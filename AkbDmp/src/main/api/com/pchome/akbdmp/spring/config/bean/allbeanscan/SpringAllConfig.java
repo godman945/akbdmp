@@ -22,6 +22,9 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 	+ "com.pchome.akbdmp.api.data,"
 	+ "com.pchome.akbdmp.api.call.listen.intercept,"
 	+ "alex.test,"
+	+ "com.pchome.dmp.mapreduce.crawlbreadcrumb,"
+	
+	
 // + "com.pchome.soft.depot.utils,"
 // + "com.pchome.akbdmp.api.data,"
 // + "com.pchome.akbdmp.api.call.*.controller,"
