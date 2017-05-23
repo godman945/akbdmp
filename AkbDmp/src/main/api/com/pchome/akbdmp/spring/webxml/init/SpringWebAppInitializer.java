@@ -34,11 +34,9 @@ public class SpringWebAppInitializer implements WebApplicationInitializer {
 		Log4jConfigListener log4jListener = new Log4jConfigListener();
 		servletContext.addListener(log4jListener);
 		
-		
 		// Create the 'root' Spring application context
 		AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
 		rootContext.register(SpringAllConfig.class);
-
 		// 自動掃描路徑
 		rootContext.register(DispatcherConfig.class);
 		// 註冊多檔上傳

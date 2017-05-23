@@ -25,8 +25,6 @@ import com.pchome.akbdmp.api.data.enumeration.DmpCheckObjNameEnum;
 import com.pchome.akbdmp.api.data.enumeration.DmpReturnKeyEnum;
 import com.pchome.akbdmp.api.data.returndata.ReturnData;
 
-import net.minidev.json.JSONArray;
-
 @RestController
 @Scope("request")
 public class AdShowLimitController extends BaseController {
@@ -43,10 +41,10 @@ public class AdShowLimitController extends BaseController {
 	@RequestMapping(value = "/api/getAdShowLimit", method = RequestMethod.POST, headers = "Accept=application/json;charset=UTF-8")
 	@ResponseBody
 	public Object adShowLimit(HttpServletRequest request,
-			@RequestParam(defaultValue = "", required = false) String adKey) throws Exception {
+			@RequestParam(defaultValue = "", required = false) String[] adKey
+			) throws Exception {
 		try {
 			log.info(">>>>>> call getAdShowLimit : adKey:" + adKey);
-			
 			JSONObject paramaterJson = new JSONObject();
 			paramaterJson.put(DmpAdShowLimitParamaterEnum.AD_KEY.getKey(), adKey);
 			ACheckData aCheckData = checkDataFactory.getaCheckData(DmpCheckObjNameEnum.CHECK_ADSHOW_LIMIT);
@@ -56,9 +54,9 @@ public class AdShowLimitController extends BaseController {
 			if(!checkFlag){
 				return getReturnData(obj);
 			}
-			JSONArray showFrequencyKeyArray = JsonPath.read(checkResult, DmpReturnKeyEnum.RESULT.getKey());
+			
 			AdShowLimitBean adShowLimitBean = new AdShowLimitBean();
-			for (Object key : showFrequencyKeyArray) {
+			for (Object key : adKey) {
 				int adLimit = (int) ((redisTemplate.opsForValue().get(key) == null) ? 0 : Integer.parseInt(redisTemplate.opsForValue().get(key).toString()));
 				adShowLimitBean.getAdShowLimitMap().put(key.toString(), adLimit);
 			}
@@ -71,10 +69,10 @@ public class AdShowLimitController extends BaseController {
 		} catch (Exception e) {
 			log.error(">>>>" + e.getMessage());
 			ReturnData returnData = new ReturnData();
-			returnData.setCode(DmpApiReturnCodeEnum.API_CODE_E003.getCode());
+			returnData.setCode(DmpApiReturnCodeEnum.API_CODE_E002.getCode());
 			returnData.setResult(e.getMessage());
-			returnData.setStatus(DmpApiReturnCodeEnum.API_CODE_E003.isStatus());
-			return returnData;
+			returnData.setStatus(DmpApiReturnCodeEnum.API_CODE_E002.isStatus());
+			return getReturnData(returnData);
 		}
 	}
 }
