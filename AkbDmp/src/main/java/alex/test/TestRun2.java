@@ -1,7 +1,8 @@
 package alex.test;
 
 import java.util.Date;
-import java.util.Random;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,10 +17,12 @@ import com.pchome.akbdmp.spring.config.bean.allbeanscan.SpringAllConfig;
 import com.pchome.soft.depot.utils.DateFormatUtil;
 
 @Component
-public class TestRun {
+public class TestRun2 {
 
-	Log log = LogFactory.getLog(TestRun.class);
+	Log log = LogFactory.getLog(TestRun2.class);
 	
+	
+
 	@Autowired
 	RedisTemplate<String, Object> redisTemplate;
 	
@@ -28,23 +31,28 @@ public class TestRun {
 	
 	private void redisTest() throws Exception{
 		
-//		String [] data = {"A01","A02","A03","A05","A06","A07","A08","A09","A10","A11","A12","A13","A14","A15","A16","A17","A18","A19",
-//				"A20","A21","A22","A23","A24","A25","A26","A27","A28","A29","A30"};
+		SetOperations<String, Object> opsForSet = redisTemplate.opsForSet();
 		
-//		Date date = new Date(); 
-//		SetOperations<String, Object> opsForSet = redisTemplate.opsForSet();
 //		System.out.println(opsForSet.members("nico").size());
-//		System.out.println(opsForSet.members("alex").size());
+//		
 //		redisTemplate.delete("nico");
-//		System.out.println(opsForSet.members("nico").size());
+//		
+//		
+		Date date = new Date(); 
+		System.out.println("開始時間:"+dateFormatUtil.getDateTemplate2().format(date));
+		ForkJoinPool forkJoinPool = new ForkJoinPool();
+		Future<Integer> future = forkJoinPool.submit(new ForkJoinProcess(0,3000,opsForSet)); 
+		System.out.println("最後完成的size=" + future.get());  
+		forkJoinPool.shutdown();
+		Date date2 = new Date(); 
+		System.out.println("結束時間:"+dateFormatUtil.getDateTemplate2().format(date2));
 		
 		
 		
-//		opsForSet.add("TEST", "CC");
 		
-//		System.out.println(opsForSet.members("TEST").contains("CC"));
 		
-//		for (int i = 0; i < 100000; i++) {
+		
+//		for (int i = 0; i < 1000000; i++) {
 //			Random randData = new Random();
 //			int no = randData.nextInt(29);
 //			String testStr = data[no];	
@@ -55,7 +63,7 @@ public class TestRun {
 		
 		//1.
 //		redisTemplate.opsForSet().add("alex", "A01");
-		 SetOperations<String, Object> opsForSet = redisTemplate.opsForSet();
+//		 SetOperations<String, Object> opsForSet = redisTemplate.opsForSet();
 		 
 		 
 //		 String n01 = "N01";
@@ -167,7 +175,7 @@ public class TestRun {
 	public static void main(String[] args) throws Exception {
 		System.setProperty("spring.profiles.active", "local");
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
-		TestRun TestRun = (TestRun) ctx.getBean(TestRun.class);
-		TestRun.redisTest();
+		TestRun2 TestRun2 = (TestRun2) ctx.getBean(TestRun2.class);
+		TestRun2.redisTest();
 	}
 }
