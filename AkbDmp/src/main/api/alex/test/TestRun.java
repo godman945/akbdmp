@@ -27,7 +27,7 @@ public class TestRun {
 	DateFormatUtil dateFormatUtil;
 	
 	private void redisTest() throws Exception{
-		redisTemplate.opsForValue().set("1", "test");
+		redisTemplate.delete("1");
 		
 		System.out.println("1>>>>"+redisTemplate.opsForValue().get("1"));
 		log.info("2>>>>"+redisTemplate.opsForValue().get("1"));
