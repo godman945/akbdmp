@@ -15,6 +15,9 @@
 
 	<build>
 		<finalName>AkbDmp_hadoop</finalName>
+		<defaultGoal>install</defaultGoal>
+		<sourceDirectory>src/main/hadoop</sourceDirectory>
+		<outputDirectory>target/hadoop/classes</outputDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -79,7 +82,11 @@
 
 	<dependencies>
 		
-		
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.4</version>
+		</dependency>
 
 	</dependencies>
 </project>
