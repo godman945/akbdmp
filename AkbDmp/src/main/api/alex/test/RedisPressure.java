@@ -34,7 +34,7 @@ public class RedisPressure {
 		Date date = new Date(); 
 		System.out.println("開始時間:"+dateFormatUtil.getDateTemplate2().format(date));
 		ForkJoinPool forkJoinPool = new ForkJoinPool();
-		Future<Integer> future = forkJoinPool.submit(new ForkJoinProcess(0,10000000,opsForSet)); 
+		Future<Integer> future = forkJoinPool.submit(new ForkJoinProcess(0,1,opsForSet)); 
 		System.out.println("最後完成的size=" + future.get());  
 		forkJoinPool.shutdown();
 		Date date2 = new Date(); 
