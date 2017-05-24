@@ -37,7 +37,7 @@ public class ForkJoinProcess extends RecursiveTask<Integer> {
             		while(flag){
             			Random randData = new Random();
                 		no = randData.nextInt(20000000);
-            			flag = opsForSet.members("alex").contains("code_"+no) ? true : false;
+            			flag = opsForSet.members("nico").contains("code_"+no) ? true : false;
             			opsForSet.add("alex", "code_"+no);
             		}
             		System.out.println(">>>>> code_"+no);
