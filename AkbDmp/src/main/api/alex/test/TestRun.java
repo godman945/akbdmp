@@ -27,6 +27,12 @@ public class TestRun {
 	DateFormatUtil dateFormatUtil;
 	
 	private void redisTest() throws Exception{
+		redisTemplate.opsForValue().set("1", "test");
+		
+		System.out.println("1>>>>"+redisTemplate.opsForValue().get("1"));
+		log.info("2>>>>"+redisTemplate.opsForValue().get("1"));
+		
+		
 		
 //		String [] data = {"A01","A02","A03","A05","A06","A07","A08","A09","A10","A11","A12","A13","A14","A15","A16","A17","A18","A19",
 //				"A20","A21","A22","A23","A24","A25","A26","A27","A28","A29","A30"};
@@ -55,7 +61,7 @@ public class TestRun {
 		
 		//1.
 //		redisTemplate.opsForSet().add("alex", "A01");
-		 SetOperations<String, Object> opsForSet = redisTemplate.opsForSet();
+//		 SetOperations<String, Object> opsForSet = redisTemplate.opsForSet();
 		 
 		 
 //		 String n01 = "N01";
@@ -165,7 +171,7 @@ public class TestRun {
 	
 	
 	public static void main(String[] args) throws Exception {
-		System.setProperty("spring.profiles.active", "local");
+		System.setProperty("spring.profiles.active", "stg");
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
 		TestRun TestRun = (TestRun) ctx.getBean(TestRun.class);
 		TestRun.redisTest();
