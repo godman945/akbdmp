@@ -44,7 +44,7 @@ public class RedisPressure {
 	
 	
 	public static void main(String[] args) throws Exception {
-		System.setProperty("spring.profiles.active", "local");
+		System.setProperty("spring.profiles.active", "stg");
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
 		RedisPressure redisPressure = (RedisPressure) ctx.getBean(RedisPressure.class);
 		redisPressure.redisTest();
