@@ -14,7 +14,7 @@ public class ForkJoinProcess extends RecursiveTask<Integer> {
 	Log log = LogFactory.getLog(ForkJoinProcess.class);
 	
 	//每個任務只處理10000筆資料
-    private static final int MAX = 10000;
+    private static final int MAX = 1000000;
     private int start;  
     private int end;
     private int total;
