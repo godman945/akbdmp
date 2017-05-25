@@ -2,6 +2,7 @@ package alex.test;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Random;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 
@@ -34,7 +35,15 @@ public class RedisPressure {
 	
 	private void redisTest() throws Exception{
 		
-		System.out.println(redisTemplate.opsForSet().members("Nico"));
+//		redisTemplate.delete("alex");
+		System.out.println(redisTemplate.opsForSet().members("alex").size());
+		
+		
+//		redisTemplate.opsForCluster().
+		
+//		redisTemplate.delete("Nico");
+		
+		
 		
 //		ClusterOperations<String, Object>  f = redisTemplate.opsForCluster();
 		
@@ -97,5 +106,10 @@ public class RedisPressure {
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
 		RedisPressure redisPressure = (RedisPressure) ctx.getBean(RedisPressure.class);
 		redisPressure.redisTest();
+//		Random r = new Random();
+//		int start = 1000000;
+//		int end = 1015000;
+//		int result = r.nextInt(end-start) + start;
+//		System.out.println(result);
 	}
 }
