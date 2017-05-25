@@ -54,25 +54,24 @@ public class ThreadTestRun {
 		// System.out.println("Finished all threads");
 	}
 
-	@SuppressWarnings("resource")
+	@SuppressWarnings({"resource","rawtypes"})
 	public static void main(String[] args) throws Exception {
 		System.setProperty("spring.profiles.active", "stg");
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
 		ThreadTestRun ThreadTestRun = ctx.getBean(ThreadTestRun.class);
 		String threadName = "";
 		String [] namePool = {"alex","Nico","bessie","boris","tim","cool","dyl","park","kylin","hebe"};
-		for (int i = 1; i < 10; i++) {
+		for (int i = 0; i < 10; i++) {
 			ExecutorService service = Executors.newFixedThreadPool(10);
 			RedisTemplate redisTemplate = ThreadTestRun.redisTemplate;
-			for (int j = 0; j < 10; j++) {
+			for (int j = 0; j < 20; j++) {
 				threadName = "task" + j;
 				service.execute(new PressureTestThreadWorker(redisTemplate,threadName,namePool[i]));
 			}
 			service.shutdown();
 			service.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
-			System.out.println(namePool[i]+"  thread complete");
+			System.out.println(namePool[i] + "  thread complete");
 		}
-		
 		System.out.println("all thread complete");
 	}
 

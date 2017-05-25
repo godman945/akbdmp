@@ -19,30 +19,23 @@ public class PressureTestThreadWorker implements Runnable {
 	@Override
 	public void run() {
 //		System.out.println(Thread.currentThread().getName());
-		System.out.println("taskName:"+name);
+//		System.out.println("taskName:"+name);
 		SetOperations<String, Object> opsForSet = redisTemplate.opsForSet();
-		for (int i = 0; i < 1000000; i++) {
+		for (int i = 0; i < 490000; i++) {
+			String guid = java.util.UUID.randomUUID().toString();
+			opsForSet.add(user, "code_"+guid);
+			System.out.println(user+">>>>>> code_"+guid);
+		}
+		for (int i = 0; i < 10000; i++) {
 			boolean flag = true;
-			int no = 0;
-			while(flag){
-				Random randData = new Random();
-				no = randData.nextInt(20000000);
-				flag = opsForSet.members(user).contains("code_"+no) ? true : false;
-				opsForSet.add(user, "code_"+no);
-				System.out.println(name+"***********"+i);
-				flag = false;
-			}
-			System.out.println(user+">>>>> code_"+no);
-//			System.out.println(name+" do "+i);
-//			if(i == 2 && "task0".equals(name)){
-//				try {
-//					Thread.sleep(50000);
-//				} catch (InterruptedException e) {
-//					e.printStackTrace();
-//				}
-//			}
+    		int no = 0;
+    		while(flag){
+    			Random randData = new Random();
+        		no = randData.nextInt(10000);
+    			flag = opsForSet.members(user).contains("test_"+no) ? true : false;
+    			opsForSet.add(user, "test_"+no);
+    			System.out.println(user+">>>>>> "+"test_"+no +" flag:"+flag);
+    		}
 		}
 	}
-
-
 }
