@@ -5,10 +5,10 @@ import org.springframework.data.redis.core.SetOperations;
 
 public class PressureTestThreadWorker implements Runnable {
 
-	private RedisTemplate redisTemplate;
+	private RedisTemplate<String, Object> redisTemplate;
 	private String name;
 	private String user;
-	public PressureTestThreadWorker(RedisTemplate redisTemplate,String name,String user) {
+	public PressureTestThreadWorker(RedisTemplate<String, Object> redisTemplate,String name,String user) {
 		this.redisTemplate = redisTemplate;
 		this.name = name;
 		this.user = user;
@@ -17,7 +17,7 @@ public class PressureTestThreadWorker implements Runnable {
 	@Override
 	public void run() {
 		SetOperations<String, Object> opsForSet = redisTemplate.opsForSet();
-		for (int i = 0; i < 95000; i++) {
+		for (int i = 0; i < 905000; i++) {
 			String guid = java.util.UUID.randomUUID().toString();
 			opsForSet.add(user, "code_"+guid);
 			System.out.println(user+" do"+i+" >>>>>> code_"+guid);
