@@ -33,8 +33,8 @@ public class ThreadTestRun {
 		long time1, time2;
 		time1 = System.currentTimeMillis();
 		for (int i = 0; i < namePool.length; i++) {
-			ExecutorService service = Executors.newFixedThreadPool(100);
-			for (int j = 0; j < 10; j++) {
+			ExecutorService service = Executors.newFixedThreadPool(5);
+			for (int j = 0; j < 5; j++) {
 				threadName = "task" + j;
 				service.execute(new PressureTestThreadWorker(redisTemplate, threadName, namePool[i]));
 			}
