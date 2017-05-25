@@ -28,9 +28,9 @@ public class ThreadTestRun {
 		String threadName = "";
 		String [] namePool = {"alex","Nico","bessie","boris","tim","cool","dyl","park","kylin","hebe"};
 		for (int i = 0; i < 10; i++) {
-			ExecutorService service = Executors.newFixedThreadPool(20);
+			ExecutorService service = Executors.newFixedThreadPool(100);
 			RedisTemplate redisTemplate = ThreadTestRun.redisTemplate;
-			for (int j = 0; j < 20; j++) {
+			for (int j = 0; j < 100; j++) {
 				threadName = "task" + j;
 				service.execute(new PressureTestThreadWorker(redisTemplate,threadName,namePool[i]));
 			}
