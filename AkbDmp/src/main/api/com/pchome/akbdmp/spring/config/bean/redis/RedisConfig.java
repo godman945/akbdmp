@@ -68,7 +68,7 @@ public class RedisConfig {
 	@Bean
 	public RedisClusterConfiguration getClusterConfiguration() {
 		Map<String, Object> source = new HashMap<String, Object>();
-		source.put("spring.redis.cluster.nodes", "redis1.mypchome.com.tw:6379");
+		source.put("spring.redis.cluster.nodes", "192.168.2.207:6379,192.168.2.204:6379,192.168.2.205:6379,192.168.2.208:6379,192.168.2.209:6379,192.168.2.206:6379");
 		source.put("spring.redis.cluster.timeout", 2000);
 		source.put("spring.redis.cluster.max-redirects", 8);
 		return new RedisClusterConfiguration(new MapPropertySource("RedisClusterConfiguration", source));

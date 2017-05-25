@@ -24,6 +24,8 @@ public class PressureTestThreadWorker implements Runnable {
 		for (int i = 0; i < 490000; i++) {
 			String guid = java.util.UUID.randomUUID().toString();
 			opsForSet.add(user, "code_"+guid);
+			
+			System.out.println(name+">>>>>>do "+i);
 			System.out.println(user+">>>>>> code_"+guid);
 		}
 		for (int i = 0; i < 10000; i++) {
@@ -34,6 +36,7 @@ public class PressureTestThreadWorker implements Runnable {
         		no = randData.nextInt(10000);
     			flag = opsForSet.members(user).contains("test_"+no) ? true : false;
     			opsForSet.add(user, "test_"+no);
+    			System.out.println(name+">>>>>>do "+i);
     			System.out.println(user+">>>>>> "+"test_"+no +" flag:"+flag);
     		}
 		}
