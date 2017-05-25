@@ -1,20 +1,17 @@
 package alex.test;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.Random;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.Future;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.data.redis.connection.RedisClusterConnection;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.ClusterOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
 import com.pchome.akbdmp.spring.config.bean.allbeanscan.SpringAllConfig;
@@ -31,14 +28,64 @@ public class RedisPressure {
 	RedisTemplate<String, Object> redisTemplate;
 	
 	@Autowired
+	JedisConnectionFactory JedisConnectionFactory;
+	
+	@Autowired
 	DateFormatUtil dateFormatUtil;
 	
 	private void redisTest() throws Exception{
 		
+		
+		RedisClusterConnection connection = JedisConnectionFactory.getClusterConnection();
+//		System.out.println(connection.exists("alex".getBytes()));
+		System.out.println(connection.sCard("alex".getBytes()));
+		
+//		SetOperations<String, Object> opsForSet = redisTemplate.opsForSet();
+//		System.out.println(redisTemplate.opsForSet().members("A1"));
+//		System.out.println(redisTemplate.opsForSet().members("B1"));
+//		
+//		System.out.println("nico,alex 差集: "+opsForSet.difference("A1", "B1")+" size:"+opsForSet.difference("nico", "alex").size());
+		
+		
+//		System.out.println(redisTemplate.opsForSet().members("B1"));
+//		redisTemplate.opsForSet().add("A1", "code_e22e3f4e-8fa6-4848-9479-6ea1dde1c0b0");
+//		redisTemplate.opsForSet().add("A1", "a02");
+//		redisTemplate.opsForSet().add("B1", "b01");
+//		redisTemplate.opsForSet().add("B1", "a02");
+//		System.out.println(connection.sInter("B1".getBytes(), "alex".getBytes()).size());
+		
+		
+		
+//		connection.sInter("B1".getBytes(), "alex".getBytes());
+		
+//		Set<byte[]> set = connection.sInter("B1".getBytes(), "alex".getBytes()).;
+//		for (byte[] object : set) {
+//			System.out.println(new String(object, "UTF-8"));
+//		}
+//		
+//		
+////		System.out.println(connection.sDiff("A1".getBytes(), "B1".getBytes()).size());
+//		
+//		
+//		 System.out.println("nico:"+redisTemplate.opsForSet.members("nico") +" size:"+ redisTemplate.opsForSet.members("nico").size());
+		
+		
+		
+		
+//		connection.del("alex".getBytes(),"nico".getBytes(),"Nico".getBytes(),"bessie".getBytes());
+//		connection.close();
+//		System.out.println(redisTemplate.opsForSet().members("nico"));
+//		System.out.println(redisTemplate.opsForSet().difference("Nico", "bessie").size());
+		
+//		System.out.println(connection.bitCount("alex".getBytes()));
+//		redisTemplate.opsForSet().
+//		System.out.println(connection.clusterGetSlotForKey("alex".getBytes()));
+//		Object obj = redisTemplate.getKeySerializer().deserialize("alex".getBytes());
+//		System.out.println(obj);
+//		System.out.println(redisTemplate.opsForSet().members(obj.toString()).contains("A"));
 //		redisTemplate.delete("alex");
-		System.out.println(redisTemplate.opsForSet().members("alex").size());
-		
-		
+//		System.out.println(redisTemplate.opsForSet().members("Nico"));
+//		ClusterOperations clusterOps = redisTemplate.opsForCluster();
 //		redisTemplate.opsForCluster().
 		
 //		redisTemplate.delete("Nico");

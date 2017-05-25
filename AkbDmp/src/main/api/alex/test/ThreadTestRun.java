@@ -30,7 +30,7 @@ public class ThreadTestRun {
 		for (int i = 0; i < 10; i++) {
 			ExecutorService service = Executors.newFixedThreadPool(100);
 			RedisTemplate redisTemplate = ThreadTestRun.redisTemplate;
-			for (int j = 0; j < 100; j++) {
+			for (int j = 0; j < 500; j++) {
 				threadName = "task" + j;
 				service.execute(new PressureTestThreadWorker(redisTemplate,threadName,namePool[i]));
 			}
