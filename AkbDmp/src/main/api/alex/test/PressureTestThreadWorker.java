@@ -1,7 +1,5 @@
 package alex.test;
 
-import java.util.Random;
-
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 
@@ -18,27 +16,15 @@ public class PressureTestThreadWorker implements Runnable {
 
 	@Override
 	public void run() {
-//		System.out.println(Thread.currentThread().getName());
-//		System.out.println("taskName:"+name);
 		SetOperations<String, Object> opsForSet = redisTemplate.opsForSet();
-		for (int i = 0; i < 100000; i++) {
+		for (int i = 0; i < 95000; i++) {
 			String guid = java.util.UUID.randomUUID().toString();
 			opsForSet.add(user, "code_"+guid);
-			
-			System.out.println(name+">>>>>>do "+i);
-			System.out.println(user+">>>>>> code_"+guid);
+			System.out.println(user+" do"+i+" >>>>>> code_"+guid);
 		}
-//		for (int i = 0; i < 5000; i++) {
-//			boolean flag = true;
-//    		int no = 0;
-//    		while(flag){
-//    			Random randData = new Random();
-//        		no = randData.nextInt(5000);
-//    			flag = opsForSet.members(user).contains("test_"+no) ? true : false;
-//    			opsForSet.add(user, "test_"+no);
-//    			System.out.println(name+">>>>>>do "+i);
-//    			System.out.println(user+">>>>>> "+"test_"+no +" flag:"+flag);
-//    		}
-//		}
+		for (int i = 0; i < 5000; i++) {
+			opsForSet.add(user, name+"_"+i);
+			System.out.println(user+" do"+i+" >>>>>> "+name+"_"+i);
+		}
 	}
 }
