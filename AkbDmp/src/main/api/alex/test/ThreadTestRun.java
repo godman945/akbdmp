@@ -26,11 +26,11 @@ public class ThreadTestRun {
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
 		ThreadTestRun ThreadTestRun = ctx.getBean(ThreadTestRun.class);
 		String threadName = "";
-		String [] namePool = {"alex","Nico","bessie","boris","tim","cool","dyl","park","kylin","hebe"};
-		for (int i = 0; i < 10; i++) {
-			ExecutorService service = Executors.newFixedThreadPool(500);
+		String [] namePool = {"DD","Nico","bessie","boris","tim","cool","dyl","park","kylin","hebe"};
+		for (int i = 0; i < 1; i++) {
+			ExecutorService service = Executors.newFixedThreadPool(1000);
 			RedisTemplate redisTemplate = ThreadTestRun.redisTemplate;
-			for (int j = 0; j < 500; j++) {
+			for (int j = 0; j < 1000; j++) {
 				threadName = "task" + j;
 				service.execute(new PressureTestThreadWorker(redisTemplate,threadName,namePool[i]));
 			}
