@@ -35,13 +35,12 @@ public class ThreadTestRun {
 		ThreadTestRun ThreadTestRun = ctx.getBean(ThreadTestRun.class);
 		String threadName = "";
 		String [] namePool = {"alex","Nico","bessie","boris","tim","cool","dyl","park","kylin","hebe"};
-		ExecutorService service = Executors.newFixedThreadPool(10);
 		RedisTemplate redisTemplate = ThreadTestRun.redisTemplate;
-		
 		long time1,time2;
 		time1 = System.currentTimeMillis();
 		for (int i = 0; i < namePool.length; i++) {
-			for (int j = 0; j < 10; j++) {
+			ExecutorService service = Executors.newFixedThreadPool(100);
+			for (int j = 0; j < 100; j++) {
 				threadName = "task" + j;
 				service.execute(new PressureTestThreadWorker(redisTemplate,threadName,namePool[i]));
 			}

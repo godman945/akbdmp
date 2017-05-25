@@ -39,6 +39,14 @@ public class RedisPressure {
 		RedisClusterConnection connection = JedisConnectionFactory.getClusterConnection();
 //		System.out.println(connection.exists("alex".getBytes()));
 		System.out.println(connection.sCard("alex".getBytes()));
+//		connection.append("A".getBytes(), "A".getBytes());
+		
+		
+		
+		
+		
+//		System.out.println(connection.cluster);
+		
 		
 //		SetOperations<String, Object> opsForSet = redisTemplate.opsForSet();
 //		System.out.println(redisTemplate.opsForSet().members("A1"));
