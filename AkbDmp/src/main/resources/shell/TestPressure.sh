@@ -1,2 +1,2 @@
-cd ~/home/webuser/project/AkbDmp/AkbDmp/target/classes
-alex.test.Alex $*
+cd /home/webuser/project/AkbDmp/AkbDmp/target
+java -cp  AkbDmp-jar-with-dependencies.jar alex.test.ThreadTestRun
