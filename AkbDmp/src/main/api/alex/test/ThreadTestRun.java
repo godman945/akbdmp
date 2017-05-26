@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +24,9 @@ public class ThreadTestRun {
 	@Autowired
 	DateFormatUtil dateFormatUtil;
 
+	@Autowired
+	JedisConnectionFactory JedisConnectionFactory;
+	
 	Log log = LogFactory.getLog(ThreadTestRun.class);
 
 	public void test() {
@@ -37,7 +41,7 @@ public class ThreadTestRun {
 			for (int j = 0; j < 200; j++) {
 				threadPool--;
 				threadName = "task" + j;
-				service.execute(new PressureTestThreadWorker(redisTemplate, threadName));
+				service.execute(new PressureTestThreadWorker(redisTemplate, threadName,JedisConnectionFactory));
 				if (threadPool <= 0) {
 					threadPool = 200;
 					service.shutdown();
