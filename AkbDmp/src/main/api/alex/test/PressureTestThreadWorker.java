@@ -10,25 +10,27 @@ public class PressureTestThreadWorker implements Runnable {
 
 	private RedisTemplate<String, Object> redisTemplate;
 	private String name;
-	private String user;
 
-	public PressureTestThreadWorker(RedisTemplate<String, Object> redisTemplate, String name, String user) {
+	public PressureTestThreadWorker(RedisTemplate<String, Object> redisTemplate, String taskName) {
 		this.redisTemplate = redisTemplate;
-		this.name = name;
-		this.user = user;
+		this.name = taskName;
 	}
 
 	@Override
 	public void run() {
-		 SetOperations<String, Object> opsForSet = redisTemplate.opsForSet();
-		 for (int i = 0; i < 45000; i++) {
-		 String guid = java.util.UUID.randomUUID().toString();
-		 opsForSet.add(user, "code_"+guid);
-		 log.info(name+"_"+user+" do"+i+" >>>>>> code_"+guid);
-		 }
-		 for (int i = 0; i < 5000; i++) {
-		 opsForSet.add(user, name+"_"+i);
-		 log.info(name+"_"+user+" do"+i+" >>>>>> "+name+"_"+i);
-		 }
+		SetOperations<String, Object> opsForSet = redisTemplate.opsForSet();
+		String[] namePool = { "alex", "Nico", "bessie", "boris", "tim", "cool", "dyl", "park", "kylin", "hebe" };
+		for (String userName : namePool) {
+			for (int i = 0; i < 4500; i++) {
+				String guid = java.util.UUID.randomUUID().toString();
+				opsForSet.add(userName, "code_" + guid);
+				log.info(userName + "_" + name + " do " + i);
+			}
+			for (int j = 0; j < 500; j++) {
+				opsForSet.add(userName, name + "_" + j);
+				log.info(userName + "_" + name + " do" + j + " >>>>>> " + name + "_" + j);
+			}
+			
+		}
 	}
 }
