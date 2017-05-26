@@ -30,16 +30,30 @@ public class ThreadTestRun {
 		String threadName = "";
 		String[] namePool = { "alex", "Nico", "bessie", "boris", "tim", "cool", "dyl", "park", "kylin", "hebe" };
 		RedisTemplate redisTemplate = ThreadTestRun.redisTemplate;
+		int threadPoolDefault = 200;
+		int threadPool = threadPoolDefault;
+		ExecutorService service = null;
+		service = Executors.newFixedThreadPool(threadPoolDefault);
 		long time1, time2;
 		time1 = System.currentTimeMillis();
 		for (int i = 0; i < namePool.length; i++) {
-			ExecutorService service = Executors.newFixedThreadPool(5);
-			for (int j = 0; j < 5; j++) {
+			for (int j = 0; j < 200; j++) {
+				threadPool--;
 				threadName = "task" + j;
 				service.execute(new PressureTestThreadWorker(redisTemplate, threadName, namePool[i]));
+			
+				if (threadPool <= 0) {
+					threadPool = threadPoolDefault;
+					service.shutdown();
+					while (!service.isTerminated()) {
+					}
+					System.out.println(threadName + "============= 批次處理完畢");
+					service = Executors.newFixedThreadPool(threadPoolDefault);
+				}
 			}
-			service.shutdown();
-			service.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+		}
+		service.shutdown();
+	  	while (!service.isTerminated()) {
 		}
 		time2 = System.currentTimeMillis();
 		System.out.println(">>>>COST============花費:" + ((double) time2 - time1) / 1000 + "秒");

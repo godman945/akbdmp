@@ -17,7 +17,7 @@ public class PressureTestThreadWorker implements Runnable {
 	@Override
 	public void run() {
 		SetOperations<String, Object> opsForSet = redisTemplate.opsForSet();
-		for (int i = 0; i < 195000; i++) {
+		for (int i = 0; i < 45000; i++) {
 			String guid = java.util.UUID.randomUUID().toString();
 			opsForSet.add(user, "code_"+guid);
 			System.out.println(user+" do"+i+" >>>>>> code_"+guid);
