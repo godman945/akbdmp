@@ -36,7 +36,7 @@ public class ThreadTestRun {
 			long time1, time2;
 			time1 = System.currentTimeMillis();
 			for (int i = 0; i < 1; i++) {
-				for (int j = 0; j < 150; j++) {
+				for (int j = 0; j < 200; j++) {
 					threadPool--;
 					threadName = "task" + j;
 					service.execute(new PressureTestThreadWorker(redisTemplate, threadName, namePool[i]));
