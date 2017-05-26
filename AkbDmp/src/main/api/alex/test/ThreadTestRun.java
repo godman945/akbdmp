@@ -28,39 +28,33 @@ public class ThreadTestRun {
 	public void test() {
 		try {
 			String threadName = "";
-			String[] namePool = { "alex", "Nico", "bessie", "boris", "tim", "cool", "dyl", "park", "kylin", "hebe" };
 			int threadPoolDefault = 200;
 			int threadPool = 200;
 			ExecutorService service = null;
 			service = Executors.newFixedThreadPool(threadPoolDefault);
 			long time1, time2;
 			time1 = System.currentTimeMillis();
-			for (int i = 0; i < namePool.length; i++) {
-				for (int j = 0; j < 200; j++) {
-					threadPool--;
-					threadName = "task" + j;
-					service.execute(new PressureTestThreadWorker(redisTemplate, threadName, namePool[i]));
-					if (threadPool <= 0) {
-						threadPool = 200;
-						service.shutdown();
-						while (!service.isTerminated()) {
-						}
+			for (int j = 0; j < 200; j++) {
+				threadPool--;
+				threadName = "task" + j;
+				service.execute(new PressureTestThreadWorker(redisTemplate, threadName));
+				if (threadPool <= 0) {
+					threadPool = 200;
+					service.shutdown();
+					while (!service.isTerminated()) {
 					}
 				}
-				while (!service.isTerminated()) {
-				}
-				log.info(threadName + "============= 批次處理完畢");
-				service = Executors.newFixedThreadPool(threadPoolDefault);
 			}
-			service.shutdown();
 			while (!service.isTerminated()) {
 			}
+			log.info(threadName + "============= 批次處理完畢");
+			service = Executors.newFixedThreadPool(threadPoolDefault);
 			time2 = System.currentTimeMillis();
 			log.info(">>>>COST============花費:" + ((double) time2 - time1) / 1000 + "秒");
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.error(">>>>>>"+ e.getMessage());
-			System.exit(1); 
+			log.error(">>>>>>" + e.getMessage());
+			System.exit(1);
 		}
 	}
 
