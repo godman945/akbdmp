@@ -29,19 +29,19 @@ public class ThreadTestRun {
 		try {
 			String threadName = "";
 			String[] namePool = { "alex", "Nico", "bessie", "boris", "tim", "cool", "dyl", "park", "kylin", "hebe" };
-			int threadPoolDefault = 150;
-			int threadPool = threadPoolDefault;
+			int threadPoolDefault = 200;
+			int threadPool = 200;
 			ExecutorService service = null;
 			service = Executors.newFixedThreadPool(threadPoolDefault);
 			long time1, time2;
 			time1 = System.currentTimeMillis();
-			for (int i = 0; i < 1; i++) {
+			for (int i = 0; i < namePool.length; i++) {
 				for (int j = 0; j < 200; j++) {
 					threadPool--;
 					threadName = "task" + j;
 					service.execute(new PressureTestThreadWorker(redisTemplate, threadName, namePool[i]));
 					if (threadPool <= 0) {
-						threadPool = threadPoolDefault;
+						threadPool = 200;
 						service.shutdown();
 						while (!service.isTerminated()) {
 						}
@@ -60,6 +60,7 @@ public class ThreadTestRun {
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error(">>>>>>"+ e.getMessage());
+			System.exit(1); 
 		}
 	}
 
