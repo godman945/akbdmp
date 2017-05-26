@@ -1,2 +1,2 @@
-cd ~/home/webuser/project/AkbDmp/AkbDmp/target
+cd ~/home/webuser/project/AkbDmp/AkbDmp/target/
 java -cp  AkbDmp-jar-with-dependencies.jar alex.test.ThreadTestRun
