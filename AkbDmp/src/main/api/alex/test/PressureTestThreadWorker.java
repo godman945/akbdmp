@@ -45,7 +45,7 @@ public class PressureTestThreadWorker implements Runnable {
 					time2 = System.currentTimeMillis();
 					String guid = java.util.UUID.randomUUID().toString();
 					opsForSet.add(userName, "code_" + guid);
-					if(((double) time2 - time1) / 1000 >= 1800){
+					if(((double) time2 - time1) / 1000 >= 10){
 						log.info(userName+">>>>>> size: "+connection.sCard(userName.getBytes()));
 						time1 = time2;
 					}
@@ -53,7 +53,7 @@ public class PressureTestThreadWorker implements Runnable {
 				for (int j = 0; j < 500; j++) {
 					time2 = System.currentTimeMillis();
 					opsForSet.add(userName, taskName + "_" + j);
-					if(((double) time2 - time1) / 1000 >= 1800){
+					if(((double) time2 - time1) / 1000 >= 10){
 						log.info(userName+">>>>>> size: "+connection.sCard(userName.getBytes()));
 						time1 = time2;
 					}
