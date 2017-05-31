@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisClusterConnection;
@@ -38,8 +39,16 @@ public class RedisConfig {
 	 JedisPoolConfig jedisPoolConfig() {
 		 JedisPoolConfig jedisConfig = new JedisPoolConfig();
 		 jedisConfig.setMaxIdle(maxIdle);
-		 jedisConfig.setMaxWaitMillis(maxWait);
+//		 jedisConfig.setMaxWaitMillis(maxWait);
 		 jedisConfig.setTestOnBorrow(testOnBorrow);
+		 jedisConfig.setMaxWaitMillis(-1);
+		 
+		//逐出扫描的时间间隔(毫秒) 如果为负数,则不运行逐出线程, 默认-1
+		 jedisConfig.setTimeBetweenEvictionRunsMillis(-1);
+		//在空闲时检查有效性, 默认false
+		 jedisConfig.setTestWhileIdle(false);
+		//设置的逐出策略类名, 默认DefaultEvictionPolicy(当连接超过最大空闲时间,或连接数超过最大空闲连接数)
+		 jedisConfig.setEvictionPolicyClassName("org.apache.commons.pool2.impl.DefaultEvictionPolicy");
 		 return jedisConfig;
 	 }
 
