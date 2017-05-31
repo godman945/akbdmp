@@ -22,13 +22,16 @@ public class PressureTestThreadWorker implements Runnable {
 	@Override
 	public void run() {
 		SetOperations<String, Object> opsForSet = redisTemplate.opsForSet();
+		
+		
 //		String[] namePool = { "alex", "Nico", "bessie", "boris", "tim", "cool", "dyl", "park", "kylin", "hebe" };
 		String[] namePool = { "alex"};
 //		long time1, time2;
 		RedisClusterConnection connection = JedisConnectionFactory.getClusterConnection();
+		
 //		time1 = System.currentTimeMillis();
 		for (String userName : namePool) {
-			for (int i = 0; i < 49500; i++) {
+			for (int i = 0; i < 99500; i++) {
 //				time2 = System.currentTimeMillis();
 				String guid = java.util.UUID.randomUUID().toString();
 				opsForSet.add(userName, "code_" + guid);
