@@ -64,7 +64,7 @@ public class PressureTestThreadWorker implements Runnable {
 				log.info(taskName+"_"+userName+">>>>>> finish ================= ");
 			}
 		}catch(Exception e){
-			log.info(e.getMessage());
+			log.error(e.getMessage());
 		}
 
 	}
