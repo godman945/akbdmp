@@ -32,41 +32,42 @@ public class PressureTestThreadWorker implements Runnable {
 
 	@Override
 	public void run() {
-//		SetOperations<String, Object> opsForSet = redisTemplate.opsForSet();
-		
-		
-		SetOperations<String, Object> opsForSet = getRedisTemplate().opsForSet();
-		
-		
-		log.info("redisTemplate:"+redisTemplate.opsForSet());
-//		String[] namePool = { "alex", "Nico", "bessie", "boris", "tim", "cool", "dyl", "park", "kylin", "hebe" };
-		String[] namePool = { "alex"};
-//		long time1, time2;
-		RedisClusterConnection connection = JedisConnectionFactory.getClusterConnection();
-		
-//		time1 = System.currentTimeMillis();
-		for (String userName : namePool) {
-			for (int i = 0; i < 49500; i++) {
-//				time2 = System.currentTimeMillis();
-				String guid = java.util.UUID.randomUUID().toString();
-				opsForSet.add(userName, "code_" + guid);
-//				log.info(userName+">>>>>> process: "+i);
-//				if(((double) time2 - time1) / 1000 >= 1800){
-//					log.info(userName+">>>>>> size: "+connection.sCard(userName.getBytes()));
-//					time1 = time2;
-//				}
+		try{
+//			SetOperations<String, Object> opsForSet = redisTemplate.opsForSet();
+			SetOperations<String, Object> opsForSet = getRedisTemplate().opsForSet();
+			log.info("redisTemplate:"+redisTemplate.opsForSet());
+//			String[] namePool = { "alex", "Nico", "bessie", "boris", "tim", "cool", "dyl", "park", "kylin", "hebe" };
+			String[] namePool = { "alex"};
+//			long time1, time2;
+			RedisClusterConnection connection = JedisConnectionFactory.getClusterConnection();
+			
+//			time1 = System.currentTimeMillis();
+			for (String userName : namePool) {
+				for (int i = 0; i < 49500; i++) {
+//					time2 = System.currentTimeMillis();
+					String guid = java.util.UUID.randomUUID().toString();
+					opsForSet.add(userName, "code_" + guid);
+//					log.info(userName+">>>>>> process: "+i);
+//					if(((double) time2 - time1) / 1000 >= 1800){
+//						log.info(userName+">>>>>> size: "+connection.sCard(userName.getBytes()));
+//						time1 = time2;
+//					}
+				}
+				for (int j = 0; j < 500; j++) {
+//					time2 = System.currentTimeMillis();
+					opsForSet.add(userName, taskName + "_" + j);
+//					log.info(userName+">>>>>> taskName: "+j);
+//					if(((double) time2 - time1) / 1000 >= 1800){
+//						log.info(userName+">>>>>> size: "+connection.sCard(userName.getBytes()));
+//						time1 = time2;
+//					}
+				}
+				log.info(taskName+"_"+userName+">>>>>> finish ================= ");
 			}
-			for (int j = 0; j < 500; j++) {
-//				time2 = System.currentTimeMillis();
-				opsForSet.add(userName, taskName + "_" + j);
-//				log.info(userName+">>>>>> taskName: "+j);
-//				if(((double) time2 - time1) / 1000 >= 1800){
-//					log.info(userName+">>>>>> size: "+connection.sCard(userName.getBytes()));
-//					time1 = time2;
-//				}
-			}
-			log.info(taskName+"_"+userName+">>>>>> finish ================= ");
+		}catch(Exception e){
+			log.info(e.getMessage());
 		}
+
 	}
 	
 	
@@ -80,8 +81,8 @@ public class PressureTestThreadWorker implements Runnable {
 	
 	 JedisPoolConfig jedisPoolConfig() {
 		 JedisPoolConfig jedisConfig = new JedisPoolConfig();
-//		 jedisConfig.setMaxIdle(maxIdle);
-//		 jedisConfig.setMaxWaitMillis(maxWait);
+		 jedisConfig.setMaxIdle(200);
+		 jedisConfig.setMaxWaitMillis(300000);
 //		 jedisConfig.setTestOnBorrow(testOnBorrow);
 		 jedisConfig.setMaxWaitMillis(-1);
 		 
