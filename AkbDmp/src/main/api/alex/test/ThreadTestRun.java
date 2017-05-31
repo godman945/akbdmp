@@ -32,18 +32,18 @@ public class ThreadTestRun {
 	public void test() {
 		try {
 			String threadName = "";
-			int threadPoolDefault = 400;
-			int threadPool = 400;
+			int threadPoolDefault = 200;
+			int threadPool = 200;
 			ExecutorService service = null;
 			service = Executors.newFixedThreadPool(threadPoolDefault);
 			long time1, time2;
 			time1 = System.currentTimeMillis();
-			for (int j = 0; j < 400; j++) {
+			for (int j = 0; j < 200; j++) {
 				threadPool--;
 				threadName = "task" + j;
 				service.execute(new PressureTestThreadWorker(redisTemplate, threadName,JedisConnectionFactory));
 				if (threadPool <= 0) {
-					threadPool = 400;
+					threadPool = 200;
 					service.shutdown();
 					while (!service.isTerminated()) {
 					}
