@@ -23,24 +23,26 @@ public class PressureTestThreadWorker implements Runnable {
 	public void run() {
 		SetOperations<String, Object> opsForSet = redisTemplate.opsForSet();
 		String[] namePool = { "alex", "Nico", "bessie", "boris", "tim", "cool", "dyl", "park", "kylin", "hebe" };
-		long time1, time2;
+//		long time1, time2;
 		RedisClusterConnection connection = JedisConnectionFactory.getClusterConnection();
-		time1 = System.currentTimeMillis();
+//		time1 = System.currentTimeMillis();
 		for (String userName : namePool) {
 			for (int i = 0; i < 49500; i++) {
-				time2 = System.currentTimeMillis();
+//				time2 = System.currentTimeMillis();
 				String guid = java.util.UUID.randomUUID().toString();
 				opsForSet.add(userName, "code_" + guid);
+				log.info(userName+">>>>>> process: "+i);
 //				if(((double) time2 - time1) / 1000 >= 1800){
-					log.info(userName+">>>>>> size: "+connection.sCard(userName.getBytes()));
+//					log.info(userName+">>>>>> size: "+connection.sCard(userName.getBytes()));
 //					time1 = time2;
 //				}
 			}
 			for (int j = 0; j < 500; j++) {
-				time2 = System.currentTimeMillis();
+//				time2 = System.currentTimeMillis();
 				opsForSet.add(userName, taskName + "_" + j);
+				log.info(userName+">>>>>> taskName: "+j);
 //				if(((double) time2 - time1) / 1000 >= 1800){
-					log.info(userName+">>>>>> size: "+connection.sCard(userName.getBytes()));
+//					log.info(userName+">>>>>> size: "+connection.sCard(userName.getBytes()));
 //					time1 = time2;
 //				}
 			}
