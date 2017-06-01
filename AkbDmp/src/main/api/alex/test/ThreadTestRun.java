@@ -63,10 +63,11 @@ public class ThreadTestRun {
 	}
 
 	public static void main(String[] args) {
-		System.setProperty("spring.profiles.active", "stg");
-		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
-		ThreadTestRun ThreadTestRun = ctx.getBean(ThreadTestRun.class);
-		ThreadTestRun.test();
+		System.out.println(java.util.UUID.randomUUID());
+//		System.setProperty("spring.profiles.active", "stg");
+//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
+//		ThreadTestRun ThreadTestRun = ctx.getBean(ThreadTestRun.class);
+//		ThreadTestRun.test();
 	}
 
 }

@@ -23,7 +23,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 	+ "com.pchome.akbdmp.api.call.listen.intercept,"
 	+ "alex.test,"
 	+ "com.pchome.dmp.mapreduce.crawlbreadcrumb,"
-	
+	+ "com.pchome.akbdmp.job,"
 	
 // + "com.pchome.soft.depot.utils,"
 // + "com.pchome.akbdmp.api.data,"
@@ -39,6 +39,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 )
 @PropertySource({ 
 	"classpath:config/prop/${spring.profiles.active}/mongo.properties",
+	"classpath:config/prop/${spring.profiles.active}/job.properties",
 	"classpath:config/prop/${spring.profiles.active}/redis.properties" })
 public class SpringAllConfig extends WebMvcConfigurerAdapter {
 

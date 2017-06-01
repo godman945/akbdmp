@@ -2,14 +2,15 @@
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+	
 	<appender name="stdout" class="org.apache.log4j.ConsoleAppender">
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d{yyyy/MM/dd HH:mm:ss} [%-5p] [%c@%t]%M(%L) %m%n" />
 		</layout>
 	</appender>
-	
+
 	<appender name="AkbDmp" class="org.apache.log4j.DailyRollingFileAppender">
-		<param name="File" value="/home/webuser/akb/log/AkbDmp.log" />
+		<param name="File" value="/home/webuser/log/dmp/AkbDmp.log" />
 		<param name="Append" value="true" />
 		<param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />
 		<layout class="org.apache.log4j.PatternLayout">
@@ -17,11 +18,25 @@
 		</layout>
 	</appender>
 
-	
+
+	<appender name="AkbDmpJob" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="/home/webuser/log/dmp/AkbDmpJob.log" />
+		<param name="Append" value="true" />
+		<param name="MaxFileSize" value="10MB" />
+		<param name="MaxBackupIndex" value="20" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{yyyy/MM/dd HH:mm:ss} [%-5p] [%c@%t]%M(%L) %m%n" />
+		</layout>
+	</appender>
+
+	<logger name="AkbDmpJob" additivity="true">
+        <priority value ="info"/>
+        <appender-ref ref="AkbDmpJob" />
+    </logger>
+
 	<root>
-		<level value="info" />
+		<level value="info"/>
 		<appender-ref ref="stdout" />
-		<appender-ref ref="AkbDmp" />
 	</root>
 
 </log4j:configuration>

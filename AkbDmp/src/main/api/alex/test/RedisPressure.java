@@ -37,11 +37,11 @@ public class RedisPressure {
 		
 		
 		RedisClusterConnection connection = JedisConnectionFactory.getClusterConnection();
-		System.out.println(connection.exists("alex".getBytes()));
+//		System.out.println(connection.exists("alex".getBytes()));
 		System.out.println(connection.sCard("alex".getBytes()));
 		
-		
-		redisTemplate.opsForSet().add("Nico", "code_1ec85663-5b75-46ce-a9bb-b25375b4c1f9");
+//		redisTemplate.opsForSet().add("alex", "112");
+//		redisTemplate.opsForSet().add("Nico", "code_1ec85663-5b75-46ce-a9bb-b25375b4c1f9");
 		
 		
 //		System.out.println(connection.sMembers("alex".getBytes()).isEmpty());
@@ -167,10 +167,10 @@ public class RedisPressure {
 	
 	public static void main(String[] args) throws Exception {
 		
-//		System.setProperty("spring.profiles.active", "stg");
-//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
-//		RedisPressure redisPressure = (RedisPressure) ctx.getBean(RedisPressure.class);
-//		redisPressure.redisTest();
+		System.setProperty("spring.profiles.active", "stg");
+		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
+		RedisPressure redisPressure = (RedisPressure) ctx.getBean(RedisPressure.class);
+		redisPressure.redisTest();
 //		Random r = new Random();
 //		int start = 1000000;
 //		int end = 1015000;
