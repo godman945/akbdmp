@@ -1,29 +1,42 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>src.main.api</groupId>
+	<groupId>src.main.job</groupId>
 	<packaging>jar</packaging>
-	<artifactId>AkbDmp</artifactId>
+	<artifactId>AkbDmpJob</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>AkbDmp Maven Webapp</name>
+	<name>AkbDmpJob Maven Webapp</name>
 	<url>http://maven.apache.org</url>
 	<build>
-		<finalName>AkbDmp</finalName>
+		<finalName>AkbDmpJob</finalName>
 		<defaultGoal>install</defaultGoal>
-		<sourceDirectory>src/main/api</sourceDirectory>
+		<sourceDirectory>src/main/job</sourceDirectory>
 		<outputDirectory>target/classes</outputDirectory>
 		<plugins>
+
 			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-					<encoding>UTF-8</encoding>
-					<compilerArguments>
-						<extdirs>${basedir}\src\main\webapp\WEB-INF\lib</extdirs>
-					</compilerArguments>
-				</configuration>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.1</version>
 			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 	</build>
 
@@ -78,31 +91,6 @@
 			<version>4.2.4.RELEASE</version>
 		</dependency>
 
-		<!-- redis -->
-		<dependency>
-			<groupId>redis.clients</groupId>
-			<artifactId>jedis</artifactId>
-			<version>2.9.0</version>
-		</dependency>
-
-		<!-- redis -->
-		<dependency>
-			<groupId>redis.clients</groupId>
-			<artifactId>jedis</artifactId>
-			<version>2.9.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-redis</artifactId>
-			<version>1.8.1.RELEASE</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>slf4j-api</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 
 		<!-- spring mvc -->
 		<dependency>
@@ -135,6 +123,7 @@
 			<artifactId>spring-context</artifactId>
 			<version>4.2.4.RELEASE</version>
 		</dependency>
+
 		<!-- freemaker -->
 		<dependency>
 			<groupId>org.freemarker</groupId>
@@ -205,37 +194,12 @@
 			<version>2.6</version>
 		</dependency>
 
-		<!-- kafka -->
-		<dependency>
-			<groupId>org.apache.kafka</groupId>
-			<artifactId>kafka-clients</artifactId>
-			<version>0.9.0.0</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>slf4j-api</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.7.25</version>
 		</dependency>
 
-		<!-- hadoop -->
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-core</artifactId>
-			<version>1.2.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-hdfs</artifactId>
-			<version>2.7.1</version>
-		</dependency>
 
 		<dependency>
 			<groupId>org.jsoup</groupId>
