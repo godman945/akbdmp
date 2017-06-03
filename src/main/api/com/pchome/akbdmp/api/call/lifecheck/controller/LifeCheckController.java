@@ -38,7 +38,7 @@ public class LifeCheckController extends BaseController {
 	Log log = LogFactory.getLog(LifeCheckController.class);
 
 	// @CrossOrigin(origins = {"http://pcbwebstg.pchome.com.tw"})
-	@RequestMapping(value = "/api/LifeCheck", method = RequestMethod.GET, headers = "Accept=application/json;charset=UTF-8")
+	@RequestMapping(value = "/api/LifeCheck", method = RequestMethod.GET)
 	@ResponseBody
 	public Object LifeCheck(HttpServletRequest request) throws Exception {
 		try {
@@ -47,43 +47,27 @@ public class LifeCheckController extends BaseController {
 				Jedis jedis = new Jedis("redisdev.mypchome.com.tw");
 				jedis.set(DmpLifeCheckEnum.CHECK_KEY.getKey(), DmpLifeCheckEnum.CHECK_KEY.getValue());
 				boolean flag = StringUtils.isNotBlank(jedis.get(DmpLifeCheckEnum.CHECK_KEY.getKey()));
+				jedis.del(DmpLifeCheckEnum.CHECK_KEY.getKey());
 				jedis.close();
-				ReturnData returnData = new ReturnData();
 				if (flag) {
-					returnData.setCode(DmpApiReturnCodeEnum.API_CODE_S001.getCode());
-					returnData.setResult(DmpApiReturnCodeEnum.API_CODE_S001.getContent());
-					returnData.setStatus(DmpApiReturnCodeEnum.API_CODE_S001.isStatus());
-					return returnData;
+					return "OK";
 				} else {
-					returnData.setCode(DmpApiReturnCodeEnum.API_CODE_E003.getCode());
-					returnData.setResult(DmpApiReturnCodeEnum.API_CODE_E003.getContent());
-					returnData.setStatus(DmpApiReturnCodeEnum.API_CODE_E003.isStatus());
-					return returnData;
+					return "ERROR";
 				}
 			} else {
 				redisTemplate.opsForValue().set(DmpLifeCheckEnum.CHECK_KEY.getKey(), DmpLifeCheckEnum.CHECK_KEY.getValue());
 				boolean flag = StringUtils.isNotBlank(redisTemplate.opsForValue().get(DmpLifeCheckEnum.CHECK_KEY.getKey()).toString());
-				ReturnData returnData = new ReturnData();
+				redisTemplate.delete(DmpLifeCheckEnum.CHECK_KEY.getKey());
 				if (flag) {
-					returnData.setCode(DmpApiReturnCodeEnum.API_CODE_S001.getCode());
-					returnData.setResult(DmpApiReturnCodeEnum.API_CODE_S001.getContent());
-					returnData.setStatus(DmpApiReturnCodeEnum.API_CODE_S001.isStatus());
-					return returnData;
+					return "OK";
 				} else {
-					returnData.setCode(DmpApiReturnCodeEnum.API_CODE_E003.getCode());
-					returnData.setResult(DmpApiReturnCodeEnum.API_CODE_E003.getContent());
-					returnData.setStatus(DmpApiReturnCodeEnum.API_CODE_E003.isStatus());
-					return returnData;
+					return "ERROR";
 				}
 			}
 
 		} catch (Exception e) {
 			log.error(">>>>" + e.getMessage());
-			ReturnData returnData = new ReturnData();
-			returnData.setCode(DmpApiReturnCodeEnum.API_CODE_E003.getCode());
-			returnData.setResult(e.getMessage());
-			returnData.setStatus(DmpApiReturnCodeEnum.API_CODE_E003.isStatus());
-			return getReturnData(returnData);
+			return "ERROR";
 		}
 	}
 }
