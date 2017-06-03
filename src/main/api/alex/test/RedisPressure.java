@@ -29,10 +29,20 @@ public class RedisPressure {
 	
 	private void redisTest() throws Exception{
 		Jedis jedis = new Jedis("redisdev.mypchome.com.tw");
-//		System.out.println(jedis.incrBy("alex".getBytes(), 1));
 		
 		
-		System.out.println(jedis.get("alex"));
+		jedis.set("LifeCheck", "I am fine");
+		
+		
+		
+		
+		System.out.println(jedis.get("LifeCheck"));
+		
+		
+//		System.out.println(jedis.incrBy("alex".getBytes(), 10));
+		
+		
+//		System.out.println(jedis.get("alex"));
 		
 //		jedis.close();
 		
