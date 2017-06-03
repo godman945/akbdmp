@@ -38,7 +38,7 @@ public class LifeCheckController extends BaseController {
 	Log log = LogFactory.getLog(LifeCheckController.class);
 
 	// @CrossOrigin(origins = {"http://pcbwebstg.pchome.com.tw"})
-	@RequestMapping(value = "/api/LifeCheck", method = RequestMethod.POST, headers = "Accept=application/json;charset=UTF-8")
+	@RequestMapping(value = "/api/LifeCheck", method = RequestMethod.GET, headers = "Accept=application/json;charset=UTF-8")
 	@ResponseBody
 	public Object LifeCheck(HttpServletRequest request) throws Exception {
 		try {
