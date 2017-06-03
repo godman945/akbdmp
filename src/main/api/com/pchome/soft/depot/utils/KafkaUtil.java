@@ -1,46 +1,69 @@
-//package com.pchome.soft.depot.utils;
-//
-//import java.util.concurrent.Future;
-//
-//import org.apache.commons.logging.Log;
-//import org.apache.commons.logging.LogFactory;
-//import org.apache.kafka.clients.producer.Producer;
-//import org.apache.kafka.clients.producer.ProducerRecord;
-//import org.apache.kafka.clients.producer.RecordMetadata;
-//import org.json.JSONObject;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.context.ApplicationContext;
-//import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-//import org.springframework.stereotype.Component;
-//
-//import com.pchome.akbdmp.spring.config.bean.allbeanscan.SpringAllConfig;
-//
-//@Component
-//public class KafkaUtil {
-//
+package com.pchome.soft.depot.utils;
+
+import java.util.Properties;
+import java.util.concurrent.Future;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
+import org.json.JSONObject;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
+
+import com.pchome.akbdmp.spring.config.bean.allbeanscan.SpringAllConfig;
+
+@Component
+public class KafkaUtil {
+
 //	Log log = LogFactory.getLog(KafkaUtil.class);
-//
+	
+	Producer<String, String> kafkaProducer = null;
+	
+	public KafkaUtil(){
+		Properties props = new Properties();
+		props.put("bootstrap.servers", "kafka1.mypchome.com.tw:9091");
+		props.put("acks", "all");
+		props.put("retries", 0);
+		props.put("batch.size", 16384);
+		props.put("linger.ms", 1);
+		props.put("buffer.memory", 536870912);
+		props.put("serializer.class", "kafka.serializer.StringEncoder");
+		props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+		props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+		kafkaProducer = new KafkaProducer<String, String>(props);
+	}
+	
+	
+
 //	@Autowired
 //	private Producer<String, String> kafkaProducer;
-//
-//	public void sendMessage(String topicname, String partitionKey, String mesg) {
-//		try {
-//			Future<RecordMetadata> f = kafkaProducer.send(new ProducerRecord<String, String>(topicname, partitionKey, mesg));
+
+	public void sendMessage(String topicname, String partitionKey, String mesg) {
+		try {
+			Future<RecordMetadata> f = kafkaProducer.send(new ProducerRecord<String, String>(topicname, partitionKey, mesg));
 //				while (!f.isDone()) {
 //			}
 //
 //			RecordMetadata recordMetadata = f.get();
-//
+
 //			log.info("Topic" + recordMetadata.topic() + recordMetadata.offset() + recordMetadata.partition());
-//
-//		} catch (Exception e) {
-//
+
+		} catch (Exception e) {
+
 //			log.error(">>>>" + e.getMessage());
-//
-//		}
-//
-//	}
-//
+
+		}
+
+	}
+	
+	public void close() {
+		kafkaProducer.close();
+	}
+
 //	public static void main(String[] args) {
 //
 //		Log log = LogFactory.getLog(KafkaUtil.class);
@@ -64,5 +87,5 @@
 //		// kafkaUtil.kafkaClose();
 //
 //	}
-//
-//}
+
+}
