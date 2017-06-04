@@ -22,16 +22,14 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
-import org.apache.log4j.xml.DOMConfigurator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
 import com.hadoop.mapreduce.LzoTextInputFormat;
+
 import com.pchome.akbdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
-import com.pchome.dmp.dao.IClassCountDAO;
-import com.pchome.dmp.dao.mongodb.ClassCountDAO;
 
 import net.minidev.json.JSONObject;
 

@@ -53,7 +53,7 @@
 			</snapshots>
 			<id>central</id>
 			<name>Central Repository</name>
-			<url>http://repo.maven.apache.org/maven2</url>
+			<url>https://mvnrepository.com/artifact/com.hadoop.gplcompression/hadoop-lzo</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
@@ -66,7 +66,7 @@
 			</snapshots>
 			<id>central</id>
 			<name>Central Repository</name>
-			<url>http://repo.maven.apache.org/maven2</url>
+			<url>https://mvnrepository.com/artifact/com.hadoop.gplcompression/hadoop-lzo</url>
 		</pluginRepository>
 	</pluginRepositories>
 
@@ -262,11 +262,17 @@
 			<version>1.8.3</version>
 		</dependency>
 		
-		<dependency>
-		    <groupId>com.hadoop.gplcompression</groupId>
-		    <artifactId>hadoop-lzo</artifactId>
-		    <version>0.4.17</version>
-		</dependency>
+	<!-- https://mvnrepository.com/artifact/com.hadoop.gplcompression/hadoop-lzo -->
+<dependency>
+    <groupId>com.hadoop.gplcompression</groupId>
+    <artifactId>hadoop-lzo</artifactId>
+    <version>0.4.17</version>
+</dependency>
+
+
+
+
+	
 
 	</dependencies>
 </project>
