@@ -74,7 +74,6 @@ public class CampaignJob {
 				return !name.endsWith(".err");
 			}
 		};
-		Map<String, Object> map = new HashMap<>();
 		for (File file : dir.listFiles(filenameFilter)) {
 			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 			while ((line = br.readLine()) != null) {
@@ -148,7 +147,6 @@ public class CampaignJob {
 			  log.info(">>>>>> delete: " + file);
               FileUtils.deleteQuietly(file);
 		}
-		System.out.println(map);
 		log.info("====CampaignJob.process() end====");
 	}
 
