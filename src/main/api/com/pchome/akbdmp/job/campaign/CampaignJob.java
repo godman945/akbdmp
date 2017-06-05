@@ -3,15 +3,11 @@ package com.pchome.akbdmp.job.campaign;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FilenameFilter;
 import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,7 +28,7 @@ import net.minidev.json.JSONObject;
 @Component
 public class CampaignJob {
 
-	Log log = LogFactory.getLog("AkbDmpJob");
+	Log log = LogFactory.getLog(this.getClass());
 
 	@Value("${save.path.campaignlog}")
 	private String campaignlogPath;
@@ -43,6 +39,8 @@ public class CampaignJob {
 	@Autowired
 	private Configuration jsonpathConfiguration;
 
+	private final static String BEHAVIOR = "campaign";
+	
 	public void process2() throws Exception {
 		ClassCountMongoBean classCountMongoBean = classCountService.findUserId("ebe21d8e-8371-4cdc-b05c-84cfbdca55f3");
 		System.out.println(classCountMongoBean.get_id());
@@ -62,19 +60,19 @@ public class CampaignJob {
 		String memid = null;
 		String uuid = null;
 		String adClass = null;
-		int count = 0;
 		String age = null;
 		String sex = null;
 		String ipArea = null;
 		String recordDate = null;
-		boolean overWrite = false;
-
-		FilenameFilter filenameFilter = new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				return !name.endsWith(".err");
+		
+		java.io.File folder = new java.io.File(campaignlogPath);
+		String[] fileList = folder.list();           
+		for (String fileName : fileList) {
+			File file = new File(campaignlogPath+"/"+fileName);
+			if(file.getName().endsWith(".err")){
+				file.delete();
+				continue;
 			}
-		};
-		for (File file : dir.listFiles(filenameFilter)) {
 			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 			while ((line = br.readLine()) != null) {
 				lines = line.split(",");
@@ -85,18 +83,13 @@ public class CampaignJob {
 				memid = lines[0];
 				uuid = lines[1];
 				adClass = lines[2];
-				count = Integer.parseInt(lines[3]);
 				age = lines[4];
 				sex = lines[5];
 				ipArea = lines[6];
 				recordDate = lines[7];
-				overWrite = Boolean.parseBoolean(lines[8]);
 				double w = 0;
 				String id = StringUtils.isNotBlank(memid) ? memid : uuid;
 				String type = StringUtils.isNotBlank(memid) ? "memid" : "uuid";
-
-				
-				if (id.equals("pc0430")) {
 				
 				ClassCountMongoBean classCountMongoBean = classCountService.findUserId(id);
 				if (classCountMongoBean == null) {
@@ -109,7 +102,7 @@ public class CampaignJob {
 					Map<String, Object> newCategoryDetail = new HashMap<>();
 					newCategoryDetail.put("w", w);
 					newCategoryDetail.put("ud", recordDate);
-					newCategoryDetail.put("source", ipArea);
+					newCategoryDetail.put("source", BEHAVIOR);
 
 					Map<String, Object> category = new HashMap<>();
 					category.put(adClass, newCategoryDetail);
@@ -140,12 +133,11 @@ public class CampaignJob {
 				
 				classCountMongoBean = episteMath(classCountMongoBean, adClass);
 				classCountService.saveOrUpdate(classCountMongoBean);
-				
-				}
 
 			}
-			  log.info(">>>>>> delete: " + file);
-              FileUtils.deleteQuietly(file);
+			br.close();
+			log.info(">>>>>> delete: " + file);
+			file.delete();
 		}
 		log.info("====CampaignJob.process() end====");
 	}
@@ -166,13 +158,9 @@ public class CampaignJob {
 				double pExpv = Math.exp(-1 * 0.05);
 				double w = JsonPath.using(jsonpathConfiguration).parse(entry.getValue()).read("w");
 				double nw = w + (1 / (1 + pExpv));
-				System.out.println(w);
-				System.out.println(nw);
 
 				Map<String, Object> newCategoryDetail3 = (Map<String, Object>) entry.getValue();
 				newCategoryDetail3.put("w", nw);
-
-				System.out.println("---------------");
 			} else {
 				double w = JsonPath.using(jsonpathConfiguration).parse(entry.getValue()).read("w");
 				double nw = w * Math.exp(-0.1 * (1 * 0.1));
