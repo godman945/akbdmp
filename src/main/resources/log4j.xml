@@ -18,7 +18,6 @@
 		</layout>
 	</appender>
 
-
 	<appender name="AkbDmpJob" class="org.apache.log4j.RollingFileAppender">
 		<param name="File" value="/home/webuser/log/dmp/AkbDmpJob.log" />
 		<param name="Append" value="true" />
@@ -29,12 +28,7 @@
 		</layout>
 	</appender>
 
-	<logger name="AkbDmp" additivity="true">
-		<priority value="info" />
-		<appender-ref ref="AkbDmp" />
-	</logger>
-
-	<logger name="AkbDmpJob" additivity="true">
+	<logger name="com.pchome.akbdmp.job.campaign.CampaignJob" additivity="true">
 		<priority value="info" />
 		<appender-ref ref="AkbDmpJob" />
 	</logger>
@@ -42,6 +36,7 @@
 	<root>
 		<level value="info" />
 		<appender-ref ref="stdout" />
+		<appender-ref ref="AkbDmp" />
 	</root>
 
 </log4j:configuration>
