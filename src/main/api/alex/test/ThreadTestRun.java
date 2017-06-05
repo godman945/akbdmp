@@ -31,6 +31,7 @@ public class ThreadTestRun {
 
 	public void test() {
 		try {
+			log.info("========================== start ThreadTestRun ====================");
 			String threadName = "";
 			int threadPoolDefault = 200;
 			int threadPool = 200;

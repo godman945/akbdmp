@@ -21,4 +21,9 @@ public class ClassCountService extends BaseService<ClassCountMongoBean> implemen
 	public ClassCountMongoBean saveOrUpdate(ClassCountMongoBean classCountMongoBean) throws Exception {
 		return classCountDAO.saveOrUpdate(classCountMongoBean);
 	}
+	
+	
+	public ClassCountMongoBean findUserId(String userId) throws Exception{
+		return classCountDAO.findUserId(userId);
+	}
 }

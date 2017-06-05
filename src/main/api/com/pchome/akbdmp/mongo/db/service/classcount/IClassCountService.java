@@ -7,4 +7,6 @@ public interface IClassCountService extends IBaseService<ClassCountMongoBean>{
 	
 	public ClassCountMongoBean saveOrUpdate(ClassCountMongoBean classCountMongoBean) throws Exception;
 	
+	public ClassCountMongoBean findUserId(String userId) throws Exception;
+	
 }
