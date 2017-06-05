@@ -5,15 +5,13 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import com.pchome.akbdmp.data.mongo.pojo.ClassCountMongoBean;
 import com.pchome.akbdmp.mongo.db.service.classcount.IClassCountService;
 import com.pchome.akbdmp.spring.config.bean.allbeanscan.SpringAllConfig;
 import com.pchome.soft.depot.utils.DateFormatUtil;
-
-import redis.clients.jedis.Jedis;
 
 @Component
 public class RedisPressure {
@@ -31,18 +29,20 @@ public class RedisPressure {
 	
 	
 	@Autowired
+	private JedisConnectionFactory JedisConnectionFactory;
+	
+	
+	@Autowired
 	private IClassCountService classCountService;
 	
 	private void redisTest() throws Exception{
+//		redisTemplate.opsForSet().add("TEST01", "CC09");
+//		System.out.println(JedisConnectionFactory.getConnection().sCard("TEST01".getBytes()));
 		
-		System.out.println(redisTemplate.opsForValue().get("TEST01"));
 		
-		redisTemplate.opsForValue().set("TEST01", "CC");
 	
 		
-		
-		
-		
+//		redisTemplate.delete("");
 		
 		
 		
@@ -230,7 +230,7 @@ public class RedisPressure {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		System.setProperty("spring.profiles.active", "prd");
+		System.setProperty("spring.profiles.active", "stg");
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
 		RedisPressure redisPressure = (RedisPressure) ctx.getBean(RedisPressure.class);
 		redisPressure.redisTest();

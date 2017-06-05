@@ -34,10 +34,11 @@ public class RedisConfig {
 
 	@Value("${redis.pool.testOnBorrow}")
 	private boolean testOnBorrow;
-	
+
 	@Value("${redis.server}")
 	private String redisServer;
-
+	
+	
 	 @Bean
 	 JedisPoolConfig jedisPoolConfig() {
 		 JedisPoolConfig jedisConfig = new JedisPoolConfig();
@@ -55,7 +56,7 @@ public class RedisConfig {
 		 return jedisConfig;
 	 }
 
-	//@Bean
+	@Bean
 	public RedisClusterConfiguration getClusterConfiguration() {
 		Map<String, Object> source = new HashMap<String, Object>();
 		source.put("spring.redis.cluster.nodes", redisServer);
@@ -64,14 +65,14 @@ public class RedisConfig {
 		return new RedisClusterConfiguration(new MapPropertySource("RedisClusterConfiguration", source));
 	}
 
-	//@Bean(name = "JedisConnectionFactory")
+	@Bean(name = "JedisConnectionFactory")
 	public JedisConnectionFactory getConnectionFactory() {
 		JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(getClusterConfiguration());
 		jedisConnectionFactory.setPoolConfig(jedisPoolConfig());
 		return jedisConnectionFactory;
 	}
 
-	//@Bean
+	@Bean
 	public JedisClusterConnection getJedisClusterConnection() {
 		return (JedisClusterConnection) getConnectionFactory().getConnection();
 	}

@@ -23,7 +23,7 @@ public class PressureTestThreadWorker implements Runnable {
 		try{
 			SetOperations<String, Object> opsForSet = redisTemplate.opsForSet();
 			log.info("redisTemplate:"+redisTemplate.opsForSet());
-			String[] namePool = { "alex", "Nico", "bessie", "boris", "tim" };
+			String[] namePool = { "alex" };
 			long time1, time2;
 			RedisClusterConnection connection = JedisConnectionFactory.getClusterConnection();
 			
