@@ -8,7 +8,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 
 public class PressureTestThreadWorker implements Runnable {
-	Log log = LogFactory.getLog(PressureTestThreadWorker.class);
+	Log log = LogFactory.getLog("AkbDmp");
 
 	private RedisTemplate<String, Object> redisTemplate;
 	private String taskName;
@@ -23,7 +23,7 @@ public class PressureTestThreadWorker implements Runnable {
 		try{
 			SetOperations<String, Object> opsForSet = redisTemplate.opsForSet();
 			log.info("redisTemplate:"+redisTemplate.opsForSet());
-			String[] namePool = { "alex" };
+			String[] namePool = { "test01","test02","test03","test04","test05","test06","test07","test08","test09","test10" };
 			long time1, time2;
 			RedisClusterConnection connection = JedisConnectionFactory.getClusterConnection();
 			

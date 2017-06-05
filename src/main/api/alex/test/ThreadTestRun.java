@@ -27,7 +27,7 @@ public class ThreadTestRun {
 	@Autowired
 	JedisConnectionFactory JedisConnectionFactory;
 	
-	Log log = LogFactory.getLog(ThreadTestRun.class);
+	Log log = LogFactory.getLog("AkbDmp");
 
 	public void test() {
 		try {
