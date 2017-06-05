@@ -8,6 +8,8 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import com.pchome.akbdmp.data.mongo.pojo.ClassCountMongoBean;
+import com.pchome.akbdmp.mongo.db.service.classcount.IClassCountService;
 import com.pchome.akbdmp.spring.config.bean.allbeanscan.SpringAllConfig;
 import com.pchome.soft.depot.utils.DateFormatUtil;
 
@@ -27,16 +29,47 @@ public class RedisPressure {
 	@Autowired
 	DateFormatUtil dateFormatUtil;
 	
+	
+	@Autowired
+	private IClassCountService classCountService;
+	
 	private void redisTest() throws Exception{
-		Jedis jedis = new Jedis("redisdev.mypchome.com.tw");
+		
+		System.out.println(redisTemplate.opsForValue().get("TEST01"));
+		
+		redisTemplate.opsForValue().set("TEST01", "CC");
+	
 		
 		
-		jedis.set("LifeCheck", "I am fine");
 		
 		
 		
 		
-		System.out.println(jedis.get("LifeCheck"));
+		
+		
+		
+		
+		
+		
+//		ClassCountMongoBean classCountMongoBean = new ClassCountMongoBean();
+//		classCountMongoBean.setMemid("test");
+//		classCountMongoBean.setUuid("test");
+//		classCountMongoBean.setBehavior("campaign");
+//		classCountMongoBean.setAd_class("test");
+//		classCountMongoBean.setCount(10);
+//		classCountMongoBean.setRecord_date("test");
+//		classCountService.saveOrUpdate(classCountMongoBean);
+		
+		
+//		Jedis jedis = new Jedis("redisdev.mypchome.com.tw");
+//		
+//		
+//		jedis.set("LifeCheck", "I am fine");
+//		
+//		
+//		
+//		
+//		System.out.println(jedis.get("LifeCheck"));
 		
 		
 //		System.out.println(jedis.incrBy("alex".getBytes(), 10));
@@ -197,7 +230,7 @@ public class RedisPressure {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		System.setProperty("spring.profiles.active", "local");
+		System.setProperty("spring.profiles.active", "prd");
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
 		RedisPressure redisPressure = (RedisPressure) ctx.getBean(RedisPressure.class);
 		redisPressure.redisTest();
