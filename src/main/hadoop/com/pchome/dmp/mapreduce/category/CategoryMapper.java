@@ -18,7 +18,7 @@ public class CategoryMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static int LOG_LENGTH = 30;
 	private static String SYMBOL = String.valueOf(new char[]{9, 31});
 //	private Log log = LogFactory.getLog(this.getClass());
-	private static Log log = LogFactory.getLog("hadoop_CategoryDriver");
+	private static Log log = LogFactory.getLog("AkbDmpJob");
 	
 	private Text keyOut = new Text();
 	private Text valueOut = new Text();

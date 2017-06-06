@@ -35,7 +35,7 @@ import net.minidev.json.JSONObject;
 
 @Component
 public class CategoryDriver {
-	private static Log log = LogFactory.getLog("hadoop_CategoryDriver");
+	private static Log log = LogFactory.getLog("AkbDmpJob");
 //	private static String log4jPath = "/home/webuser/dmp/webapps/analyzer/src/config/log4j/Log4j_Category.xml";
 	
 	@Value("${hpd11.fs.default.name}")
