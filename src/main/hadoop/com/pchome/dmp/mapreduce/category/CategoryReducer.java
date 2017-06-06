@@ -56,21 +56,21 @@ public class CategoryReducer extends Reducer<Text, Text, Text, Text> {
 //		producer = new KafkaProducer<String, String>(props);
 
 		try {
-			for( EnumCategoryJob enumCategoryJob: EnumCategoryJob.values() ) {
-				AncestorJob job = FactoryCategoryJob.getInstance( enumCategoryJob );
-//				if( enumCategoryJob.getClassName().equals("com.pchome.dmp.factory.job.CategoryCountCk") ) {
-				if( enumCategoryJob.getClassName().equals(EnumCategoryJob.Category_Count_Ck.getClassName()) ) {
-					for( EnumKdclCkDailyAddedAmount enumKdclCkDailyAddedAmount: EnumKdclCkDailyAddedAmount.values() ) {		//Categorized_pcid,Categorized_uuid
-						job.dailyAddedAmount.put( enumKdclCkDailyAddedAmount.getKeyName(), new Integer(0));
-					}
-				}
-//				if( enumCategoryJob.getClassName().equals("com.pchome.dmp.factory.job.CategoryCountPv") ) {
-				if( enumCategoryJob.getClassName().equals(EnumCategoryJob.Category_Count_Pv.getClassName()) ) {
-					for( EnumKdclPvDailyAddedAmount enumKdclPvDailyAddedAmount: EnumKdclPvDailyAddedAmount.values() ) {
-						job.dailyAddedAmount.put( enumKdclPvDailyAddedAmount.getKeyName(), new Integer(0));
-					}
-				}
-			}
+//			for( EnumCategoryJob enumCategoryJob: EnumCategoryJob.values() ) {
+//				AncestorJob job = FactoryCategoryJob.getInstance( enumCategoryJob );
+////				if( enumCategoryJob.getClassName().equals("com.pchome.dmp.factory.job.CategoryCountCk") ) {
+//				if( enumCategoryJob.getClassName().equals(EnumCategoryJob.Category_Count_Ck.getClassName()) ) {
+//					for( EnumKdclCkDailyAddedAmount enumKdclCkDailyAddedAmount: EnumKdclCkDailyAddedAmount.values() ) {		//Categorized_pcid,Categorized_uuid
+//						job.dailyAddedAmount.put( enumKdclCkDailyAddedAmount.getKeyName(), new Integer(0));
+//					}
+//				}
+////				if( enumCategoryJob.getClassName().equals("com.pchome.dmp.factory.job.CategoryCountPv") ) {
+//				if( enumCategoryJob.getClassName().equals(EnumCategoryJob.Category_Count_Pv.getClassName()) ) {
+//					for( EnumKdclPvDailyAddedAmount enumKdclPvDailyAddedAmount: EnumKdclPvDailyAddedAmount.values() ) {
+//						job.dailyAddedAmount.put( enumKdclPvDailyAddedAmount.getKeyName(), new Integer(0));
+//					}
+//				}
+//			}
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
@@ -81,17 +81,17 @@ public class CategoryReducer extends Reducer<Text, Text, Text, Text> {
 
 		try {
 //			log.info("key=" + key);
-
-			if (StringUtils.isBlank(key.toString())) {
-				log.info("key is blank");
-				return;
-			}
-
-			String[] keys = key.toString().split(SYMBOL);
-
-			EnumCategoryJob enumCategoryJob = EnumCategoryJob.valueOf(keys[0]);
-			job = FactoryCategoryJob.getInstance(enumCategoryJob);
-			job.add(keys, value);
+//
+//			if (StringUtils.isBlank(key.toString())) {
+//				log.info("key is blank");
+//				return;
+//			}
+//
+//			String[] keys = key.toString().split(SYMBOL);
+//
+//			EnumCategoryJob enumCategoryJob = EnumCategoryJob.valueOf(keys[0]);
+//			job = FactoryCategoryJob.getInstance(enumCategoryJob);
+//			job.add(keys, value);
 //			job.update();
 			
 //			log.info("---bessie TEST OK------bessie TEST OK------bessie TEST OK------bessie TEST OK------bessie TEST OK---");
@@ -110,12 +110,12 @@ public class CategoryReducer extends Reducer<Text, Text, Text, Text> {
 			//    		job.update();	//mongoDB
 
 			//test OK
-			if( !job.outputCollector.isEmpty() ) {
-				for(String str:job.outputCollector) {
-					context.write(new Text(str.trim()), null );
-				}
-				job.outputCollector.clear();
-			}
+//			if( !job.outputCollector.isEmpty() ) {
+//				for(String str:job.outputCollector) {
+//					context.write(new Text(str.trim()), null );
+//				}
+//				job.outputCollector.clear();
+//			}
 //			
 			
 //			//bessie-start
