@@ -56,21 +56,21 @@ public class CategoryReducer extends Reducer<Text, Text, Text, Text> {
 //		producer = new KafkaProducer<String, String>(props);
 
 		try {
-//			for( EnumCategoryJob enumCategoryJob: EnumCategoryJob.values() ) {
-//				AncestorJob job = FactoryCategoryJob.getInstance( enumCategoryJob );
-////				if( enumCategoryJob.getClassName().equals("com.pchome.dmp.factory.job.CategoryCountCk") ) {
-//				if( enumCategoryJob.getClassName().equals(EnumCategoryJob.Category_Count_Ck.getClassName()) ) {
-//					for( EnumKdclCkDailyAddedAmount enumKdclCkDailyAddedAmount: EnumKdclCkDailyAddedAmount.values() ) {		//Categorized_pcid,Categorized_uuid
-//						job.dailyAddedAmount.put( enumKdclCkDailyAddedAmount.getKeyName(), new Integer(0));
-//					}
-//				}
-////				if( enumCategoryJob.getClassName().equals("com.pchome.dmp.factory.job.CategoryCountPv") ) {
-//				if( enumCategoryJob.getClassName().equals(EnumCategoryJob.Category_Count_Pv.getClassName()) ) {
-//					for( EnumKdclPvDailyAddedAmount enumKdclPvDailyAddedAmount: EnumKdclPvDailyAddedAmount.values() ) {
-//						job.dailyAddedAmount.put( enumKdclPvDailyAddedAmount.getKeyName(), new Integer(0));
-//					}
-//				}
-//			}
+			for( EnumCategoryJob enumCategoryJob: EnumCategoryJob.values() ) {
+				AncestorJob job = FactoryCategoryJob.getInstance( enumCategoryJob );
+//				if( enumCategoryJob.getClassName().equals("com.pchome.dmp.factory.job.CategoryCountCk") ) {
+				if( enumCategoryJob.getClassName().equals(EnumCategoryJob.Category_Count_Ck.getClassName()) ) {
+					for( EnumKdclCkDailyAddedAmount enumKdclCkDailyAddedAmount: EnumKdclCkDailyAddedAmount.values() ) {		//Categorized_pcid,Categorized_uuid
+						job.dailyAddedAmount.put( enumKdclCkDailyAddedAmount.getKeyName(), new Integer(0));
+					}
+				}
+//				if( enumCategoryJob.getClassName().equals("com.pchome.dmp.factory.job.CategoryCountPv") ) {
+				if( enumCategoryJob.getClassName().equals(EnumCategoryJob.Category_Count_Pv.getClassName()) ) {
+					for( EnumKdclPvDailyAddedAmount enumKdclPvDailyAddedAmount: EnumKdclPvDailyAddedAmount.values() ) {
+						job.dailyAddedAmount.put( enumKdclPvDailyAddedAmount.getKeyName(), new Integer(0));
+					}
+				}
+			}
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
@@ -109,7 +109,7 @@ public class CategoryReducer extends Reducer<Text, Text, Text, Text> {
 			//suspected: Error: GC overhead limit exceeded
 			//    		job.update();	//mongoDB
 
-			//test OK
+//			//test OK
 //			if( !job.outputCollector.isEmpty() ) {
 //				for(String str:job.outputCollector) {
 //					context.write(new Text(str.trim()), null );
