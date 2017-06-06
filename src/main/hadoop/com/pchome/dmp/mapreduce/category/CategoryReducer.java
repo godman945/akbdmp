@@ -80,18 +80,18 @@ public class CategoryReducer extends Reducer<Text, Text, Text, Text> {
 	public void reduce(Text key, Iterable<Text> value, Context context) {
 
 		try {
-//			log.info("key=" + key);
-//
-//			if (StringUtils.isBlank(key.toString())) {
-//				log.info("key is blank");
-//				return;
-//			}
-//
-//			String[] keys = key.toString().split(SYMBOL);
-//
-//			EnumCategoryJob enumCategoryJob = EnumCategoryJob.valueOf(keys[0]);
-//			job = FactoryCategoryJob.getInstance(enumCategoryJob);
-//			job.add(keys, value);
+			log.info("key=" + key);
+
+			if (StringUtils.isBlank(key.toString())) {
+				log.info("key is blank");
+				return;
+			}
+
+			String[] keys = key.toString().split(SYMBOL);
+
+			EnumCategoryJob enumCategoryJob = EnumCategoryJob.valueOf(keys[0]);
+			job = FactoryCategoryJob.getInstance(enumCategoryJob);
+			job.add(keys, value);
 //			job.update();
 			
 //			log.info("---bessie TEST OK------bessie TEST OK------bessie TEST OK------bessie TEST OK------bessie TEST OK---");
