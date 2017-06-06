@@ -41,7 +41,8 @@ public class RedisPressure {
 			RedisConnection con = JedisConnectionFactory.getConnection();
 			log.info(con.sCard("test01".getBytes()));
 			log.info(con.sCard("test02".getBytes()));
-			log.info(con.sDiff("test01".getBytes(), "test02".getBytes()));
+			log.info(con.sMembers("test01".getBytes()));
+//			log.info(con.sDiff("test01".getBytes(), "test02".getBytes()));
 		}catch(Exception e){
 			log.error(e.getMessage());
 		}
