@@ -1,5 +1,8 @@
 package alex.test;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,9 @@ import org.springframework.stereotype.Component;
 import com.pchome.akbdmp.mongo.db.service.classcount.IClassCountService;
 import com.pchome.akbdmp.spring.config.bean.allbeanscan.SpringAllConfig;
 import com.pchome.soft.depot.utils.DateFormatUtil;
+
+import redis.clients.jedis.HostAndPort;
+import redis.clients.jedis.JedisCluster;
 
 @Component
 public class RedisPressure {
@@ -35,13 +41,29 @@ public class RedisPressure {
 	
 	@Autowired
 	private IClassCountService classCountService;
-	
+	@SuppressWarnings("resource")
 	private void redisTest() throws Exception{
 		try{
-			RedisConnection con = JedisConnectionFactory.getConnection();
-			log.info(con.sCard("test01".getBytes()));
-			log.info(con.sCard("test02".getBytes()));
-			log.info(con.sMembers("test01".getBytes()));
+			Set<HostAndPort> jedisClusterNodes = new HashSet<HostAndPort>();
+			jedisClusterNodes.add(new HostAndPort("192.168.2.207",6379));
+			jedisClusterNodes.add(new HostAndPort("192.168.2.204",6379));
+			jedisClusterNodes.add(new HostAndPort("192.168.2.205",6379));
+			jedisClusterNodes.add(new HostAndPort("192.168.2.208",6379));
+			jedisClusterNodes.add(new HostAndPort("192.168.2.209",6379));
+			jedisClusterNodes.add(new HostAndPort("192.168.2.206",6379));
+			
+			
+			
+			
+			JedisCluster jedisCluster = new JedisCluster(jedisClusterNodes,-1,1000);
+			log.info(jedisCluster.scard("test01"));
+			log.info(jedisCluster.scard("test02"));
+			log.info(jedisCluster.sdiff("test01","test02"));
+			
+//			RedisConnection con = JedisConnectionFactory.getConnection();
+//			log.info(con.sCard("test01".getBytes()));
+//			log.info(con.sCard("test02".getBytes()));
+//			log.info(con.sMembers("test01".getBytes()));
 //			log.info(con.sDiff("test01".getBytes(), "test02".getBytes()));
 		}catch(Exception e){
 			log.error(e.getMessage());
