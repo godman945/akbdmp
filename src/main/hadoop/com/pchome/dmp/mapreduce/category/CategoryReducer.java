@@ -92,6 +92,7 @@ public class CategoryReducer extends Reducer<Text, Text, Text, Text> {
 			EnumCategoryJob enumCategoryJob = EnumCategoryJob.valueOf(keys[0]);
 			job = FactoryCategoryJob.getInstance(enumCategoryJob);
 			job.add(keys, value);
+			
 //			job.update();
 			
 //			log.info("---bessie TEST OK------bessie TEST OK------bessie TEST OK------bessie TEST OK------bessie TEST OK---");
