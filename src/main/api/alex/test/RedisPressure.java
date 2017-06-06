@@ -45,6 +45,7 @@ public class RedisPressure {
 //			log.info(con.sDiff("test01".getBytes(), "test02".getBytes()));
 		}catch(Exception e){
 			log.error(e.getMessage());
+			System.exit(1);
 		}
 		
 		
