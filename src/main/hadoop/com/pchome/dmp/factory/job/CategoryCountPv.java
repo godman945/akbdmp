@@ -205,7 +205,7 @@ public class CategoryCountPv extends AncestorJob {
         if (doc == null) {
             return;
         }
-//        list.add(doc);
+        list.add(doc);
     }
 
 	@Override
