@@ -42,10 +42,14 @@ public class RedisConfig {
 	 @Bean
 	 JedisPoolConfig jedisPoolConfig() {
 		 JedisPoolConfig jedisConfig = new JedisPoolConfig();
-		 jedisConfig.setMaxIdle(maxIdle);
-//		 jedisConfig.setMaxWaitMillis(maxWait);
+		 //空闲连接实例的最大数目，为负值时没有限制。Idle的实例在使用前，通常会通过
+		 jedisConfig.setMaxIdle(10000000);
 		 jedisConfig.setTestOnBorrow(testOnBorrow);
+		 //等待可用连接的最大数目，单位毫秒（million seconds)
 		 jedisConfig.setMaxWaitMillis(-1);
+		 
+		 
+		 
 		 
 		//逐出扫描的时间间隔(毫秒) 如果为负数,则不运行逐出线程, 默认-1
 		 jedisConfig.setTimeBetweenEvictionRunsMillis(-1);
@@ -60,8 +64,8 @@ public class RedisConfig {
 	public RedisClusterConfiguration getClusterConfiguration() {
 		Map<String, Object> source = new HashMap<String, Object>();
 		source.put("spring.redis.cluster.nodes", redisServer);
-		source.put("spring.redis.cluster.timeout", 5000);
-		source.put("spring.redis.cluster.max-redirects", 8);
+		source.put("spring.redis.cluster.timeout", 10000000);
+		source.put("spring.redis.cluster.max-redirects", 10000000);
 		return new RedisClusterConfiguration(new MapPropertySource("RedisClusterConfiguration", source));
 	}
 
@@ -72,10 +76,10 @@ public class RedisConfig {
 		return jedisConnectionFactory;
 	}
 
-	@Bean
-	public JedisClusterConnection getJedisClusterConnection() {
-		return (JedisClusterConnection) getConnectionFactory().getConnection();
-	}
+//	@Bean
+//	public JedisClusterConnection getJedisClusterConnection() {
+//		return (JedisClusterConnection) getConnectionFactory().getConnection();
+//	}
 
 	@Bean(name = "redisTemplate")
 	public RedisTemplate<String, Object> getRedisTemplate() {

@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -36,6 +37,13 @@ public class RedisPressure {
 	private IClassCountService classCountService;
 	
 	private void redisTest() throws Exception{
+		RedisConnection con = JedisConnectionFactory.getConnection();
+		
+		log.info(con.sCard("test01".getBytes()));
+		log.info(con.sCard("test02".getBytes()));
+		log.info(con.sDiff("test01".getBytes(), "test02".getBytes()));
+		
+		
 //		redisTemplate.opsForSet().add("TEST01", "CC09");
 //		System.out.println(JedisConnectionFactory.getConnection().sCard("TEST01".getBytes()));
 		
