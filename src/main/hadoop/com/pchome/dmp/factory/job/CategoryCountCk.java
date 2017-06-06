@@ -149,7 +149,7 @@ public class CategoryCountCk extends AncestorJob {
         if (doc == null) {
             return;
         }
-//        list.add(doc);
+        list.add(doc);
     }
 
 	@Override

@@ -110,74 +110,74 @@ public class CategoryReducer extends Reducer<Text, Text, Text, Text> {
 			//suspected: Error: GC overhead limit exceeded
 			//    		job.update();	//mongoDB
 
-//			//test OK
-//			if( !job.outputCollector.isEmpty() ) {
-//				for(String str:job.outputCollector) {
-//					context.write(new Text(str.trim()), null );
-//				}
-//				job.outputCollector.clear();
-//			}
+			//test OK
+			if( !job.outputCollector.isEmpty() ) {
+				for(String str:job.outputCollector) {
+					context.write(new Text(str.trim()), null );
+				}
+				job.outputCollector.clear();
+			}
 //			
 			
-//			//bessie-start
-//			//list send kafka--add by bessie
-//			KafkaUtil kafkaUtil = new KafkaUtil();
-//			List<JSONObject> kafka = new ArrayList<>();
-//			JSONObject sendKafkaJson = new JSONObject();
-//			
-//			for (EnumCategoryJob enumCategoryJob : EnumCategoryJob.values()) { // Category_Count_Ck,Category_Count_Pv
-//				AncestorJob job = FactoryCategoryJob.getInstance(enumCategoryJob);
-//				if (enumCategoryJob.getClassName().equals(EnumCategoryJob.Category_Count_Ck.getClassName())) {
-//					sendKafkaJson.put("type", "mongo");
-//					sendKafkaJson.put("action", "insert");
-//					sendKafkaJson.put("collection", "class_count");
-//					sendKafkaJson.put("column", "");
-//					sendKafkaJson.put("condition", "");
-//					sendKafkaJson.put("Test", "ck ck ck");
-//					sendKafkaJson.put("content", job.list.toString());
-//					kafka.add(sendKafkaJson);
-//					kafkaUtil.sendMessage("TEST", "", kafka.toString());
-////					for (DBObject jsonObject : job.list) {
-////						sendKafkaJson.put("type", "mongo");
-////						sendKafkaJson.put("action", "insert");
-////						sendKafkaJson.put("collection", "class_count");
-////						sendKafkaJson.put("column", "");
-////						sendKafkaJson.put("condition", "");
-////						sendKafkaJson.put("Test", "ck ck ck");
-////						sendKafkaJson.put("content", jsonObject.toString());
-////						kafka.add(sendKafkaJson);
-////						kafkaUtil.sendMessage("TEST", "", kafka.toString());
-////					}
-//					
-//				}
-//				
-//				if (enumCategoryJob.getClassName().equals(EnumCategoryJob.Category_Count_Pv.getClassName())) {
-//					sendKafkaJson.put("type", "mongo");
-//					sendKafkaJson.put("action", "insert");
-//					sendKafkaJson.put("collection", "class_count");
-//					sendKafkaJson.put("column", "");
-//					sendKafkaJson.put("condition", "");
-//					sendKafkaJson.put("Test", "PV pV pV");
-//					sendKafkaJson.put("content", job.list.toString());
-//					kafka.add(sendKafkaJson);
-//					kafkaUtil.sendMessage("TEST", "", kafka.toString());
-////					for (DBObject jsonObject : job.list) {
-////						sendKafkaJson.put("type", "mongo");
-////						sendKafkaJson.put("action", "insert");
-////						sendKafkaJson.put("collection", "class_count");
-////						sendKafkaJson.put("column", "");
-////						sendKafkaJson.put("condition", "");
-////						sendKafkaJson.put("Test", "PV PV PV");
-////						sendKafkaJson.put("content", jsonObject.toString());
-////						kafka.add(sendKafkaJson);
-////						kafkaUtil.sendMessage("TEST", "", kafka.toString());
-////					}
-//				}
-//			}
-//			kafkaUtil.sendMessage("TEST", "", "ck ck ");
-//			kafkaUtil.sendMessage("TEST", "","PV pV");
-//			kafkaUtil.close();
-//			//bessie-end
+			//bessie-start
+			//list send kafka--add by bessie
+			KafkaUtil kafkaUtil = new KafkaUtil();
+			List<JSONObject> kafka = new ArrayList<>();
+			JSONObject sendKafkaJson = new JSONObject();
+			
+			for (EnumCategoryJob enumCategoryJob : EnumCategoryJob.values()) { // Category_Count_Ck,Category_Count_Pv
+				AncestorJob job = FactoryCategoryJob.getInstance(enumCategoryJob);
+				if (enumCategoryJob.getClassName().equals(EnumCategoryJob.Category_Count_Ck.getClassName())) {
+					sendKafkaJson.put("type", "mongo");
+					sendKafkaJson.put("action", "insert");
+					sendKafkaJson.put("collection", "class_count");
+					sendKafkaJson.put("column", "");
+					sendKafkaJson.put("condition", "");
+					sendKafkaJson.put("Test", "ck ck ck");
+					sendKafkaJson.put("content", job.list.toString());
+					kafka.add(sendKafkaJson);
+					kafkaUtil.sendMessage("TEST", "", kafka.toString());
+//					for (DBObject jsonObject : job.list) {
+//						sendKafkaJson.put("type", "mongo");
+//						sendKafkaJson.put("action", "insert");
+//						sendKafkaJson.put("collection", "class_count");
+//						sendKafkaJson.put("column", "");
+//						sendKafkaJson.put("condition", "");
+//						sendKafkaJson.put("Test", "ck ck ck");
+//						sendKafkaJson.put("content", jsonObject.toString());
+//						kafka.add(sendKafkaJson);
+//						kafkaUtil.sendMessage("TEST", "", kafka.toString());
+//					}
+					
+				}
+				
+				if (enumCategoryJob.getClassName().equals(EnumCategoryJob.Category_Count_Pv.getClassName())) {
+					sendKafkaJson.put("type", "mongo");
+					sendKafkaJson.put("action", "insert");
+					sendKafkaJson.put("collection", "class_count");
+					sendKafkaJson.put("column", "");
+					sendKafkaJson.put("condition", "");
+					sendKafkaJson.put("Test", "PV pV pV");
+					sendKafkaJson.put("content", job.list.toString());
+					kafka.add(sendKafkaJson);
+					kafkaUtil.sendMessage("TEST", "", kafka.toString());
+//					for (DBObject jsonObject : job.list) {
+//						sendKafkaJson.put("type", "mongo");
+//						sendKafkaJson.put("action", "insert");
+//						sendKafkaJson.put("collection", "class_count");
+//						sendKafkaJson.put("column", "");
+//						sendKafkaJson.put("condition", "");
+//						sendKafkaJson.put("Test", "PV PV PV");
+//						sendKafkaJson.put("content", jsonObject.toString());
+//						kafka.add(sendKafkaJson);
+//						kafkaUtil.sendMessage("TEST", "", kafka.toString());
+//					}
+				}
+			}
+			kafkaUtil.sendMessage("TEST", "", "ck ck ");
+			kafkaUtil.sendMessage("TEST", "","PV pV");
+			kafkaUtil.close();
+			//bessie-end
 			
 			
 			
