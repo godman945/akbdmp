@@ -35,8 +35,10 @@ import net.minidev.json.JSONObject;
 
 @Component
 public class CategoryDriver {
-	private static Log log = LogFactory.getLog("AkbDmpJob");
+
 //	private static String log4jPath = "/home/webuser/dmp/webapps/analyzer/src/config/log4j/Log4j_Category.xml";
+
+	private static Log log = LogFactory.getLog(CategoryDriver.class);
 	
 	@Value("${hpd11.fs.default.name}")
 	private String hdfsPath;
@@ -272,7 +274,7 @@ public class CategoryDriver {
 
 	public static void main(String[] args) throws Exception {
 //		DOMConfigurator.configure(log4jPath);
-
+		
 		log.info("====driver start====");
 
 		String date = "";

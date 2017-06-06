@@ -25,7 +25,7 @@ import com.pchome.dmp.mapreduce.category.CategoryReducer;
 @Component
 public class CategoryCountCk extends AncestorJob {
 
-	private IClassCountDAO dao = ClassCountDAO.getInstance();
+//	private IClassCountDAO dao = ClassCountDAO.getInstance();	//mark by bessie
 	
 	protected static int LOG_LENGTH = 5;
 	
@@ -241,18 +241,19 @@ public class CategoryCountCk extends AncestorJob {
 		}
 
 	}
-
+	
 	@Override
 	public int insert() throws Exception {
-
-        if (list.size() <= 0) {
-            return 0;
-        }
-
-        int count = dao.insert( list );
-        list = new ArrayList<DBObject>();
-
-        return count;
+//	mark by bessie
+//        if (list.size() <= 0) {
+//            return 0;
+//        }
+//
+//        int count = dao.insert( list );
+//        list = new ArrayList<DBObject>();
+//
+//        return count;
+		  return 0;
 	}
 
 }

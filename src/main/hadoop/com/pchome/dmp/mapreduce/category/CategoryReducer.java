@@ -31,7 +31,7 @@ public class CategoryReducer extends Reducer<Text, Text, Text, Text> {
 	private final static String SYMBOL = String.valueOf(new char[]{9, 31});
 //	private Log log = LogFactory.getLog(this.getClass());
 	
-	private static Log log = LogFactory.getLog("AkbDmpJob");
+	Log log = LogFactory.getLog(this.getClass());
 
 	public static String record_date;
 
