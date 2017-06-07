@@ -22,6 +22,8 @@ public abstract class AncestorJob {
 	protected Log log = LogFactory.getLog(this.getClass());
 //	protected List<DBObject> list = new ArrayList<DBObject>();
 	public List<DBObject> list = new ArrayList<DBObject>();
+	
+	public List<JSONObject> kafkaList = new ArrayList<JSONObject>();//add by bessie
 
 	protected final static String SYMBOL = String.valueOf(new char[]{9, 31});
 	protected final static int LIMIT = 0;

@@ -29,6 +29,7 @@ import com.pchome.dmp.dao.mongodb.ClassUrlDAO;
 import com.pchome.dmp.enumerate.EnumCategoryJob;
 import com.pchome.dmp.enumerate.EnumKdclPvDailyAddedAmount;
 import com.pchome.dmp.mapreduce.category.CategoryReducer;
+import com.pchome.soft.depot.utils.KafkaUtil;
 
 @Component
 public class CategoryCountPv extends AncestorJob {
@@ -342,21 +343,23 @@ public class CategoryCountPv extends AncestorJob {
 		try {
 //			log.info("list size:"+list.size());
 			if (list.size() > LIMIT) {
-				dao.insert(list);//mark by bessie
+//				dao.insert(list);//mark by bessie
 
-//				JSONObject sendKafkaJson = new JSONObject();
-//				sendKafkaJson.put("type", "mongo");
-//				sendKafkaJson.put("action", "insert");
-//				sendKafkaJson.put("collection", "class_count");
-//				sendKafkaJson.put("column", "");
-//				sendKafkaJson.put("condition", "");
-//				sendKafkaJson.put("content",list.toString());
-//				kafkaList.add(sendKafkaJson);
+				JSONObject sendKafkaJson = new JSONObject();
+				sendKafkaJson.put("type", "mongo");
+				sendKafkaJson.put("action", "insert");
+				sendKafkaJson.put("collection", "class_count");
+				sendKafkaJson.put("column", "");
+				sendKafkaJson.put("condition", "");
+				sendKafkaJson.put("content",list.toString());
+				kafkaList.add(sendKafkaJson);
 //				
+				KafkaUtil.sendMessage("TEST", "",kafkaList.toString()); // "reducer ck ok"
 //				Future<RecordMetadata> f  = producer.send(new ProducerRecord<String, String>("TEST", "", kafkaList.toString())); // "reducer pv ok"
 //				while (!f.isDone()) {
 //				}
 				list = new ArrayList<DBObject>();
+				kafkaList=new ArrayList<JSONObject>();
 			}
 		} catch (Exception e) {
 			log.error("mongodb update error= " + e);
