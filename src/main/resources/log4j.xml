@@ -32,6 +32,21 @@
 		<priority value="info" />
 		<appender-ref ref="AkbDmpJob" />
 	</logger>
+	
+	<logger name="com.pchome.dmp.mapreduce.category.CategoryDriver" additivity="true">
+		<priority value="info" />
+		<appender-ref ref="AkbDmpJob" />
+	</logger>
+	
+	<logger name="com.pchome.dmp.mapreduce.category.CategoryMapper" additivity="true">
+		<priority value="info" />
+		<appender-ref ref="AkbDmpJob" />
+	</logger>
+	
+	<logger name="com.pchome.dmp.mapreduce.category.CategoryReducer" additivity="true">
+		<priority value="info" />
+		<appender-ref ref="AkbDmpJob" />
+	</logger>
 
 	<root>
 		<level value="info" />

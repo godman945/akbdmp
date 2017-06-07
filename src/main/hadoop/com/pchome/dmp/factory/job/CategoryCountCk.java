@@ -25,7 +25,7 @@ import com.pchome.dmp.mapreduce.category.CategoryReducer;
 @Component
 public class CategoryCountCk extends AncestorJob {
 
-	private IClassCountDAO dao = ClassCountDAO.getInstance();
+	private IClassCountDAO dao = ClassCountDAO.getInstance();	//mark by bessie
 	
 	protected static int LOG_LENGTH = 5;
 	
@@ -220,7 +220,7 @@ public class CategoryCountCk extends AncestorJob {
 		try {
 //			log.info("list size:"+list.size());
 			if (list.size() > LIMIT) {
-//				dao.insert(list);//mark by bessie
+				dao.insert(list);//mark by bessie
 				
 //				JSONObject sendKafkaJson = new JSONObject();
 //				sendKafkaJson.put("type", "mongo");
@@ -241,10 +241,10 @@ public class CategoryCountCk extends AncestorJob {
 		}
 
 	}
-
+	
 	@Override
 	public int insert() throws Exception {
-
+//	mark by bessie
         if (list.size() <= 0) {
             return 0;
         }
@@ -253,6 +253,7 @@ public class CategoryCountCk extends AncestorJob {
         list = new ArrayList<DBObject>();
 
         return count;
+//		  return 0;
 	}
 
 }
