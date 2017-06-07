@@ -1,5 +1,7 @@
 package com.pchome.akbdmp.api.call.adshowlimit.controller;
 
+import java.util.Arrays;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
@@ -8,6 +10,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,7 +36,7 @@ import redis.clients.jedis.Jedis;
 public class AdShowLimitController extends BaseController {
 
 	@Autowired
-	RedisTemplate<String, Object> redisTemplate;
+	RedisTemplate<String, String> redisTemplate;
 
 	@Autowired
 	CheckDataFactory checkDataFactory;
@@ -41,8 +44,12 @@ public class AdShowLimitController extends BaseController {
 	@Value("${spring.profiles.active}")
 	private String active;
 	
+	@Autowired
+	private JedisConnectionFactory jedisConnectionFactory;
+	
 	Log log = LogFactory.getLog(AdShowLimitController.class);
 
+	
 	// @CrossOrigin(origins = {"http://pcbwebstg.pchome.com.tw"})
 	@RequestMapping(value = "/api/getAdShowLimit", method = RequestMethod.POST, headers = "Accept=application/json;charset=UTF-8")
 	@ResponseBody
@@ -50,7 +57,7 @@ public class AdShowLimitController extends BaseController {
 			@RequestParam(defaultValue = "", required = false) String[] adKey
 			) throws Exception {
 		try {
-			log.info(">>>>>> call getAdShowLimit : adKey:" + adKey);
+			log.info(">>>>>> call getAdShowLimit : adKey:" + Arrays.asList(adKey));
 			JSONObject paramaterJson = new JSONObject();
 			paramaterJson.put(DmpAdShowLimitParamaterEnum.AD_KEY.getKey(), adKey);
 			ACheckData aCheckData = checkDataFactory.getaCheckData(DmpCheckObjNameEnum.CHECK_ADSHOW_LIMIT);
@@ -75,8 +82,10 @@ public class AdShowLimitController extends BaseController {
 				returnData.setStatus(DmpApiReturnCodeEnum.API_CODE_S001.isStatus());
 				return returnData;
 			}else{
+				
 				AdShowLimitBean adShowLimitBean = new AdShowLimitBean();
 				for (Object key : adKey) {
+					System.out.println(redisTemplate.opsForValue().get(key));
 					int adLimit = (int) ((redisTemplate.opsForValue().get(key) == null) ? 0 : Integer.parseInt(redisTemplate.opsForValue().get(key).toString()));
 					adShowLimitBean.getAdShowLimitMap().put(key.toString(), adLimit);
 				}
