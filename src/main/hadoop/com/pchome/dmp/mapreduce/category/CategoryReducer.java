@@ -186,58 +186,58 @@ public class CategoryReducer extends Reducer<Text, Text, Text, Text> {
 //			}
 
 			// write cated&uncated ck,pv count to MySQL
-//			log.info("****** ******");
-//			try {
-//				KdclStatisticsSourceDAO dao = new KdclStatisticsSourceDAO();
-//				dao.dbInit();
-//				dao.deleteByBehaviorAndRecordDate("ad_click", record_date);
-//				dao.deleteByBehaviorAndRecordDate("ruten", record_date);
-//				dao.deleteByBehaviorAndRecordDate("24h", record_date);
-//
-//				for( EnumCategoryJob enumCategoryJob: EnumCategoryJob.values() ) {			//Category_Count_Ck,Category_Count_Pv
-//					AncestorJob job = FactoryCategoryJob.getInstance( enumCategoryJob );
-//					for( Map.Entry<String, Integer> entry:job.dailyAddedAmount.entrySet() ) {		//CK:(2)ck_cated_pcid,ck_cated_uuid PV:(8)
-//						log.info(entry.getKey() + "  " + entry.getValue());							//ck_cated_pcid  30
-//
-//						if( enumCategoryJob.getClassName().equals(EnumCategoryJob.Category_Count_Ck.getClassName()) ) {
-//							for( EnumKdclCkDailyAddedAmount x: EnumKdclCkDailyAddedAmount.values() ) {
-//								if( entry.getKey().equals(x.getKeyName()) ) {
-//									log.info(x + ":" + x.getId_type() +":"+ x.getService_type() +":"+
-//											x.getBehavior() +":"+ x.getClassify() +":"+ entry.getValue() +":"+ record_date);
-//									dao.insert(x.getId_type(), x.getService_type(), x.getBehavior(), x.getClassify(), entry.getValue(), record_date);
-//									break;
-//								}
+			log.info("****** ******");
+			try {
+				KdclStatisticsSourceDAO dao = new KdclStatisticsSourceDAO();
+				dao.dbInit();
+				dao.deleteByBehaviorAndRecordDate("ad_click", record_date);
+				dao.deleteByBehaviorAndRecordDate("ruten", record_date);
+				dao.deleteByBehaviorAndRecordDate("24h", record_date);
+
+				for( EnumCategoryJob enumCategoryJob: EnumCategoryJob.values() ) {			//Category_Count_Ck,Category_Count_Pv
+					AncestorJob job = FactoryCategoryJob.getInstance( enumCategoryJob );
+					for( Map.Entry<String, Integer> entry:job.dailyAddedAmount.entrySet() ) {		//CK:(2)ck_cated_pcid,ck_cated_uuid PV:(8)
+						log.info(entry.getKey() + "  " + entry.getValue());							//ck_cated_pcid  30
+
+						if( enumCategoryJob.getClassName().equals(EnumCategoryJob.Category_Count_Ck.getClassName()) ) {
+							for( EnumKdclCkDailyAddedAmount x: EnumKdclCkDailyAddedAmount.values() ) {
+								if( entry.getKey().equals(x.getKeyName()) ) {
+									log.info(x + ":" + x.getId_type() +":"+ x.getService_type() +":"+
+											x.getBehavior() +":"+ x.getClassify() +":"+ entry.getValue() +":"+ record_date);
+									dao.insert(x.getId_type(), x.getService_type(), x.getBehavior(), x.getClassify(), entry.getValue(), record_date);
+									break;
+								}
+							}
+
+//							for( EnumKdclCkDailyAddedAmount x: EnumKdclCkDailyAddedAmount.values() ) {			//Categorized_pcid,Categorized_uuid
+//								log.info(x + ":" + x.getId_type() +":"+ x.getService_type() +":"+
+//										x.getBehavior() +":"+ x.getClassify() +":"+ entry.getValue() +":"+ record_date);
+//								dao.insert(x.getId_type(), x.getService_type(), x.getBehavior(), x.getClassify(), entry.getValue(), record_date);
 //							}
-//
-////							for( EnumKdclCkDailyAddedAmount x: EnumKdclCkDailyAddedAmount.values() ) {			//Categorized_pcid,Categorized_uuid
-////								log.info(x + ":" + x.getId_type() +":"+ x.getService_type() +":"+
-////										x.getBehavior() +":"+ x.getClassify() +":"+ entry.getValue() +":"+ record_date);
-////								dao.insert(x.getId_type(), x.getService_type(), x.getBehavior(), x.getClassify(), entry.getValue(), record_date);
-////							}
-//						}
-//						if( enumCategoryJob.getClassName().equals(EnumCategoryJob.Category_Count_Pv.getClassName()) ) {
+						}
+						if( enumCategoryJob.getClassName().equals(EnumCategoryJob.Category_Count_Pv.getClassName()) ) {
+							for( EnumKdclPvDailyAddedAmount x: EnumKdclPvDailyAddedAmount.values() ) {
+								if( entry.getKey().equals(x.getKeyName()) ) {
+									log.info(x + ":" + x.getId_type() +":"+ x.getService_type() +":"+
+											x.getBehavior() +":"+ x.getClassify() +":"+ entry.getValue() +":"+ record_date);
+									dao.insert(x.getId_type(), x.getService_type(), x.getBehavior(), x.getClassify(), entry.getValue(), record_date);
+									break;
+								}
+							}
+
 //							for( EnumKdclPvDailyAddedAmount x: EnumKdclPvDailyAddedAmount.values() ) {
-//								if( entry.getKey().equals(x.getKeyName()) ) {
-//									log.info(x + ":" + x.getId_type() +":"+ x.getService_type() +":"+
-//											x.getBehavior() +":"+ x.getClassify() +":"+ entry.getValue() +":"+ record_date);
-//									dao.insert(x.getId_type(), x.getService_type(), x.getBehavior(), x.getClassify(), entry.getValue(), record_date);
-//									break;
-//								}
+//								log.info(x + ":" + x.getId_type() +":"+ x.getService_type() +":"+
+//										x.getBehavior() +":"+ x.getClassify() +":"+ entry.getValue() +":"+ record_date);
+//								dao.insert(x.getId_type(), x.getService_type(), x.getBehavior(), x.getClassify(), entry.getValue(), record_date);
 //							}
-//
-////							for( EnumKdclPvDailyAddedAmount x: EnumKdclPvDailyAddedAmount.values() ) {
-////								log.info(x + ":" + x.getId_type() +":"+ x.getService_type() +":"+
-////										x.getBehavior() +":"+ x.getClassify() +":"+ entry.getValue() +":"+ record_date);
-////								dao.insert(x.getId_type(), x.getService_type(), x.getBehavior(), x.getClassify(), entry.getValue(), record_date);
-////							}
-//						}
-//					}
-//				}
-//				dao.closeAll();
-//			} catch (Exception e) {
-//				log.error(e.getMessage());
-//			}
-//			log.info("****** ******");
+						}
+					}
+				}
+				dao.closeAll();
+			} catch (Exception e) {
+				log.error(e.getMessage());
+			}
+			log.info("****** ******");
 
 		} catch (Exception e) {
 			log.error(e.getMessage());
