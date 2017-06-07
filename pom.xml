@@ -47,6 +47,7 @@
 	</build>
 
 	<repositories>
+	<!-- 
 		<repository>
 	   		<snapshots>
 	    	<enabled>false</enabled>
@@ -55,6 +56,15 @@
 	   		<name>Central Repository</name>
 	   		<url>http://maven.twttr.com/</url>
 	  	</repository>
+	  	 -->
+	  	<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>central</id>
+			<name>Central Repository</name>
+			<url>http://repo.maven.apache.org/maven2</url>
+		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
