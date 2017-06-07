@@ -10,10 +10,10 @@ import org.springframework.data.redis.core.SetOperations;
 public class PressureTestThreadWorker implements Runnable {
 	Log log = LogFactory.getLog("AkbDmp");
 
-	private RedisTemplate<String, Object> redisTemplate;
+	private RedisTemplate<String, String> redisTemplate;
 	private String taskName;
 	private JedisConnectionFactory JedisConnectionFactory;
-	public PressureTestThreadWorker(RedisTemplate<String, Object> redisTemplate, String taskName,JedisConnectionFactory JedisConnectionFactory) {
+	public PressureTestThreadWorker(RedisTemplate<String, String> redisTemplate, String taskName,JedisConnectionFactory JedisConnectionFactory) {
 		this.redisTemplate = redisTemplate;
 		this.taskName = taskName;
 		this.JedisConnectionFactory = JedisConnectionFactory;
@@ -21,9 +21,9 @@ public class PressureTestThreadWorker implements Runnable {
 
 	public void run() {
 		try{
-			SetOperations<String, Object> opsForSet = redisTemplate.opsForSet();
+			SetOperations<String, String> opsForSet = redisTemplate.opsForSet();
 			log.info("redisTemplate:"+redisTemplate.opsForSet());
-			String[] namePool = { "test01","test02","test03","test04","test05","test06","test07","test08","test09","test10" };
+			String[] namePool = { "{PCHOME}_test01","{PCHOME}_test02","{PCHOME}_test03","{PCHOME}_test04","{PCHOME}_test05","{PCHOME}_test06","{PCHOME}_test07","{PCHOME}_test08","{PCHOME}_test09","{PCHOME}_test10" };
 			long time1, time2;
 			RedisClusterConnection connection = JedisConnectionFactory.getClusterConnection();
 			
