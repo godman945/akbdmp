@@ -27,7 +27,7 @@ public class ThreadTestRun {
 	@Autowired
 	JedisConnectionFactory JedisConnectionFactory;
 	
-	Log log = LogFactory.getLog("AkbDmp");
+	Log log = LogFactory.getLog(RedisPressure.class);
 
 	public void test() {
 		try {

@@ -8,7 +8,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 
 public class PressureTestThreadWorker implements Runnable {
-	Log log = LogFactory.getLog("AkbDmp");
+	Log log = LogFactory.getLog(this.getClass());
 
 	private RedisTemplate<String, String> redisTemplate;
 	private String taskName;

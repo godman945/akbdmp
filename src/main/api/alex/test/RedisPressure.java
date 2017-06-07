@@ -8,7 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.connection.RedisClusterNode;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -18,7 +18,9 @@ import com.pchome.akbdmp.spring.config.bean.allbeanscan.SpringAllConfig;
 import com.pchome.soft.depot.utils.DateFormatUtil;
 
 import redis.clients.jedis.HostAndPort;
-import redis.clients.jedis.JedisCluster;
+import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.JedisSlotBasedConnectionHandler;
+import redis.clients.util.JedisClusterCRC16;
 
 @Component
 public class RedisPressure {
@@ -28,7 +30,7 @@ public class RedisPressure {
 	
 
 	@Autowired
-	RedisTemplate<String, Object> redisTemplate;
+	RedisTemplate<String, String> redisTemplate;
 	
 	
 	@Autowired
@@ -41,28 +43,159 @@ public class RedisPressure {
 	
 	@Autowired
 	private IClassCountService classCountService;
+	
+	
 	@SuppressWarnings("resource")
 	private void redisTest() throws Exception{
 		try{
-			Set<HostAndPort> jedisClusterNodes = new HashSet<HostAndPort>();
-			jedisClusterNodes.add(new HostAndPort("192.168.2.207",6379));
-			jedisClusterNodes.add(new HostAndPort("192.168.2.204",6379));
-			jedisClusterNodes.add(new HostAndPort("192.168.2.205",6379));
-			jedisClusterNodes.add(new HostAndPort("192.168.2.208",6379));
-			jedisClusterNodes.add(new HostAndPort("192.168.2.209",6379));
-			jedisClusterNodes.add(new HostAndPort("192.168.2.206",6379));
+			
+			
+			System.out.println(redisTemplate.opsForSet().difference("{TEST}_A01", "{TEST}_B01"));
 			
 			
 			
 			
-			JedisCluster jedisCluster = new JedisCluster(jedisClusterNodes,-1,1000);
-			log.info(jedisCluster.scard("test01"));
-			log.info(jedisCluster.scard("test02"));
-			log.info(jedisCluster.sdiff("test01","test02"));
+//			Set<HostAndPort> jedisClusterNodes = new HashSet<HostAndPort>();
+//			jedisClusterNodes.add(new HostAndPort("192.168.2.204",6379));
+//			jedisClusterNodes.add(new HostAndPort("192.168.2.205",6379));
+//			jedisClusterNodes.add(new HostAndPort("192.168.2.206",6379));
+//			jedisClusterNodes.add(new HostAndPort("192.168.2.207",6379));
+//			jedisClusterNodes.add(new HostAndPort("192.168.2.208",6379));
+//			jedisClusterNodes.add(new HostAndPort("192.168.2.209",6379));
+//			JedisCluster jedisCluster = new JedisCluster(jedisClusterNodes,0,1000);
+//			
+//			jedisCluster.sadd("alex".getBytes(), "1".getBytes());
+//			JedisSlotBasedConnectionHandler connectionHandler = new JedisSlotBasedConnectionHandler(jedisClusterNodes, jedisConfig, 5000);
+			//2604
+//			System.out.println(JedisClusterCRC16.getSlot("{pchome}_alex"));
+//			System.out.println(JedisClusterCRC16.getSlot("{pchome}_bessie"));
+//			JedisConnectionFactory.getConnection().sAdd("{pchome}_bessie".getBytes(), "2".getBytes());
+//			System.out.println(JedisConnectionFactory.getConnection().sDiff("{pchome}_alex".getBytes(),"{pchome}_bessie".getBytes()));
+//			System.out.println(redisTemplate.opsForSet().difference("{pchome}_alex", "{pchome}_bessie"));
+			
+			
+//			RedisClusterNode  redisClusterNode  = JedisConnectionFactory.getClusterConnection().clusterGetNodeForSlot(2604);
+//			System.out.println(redisClusterNode.getHost());
+//			redisClusterNode.servesSlot(2604);
+//			
+//			JedisPoolConfig jedisConfig = new JedisPoolConfig();
+//			JedisSlotBasedConnectionHandler connectionHandler = new JedisSlotBasedConnectionHandler(jedisClusterNodes, jedisConfig, 5000);
+//			connectionHandler.renewSlotCache();
+//			connectionHandler.getConnection().sadd("bessie".getBytes(), "555".getBytes());
+//			List<JedisPool> pools = new ArrayList<JedisPool>();
+//			pools.addAll(cache.getNodes().values());
+//			JedisClusterInfoCache clusterInfoCache = new RedisPressure();
+			
+
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+//			Jedis jedis = connectionHandler.getConnectionFromSlot(2604);
+//			jedis.sadd("bessie", "5");
+			
+//			System.out.println(JedisCluster.HASHSLOTS);
+			
+			
+			
+//			 JedisPool pool = clusterInfoCache.getSlotPool(slot);
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+//			jedis.sadd("bessie", "2");
+			
+			
+			
+//			Jedis jedis = new Jedis("192.168.2.204:6379");
+//			jedis.sadd("alex".getBytes(), "1".getBytes());
+////			jedis.close();
+//			System.out.println(jedis.scard("alex".getBytes()));
+//			
+//			Reshard.migrateSlots(srcNodeInfo, destNodeInfo, 9189);
+//			
+//			 List<Object> slots = jedisCluster.clusterSlots();  
+//			System.out.println(jedisCluster.geohash("alex", "1"));
+			
+			
+			
+			
+			
+//			JedisClusterConnectionHandler connectionHandler = jedisCluster.co
+			
+			
+			
+//			System.out.println(jedisCluster.sdiffstore("alex", "bessie"));
+			
+//			System.out.println(jedisCluster.info());
+			
+//			log.info(jedisCluster.scard("test01"));
+//			log.info(jedisCluster.scard("test02"));
+//			System.out.println(jedisCluster.smembers("bessie"));
+//			jedisCluster.srem("nico", "1234");
+//			jedisCluster.sadd("nico", "N01");
+			
+//			jedisCluster.add
+			
+			
+			
+//			System.out.println(jedisCluster.smembers("nico"));
+			
+//			System.out.println(jedisCluster.sdiff("alex", "bessie"));
+			
+			
+			
+			
+			
+			
+			
+			
+			
+//			log.info(jedisCluster.sdiff("test01","test02"));
+			
+			
+			
+			
+//			System.out.println(redisTemplate.opsForSet().size("test01"));
+////			System.out.println(redisTemplate.opsForSet().difference("test01", "test02"));
+////			redisTemplate.opsForSet().add("bessie", "123");
+//			
+//			
+////			System.out.println(redisTemplate.opsForSet().members("alex"));
+////			System.out.println(redisTemplate.opsForSet().members("bessie"));
+//			System.out.println(redisTemplate.opsForSet().difference("alex", "bessie"));
+			
+			
+			
 			
 //			RedisConnection con = JedisConnectionFactory.getConnection();
-//			log.info(con.sCard("test01".getBytes()));
-//			log.info(con.sCard("test02".getBytes()));
+////			log.info(con.sCard("test01".getBytes()));
+////			log.info(con.sCard("test02".getBytes()));
+//			log.info(con.sDiff("alex".getBytes(),"bessie".getBytes()));
+//			
+//			Set<byte>
+			
+			
 //			log.info(con.sMembers("test01".getBytes()));
 //			log.info(con.sDiff("test01".getBytes(), "test02".getBytes()));
 		}catch(Exception e){
