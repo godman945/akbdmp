@@ -48,7 +48,7 @@ public class RedisConfig {
 		 //等待可用连接的最大数目，单位毫秒（million seconds)
 		 jedisConfig.setMaxWaitMillis(-1);
 		 
-		 
+		 jedisConfig.setMaxTotal(60000);
 		 
 		 
 		//逐出扫描的时间间隔(毫秒) 如果为负数,则不运行逐出线程, 默认-1
@@ -69,21 +69,16 @@ public class RedisConfig {
 		return new RedisClusterConfiguration(new MapPropertySource("RedisClusterConfiguration", source));
 	}
 
-	@Bean(name = "JedisConnectionFactory")
+	@Bean(name = "jedisConnectionFactory")
 	public JedisConnectionFactory getConnectionFactory() {
 		JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(getClusterConfiguration());
 		jedisConnectionFactory.setPoolConfig(jedisPoolConfig());
 		return jedisConnectionFactory;
 	}
 
-//	@Bean
-//	public JedisClusterConnection getJedisClusterConnection() {
-//		return (JedisClusterConnection) getConnectionFactory().getConnection();
-//	}
-
 	@Bean(name = "redisTemplate")
-	public RedisTemplate<String, Object> getRedisTemplate() {
-		RedisTemplate<String, Object> clusterTemplate = new RedisTemplate<String, Object>();
+	public RedisTemplate<String, String> getRedisTemplate() {
+		RedisTemplate<String, String> clusterTemplate = new RedisTemplate<String, String>();
 		clusterTemplate.setConnectionFactory(getConnectionFactory());
 		clusterTemplate.setKeySerializer(new StringRedisSerializer());
 		clusterTemplate.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
