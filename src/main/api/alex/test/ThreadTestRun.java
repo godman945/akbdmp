@@ -19,7 +19,7 @@ import com.pchome.soft.depot.utils.DateFormatUtil;
 public class ThreadTestRun {
 
 	@Autowired
-	RedisTemplate<String, Object> redisTemplate;
+	RedisTemplate<String, String> redisTemplate;
 
 	@Autowired
 	DateFormatUtil dateFormatUtil;
