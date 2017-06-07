@@ -21,9 +21,9 @@ public class KafkaUtil {
 
 //	Log log = LogFactory.getLog(KafkaUtil.class);
 	
-	Producer<String, String> kafkaProducer = null;
+	public static Producer<String, String> kafkaProducer = null;
 	
-	public KafkaUtil(){
+	 static {
 		Properties props = new Properties();
 		props.put("bootstrap.servers", "kafka1.mypchome.com.tw:9091");
 		props.put("acks", "all");
@@ -42,7 +42,7 @@ public class KafkaUtil {
 //	@Autowired
 //	private Producer<String, String> kafkaProducer;
 
-	public void sendMessage(String topicname, String partitionKey, String mesg) {
+	public static void sendMessage(String topicname, String partitionKey, String mesg) {
 		try {
 			Future<RecordMetadata> f = kafkaProducer.send(new ProducerRecord<String, String>(topicname, partitionKey, mesg));
 //				while (!f.isDone()) {
@@ -60,7 +60,7 @@ public class KafkaUtil {
 
 	}
 	
-	public void close() {
+	public static void close() {
 		kafkaProducer.close();
 	}
 
