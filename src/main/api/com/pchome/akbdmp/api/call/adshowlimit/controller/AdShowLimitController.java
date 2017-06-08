@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
@@ -85,8 +86,7 @@ public class AdShowLimitController extends BaseController {
 				
 				AdShowLimitBean adShowLimitBean = new AdShowLimitBean();
 				for (Object key : adKey) {
-					System.out.println(redisTemplate.opsForValue().get(key));
-					int adLimit = (int) ((redisTemplate.opsForValue().get(key) == null) ? 0 : Integer.parseInt(redisTemplate.opsForValue().get(key).toString()));
+					int adLimit = (int) ((redisTemplate.opsForValue().get(key) == null) ? 0 : Integer.parseInt(IOUtils.toString(jedisConnectionFactory.getClusterConnection().get(key.toString().getBytes()))));
 					adShowLimitBean.getAdShowLimitMap().put(key.toString(), adLimit);
 				}
 				

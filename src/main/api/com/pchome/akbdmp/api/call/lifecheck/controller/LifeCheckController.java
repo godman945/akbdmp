@@ -27,7 +27,7 @@ import redis.clients.jedis.Jedis;
 public class LifeCheckController extends BaseController {
 
 	@Autowired
-	RedisTemplate<String, Object> redisTemplate;
+	RedisTemplate<String, String> redisTemplate;
 
 	@Autowired
 	CheckDataFactory checkDataFactory;
