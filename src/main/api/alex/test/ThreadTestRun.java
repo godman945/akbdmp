@@ -64,7 +64,7 @@ public class ThreadTestRun {
 	}
 
 	public static void main(String[] args) {
-		System.setProperty("spring.profiles.active", "stg");
+		System.setProperty("spring.profiles.active", "prd");
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
 		ThreadTestRun ThreadTestRun = ctx.getBean(ThreadTestRun.class);
 		ThreadTestRun.test();
