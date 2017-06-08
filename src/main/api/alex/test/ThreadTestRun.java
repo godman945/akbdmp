@@ -25,7 +25,7 @@ public class ThreadTestRun {
 	DateFormatUtil dateFormatUtil;
 
 	@Autowired
-	JedisConnectionFactory JedisConnectionFactory;
+	JedisConnectionFactory jedisConnectionFactory;
 	
 	Log log = LogFactory.getLog(RedisPressure.class);
 
@@ -42,7 +42,7 @@ public class ThreadTestRun {
 			for (int j = 0; j < 200; j++) {
 				threadPool--;
 				threadName = "task" + j;
-				service.execute(new PressureTestThreadWorker(redisTemplate, threadName,JedisConnectionFactory));
+				service.execute(new PressureTestThreadWorker(redisTemplate, threadName,jedisConnectionFactory));
 				if (threadPool <= 0) {
 					threadPool = 200;
 					service.shutdown();

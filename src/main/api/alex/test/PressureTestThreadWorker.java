@@ -12,11 +12,11 @@ public class PressureTestThreadWorker implements Runnable {
 
 	private RedisTemplate<String, String> redisTemplate;
 	private String taskName;
-	private JedisConnectionFactory JedisConnectionFactory;
-	public PressureTestThreadWorker(RedisTemplate<String, String> redisTemplate, String taskName,JedisConnectionFactory JedisConnectionFactory) {
+	private JedisConnectionFactory jedisConnectionFactory;
+	public PressureTestThreadWorker(RedisTemplate<String, String> redisTemplate, String taskName,JedisConnectionFactory jedisConnectionFactory) {
 		this.redisTemplate = redisTemplate;
 		this.taskName = taskName;
-		this.JedisConnectionFactory = JedisConnectionFactory;
+		this.jedisConnectionFactory = jedisConnectionFactory;
 	}
 
 	public void run() {
@@ -25,7 +25,7 @@ public class PressureTestThreadWorker implements Runnable {
 			log.info("redisTemplate:"+redisTemplate.opsForSet());
 			String[] namePool = { "{PCHOME}_test01","{PCHOME}_test02","{PCHOME}_test03","{PCHOME}_test04","{PCHOME}_test05","{PCHOME}_test06","{PCHOME}_test07","{PCHOME}_test08","{PCHOME}_test09","{PCHOME}_test10" };
 			long time1, time2;
-			RedisClusterConnection connection = JedisConnectionFactory.getClusterConnection();
+			RedisClusterConnection connection = jedisConnectionFactory.getClusterConnection();
 			
 			time1 = System.currentTimeMillis();
 			for (String userName : namePool) {
