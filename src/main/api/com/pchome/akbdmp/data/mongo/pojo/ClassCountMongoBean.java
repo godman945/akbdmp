@@ -1,6 +1,8 @@
 package com.pchome.akbdmp.data.mongo.pojo;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -12,7 +14,9 @@ public class ClassCountMongoBean {
 	private String _id;
 	@Indexed
 	private String user_id = "";
-	private Map<String, Object> category_info = new HashMap<>();
+	private String create_date = "";
+	private String update_date = "";
+	private List<Map<String, Object>> category_info = new ArrayList<>();
 	private Map<String, Object> user_info = new HashMap<>();
 
 	public String getUser_id() {
@@ -23,11 +27,12 @@ public class ClassCountMongoBean {
 		this.user_id = user_id;
 	}
 
-	public Map<String, Object> getCategory_info() {
+
+	public List<Map<String, Object>> getCategory_info() {
 		return category_info;
 	}
 
-	public void setCategory_info(Map<String, Object> category_info) {
+	public void setCategory_info(List<Map<String, Object>> category_info) {
 		this.category_info = category_info;
 	}
 
@@ -41,6 +46,22 @@ public class ClassCountMongoBean {
 
 	public String get_id() {
 		return _id;
+	}
+
+	public String getCreate_date() {
+		return create_date;
+	}
+
+	public void setCreate_date(String create_date) {
+		this.create_date = create_date;
+	}
+
+	public String getUpdate_date() {
+		return update_date;
+	}
+
+	public void setUpdate_date(String update_date) {
+		this.update_date = update_date;
 	}
 
 }
