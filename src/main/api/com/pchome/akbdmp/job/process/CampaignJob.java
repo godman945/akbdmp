@@ -166,7 +166,7 @@ public class CampaignJob {
 				categoryInfo.put("update_date", classCountLogBean.getRecordDate());
 				List<Map<String, Object>> categoryInfoList = classCountMongoBean.getCategory_info();
 				categoryInfoList.add(categoryInfo);
-				classCountMongoBean.setCreate_date(classCountLogBean.getRecordDate());
+				classCountMongoBean.setUpdate_date(classCountLogBean.getRecordDate());
 			}
 
 			// 分類已存在則更新時間
