@@ -36,10 +36,10 @@ import net.minidev.json.JSONObject;
 
 @Component
 public class CategoryLogDriver {
+	
+	private static String log4jPath = "/home/webuser/project/AkbDmp/src/main/resources/log4j.xml";
 
-//	private static String log4jPath = "/home/webuser/dmp/webapps/analyzer/src/config/log4j/Log4j_Category.xml";
-
-	private static Log log = LogFactory.getLog(CategoryLogDriver.class);
+	private static Log log = LogFactory.getLog("CategoryLogDriver");
 	
 	@Value("${hpd11.fs.default.name}")
 	private String hdfsPath;
@@ -186,11 +186,13 @@ public class CategoryLogDriver {
 
 			boolean testFlag = Boolean.parseBoolean( inputPathTestingFlag );
 			log.info("testFlag=" + testFlag);
+			
+			
+			testFlag = true;
 			if( testFlag ) {
 				// testData:
-				alllogOpRange.append( inputPathTestingPath );
-			}
-			else {
+				alllogOpRange.append(inputPathTestingPath );
+			}else {
 				// formal Data: /home/webuser/analyzer/storedata/alllog/
 				alllogOpRange.append(analyzerPathAlllog );
 				alllogOpRange.append( dateStr );

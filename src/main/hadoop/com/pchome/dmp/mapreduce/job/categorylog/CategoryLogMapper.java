@@ -32,7 +32,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static int LOG_LENGTH = 30;
 	private static String SYMBOL = String.valueOf(new char[] { 9, 31 });
 	// private Log log = LogFactory.getLog(this.getClass());
-	Log log = LogFactory.getLog(this.getClass());
+	Log log = LogFactory.getLog("CategoryLogMapper");
 
 	private Text keyOut = new Text();
 	private Text valueOut = new Text();

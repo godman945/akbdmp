@@ -48,6 +48,18 @@
 		<appender-ref ref="AkbDmpJob" />
 	</logger>
 
+	
+	<logger name="CategoryLogDriver" additivity="true">
+		<priority value="info" />
+		<appender-ref ref="AkbDmpJob" />
+	</logger>
+	<logger name="CategoryLogMapper" additivity="true">
+		<priority value="info" />
+		<appender-ref ref="AkbDmpJob" />
+	</logger>
+
+
+
 	<root>
 		<level value="info" />
 		<appender-ref ref="stdout" />
