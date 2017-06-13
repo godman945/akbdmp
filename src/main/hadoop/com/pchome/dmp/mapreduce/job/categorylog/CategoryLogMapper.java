@@ -51,60 +51,47 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		this.categoryLogFactory = new CategoryLogFactory();
 		this.personalInfoFactory = new PersonalInfoFactory();
 		this.categoryLogBean = new CategoryLogBean();
-
-		// log.info("record_date: " + record_date);
-
 		record_date = context.getConfiguration().get("job.date");
-		// log.info("record_date: " + record_date);
 
-		// read data : ClsfyGndAgeCrspTable.txt
 		Configuration conf = context.getConfiguration();
 		try {
-			
-			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
-			Path clsfyTable = Paths.get(path[1].toString());
-			Charset charset = Charset.forName("UTF-8");
-			List<String> lines = Files.readAllLines(clsfyTable, charset);
-			for (String line : lines) {
-				String[] tmpStrAry = line.split(";"); // 0001000000000000;M,35
-				String[] tmpStrAry2 = tmpStrAry[1].split(",");
-				clsfyCraspMap.put(tmpStrAry[0],
-						new combinedValue(tmpStrAry[1].split(",")[0], tmpStrAry2.length > 1 ? tmpStrAry2[1] : ""));
-			}
-			// log.info("ClsfyGndAgeCrspTable map size:" +
-			// clsfyCraspMap.size());
-
-			
-			
-			
+			System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+//			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
+//			Path clsfyTable = Paths.get(path[1].toString());
+//			Charset charset = Charset.forName("UTF-8");
+//			List<String> lines = Files.readAllLines(clsfyTable, charset);
+//			for (String line : lines) {
+//				String[] tmpStrAry = line.split(";"); // 0001000000000000;M,35
+//				String[] tmpStrAry2 = tmpStrAry[1].split(",");
+//				clsfyCraspMap.put(tmpStrAry[0],	new combinedValue(tmpStrAry[1].split(",")[0], tmpStrAry2.length > 1 ? tmpStrAry2[1] : ""));
+//			}
 			
 			
 			// get csv file
-
-			Path cate_path = Paths.get(path[0].toString());
-			charset = Charset.forName("UTF-8");
-
-			int maxCateLvl = 4;
-			list = new ArrayList<Map<String, String>>();
-
-			for (int i = 0; i < maxCateLvl; i++) {
-				list.add(new HashMap<String, String>());
-			}
-			
-			lines.clear();
-			lines = Files.readAllLines(cate_path, charset);
+//			Path cate_path = Paths.get(path[0].toString());
+//			charset = Charset.forName("UTF-8");
+//
+//			int maxCateLvl = 4;
+//			list = new ArrayList<Map<String, String>>();
+//
+//			for (int i = 0; i < maxCateLvl; i++) {
+//				list.add(new HashMap<String, String>());
+//			}
+//			
+//			lines.clear();
+//			lines = Files.readAllLines(cate_path, charset);
 
 			// 將 table: pfp_ad_category_new 內容放入list中(共有 maxCateLvl 層)
-			for (String line : lines) {
-				String[] tmpStr = line.split(";");
-
-				int lvl = Integer.parseInt(tmpStr[5].replaceAll("\"", "").trim());
-				if (lvl <= maxCateLvl) {
-					list.get(lvl - 1).put(tmpStr[3].replaceAll("\"", "").trim(),
-							tmpStr[4].replaceAll("\"", "").replaceAll("@", "").trim());
-				}
-
-			}
+//			for (String line : lines) {
+//				String[] tmpStr = line.split(";");
+//
+//				int lvl = Integer.parseInt(tmpStr[5].replaceAll("\"", "").trim());
+//				if (lvl <= maxCateLvl) {
+//					list.get(lvl - 1).put(tmpStr[3].replaceAll("\"", "").trim(),
+//							tmpStr[4].replaceAll("\"", "").replaceAll("@", "").trim());
+//				}
+//
+//			}
 		} catch (Exception e) {
 			// log.error("ClsfyGndAgeCrspTable error:\n" + e.getMessage());
 			// e.printStackTrace();
@@ -141,64 +128,35 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		try {
 			// 1.reg待補
 			// 2.走ad_click
-			if (values[13].equals("ck") && StringUtils.isNotBlank(values[15]) && values[15].matches("\\d{16}")) {
-				ACategoryLogData aCategoryLogData = categoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
-				aCategoryLogData.processCategory(values, personalInfoFactory, categoryLogBean);
-			}
+//			if (values[13].equals("ck") && StringUtils.isNotBlank(values[15]) && values[15].matches("\\d{16}")) {
+//				ACategoryLogData aCategoryLogData = categoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
+//				aCategoryLogData.processCategory(values, personalInfoFactory, categoryLogBean);
+//			}
 
 			// 露天
-			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].matches("reten")) {
-				ACategoryLogData aCategoryLogData = categoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
-				categoryLogBean.setClsfyCraspMap(clsfyCraspMap);
-				categoryLogBean.setList(list);
-				result = (CategoryLogBean)aCategoryLogData.processCategory(values, personalInfoFactory, categoryLogBean);
-			}
+//			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].matches("reten")) {
+//				ACategoryLogData aCategoryLogData = categoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
+//				categoryLogBean.setClsfyCraspMap(clsfyCraspMap);
+//				categoryLogBean.setList(list);
+//				result = (CategoryLogBean)aCategoryLogData.processCategory(values, personalInfoFactory, categoryLogBean);
+//			}
 
 			// 24h
-			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].matches("24h")) {
-				ACategoryLogData aCategoryLogData = categoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
-				aCategoryLogData.processCategory(values, personalInfoFactory, categoryLogBean);
-			}
+//			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].matches("24h")) {
+//				ACategoryLogData aCategoryLogData = categoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
+//				aCategoryLogData.processCategory(values, personalInfoFactory, categoryLogBean);
+//			}
 			
-			  String result2 = result.getMemid() +SYMBOL+result.getUuid()+SYMBOL+result.getAdClass()+SYMBOL+result.getAge()+SYMBOL+result.getSex();
-			
+//			String result2 = result.getMemid() +SYMBOL+result.getUuid()+SYMBOL+result.getAdClass()+SYMBOL+result.getAge()+SYMBOL+result.getSex();
+			String result2 = "ssssss";
 			keyOut.set(key);
 			valueOut.set(result2);
-			
 			context.write(keyOut, valueOut);
-			
-
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.exit(1);
 		}
 
-		//
-		// for (EnumCategoryJob enumCategoryJob: EnumCategoryJob.values()) {
-		// try {
-		// job = FactoryCategoryJob.getInstance(enumCategoryJob);
-		//
-		// key = job.getKey(values);
-		// val = job.getValue(values);
-		//
-		// if (StringUtils.isBlank(key)) {
-		//// log.info("key is blank");
-		// continue;
-		// }
-		// if (StringUtils.isBlank(val)) {
-		//// log.info("val is blank");
-		// continue;
-		// }
-		//
-		// keyOut.set(key);
-		// valueOut.set(val);
-		//
-		// context.write(keyOut, valueOut);
-		//
-		// } catch (Exception e) {
-		// log.error(value, e);
-		// }
-		//
-		// }
 
 	}
 
