@@ -143,25 +143,25 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //				aCategoryLogData.processCategory(values, personalInfoFactory, categoryLogBean);
 //			}
 
+			String result2 = "";
 			// 露天
-			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[3].matches("ruten")) {
+			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].matches("ruten")) {
 				ACategoryLogData aCategoryLogData = categoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
 				categoryLogBean.setClsfyCraspMap(clsfyCraspMap);
 				categoryLogBean.setList(list);
 				result = (CategoryLogBean)aCategoryLogData.processCategory(values, personalInfoFactory, categoryLogBean);
+				result2 = result.getMemid() +SYMBOL+result.getUuid()+SYMBOL+result.getAdClass()+SYMBOL+result.getAge()+SYMBOL+result.getSex();
 			}
 
 			// 24h
-//			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].matches("24h")) {
-//				ACategoryLogData aCategoryLogData = categoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
-//				aCategoryLogData.processCategory(values, personalInfoFactory, categoryLogBean);
-//			}
-			
-			String result2 = result.getMemid() +SYMBOL+result.getUuid()+SYMBOL+result.getAdClass()+SYMBOL+result.getAge()+SYMBOL+result.getSex();
+			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].matches("24h")) {
+				ACategoryLogData aCategoryLogData = categoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
+				aCategoryLogData.processCategory(values, personalInfoFactory, categoryLogBean);
+				result2 = result.getMemid() +SYMBOL+result.getUuid()+SYMBOL+result.getAdClass()+SYMBOL+result.getAge()+SYMBOL+result.getSex();
+			}
 			log.info(">>>>>> result2:"+result2);
-//			String result2 = "ssssss";
 			keyOut.set(key);
-			valueOut.set(result2);
+			valueOut.set(StringUtils.isBlank(result2) ? "null" : result2);
 			context.write(keyOut, valueOut);
 		} catch (Exception e) {
 			e.printStackTrace();

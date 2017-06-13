@@ -105,8 +105,8 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 		try {
 			Date date = new Date();
 			for (Text url : value) {
-				System.out.println(">>>>>>>>>>>>>>>>>>>>>>" + key);
-				System.out.println(">>>>>>>>>>>>>>>>>>>>>>" + value);
+				log.info("key >>>>>>>>>>>>>>>>>>>>>>" + key);
+				log.info("value >>>>>>>>>>>>>>>>>>>>>>" + value);
 //				JSONObject json = new JSONObject();
 //				json.put("url", url.toString());
 //				json.put("status", (key.toString().matches("\\d{16}")?"1":"0"));	//(0:未分類  1:已分類  2:跳過)
