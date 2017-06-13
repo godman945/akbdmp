@@ -157,9 +157,17 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].matches("24h")) {
 				ACategoryLogData aCategoryLogData = categoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
 				aCategoryLogData.processCategory(values, personalInfoFactory, categoryLogBean);
+				categoryLogBean.setClsfyCraspMap(clsfyCraspMap);
+				categoryLogBean.setList(list);
+				result = (CategoryLogBean)aCategoryLogData.processCategory(values, personalInfoFactory, categoryLogBean);
 				result2 = result.getMemid() +SYMBOL+result.getUuid()+SYMBOL+result.getAdClass()+SYMBOL+result.getAge()+SYMBOL+result.getSex();
 			}
 			log.info(">>>>>> result2:"+result2);
+			
+			
+			if(StringUtils.isBlank(result2)){
+				return;
+			}
 			keyOut.set(key);
 			valueOut.set(StringUtils.isBlank(result2) ? "null" : result2);
 			context.write(keyOut, valueOut);
