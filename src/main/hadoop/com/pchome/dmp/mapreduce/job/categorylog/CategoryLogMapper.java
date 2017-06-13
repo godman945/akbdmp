@@ -47,6 +47,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 
 	@Override
 	public void setup(Context context) {
+		log.info("@@@@@@@@@@@@@@@@@@@@@@@@222");
 		record_date = context.getConfiguration().get("job.date");
 		this.categoryLogFactory = new CategoryLogFactory();
 		this.personalInfoFactory = new PersonalInfoFactory();

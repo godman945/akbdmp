@@ -37,8 +37,6 @@ import net.minidev.json.JSONObject;
 @Component
 public class CategoryLogDriver {
 	
-	private static String log4jPath = "/home/webuser/project/AkbDmp/src/main/resources/log4j.xml";
-
 	private static Log log = LogFactory.getLog("CategoryLogDriver");
 	
 	@Value("${hpd11.fs.default.name}")
@@ -170,7 +168,7 @@ public class CategoryLogDriver {
 		job.setMapperClass(CategoryLogMapper.class);
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(Text.class);
-//		job.setReducerClass(CategoryLogReducer.class);
+		job.setReducerClass(CategoryLogReducer.class);
 		job.setInputFormatClass(LzoTextInputFormat.class);
 //		job.setOutputKeyClass(Text.class);
 //		job.setOutputValueClass(Text.class);
@@ -227,8 +225,9 @@ public class CategoryLogDriver {
 		
 		String str1 = hdfsPath +"/home/webuser/dmp/crawlBreadCrumb/data/pfp_ad_category_new.csv";
 		String str2 = hdfsPath +"/home/webuser/dmp/readingdata/ClsfyGndAgeCrspTable.txt";
+		String str3 = "/home/webuser/project/AkbDmp/src/main/resources/log4j.xml";
 		// path
-		String[] filePaths = {str1,str2};
+		String[] filePaths = {str1,str2,str3};
 		
 		for (String filePath: filePaths) {
 			DistributedCache.addCacheFile(new URI(filePath), job.getConfiguration());
