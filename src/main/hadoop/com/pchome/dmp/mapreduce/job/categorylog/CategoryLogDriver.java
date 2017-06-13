@@ -222,9 +222,16 @@ public class CategoryLogDriver {
 			DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fs);
 		}
 		
-		DistributedCache.addCacheFile(new URI( hdfsPath +"/home/webuser/dmp/crawlBreadCrumb/data/pfp_ad_category_new.csv"), job.getConfiguration());
-		DistributedCache.addCacheFile(new URI(hdfsPath+"/home/webuser/dmp/readingdata/ClsfyGndAgeCrspTable.txt"), job.getConfiguration());
-
+		
+		String str1 = hdfsPath +"/home/webuser/dmp/crawlBreadCrumb/data/pfp_ad_category_new.csv";
+		String str2 = hdfsPath +"/home/webuser/dmp/readingdata/ClsfyGndAgeCrspTable.txt";
+		// path
+		String[] filePaths = {str1,str2};
+		
+		for (String filePath: filePaths) {
+			DistributedCache.addCacheFile(new URI(filePath), job.getConfiguration());
+		}
+		
 //		//delete old doc for specific date
 //		deleteMongoOldDoc(dateStr.substring(0, 10));
 //		
