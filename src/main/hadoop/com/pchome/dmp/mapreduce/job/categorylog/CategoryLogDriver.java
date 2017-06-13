@@ -185,8 +185,6 @@ public class CategoryLogDriver {
 			boolean testFlag = Boolean.parseBoolean( inputPathTestingFlag );
 			log.info("testFlag=" + testFlag);
 			
-			
-			testFlag = true;
 			if( testFlag ) {
 				// testData:
 				alllogOpRange.append(inputPathTestingPath );
@@ -307,13 +305,6 @@ public class CategoryLogDriver {
 		CategoryLogDriver CategoryDriver = (CategoryLogDriver) ctx.getBean(CategoryLogDriver.class);
 
 		CategoryDriver.drive(date);
-		
-		
-//		
-		/*
-		CategoryDriver driver = new CategoryDriver();
-		driver.drive(date);
-		 */
 		
 		log.info("====driver end====");
 	}

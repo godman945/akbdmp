@@ -125,6 +125,15 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		// values[4] //url
 		// values[15] //ad_class
 		// values[3] //behavior
+		
+		
+		log.info(">>>>>> "+values[1]);
+		log.info(">>>>>> "+values[2]);
+		log.info(">>>>>> "+values[13]);
+		log.info(">>>>>> "+values[4]);
+		log.info(">>>>>> "+values[15]);
+		log.info(">>>>>> "+values[3]);
+		log.info("----------------------------------- data");
 		CategoryLogBean result = null;
 		try {
 			// 1.reg待補
@@ -149,7 +158,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			}
 			
 			String result2 = result.getMemid() +SYMBOL+result.getUuid()+SYMBOL+result.getAdClass()+SYMBOL+result.getAge()+SYMBOL+result.getSex();
-			
+			log.info(">>>>>> result2:"+result2);
 //			String result2 = "ssssss";
 			keyOut.set(key);
 			valueOut.set(result2);
