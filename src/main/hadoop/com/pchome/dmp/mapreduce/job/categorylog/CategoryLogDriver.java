@@ -225,7 +225,7 @@ public class CategoryLogDriver {
 		
 		String str1 = hdfsPath +"/home/webuser/dmp/crawlBreadCrumb/data/pfp_ad_category_new.csv";
 		String str2 = hdfsPath +"/home/webuser/dmp/readingdata/ClsfyGndAgeCrspTable.txt";
-		String str3 = "/home/webuser/project/AkbDmp/src/main/resources/log4j.xml";
+		String str3 = "/home/webuser/dmp/alex/log4j.xml";
 		// path
 		String[] filePaths = {str1,str2,str3};
 		
