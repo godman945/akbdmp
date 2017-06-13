@@ -13,7 +13,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 	+"com.pchome.dmp.mapreduce.crawlbreadcrumb,"
 	+"com.pchome.akbdmp.spring.config.bean.property,"
 	+"com.pchome.hadoop.category.job,"
-	+"com.pchome.dmp.dao.sql"
+	+"com.pchome.dmp.dao.sql,"
+	+"com.pchome.dmp.mapreduce.job.categorylog"
 )
 @PropertySource({ 
 	"classpath:config/hadoop/hdfs.properties",
