@@ -103,16 +103,16 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public void map(LongWritable offset, Text value, Context context) {
 		// log.info("value=" + value);
 
-		if (StringUtils.isBlank(value.toString())) {
-			// log.info("value is blank");
-			return;
-		}
-
-		String[] values = value.toString().split(SYMBOL);
-		if (values.length < LOG_LENGTH) {
-			log.info("values.length < " + LOG_LENGTH);
-			return;
-		}
+//		if (StringUtils.isBlank(value.toString())) {
+//			// log.info("value is blank");
+//			return;
+//		}
+//
+//		String[] values = value.toString().split(SYMBOL);
+//		if (values.length < LOG_LENGTH) {
+//			log.info("values.length < " + LOG_LENGTH);
+//			return;
+//		}
 
 		AncestorJob job = null;
 		String key = null;
@@ -124,7 +124,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		// values[13] //ck,pv
 		// values[4] //url
 		// values[15] //ad_class
-		CategoryLogBean result = null;
+//		CategoryLogBean result = null;
 		try {
 			// 1.reg待補
 			// 2.走ad_click
@@ -154,7 +154,6 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			context.write(keyOut, valueOut);
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.exit(1);
 		}
 
 
