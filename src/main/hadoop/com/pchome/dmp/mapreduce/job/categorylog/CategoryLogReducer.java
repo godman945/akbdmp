@@ -2,8 +2,10 @@ package com.pchome.dmp.mapreduce.job.categorylog;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.Future;
 
 import org.apache.commons.lang.StringUtils;
@@ -11,12 +13,17 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.codehaus.jettison.json.JSONObject;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
 import com.mongodb.DBObject;
+import com.pchome.akbdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 import com.pchome.dmp.dao.sql.KdclStatisticsSourceDAO;
 import com.pchome.dmp.enumerate.EnumCategoryJob;
 import com.pchome.dmp.enumerate.EnumKdclCkDailyAddedAmount;
@@ -37,40 +44,56 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	public AncestorJob job = null;
 	
-//	Producer<String, String> producer = null;
+	private String kafkaMetadataBrokerlist;
+	
+	private String kafkaAcks;
+	
+	private String kafkaRetries;
+	
+	private String kafkaBatchSize;
+	
+	private String kafkaLingerMs;
+	
+	private String kafkaBufferMemory;
+	
+	private String kafkaSerializerClass;
+	
+	private String kafkaKeySerializer;
+	
+	private String kafkaValueSerializer;
+	
+	List<JSONObject> kafkaList = new ArrayList<>();
+
+	Producer<String, String> producer = null;
 
 	@Override
 	public void setup(Context context) {
-		record_date = context.getConfiguration().get("job.date");
-		//log.info("record_date: " + record_date);
-//		Properties props = new Properties();
-//		props.put("bootstrap.servers", "kafka1.mypchome.com.tw:9091");
-//		props.put("acks", "all");
-//		props.put("retries", 0);
-//		props.put("batch.size", 16384);
-//		props.put("linger.ms", 1);
-//		props.put("buffer.memory", 536870912);
-//		props.put("serializer.class", "kafka.serializer.StringEncoder");
-//		props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-//		props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-//		producer = new KafkaProducer<String, String>(props);
-
 		try {
-			for( EnumCategoryJob enumCategoryJob: EnumCategoryJob.values() ) {
-				AncestorJob job = FactoryCategoryJob.getInstance( enumCategoryJob );
-//				if( enumCategoryJob.getClassName().equals("com.pchome.dmp.factory.job.CategoryCountCk") ) {
-				if( enumCategoryJob.getClassName().equals(EnumCategoryJob.Category_Count_Ck.getClassName()) ) {
-					for( EnumKdclCkDailyAddedAmount enumKdclCkDailyAddedAmount: EnumKdclCkDailyAddedAmount.values() ) {		//Categorized_pcid,Categorized_uuid
-						job.dailyAddedAmount.put( enumKdclCkDailyAddedAmount.getKeyName(), new Integer(0));
-					}
-				}
-//				if( enumCategoryJob.getClassName().equals("com.pchome.dmp.factory.job.CategoryCountPv") ) {
-				if( enumCategoryJob.getClassName().equals(EnumCategoryJob.Category_Count_Pv.getClassName()) ) {
-					for( EnumKdclPvDailyAddedAmount enumKdclPvDailyAddedAmount: EnumKdclPvDailyAddedAmount.values() ) {
-						job.dailyAddedAmount.put( enumKdclPvDailyAddedAmount.getKeyName(), new Integer(0));
-					}
-				}
-			}
+    		System.setProperty("spring.profiles.active", "prd");
+    		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+			
+			this.kafkaMetadataBrokerlist = ctx.getEnvironment().getProperty("kafka.metadata.broker.list");
+			this.kafkaAcks = ctx.getEnvironment().getProperty("kafka.acks");
+			this.kafkaRetries = ctx.getEnvironment().getProperty("kafka.retries");
+			this.kafkaBatchSize = ctx.getEnvironment().getProperty("kafka.batch.size");
+			this.kafkaLingerMs = ctx.getEnvironment().getProperty("kafka.linger.ms");
+			this.kafkaBufferMemory = ctx.getEnvironment().getProperty("kafka.buffer.memory");
+			this.kafkaSerializerClass = ctx.getEnvironment().getProperty("kafka.serializer.class");
+			this.kafkaKeySerializer = ctx.getEnvironment().getProperty("kafka.key.serializer");
+			this.kafkaValueSerializer = ctx.getEnvironment().getProperty("kafka.value.serializer");
+			
+			Properties props = new Properties();
+			props.put("bootstrap.servers", kafkaMetadataBrokerlist);
+			props.put("acks", kafkaAcks);
+			props.put("retries", kafkaRetries);
+			props.put("batch.size", kafkaBatchSize);
+			props.put("linger.ms",kafkaLingerMs );
+			props.put("buffer.memory", kafkaBufferMemory);
+			props.put("serializer.class", kafkaSerializerClass);
+			props.put("key.serializer", kafkaKeySerializer);
+			props.put("value.serializer", kafkaValueSerializer);
+			producer = new KafkaProducer<String, String>(props);
+			
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
@@ -80,21 +103,18 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	public void reduce(Text key, Iterable<Text> value, Context context) {
 
 		try {
-			log.info("key=" + key);
-
-			if (StringUtils.isBlank(key.toString())) {
-				log.info("key is blank");
-				return;
+			Date date = new Date();
+			for (Text url : value) {
+				System.out.println(">>>>>>>>>>>>>>>>>>>>>>" + key);
+				System.out.println(">>>>>>>>>>>>>>>>>>>>>>" + value);
+//				JSONObject json = new JSONObject();
+//				json.put("url", url.toString());
+//				json.put("status", (key.toString().matches("\\d{16}")?"1":"0"));	//(0:未分類  1:已分類  2:跳過)
+//				json.put("ad_class", key.toString().matches("\\d{16}")?key.toString():"");
+//				json.put("create_date", date);
+//				json.put("update_date", date);
+//				kafkaList.add(json);
 			}
-
-			String[] keys = key.toString().split(SYMBOL);
-
-			EnumCategoryJob enumCategoryJob = EnumCategoryJob.valueOf(keys[0]);
-			job = FactoryCategoryJob.getInstance(enumCategoryJob);
-			job.add(keys, value);
-			job.update();
-			
-//			log.info("---bessie TEST OK------bessie TEST OK------bessie TEST OK------bessie TEST OK------bessie TEST OK---");
 
 		} catch (Exception e) {
 			log.error(key, e);
@@ -105,144 +125,17 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	@Override
 	public void cleanup(Context context) {
 		try {
-			
-			//suspected: Error: GC overhead limit exceeded
-			//    		job.update();	//mongoDB
-
-			//test OK
-			if( !job.outputCollector.isEmpty() ) {
-				for(String str:job.outputCollector) {
-					context.write(new Text(str.trim()), null );
-				}
-				job.outputCollector.clear();
+    		/*mark by bessie
+    		coll.insert(list);
+    		mongoClient.close();
+    		*/
+    		Future<RecordMetadata> f  = producer.send(new ProducerRecord<String, String>("TEST", "", kafkaList.toString()));
+			while (!f.isDone()) {
 			}
-//			
-			
-//			//bessie-start
-//			//list send kafka--add by bessie
-//			KafkaUtil kafkaUtil = new KafkaUtil();
-//			List<JSONObject> kafka = new ArrayList<>();
-//			JSONObject sendKafkaJson = new JSONObject();
-//			
-//			for (EnumCategoryJob enumCategoryJob : EnumCategoryJob.values()) { // Category_Count_Ck,Category_Count_Pv
-//				AncestorJob job = FactoryCategoryJob.getInstance(enumCategoryJob);
-//				if (enumCategoryJob.getClassName().equals(EnumCategoryJob.Category_Count_Ck.getClassName())) {
-////					sendKafkaJson.put("type", "mongo");
-////					sendKafkaJson.put("action", "insert");
-////					sendKafkaJson.put("collection", "class_count");
-////					sendKafkaJson.put("column", "");
-////					sendKafkaJson.put("condition", "");
-////					sendKafkaJson.put("Test", "ck ck ck");
-////					sendKafkaJson.put("content", job.list.toString());
-////					kafka.add(sendKafkaJson);
-////					kafkaUtil.sendMessage("TEST", "", kafka.toString());
-//					for (DBObject jsonObject : job.list) {
-//						sendKafkaJson.put("type", "mongo");
-//						sendKafkaJson.put("action", "insert");
-//						sendKafkaJson.put("collection", "class_count");
-//						sendKafkaJson.put("column", "");
-//						sendKafkaJson.put("condition", "");
-//						sendKafkaJson.put("Test", "ck ck ck");
-//						sendKafkaJson.put("content", jsonObject.toString());
-//						kafka.add(sendKafkaJson);
-//						kafkaUtil.sendMessage("TEST", "", kafka.toString());
-//					}
-//				}
-//				
-//				if (enumCategoryJob.getClassName().equals(EnumCategoryJob.Category_Count_Pv.getClassName())) {
-////					sendKafkaJson.put("type", "mongo");
-////					sendKafkaJson.put("action", "insert");
-////					sendKafkaJson.put("collection", "class_count");
-////					sendKafkaJson.put("column", "");
-////					sendKafkaJson.put("condition", "");
-////					sendKafkaJson.put("Test", "PV pV pV");
-////					sendKafkaJson.put("content", job.list.toString());
-////					kafka.add(sendKafkaJson);
-////					kafkaUtil.sendMessage("TEST", "", kafka.toString());
-//					for (DBObject jsonObject : job.list) {
-//						sendKafkaJson.put("type", "mongo");
-//						sendKafkaJson.put("action", "insert");
-//						sendKafkaJson.put("collection", "class_count");
-//						sendKafkaJson.put("column", "");
-//						sendKafkaJson.put("condition", "");
-//						sendKafkaJson.put("Test", "PV PV PV");
-//						sendKafkaJson.put("content", jsonObject.toString());
-//						kafka.add(sendKafkaJson);
-//						kafkaUtil.sendMessage("TEST", "", kafka.toString());
-//					}
-//				}
-//			}
-//			kafkaUtil.sendMessage("TEST", "", "20170607 test ok ");
-//			kafkaUtil.close();
-//			//bessie-end
-			
-			
-			
-//			if( !job.outputCollectorList.isEmpty() ) {
-//				for(String str:job.outputCollectorList) {
-//					context.write(new Text(str.trim()), null );
-//				}
-//				job.outputCollectorList.clear();
-//			}
-
-			// write cated&uncated ck,pv count to MySQL
-			log.info("****** ******");
-			try {
-				KdclStatisticsSourceDAO dao = new KdclStatisticsSourceDAO();
-				dao.dbInit();
-				dao.deleteByBehaviorAndRecordDate("ad_click", record_date);
-				dao.deleteByBehaviorAndRecordDate("ruten", record_date);
-				dao.deleteByBehaviorAndRecordDate("24h", record_date);
-
-				for( EnumCategoryJob enumCategoryJob: EnumCategoryJob.values() ) {			//Category_Count_Ck,Category_Count_Pv
-					AncestorJob job = FactoryCategoryJob.getInstance( enumCategoryJob );
-					for( Map.Entry<String, Integer> entry:job.dailyAddedAmount.entrySet() ) {		//CK:(2)ck_cated_pcid,ck_cated_uuid PV:(8)
-						log.info(entry.getKey() + "  " + entry.getValue());							//ck_cated_pcid  30
-
-						if( enumCategoryJob.getClassName().equals(EnumCategoryJob.Category_Count_Ck.getClassName()) ) {
-							for( EnumKdclCkDailyAddedAmount x: EnumKdclCkDailyAddedAmount.values() ) {
-								if( entry.getKey().equals(x.getKeyName()) ) {
-									log.info(x + ":" + x.getId_type() +":"+ x.getService_type() +":"+
-											x.getBehavior() +":"+ x.getClassify() +":"+ entry.getValue() +":"+ record_date);
-									dao.insert(x.getId_type(), x.getService_type(), x.getBehavior(), x.getClassify(), entry.getValue(), record_date);
-									break;
-								}
-							}
-
-//							for( EnumKdclCkDailyAddedAmount x: EnumKdclCkDailyAddedAmount.values() ) {			//Categorized_pcid,Categorized_uuid
-//								log.info(x + ":" + x.getId_type() +":"+ x.getService_type() +":"+
-//										x.getBehavior() +":"+ x.getClassify() +":"+ entry.getValue() +":"+ record_date);
-//								dao.insert(x.getId_type(), x.getService_type(), x.getBehavior(), x.getClassify(), entry.getValue(), record_date);
-//							}
-						}
-						if( enumCategoryJob.getClassName().equals(EnumCategoryJob.Category_Count_Pv.getClassName()) ) {
-							for( EnumKdclPvDailyAddedAmount x: EnumKdclPvDailyAddedAmount.values() ) {
-								if( entry.getKey().equals(x.getKeyName()) ) {
-									log.info(x + ":" + x.getId_type() +":"+ x.getService_type() +":"+
-											x.getBehavior() +":"+ x.getClassify() +":"+ entry.getValue() +":"+ record_date);
-									dao.insert(x.getId_type(), x.getService_type(), x.getBehavior(), x.getClassify(), entry.getValue(), record_date);
-									break;
-								}
-							}
-
-//							for( EnumKdclPvDailyAddedAmount x: EnumKdclPvDailyAddedAmount.values() ) {
-//								log.info(x + ":" + x.getId_type() +":"+ x.getService_type() +":"+
-//										x.getBehavior() +":"+ x.getClassify() +":"+ entry.getValue() +":"+ record_date);
-//								dao.insert(x.getId_type(), x.getService_type(), x.getBehavior(), x.getClassify(), entry.getValue(), record_date);
-//							}
-						}
-					}
-				}
-				dao.closeAll();
-			} catch (Exception e) {
-				log.error(e.getMessage());
-			}
-			log.info("****** ******");
-
-		} catch (Exception e) {
+    		
+    	} catch (Exception e) {
 			log.error(e.getMessage());
 		}
-
 	}
 
 }

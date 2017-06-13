@@ -55,7 +55,6 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 
 		Configuration conf = context.getConfiguration();
 		try {
-			System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
 			Path clsfyTable = Paths.get(path[1].toString());
 			Charset charset = Charset.forName("UTF-8");
@@ -124,6 +123,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		// values[13] //ck,pv
 		// values[4] //url
 		// values[15] //ad_class
+		// values[3] //behavior
 		CategoryLogBean result = null;
 		try {
 			// 1.reg待補
@@ -134,7 +134,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			}
 
 			// 露天
-			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].matches("reten")) {
+			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[3].matches("ruten")) {
 				ACategoryLogData aCategoryLogData = categoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
 				categoryLogBean.setClsfyCraspMap(clsfyCraspMap);
 				categoryLogBean.setList(list);
@@ -148,6 +148,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			}
 			
 			String result2 = result.getMemid() +SYMBOL+result.getUuid()+SYMBOL+result.getAdClass()+SYMBOL+result.getAge()+SYMBOL+result.getSex();
+			
 //			String result2 = "ssssss";
 			keyOut.set(key);
 			valueOut.set(result2);

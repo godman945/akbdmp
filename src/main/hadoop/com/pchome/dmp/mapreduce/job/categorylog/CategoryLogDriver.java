@@ -122,8 +122,8 @@ public class CategoryLogDriver {
 		conf.set("mapreduce.map.speculative", mapredExecution);
 		conf.set("mapreduce.reduce.speculative", mapredReduceExecution);
 		conf.set("mapreduce.task.timeout", mapredTimeout);
-		conf.set("mapred.child.java.opts", "-Xmx2048m");
-		conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2048m");
+		conf.set("mapred.child.java.opts", "-Xmx3072m");
+		conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx3072m");
 
 		conf.set("job.date", (dateStr.matches("\\d{4}-\\d{2}-\\d{2}") || dateStr.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}"))?dateStr.substring(0, 10):"");
 		System.out.println( "job.date: " + dateStr.substring(0, 10) );
