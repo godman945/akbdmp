@@ -128,13 +128,6 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			// TODO Auto-generated catch block
 //			e1.printStackTrace();
 //		}
-		
-		
-		String[] values = value.toString().split(SYMBOL);
-		if (values.length < LOG_LENGTH) {
-			log.info("values.length < " + LOG_LENGTH);
-			return;
-		}
 
 		// 1.
 		// values[1] //mid
@@ -151,6 +144,14 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //		values[4] = "http://24h.pchome.com.tw/region/DICM";
 //		values[15] = "alex5";
 //		values[3] = "alex6";
+		
+		
+		
+		String[] values = value.toString().split(SYMBOL);
+		if (values.length < LOG_LENGTH) {
+			log.info("values.length < " + LOG_LENGTH);
+			return;
+		}
 		
  		log.info(">>>>>> "+values[1]);
 		log.info(">>>>>> "+values[2]);
