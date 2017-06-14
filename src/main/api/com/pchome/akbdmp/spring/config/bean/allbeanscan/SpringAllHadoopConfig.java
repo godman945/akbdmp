@@ -14,7 +14,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 	+"com.pchome.akbdmp.spring.config.bean.property,"
 	+"com.pchome.hadoop.category.job,"
 	+"com.pchome.dmp.dao.sql,"
-	+"com.pchome.dmp.mapreduce.job.categorylog"
+	+"com.pchome.dmp.mapreduce.job.categorylog,"
+	+"com.pchome.dmp.spring.config.bean"
 )
 @PropertySource({ 
 	"classpath:config/hadoop/hdfs.properties",
