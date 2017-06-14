@@ -14,7 +14,7 @@ public class CategoryLogFactory {
 		switch (categoryLogEnum) {
 		case AD_CLICK:
 			if (objectMap.containsKey(categoryLogEnum.getKey())) {
-				return (ACategoryLogData) objectMap.get(categoryLogEnum.getKey());
+				return (AdClickLog) objectMap.get(categoryLogEnum.getKey());
 			} else {
 				AdClickLog adClickLog = new AdClickLog();
 				objectMap.put(categoryLogEnum.getKey(), adClickLog);
@@ -22,19 +22,19 @@ public class CategoryLogFactory {
 			}
 		case PV_RETUN:
 			if (objectMap.containsKey(categoryLogEnum.getKey())) {
-				return (ACategoryLogData) objectMap.get(categoryLogEnum.getKey());
+				return (AdRetunLog) objectMap.get(categoryLogEnum.getKey());
 			} else {
-				AdClickLog adClickLog = new AdClickLog();
-				objectMap.put(categoryLogEnum.getKey(), adClickLog);
-				return adClickLog;
+				AdRetunLog adRetunLog = new AdRetunLog();
+				objectMap.put(categoryLogEnum.getKey(), adRetunLog);
+				return adRetunLog;
 			}
 		case PV_24H:
 			if (objectMap.containsKey(categoryLogEnum.getKey())) {
-				return (ACategoryLogData) objectMap.get(categoryLogEnum.getKey());
+				return (Ad24HLog) objectMap.get(categoryLogEnum.getKey());
 			} else {
-				AdClickLog adClickLog = new AdClickLog();
-				objectMap.put(categoryLogEnum.getKey(), adClickLog);
-				return adClickLog;
+				Ad24HLog ad24HLog = new Ad24HLog();
+				objectMap.put(categoryLogEnum.getKey(), ad24HLog);
+				return ad24HLog;
 			}
 		default:
 			break;
