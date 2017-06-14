@@ -226,7 +226,8 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				return;
 			}
 			
-			String result = categoryLogBeanResult.getMemid() +SYMBOL+categoryLogBeanResult.getUuid()+SYMBOL+categoryLogBeanResult.getAdClass()+SYMBOL+categoryLogBeanResult.getAge()+SYMBOL+categoryLogBeanResult.getSex(); 
+			String result = categoryLogBeanResult.getMemid() +SYMBOL+categoryLogBeanResult.getUuid()+SYMBOL+categoryLogBeanResult.getAdClass()+SYMBOL+categoryLogBeanResult.getAge()+SYMBOL+categoryLogBeanResult.getSex()+SYMBOL+categoryLogBeanResult.getSource(); 
+			log.info(">>>>>> write key:"+result);
 			keyOut.set(result);
 			valueOut.set("null");
 			context.write(keyOut, valueOut);
