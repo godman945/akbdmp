@@ -20,13 +20,14 @@ import org.apache.hadoop.mapreduce.Mapper.Context;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.springframework.data.mongodb.core.MongoOperations;
 
 import com.pchome.dmp.enumerate.PersonalInfoEnum;
 import com.pchome.dmp.mapreduce.prsnldata.PersonalDataPhase2Mapper.combinedValue;
 
-public class AdRetunLog extends ACategoryLogData {
+public class AdRutenLog extends ACategoryLogData {
 
-	public Object processCategory(String[] values, CategoryLogBean categoryLogBean) throws Exception {
+	public Object processCategory(String[] values, CategoryLogBean categoryLogBean,MongoOperations mongoOperations) throws Exception {
 		
 		
 //		log.info("rutenURL:" + value.toString());	//debug

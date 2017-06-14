@@ -101,20 +101,35 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	@Override
 	public void reduce(Text key, Iterable<Text> value, Context context) {
-
 		try {
-			Date date = new Date();
-			for (Text url : value) {
-				log.info("key >>>>>>>>>>>>>>>>>>>>>>" + key);
-				log.info("value >>>>>>>>>>>>>>>>>>>>>>" + value);
-//				JSONObject json = new JSONObject();
-//				json.put("url", url.toString());
-//				json.put("status", (key.toString().matches("\\d{16}")?"1":"0"));	//(0:未分類  1:已分類  2:跳過)
-//				json.put("ad_class", key.toString().matches("\\d{16}")?key.toString():"");
-//				json.put("create_date", date);
-//				json.put("update_date", date);
-//				kafkaList.add(json);
-			}
+			
+			String data[] = key.toString().split(SYMBOL);
+//			JSONObject json = new JSONObject();
+//			json.put("url", url.toString());
+//			json.put("status", (key.toString().matches("\\d{16}") ? "1" : "0"));
+//			json.put("ad_class", key.toString().matches("\\d{16}") ? key.toString() : "");
+//			json.put("create_date", date);
+//			json.put("update_date", date);
+//			kafkaList.add(json);
+			
+			
+			
+			
+			
+			
+			
+//			Date date = new Date();
+//			for (Text url : value) {
+//				log.info("key >>>>>>>>>>>>>>>>>>>>>>" + key);
+//				log.info("value >>>>>>>>>>>>>>>>>>>>>>" + value);
+////				JSONObject json = new JSONObject();
+////				json.put("url", url.toString());
+////				json.put("status", (key.toString().matches("\\d{16}")?"1":"0"));	//(0:未分類  1:已分類  2:跳過)
+////				json.put("ad_class", key.toString().matches("\\d{16}")?key.toString():"");
+////				json.put("create_date", date);
+////				json.put("update_date", date);
+////				kafkaList.add(json);
+//			}
 
 		} catch (Exception e) {
 			log.error(key, e);

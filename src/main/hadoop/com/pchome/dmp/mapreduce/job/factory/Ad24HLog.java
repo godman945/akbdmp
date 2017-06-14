@@ -21,26 +21,43 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
+import com.pchome.dmp.data.mongo.pojo.ClassUrlMongoBean;
 import com.pchome.dmp.enumerate.EnumBreadCrumbDirectlyMatch;
 import com.pchome.dmp.enumerate.PersonalInfoEnum;
 
+
+@SuppressWarnings("unchecked")
 public class Ad24HLog extends ACategoryLogData {
 
-	public Object processCategory(String[] values, CategoryLogBean categoryLogBean) throws Exception {
+	
+	public Object processCategory(String[] values, CategoryLogBean categoryLogBean,MongoOperations mongoOperations) throws Exception {
 
 		String memid = values[1];
 		String uuid = values[2];
 		String sourceUrl = values[4];
 		String adClass = "";
 		
-		if (StringUtils.isBlank(memid) && StringUtils.isBlank(uuid)) {
+		if ((StringUtils.isBlank(memid) || memid.equals("null")) && (StringUtils.isBlank(uuid)|| uuid.equals("null"))) {
 			return null;
 		}
 
 		if (StringUtils.isBlank(sourceUrl)) {
 			return null;
 		}
+		
+		
+		
+		
+		
+		Query query = new Query(Criteria.where("_id").is("59404c00e4b0ed734829caf4"));
+		ClassUrlMongoBean classUrlMongoBean = (ClassUrlMongoBean)
+		mongoOperations.findOne(query, ClassUrlMongoBean.class);
+		System.out.println(classUrlMongoBean.getUrl());
+		System.out.println("AAA");
 
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		Map<String, String> oriMatchMap = new HashMap<String, String>();
@@ -174,10 +191,17 @@ public class Ad24HLog extends ACategoryLogData {
 			}
 		}
 
+		//1.enum比對不到且爬蟲也沒有
+		if(StringUtils.isBlank(adClass)){
+			return null;
+		}
+		
+		
 		if(StringUtils.isNotBlank(memid)){
 			APersonalInfo aPersonalInfo = PersonalInfoFactory.getAPersonalInfoFactory(PersonalInfoEnum.MEMBER);
 			Map<String, Object> memberMap = aPersonalInfo.getMap();
 			memberMap.put("memid", memid);
+			
 			Map<String, Object> userInfo = (Map<String, Object>) aPersonalInfo.personalData(memberMap);
 			categoryLogBean.setAdClass(adClass);
 			categoryLogBean.setMemid(values[1]);
@@ -186,7 +210,6 @@ public class Ad24HLog extends ACategoryLogData {
 			categoryLogBean.setSource("24h");
 			categoryLogBean.setSex(StringUtils.isNotBlank(userInfo.get("sex").toString()) ? userInfo.get("sex").toString(): "null");
 			categoryLogBean.setAge(StringUtils.isNotBlank(userInfo.get("age").toString()) ? userInfo.get("age").toString(): "null");
-			
 			return categoryLogBean;
 		}else if(StringUtils.isNotBlank(uuid)){
 			APersonalInfo aPersonalInfo = PersonalInfoFactory.getAPersonalInfoFactory(PersonalInfoEnum.UUID);
@@ -202,15 +225,12 @@ public class Ad24HLog extends ACategoryLogData {
 			categoryLogBean.setSex(StringUtils.isNotBlank(userInfo.get("sex").toString()) ? userInfo.get("sex").toString(): "null");
 			categoryLogBean.setAge(StringUtils.isNotBlank(userInfo.get("age").toString()) ? userInfo.get("age").toString(): "null");
 			return categoryLogBean;
-//			Map<String, com.pchome.dmp.mapreduce.job.categorylog.CategoryLogMapper.combinedValue> clsfyCraspMap = categoryLogBean.getClsfyCraspMap();
-//			com.pchome.dmp.mapreduce.job.categorylog.CategoryLogMapper.combinedValue combineObj = clsfyCraspMap.get(adClass);
-//			System.out.println(combineObj.age);
-//			System.out.println(combineObj.gender);
 		}
 
 		return null;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static NameValuePair requestGetAPI42(String uri) throws Exception {
 
 		HttpParams httpparameters = new BasicHttpParams();

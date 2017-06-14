@@ -22,9 +22,9 @@ public class CategoryLogFactory {
 			}
 		case PV_RETUN:
 			if (objectMap.containsKey(categoryLogEnum.getKey())) {
-				return (AdRetunLog) objectMap.get(categoryLogEnum.getKey());
+				return (AdRutenLog) objectMap.get(categoryLogEnum.getKey());
 			} else {
-				AdRetunLog adRetunLog = new AdRetunLog();
+				AdRutenLog adRetunLog = new AdRutenLog();
 				objectMap.put(categoryLogEnum.getKey(), adRetunLog);
 				return adRetunLog;
 			}
