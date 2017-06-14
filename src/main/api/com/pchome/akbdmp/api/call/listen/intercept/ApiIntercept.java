@@ -32,7 +32,7 @@ public class ApiIntercept {
 		try {
 			Object[] args = proceedingJoinPoint.getArgs();
 			HttpServletRequest request = (HttpServletRequest) args[0];
-			log.info(request.getHeader("User-Agent"));
+//			log.info(request.getHeader("User-Agent"));
 			request.setAttribute("device", "pc");
 			if (request.getHeader("User-Agent").toUpperCase().indexOf("WINDOWS") > 0) {
 				request.setAttribute("device", "pc");
