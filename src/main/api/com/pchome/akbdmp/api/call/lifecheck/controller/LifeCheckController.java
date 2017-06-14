@@ -42,7 +42,7 @@ public class LifeCheckController extends BaseController {
 	@ResponseBody
 	public Object LifeCheck(HttpServletRequest request) throws Exception {
 		try {
-			log.info(">>>>>> call LifeCheck");
+//			log.info(">>>>>> call LifeCheck");
 			if (active.equals("stg")) {
 				Jedis jedis = new Jedis("redisdev.mypchome.com.tw");
 				jedis.set(DmpLifeCheckEnum.CHECK_KEY.getKey(), DmpLifeCheckEnum.CHECK_KEY.getValue());

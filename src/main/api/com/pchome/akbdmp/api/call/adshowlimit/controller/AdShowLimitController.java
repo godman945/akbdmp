@@ -58,7 +58,7 @@ public class AdShowLimitController extends BaseController {
 			@RequestParam(defaultValue = "", required = false) String[] adKey
 			) throws Exception {
 		try {
-			log.info(">>>>>> call getAdShowLimit : adKey:" + Arrays.asList(adKey));
+//			log.info(">>>>>> call getAdShowLimit : adKey:" + Arrays.asList(adKey));
 			JSONObject paramaterJson = new JSONObject();
 			paramaterJson.put(DmpAdShowLimitParamaterEnum.AD_KEY.getKey(), adKey);
 			ACheckData aCheckData = checkDataFactory.getaCheckData(DmpCheckObjNameEnum.CHECK_ADSHOW_LIMIT);

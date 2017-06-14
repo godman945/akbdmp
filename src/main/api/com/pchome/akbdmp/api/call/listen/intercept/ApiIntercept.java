@@ -58,7 +58,7 @@ public class ApiIntercept {
 		returnObject = proceedingJoinPoint.proceed();
 		time2 = System.currentTimeMillis();
 		final Signature signature = proceedingJoinPoint.getSignature();
-		log.info(signature.getDeclaringTypeName() + "." + signature.getName()+">>>>花費:"+((double) time2 - time1) / 1000+"秒");
+//		log.info(signature.getDeclaringTypeName() + "." + signature.getName()+">>>>花費:"+((double) time2 - time1) / 1000+"秒");
 		return returnObject;
 	}
 }
