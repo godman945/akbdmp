@@ -15,6 +15,7 @@ public class CategoryLogBean {
 	private String sex;
 	private String age;
 	private String recodeDate;
+	private String source;
 	private Map<String, combinedValue> clsfyCraspMap ;
 	private ArrayList<Map<String, String>> list; 
 	
@@ -81,6 +82,14 @@ public class CategoryLogBean {
 
 	public void setList(ArrayList<Map<String, String>> list) {
 		this.list = list;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
 	}
 
 	

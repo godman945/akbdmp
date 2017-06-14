@@ -8,9 +8,8 @@ import com.pchome.dmp.enumerate.PersonalInfoEnum;
 
 public class AdClickLog extends ACategoryLogData {
 
-	public Object processCategory(String[] values, Object obj,CategoryLogBean categoryLogBean) throws Exception {
-		PersonalInfoFactory personalInfoFactory = (PersonalInfoFactory) obj;
-		APersonalInfo aPersonalInfo = personalInfoFactory.getAPersonalInfoFactory(PersonalInfoEnum.MEMBER);
+	public Object processCategory(String[] values, CategoryLogBean categoryLogBean) throws Exception {
+		APersonalInfo aPersonalInfo = PersonalInfoFactory.getAPersonalInfoFactory(PersonalInfoEnum.MEMBER);
 		Map<String,Object> map = aPersonalInfo.getMap();
 		map.put("1", "memid");
 		

@@ -9,7 +9,7 @@ public class CategoryLogFactory {
 
 	private static Map<String, Object> objectMap = new HashMap<String, Object>();
 
-	public ACategoryLogData getACategoryLogObj(CategoryLogEnum categoryLogEnum) throws Exception {
+	public static ACategoryLogData getACategoryLogObj(CategoryLogEnum categoryLogEnum) throws Exception {
 
 		switch (categoryLogEnum) {
 		case AD_CLICK:

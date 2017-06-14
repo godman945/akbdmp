@@ -26,7 +26,7 @@ import com.pchome.dmp.mapreduce.prsnldata.PersonalDataPhase2Mapper.combinedValue
 
 public class AdRetunLog extends ACategoryLogData {
 
-	public Object processCategory(String[] values, Object obj,CategoryLogBean categoryLogBean) throws Exception {
+	public Object processCategory(String[] values, CategoryLogBean categoryLogBean) throws Exception {
 		
 		
 //		log.info("rutenURL:" + value.toString());	//debug
