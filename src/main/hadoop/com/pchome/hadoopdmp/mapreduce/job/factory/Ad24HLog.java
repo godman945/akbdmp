@@ -36,7 +36,6 @@ import com.pchome.hadoopdmp.enumerate.PersonalInfoEnum;
 public class Ad24HLog extends ACategoryLogData {
 
 	
-	@SuppressWarnings("unused")
 	public Object processCategory(String[] values, CategoryLogBean categoryLogBean,MongoOperations mongoOperations) throws Exception {
 
 		String memid = values[1];
@@ -68,6 +67,7 @@ public class Ad24HLog extends ACategoryLogData {
 		}
 		
 		if(classUrlMongoBean != null){
+			//爬蟲
 			if(classUrlMongoBean.getStatus() == "0"){
 				adClass = crawlerGetAdclass(categoryLogBean,sourceUrl);
 				if(StringUtils.isNotBlank(adClass)){
@@ -76,6 +76,11 @@ public class Ad24HLog extends ACategoryLogData {
 					classUrlMongoBean.setUpdate_dateDate(date);
 					mongoOperations.save(classUrlMongoBean);
 				}
+			}
+			
+			//比對個資
+			if(classUrlMongoBean.getStatus() == "0"){
+				adClass = classUrlMongoBean.getAd_class();
 			}
 		}
 		
