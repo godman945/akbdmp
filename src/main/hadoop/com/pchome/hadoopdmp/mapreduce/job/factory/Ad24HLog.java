@@ -73,6 +73,19 @@ public class Ad24HLog extends ACategoryLogData {
 			}
 		}
 		
+		if (classUrlMongoBean == null){
+			adClass = crawlerGetAdclass(categoryLogBean,sourceUrl);
+			Date date = new Date();
+			ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
+			classUrlMongoBeanCreate.setAd_class(adClass);
+			classUrlMongoBeanCreate.setStatus(StringUtils.isBlank(adClass) ? "0" : "1");
+			classUrlMongoBeanCreate.setUrl(sourceUrl); 
+			classUrlMongoBeanCreate.setCreate_date(date);
+			classUrlMongoBeanCreate.setUpdate_dateDate(date);
+			mongoOperations.save(classUrlMongoBeanCreate);
+		}
+		
+		
 		//1.enum比對不到且爬蟲也沒有
 		if(StringUtils.isBlank(adClass)){
 			return null;
