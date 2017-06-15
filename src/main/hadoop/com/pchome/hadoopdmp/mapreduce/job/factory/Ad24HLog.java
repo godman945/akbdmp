@@ -57,7 +57,7 @@ public class Ad24HLog extends ACategoryLogData {
 		
 		if(classUrlMongoBean != null){
 			//爬蟲
-			if(classUrlMongoBean.getStatus() == "0"){
+			if(classUrlMongoBean.getStatus().equals("0")){
 				adClass = crawlerGetAdclass(categoryLogBean,sourceUrl);
 				if(StringUtils.isNotBlank(adClass)){
 					Date date = new Date();
@@ -68,7 +68,7 @@ public class Ad24HLog extends ACategoryLogData {
 			}
 			
 			//比對個資
-			if(classUrlMongoBean.getStatus() == "1"){
+			if(classUrlMongoBean.getStatus().equals("1")){
 				adClass = classUrlMongoBean.getAd_class();
 			}
 		}
@@ -93,6 +93,8 @@ public class Ad24HLog extends ACategoryLogData {
 		
 		//2取個資
 		if(StringUtils.isNotBlank(memid)){
+			
+			
 			APersonalInfo aPersonalInfo = PersonalInfoFactory.getAPersonalInfoFactory(PersonalInfoEnum.MEMBER);
 			Map<String, Object> memberMap = aPersonalInfo.getMap();
 			memberMap.put("memid", memid);
@@ -121,18 +123,6 @@ public class Ad24HLog extends ACategoryLogData {
 			categoryLogBean.setAge(StringUtils.isNotBlank(userInfo.get("age").toString()) ? userInfo.get("age").toString(): "null");
 			return categoryLogBean;
 		}
-
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 
 
 		return null;
@@ -167,7 +157,9 @@ public class Ad24HLog extends ACategoryLogData {
 	}
 
 	
-	
+//	public String memberInfoIsExist(CategoryLogBean categoryLogBean,String sourceUrl) throws Exception{
+//		
+//	}
 	
 	
 	public String crawlerGetAdclass(CategoryLogBean categoryLogBean,String sourceUrl) throws Exception{
