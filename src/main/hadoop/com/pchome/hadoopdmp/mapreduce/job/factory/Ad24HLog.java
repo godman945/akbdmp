@@ -32,7 +32,7 @@ import com.pchome.hadoopdmp.enumerate.EnumBreadCrumbDirectlyMatch;
 import com.pchome.hadoopdmp.enumerate.PersonalInfoEnum;
 
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({ "unchecked", "deprecation" ,"static-access","resource"})
 public class Ad24HLog extends ACategoryLogData {
 
 	
@@ -42,28 +42,6 @@ public class Ad24HLog extends ACategoryLogData {
 		String uuid = values[2];
 		String sourceUrl = values[4];
 		String adClass = "";
-		
-//		if(true){
-//			ClassCountMongoBean classCountMongoBean = null;
-//			Query query = new Query(Criteria.where("user_id").is("souushiow".trim()));
-//			classCountMongoBean = mongoOperations.findOne(query, ClassCountMongoBean.class);
-//			
-//			if(StringUtils.isBlank(classCountMongoBean.getUser_info().get("sex").toString())){
-//				
-//			}
-//			
-//			
-//			
-//			
-//			return null;	
-//		}
-		
-		
-		
-		
-		
-		
-		
 		
 		if ((StringUtils.isBlank(memid) || memid.equals("null")) && (StringUtils.isBlank(uuid) || uuid.equals("null"))) {
 			return null;
@@ -81,7 +59,7 @@ public class Ad24HLog extends ACategoryLogData {
 			//爬蟲
 			if(classUrlMongoBean.getStatus().equals("0")){
 				adClass = crawlerGetAdclass(categoryLogBean,sourceUrl);
-				if(StringUtils.isNotBlank(adClass)){
+				if(StringUtils.isNotBlank(adClass) && !adClass.equals("unclassed")){
 					Date date = new Date();
 					classUrlMongoBean.setStatus("1");
 					classUrlMongoBean.setUpdate_dateDate(date);
@@ -100,7 +78,7 @@ public class Ad24HLog extends ACategoryLogData {
 			Date date = new Date();
 			ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
 			classUrlMongoBeanCreate.setAd_class(adClass);
-			classUrlMongoBeanCreate.setStatus(StringUtils.isBlank(adClass) ? "0" : "1");
+			classUrlMongoBeanCreate.setStatus((StringUtils.isBlank(adClass) || adClass.equals("unclassed")) ? "0" : "1");
 			classUrlMongoBeanCreate.setUrl(sourceUrl); 
 			classUrlMongoBeanCreate.setCreate_date(date);
 			classUrlMongoBeanCreate.setUpdate_dateDate(date);
@@ -108,7 +86,7 @@ public class Ad24HLog extends ACategoryLogData {
 		}
 		
 		//1.enum比對不到且爬蟲也沒有
-		if(StringUtils.isBlank(adClass)){
+		if(StringUtils.isBlank(adClass) || adClass.equals("unclassed")){
 			return null;
 		}
 		
@@ -146,7 +124,6 @@ public class Ad24HLog extends ACategoryLogData {
 	}
 	
 	
-	@SuppressWarnings("deprecation")
 	public static NameValuePair requestGetAPI42(String uri) throws Exception {
 
 		HttpParams httpparameters = new BasicHttpParams();
