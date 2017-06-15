@@ -23,10 +23,10 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import com.pchome.hadoopdmp.data.mongo.pojo.ClassCountMongoBean;
 import com.pchome.hadoopdmp.data.mongo.pojo.ClassUrlMongoBean;
 import com.pchome.hadoopdmp.enumerate.EnumBreadCrumbDirectlyMatch;
 import com.pchome.hadoopdmp.enumerate.PersonalInfoEnum;
@@ -42,6 +42,28 @@ public class Ad24HLog extends ACategoryLogData {
 		String uuid = values[2];
 		String sourceUrl = values[4];
 		String adClass = "";
+		
+//		if(true){
+//			ClassCountMongoBean classCountMongoBean = null;
+//			Query query = new Query(Criteria.where("user_id").is("souushiow".trim()));
+//			classCountMongoBean = mongoOperations.findOne(query, ClassCountMongoBean.class);
+//			
+//			if(StringUtils.isBlank(classCountMongoBean.getUser_info().get("sex").toString())){
+//				
+//			}
+//			
+//			
+//			
+//			
+//			return null;	
+//		}
+		
+		
+		
+		
+		
+		
+		
 		
 		if ((StringUtils.isBlank(memid) || memid.equals("null")) && (StringUtils.isBlank(uuid) || uuid.equals("null"))) {
 			return null;
@@ -85,7 +107,6 @@ public class Ad24HLog extends ACategoryLogData {
 			mongoOperations.save(classUrlMongoBeanCreate);
 		}
 		
-		
 		//1.enum比對不到且爬蟲也沒有
 		if(StringUtils.isBlank(adClass)){
 			return null;
@@ -93,41 +114,38 @@ public class Ad24HLog extends ACategoryLogData {
 		
 		//2取個資
 		if(StringUtils.isNotBlank(memid)){
-			
-			
-			APersonalInfo aPersonalInfo = PersonalInfoFactory.getAPersonalInfoFactory(PersonalInfoEnum.MEMBER);
-			Map<String, Object> memberMap = aPersonalInfo.getMap();
-			memberMap.put("memid", memid);
-			
-			Map<String, Object> userInfo = (Map<String, Object>) aPersonalInfo.personalData(memberMap);
 			categoryLogBean.setAdClass(adClass);
 			categoryLogBean.setMemid(values[1]);
 			categoryLogBean.setUuid(values[2]);
-//			categoryLogBean.setRecodeDate(recodeDate);
 			categoryLogBean.setSource("24h");
-			categoryLogBean.setSex(StringUtils.isNotBlank(userInfo.get("sex").toString()) ? userInfo.get("sex").toString(): "null");
-			categoryLogBean.setAge(StringUtils.isNotBlank(userInfo.get("age").toString()) ? userInfo.get("age").toString(): "null");
+			categoryLogBean.setType("memid");
 			return categoryLogBean;
 		}else if(StringUtils.isNotBlank(uuid)){
 			APersonalInfo aPersonalInfo = PersonalInfoFactory.getAPersonalInfoFactory(PersonalInfoEnum.UUID);
 			Map<String, Object> uuidMap = aPersonalInfo.getMap();
-			uuidMap.put("adClass", adClass);
+			uuidMap.put("adClass", adClass); 
 			uuidMap.put("ClsfyCraspMap", categoryLogBean.getClsfyCraspMap());
 			Map<String, Object> userInfo = (Map<String, Object>) aPersonalInfo.personalData(uuidMap);
 			categoryLogBean.setAdClass(adClass);
 			categoryLogBean.setMemid(values[1]);
 			categoryLogBean.setUuid(values[2]);
-//			categoryLogBean.setRecodeDate(recodeDate);
 			categoryLogBean.setSource("24h");
 			categoryLogBean.setSex(StringUtils.isNotBlank(userInfo.get("sex").toString()) ? userInfo.get("sex").toString(): "null");
 			categoryLogBean.setAge(StringUtils.isNotBlank(userInfo.get("age").toString()) ? userInfo.get("age").toString(): "null");
+			categoryLogBean.setType("uuid");
 			return categoryLogBean;
 		}
-
-
 		return null;
 	}
-
+	
+	public boolean memberInfoIsExist(String memid,MongoOperations mongoOperations) throws Exception{
+		ClassCountMongoBean classCountMongoBean = null;
+		Query query = new Query(Criteria.where("user_id").is(memid.trim()));
+		classCountMongoBean = mongoOperations.findOne(query, ClassCountMongoBean.class);
+		return classCountMongoBean == null ? false : true;
+	}
+	
+	
 	@SuppressWarnings("deprecation")
 	public static NameValuePair requestGetAPI42(String uri) throws Exception {
 
@@ -155,12 +173,6 @@ public class Ad24HLog extends ACategoryLogData {
 		
 		}
 	}
-
-	
-//	public String memberInfoIsExist(CategoryLogBean categoryLogBean,String sourceUrl) throws Exception{
-//		
-//	}
-	
 	
 	public String crawlerGetAdclass(CategoryLogBean categoryLogBean,String sourceUrl) throws Exception{
 		String adClass="";

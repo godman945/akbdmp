@@ -158,7 +158,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		// values[3] //behavior
 
 		String[] values = new String[100];
-		values[1] = "sts0330";
+		values[1] = "souushiow";
 		values[2] = "alex2";
 		values[13] = "pv";
 		values[4] = "http://24h.pchome.com.tw/region/DICM";
@@ -179,34 +179,6 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		log.info(">>>>>> " + values[3]);
 		log.info("----------------------------------- data");
 		try {
-
-			// String domain = "";
-			// Pattern p =
-			// Pattern.compile("(http|https)://([A-Za-z0-9||_||-]*\\.)*([A-Za-z0-9||_||-]*)/");
-			// Matcher m = p.matcher(values[4]);
-			// if( m.find() ) {
-			// domain = m.group();
-			// if( domain.charAt(domain.length()-1) == '/' ) {
-			// domain = domain.substring(0, domain.length()-1);
-			// }
-			// }
-			//
-			// String behavior = "24h";
-			// if( domain.contains("ruten.com.tw") ) {
-			// behavior = "ruten";
-			// } else if( domain.contains("24h.pchome.com.tw") ) {
-			// behavior = "24h";
-			// }
-
-			// 1.reg待補
-			// 2.走ad_click
-			// if (values[13].equals("ck") && StringUtils.isNotBlank(values[15])
-			// && values[15].matches("\\d{16}")) {
-			// ACategoryLogData aCategoryLogData =
-			// categoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
-			// aCategoryLogData.processCategory(values, personalInfoFactory,
-			// categoryLogBean);
-			// }
 
 			CategoryLogBean categoryLogBeanResult = null;
 			// 露天
@@ -231,10 +203,8 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			if (categoryLogBeanResult == null) {
 				return;
 			}
-
-			String result = categoryLogBeanResult.getMemid() + SYMBOL + categoryLogBeanResult.getUuid() + SYMBOL
-					+ categoryLogBeanResult.getAdClass() + SYMBOL + categoryLogBeanResult.getAge() + SYMBOL
-					+ categoryLogBeanResult.getSex() + SYMBOL + categoryLogBeanResult.getSource();
+			categoryLogBeanResult.setRecodeDate(record_date);
+			String result = categoryLogBeanResult.getMemid() + SYMBOL + categoryLogBeanResult.getUuid() + SYMBOL + categoryLogBeanResult.getAdClass() + SYMBOL + categoryLogBeanResult.getAge() + SYMBOL + categoryLogBeanResult.getSex() + SYMBOL + categoryLogBeanResult.getSource()+ SYMBOL +categoryLogBeanResult.getRecodeDate() + SYMBOL + categoryLogBeanResult.getType();
 			log.info(">>>>>> write key:" + result);
 			keyOut.set(result);
 			context.write(keyOut, valueOut);

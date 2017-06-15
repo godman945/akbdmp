@@ -1,10 +1,7 @@
 package com.pchome.hadoopdmp.mapreduce.job.factory;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.hadoop.conf.Configuration;
 
 import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper.combinedValue;
 
@@ -16,10 +13,19 @@ public class CategoryLogBean {
 	private String age;
 	private String recodeDate;
 	private String source;
+	private String type;
 	private Map<String, combinedValue> clsfyCraspMap ;
 	private ArrayList<Map<String, String>> list; 
 	
 	
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
 	public String getMemid() {
 		return memid;
 	}
