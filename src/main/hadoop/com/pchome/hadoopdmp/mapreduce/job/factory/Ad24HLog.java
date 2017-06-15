@@ -54,17 +54,6 @@ public class Ad24HLog extends ACategoryLogData {
 		ClassUrlMongoBean classUrlMongoBean = null;
 		Query query = new Query(Criteria.where("url").is(sourceUrl.trim()));
 		classUrlMongoBean = mongoOperations.findOne(query, ClassUrlMongoBean.class);
-		if (classUrlMongoBean == null){
-			adClass = crawlerGetAdclass(categoryLogBean,sourceUrl);
-			Date date = new Date();
-			ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
-			classUrlMongoBeanCreate.setAd_class(adClass);
-			classUrlMongoBeanCreate.setStatus(StringUtils.isBlank(adClass) ? "0" : "1");
-			classUrlMongoBeanCreate.setUrl(sourceUrl); 
-			classUrlMongoBeanCreate.setCreate_date(date);
-			classUrlMongoBeanCreate.setUpdate_dateDate(date);
-			mongoOperations.save(classUrlMongoBean);
-		}
 		
 		if(classUrlMongoBean != null){
 			//爬蟲
@@ -79,7 +68,7 @@ public class Ad24HLog extends ACategoryLogData {
 			}
 			
 			//比對個資
-			if(classUrlMongoBean.getStatus() == "0"){
+			if(classUrlMongoBean.getStatus() == "1"){
 				adClass = classUrlMongoBean.getAd_class();
 			}
 		}
