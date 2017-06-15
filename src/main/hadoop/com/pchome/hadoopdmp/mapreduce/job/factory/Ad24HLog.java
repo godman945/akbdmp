@@ -330,17 +330,7 @@ public class Ad24HLog extends ACategoryLogData {
 			}
 		}
 		
-		
-
-		
-		
-		
-		
-		
-		
-		
-		return null;
-		
+		return adClass;
 	}
 	
 	
