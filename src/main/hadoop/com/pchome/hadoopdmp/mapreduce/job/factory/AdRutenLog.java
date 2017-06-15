@@ -70,7 +70,7 @@ public class AdRutenLog extends ACategoryLogData {
 				}
 			}
 			
-			//比對個資
+			//有ad_class
 			if(classUrlMongoBean.getStatus().equals("1")){
 				adClass = classUrlMongoBean.getAd_class();
 			}

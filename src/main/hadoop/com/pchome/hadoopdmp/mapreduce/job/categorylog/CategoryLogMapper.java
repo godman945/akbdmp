@@ -164,7 +164,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		values[4] = "http://24h.pchome.com.tw/region/DICM";
 		values[15] = "alex5";
 		values[3] = "alex6";
-
+		
 		// String[] values = value.toString().split(SYMBOL);
 		// if (values.length < LOG_LENGTH) {
 		// log.info("values.length < " + LOG_LENGTH);
@@ -181,19 +181,27 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		try {
 
 			CategoryLogBean categoryLogBeanResult = null;
+			//click
+			if (values[13].equals("ck") && StringUtils.isNotBlank(values[4]) && StringUtils.isNotBlank(values[15])) {
+//				this.categoryLogBean = new CategoryLogBean();
+				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
+				categoryLogBean.setClsfyCraspMap(clsfyCraspMap);
+				categoryLogBean.setList(list);
+				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean,mongoOperations);
+			}
+			
 			// 露天
 			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].contains("ruten")) {
+//				this.categoryLogBean = new CategoryLogBean();
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
 				categoryLogBean.setClsfyCraspMap(clsfyCraspMap);
 				categoryLogBean.setList(list);
 				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean,mongoOperations);
-				// result2 = result.getMemid()
-				// +SYMBOL+result.getUuid()+SYMBOL+result.getAdClass()+SYMBOL+result.getAge()+SYMBOL+result.getSex();
 			}
 
 			// 24h
 			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].contains("24h")) {
-				this.categoryLogBean = new CategoryLogBean();
+//				this.categoryLogBean = new CategoryLogBean();
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
 				categoryLogBean.setList(list);
 				categoryLogBean.setClsfyCraspMap(clsfyCraspMap);
