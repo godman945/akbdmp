@@ -133,40 +133,6 @@ public class Ad24HLog extends ACategoryLogData {
 		
 		
 		
-//		ClassUrlMongoBean classUrlMongoBean = null;
-//		Query query = new Query(Criteria.where("_id").is("59419cede4b054a874e9c442"));
-//		classUrlMongoBean = mongoOperations.findOne(query, ClassUrlMongoBean.class);
-//		if(classUrlMongoBean == null){
-//			classUrlMongoBean = new ClassUrlMongoBean();
-//			classUrlMongoBean.setAd_class("aaa");
-//			classUrlMongoBean.setStatus("0");;
-//			classUrlMongoBean.setCreate_date(new Date());
-//			classUrlMongoBean.setUrl("123.com");
-//			classUrlMongoBean.setUpdate_dateDate(new Date());
-//			mongoOperations.save(ClassUrlMongoBean.class);
-//		}
-//		
-		
-//		MongoTemplate mongoTemplate = (MongoTemplate) mongoOperations;
-		
-//		ClassUrlMongoBean classUrlMongoBean2 = new ClassUrlMongoBean();
-//		classUrlMongoBean2.setAd_class("aaa");
-////		classUrlMongoBean2.setStatus("0");
-////		classUrlMongoBean2.setCreate_date(new Date());
-////		classUrlMongoBean2.setUrl("123.com");
-////		classUrlMongoBean2.setUpdate_dateDate(new Date());
-////		mongoOperations.save(ClassUrlMongoBean.class);
-//		mongoOperations.save(classUrlMongoBean2);
-		
-//		Date date = new Date();
-//		ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
-//		classUrlMongoBeanCreate.setAd_class(adClass);
-//		classUrlMongoBeanCreate.setStatus(StringUtils.isBlank(adClass) ? "0" : "1");
-//		classUrlMongoBeanCreate.setUrl(sourceUrl); 
-//		classUrlMongoBeanCreate.setCreate_date(date);
-//		classUrlMongoBeanCreate.setUpdate_dateDate(date);
-//		mongoOperations.save(classUrlMongoBean);
-		
 
 
 		return null;
