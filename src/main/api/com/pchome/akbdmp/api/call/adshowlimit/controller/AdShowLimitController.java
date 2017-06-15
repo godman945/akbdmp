@@ -50,6 +50,9 @@ public class AdShowLimitController extends BaseController {
 	
 	Log log = LogFactory.getLog(AdShowLimitController.class);
 
+	private static long time1 =  System.currentTimeMillis();
+	
+	private long time2;
 	
 	// @CrossOrigin(origins = {"http://pcbwebstg.pchome.com.tw"})
 	@RequestMapping(value = "/api/getAdShowLimit", method = RequestMethod.POST, headers = "Accept=application/json;charset=UTF-8")
@@ -58,7 +61,12 @@ public class AdShowLimitController extends BaseController {
 			@RequestParam(defaultValue = "", required = false) String[] adKey
 			) throws Exception {
 		try {
-//			log.info(">>>>>> call getAdShowLimit : adKey:" + Arrays.asList(adKey));
+			time2 = System.currentTimeMillis();
+			if(((double) time2 - time1) / 1000 >= 600){
+				log.info(">>>>>> call getAdShowLimit : adKey:" + Arrays.asList(adKey));
+				time1 = time2;
+			}
+
 			JSONObject paramaterJson = new JSONObject();
 			paramaterJson.put(DmpAdShowLimitParamaterEnum.AD_KEY.getKey(), adKey);
 			ACheckData aCheckData = checkDataFactory.getaCheckData(DmpCheckObjNameEnum.CHECK_ADSHOW_LIMIT);
