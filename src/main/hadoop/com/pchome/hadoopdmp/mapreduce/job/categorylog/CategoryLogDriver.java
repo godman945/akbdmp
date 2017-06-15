@@ -169,9 +169,9 @@ public class CategoryLogDriver {
 		job.setMapOutputValueClass(Text.class);
 		job.setReducerClass(CategoryLogReducer.class);
 		job.setInputFormatClass(LzoTextInputFormat.class);
-//		job.setOutputKeyClass(Text.class);
-//		job.setOutputValueClass(Text.class);
-//		job.setNumReduceTasks(1);
+		job.setOutputKeyClass(Text.class);
+		job.setOutputValueClass(Text.class);
+		job.setNumReduceTasks(1);
 
 		//job.setOutputFormatClass(NullOutputFormat.class);
 		FileOutputFormat.setOutputPath(job, new Path("/home/webuser/dmp/crawlUrls_TEST"));//home/webuser/dmp/crawlUrls		bessie
@@ -194,7 +194,11 @@ public class CategoryLogDriver {
 
 			}
 
-			FileInputFormat.addInputPaths(job, alllogOpRange.toString());
+			String bessieTempPath="/home/webuser/akb/storedata/alllog/2017-05-01/00";
+			
+//			FileInputFormat.addInputPaths(job, alllogOpRange.toString());
+			FileInputFormat.addInputPaths(job, bessieTempPath);
+			
 			log.info("alllogOpRange:" + alllogOpRange);
 		} else if( dateStr.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}") ) {
 			alllogStr = alllog + dateStr.replaceAll(" ", "/");

@@ -11,6 +11,8 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.codehaus.jettison.json.JSONObject;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -24,11 +26,14 @@ import com.pchome.hadoopdmp.spring.config.bean.mongodb.MongodbHadoopConfig;
 @Component
 public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 
-	Log log = LogFactory.getLog("CategoryLogMapper");
+	Log log = LogFactory.getLog("CategoryLogReducer");
 	
 	private MongoOperations mongoOperations;
 	
 	private final static String SYMBOL = String.valueOf(new char[]{9, 31});
+	
+	private Text keyOut = new Text();
+	private Text valueOut = new Text();
 
 	public static String record_date;
 
@@ -55,9 +60,16 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	List<JSONObject> kafkaList = new ArrayList<>();
 
 	Producer<String, String> producer = null;
+	
+	@Autowired
+	WriteAkbDmp writeAkbDmp;
+	
+	
+//	private CategoryLogReducer categoryLogReducer;
 
 	@Override
 	public void setup(Context context) {
+		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		try {
     		System.setProperty("spring.profiles.active", "prd");
     		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
@@ -84,22 +96,33 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 //			props.put("key.serializer", kafkaKeySerializer);
 //			props.put("value.serializer", kafkaValueSerializer);
 //			producer = new KafkaProducer<String, String>(props);
+    		
+    		
 			
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
 	}
 
+	public static void main(String[] args) throws Exception {
+//		System.setProperty("spring.profiles.active", "prd");
+//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//		CategoryLogReducer categoryLogReducer = ctx.getBean(CategoryLogReducer.class);
+//		categoryLogReducer.reduce(null, null, null);
+	}
+	
 	@Override
 	public void reduce(Text key, Iterable<Text> value, Context context) {
+		log.info(">>>>>> reduce start : " + key);
+//		System.setProperty("spring.profiles.active", "prd");
+//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+		
 		// 0:Memid + 1:Uuid + 2:AdClass + 3:Age + 4:Sex + 5:Source + 6:RecodeDate + 7:Type(memid or uuid)
 		try {
 			
-			String data[] = key.toString().split(SYMBOL);
+//			String key1="bessie	0011017816840000	29	F	ruten	 date	uuid";
 			
-			Date date = new Date();
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			String dateString = sdf.format(date);
+			String data[] = key.toString().split(SYMBOL);
 			
 			ClassCountLogBean classCountLogBean = new ClassCountLogBean();
 			classCountLogBean.setMemid(data[0]);
@@ -108,12 +131,23 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 			classCountLogBean.setAge(data[3]);
 			classCountLogBean.setSex(data[4]);
 			classCountLogBean.setSource(data[5]);
-			classCountLogBean.setRecordDate(dateString);
+			classCountLogBean.setRecordDate(data[6]);
 			classCountLogBean.setType(data[7]);
-			mongoOperations.save(classCountLogBean);
+			this.writeAkbDmp.process(classCountLogBean);
 			
 			
-			
+			/*
+ClassCountLogBean classCountLogBean = new ClassCountLogBean();
+   classCountLogBean.setMemid(data[0]);
+   classCountLogBean.setUuid(data[1]);
+   classCountLogBean.setAdClass(data[2]);
+   classCountLogBean.setAge(data[3]);
+   classCountLogBean.setSex(data[4]);
+   classCountLogBean.setSource(data[5]);
+   classCountLogBean.setRecordDate(dateString);
+   classCountLogBean.setType(data[7]);
+   mongoOperations.save(classCountLogBean);
+			 * */
 			
 			
 
@@ -140,6 +174,11 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 ////				kafkaList.add(json);
 //			}
 
+			
+			log.info(">>>>>> write key:" + key);
+			keyOut.set(key);
+			context.write(keyOut, valueOut);
+			
 		} catch (Exception e) {
 			log.error(key, e);
 		}
