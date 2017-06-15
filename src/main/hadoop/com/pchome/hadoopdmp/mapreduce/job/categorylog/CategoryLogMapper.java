@@ -54,6 +54,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 
 	@Override
 	public void setup(Context context) {
+		log.info(">>>>>> Mapper  setup>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		try {
 			System.setProperty("spring.profiles.active", "prd");
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
@@ -108,7 +109,6 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 
 	@Override
 	public void map(LongWritable offset, Text value, Context context) {
-
 		try {
 			//跑 local main測試
 			System.setProperty("spring.profiles.active", "prd");
