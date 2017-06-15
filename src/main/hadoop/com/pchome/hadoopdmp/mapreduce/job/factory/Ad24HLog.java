@@ -70,7 +70,7 @@ public class Ad24HLog extends ACategoryLogData {
 		if(classUrlMongoBean != null){
 			if(classUrlMongoBean.getStatus() == "0"){
 				adClass = crawlerGetAdclass(categoryLogBean,sourceUrl);
-				if(StringUtils.isBlank(adClass)){
+				if(StringUtils.isNotBlank(adClass)){
 					Date date = new Date();
 					classUrlMongoBean.setStatus("1");
 					classUrlMongoBean.setUpdate_dateDate(date);
