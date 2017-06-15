@@ -37,11 +37,10 @@ import com.pchome.hadoopdmp.spring.config.bean.mongodb.MongodbHadoopConfig;
 
 @Component
 public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
-
+	Log log = LogFactory.getLog("CategoryLogMapper");
+	
 	private static int LOG_LENGTH = 30;
 	private static String SYMBOL = String.valueOf(new char[] { 9, 31 });
-	// private Log log = LogFactory.getLog(this.getClass());
-	Log log = LogFactory.getLog("CategoryLogMapper");
 
 	private Text keyOut = new Text();
 	private Text valueOut = new Text();
@@ -56,6 +55,10 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	@Override
 	public void setup(Context context) {
 		try {
+			System.setProperty("spring.profiles.active", "prd");
+			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+			this.mongoOperations = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
+			
 			record_date = context.getConfiguration().get("job.date");
 			this.categoryLogBean = new CategoryLogBean();
 			record_date = context.getConfiguration().get("job.date");
@@ -106,14 +109,20 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	@Override
 	public void map(LongWritable offset, Text value, Context context) {
 
-		Path cate_path = Paths.get("D:/home/webuser/pfp_ad_category_new.csv");
-		Path clsfyTable = Paths.get("D:/home/webuser/ClsfyGndAgeCrspTable.txt");
-		Charset charset = Charset.forName("UTF-8");
 		try {
+			//跑 local main測試
 			System.setProperty("spring.profiles.active", "prd");
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-			this.mongoOperations = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
+//			this.mongoOperations = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
+
 			
+			/*跑loca main方法
+			 * 
+			Path cate_path = Paths.get("D:/home/webuser/pfp_ad_category_new.csv");
+			Path clsfyTable = Paths.get("D:/home/webuser/ClsfyGndAgeCrspTable.txt");
+			Charset charset = Charset.forName("UTF-8");
+			
+			//get 年齡/性別   對照表
 			List<String> lines = Files.readAllLines(clsfyTable, charset);
 			for (String line : lines) {
 				String[] tmpStrAry = line.split(";"); // 0001000000000000;M,35
@@ -122,7 +131,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						new combinedValue(tmpStrAry[1].split(",")[0], tmpStrAry2.length > 1 ? tmpStrAry2[1] : ""));
 			}
 
-			// get csv file
+			// get 大分類表 csv file
 
 			int maxCateLvl = 4;
 			list = new ArrayList<Map<String, String>>();
@@ -144,19 +153,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				}
 
 			}
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
-		// 1.
-		// values[1] //mid
-		// values[2] //uuid
-		// values[13] //ck,pv
-		// values[4] //url
-		// values[15] //ad_class
-		// values[3] //behavior
-
+			
 		String[] values = new String[100];
 		values[1] = "souushiow";
 		values[2] = "alex2";
@@ -164,12 +161,27 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		values[4] = "http://24h.pchome.com.tw/region/DICM";
 		values[15] = "alex5";
 		values[3] = "alex6";
+			*/
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
-		// String[] values = value.toString().split(SYMBOL);
-		// if (values.length < LOG_LENGTH) {
-		// log.info("values.length < " + LOG_LENGTH);
-		// return;
-		// }
+		
+		
+		// 1.
+		// values[1] //mid
+		// values[2] //uuid
+		// values[13] //ck,pv
+		// values[4] //url
+		// values[15] //ad_class
+		// values[3] //behavior
+		
+		String[] values = value.toString().split(SYMBOL);
+		if (values.length < LOG_LENGTH) {
+			log.info("values.length < " + LOG_LENGTH);
+			return;
+		}
 
 		log.info(">>>>>> " + values[1]);
 		log.info(">>>>>> " + values[2]);
@@ -181,19 +193,27 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		try {
 
 			CategoryLogBean categoryLogBeanResult = null;
+			//click
+			if (values[13].equals("ck") && StringUtils.isNotBlank(values[4]) && StringUtils.isNotBlank(values[15])) {
+//				this.categoryLogBean = new CategoryLogBean();
+				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
+				categoryLogBean.setClsfyCraspMap(clsfyCraspMap);
+				categoryLogBean.setList(list);
+				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean,mongoOperations);
+			}
+			
 			// 露天
 			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].contains("ruten")) {
+//				this.categoryLogBean = new CategoryLogBean();
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
 				categoryLogBean.setClsfyCraspMap(clsfyCraspMap);
 				categoryLogBean.setList(list);
 				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean,mongoOperations);
-				// result2 = result.getMemid()
-				// +SYMBOL+result.getUuid()+SYMBOL+result.getAdClass()+SYMBOL+result.getAge()+SYMBOL+result.getSex();
 			}
 
 			// 24h
 			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].contains("24h")) {
-				this.categoryLogBean = new CategoryLogBean();
+//				this.categoryLogBean = new CategoryLogBean();
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
 				categoryLogBean.setList(list);
 				categoryLogBean.setClsfyCraspMap(clsfyCraspMap);
@@ -204,6 +224,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				return;
 			}
 			categoryLogBeanResult.setRecodeDate(record_date);
+			// 0:Memid + 1:Uuid + 2:AdClass + 3:Age + 4:Sex + 5:Source + 6:RecodeDate + 7:Type
 			String result = categoryLogBeanResult.getMemid() + SYMBOL + categoryLogBeanResult.getUuid() + SYMBOL + categoryLogBeanResult.getAdClass() + SYMBOL + categoryLogBeanResult.getAge() + SYMBOL + categoryLogBeanResult.getSex() + SYMBOL + categoryLogBeanResult.getSource()+ SYMBOL +categoryLogBeanResult.getRecodeDate() + SYMBOL + categoryLogBeanResult.getType();
 			log.info(">>>>>> write key:" + result);
 			keyOut.set(result);
