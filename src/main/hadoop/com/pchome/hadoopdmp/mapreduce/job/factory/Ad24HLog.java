@@ -52,161 +52,11 @@ public class Ad24HLog extends ACategoryLogData {
 			return null;
 		}
 		
-		
-		
-//		Query query = new Query(Criteria.where("url").is(sourceUrl.trim()).and("status").is(1));
-//		ClassUrlMongoBean classUrlMongoBean = (ClassUrlMongoBean)
-//		mongoOperations.findOne(query, ClassUrlMongoBean.class);
-		
-		
 		ClassUrlMongoBean classUrlMongoBean = null;
 		Query query = new Query(Criteria.where("url").is(sourceUrl.trim()));
 		classUrlMongoBean = mongoOperations.findOne(query, ClassUrlMongoBean.class);
-		
-//		if (classUrlMongoBean == null){
-//		   System.out.println("*************mongo not find************insert********");
-//		   ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
-//		   classUrlMongoBeanCreate.setUrl(sourceUrl); 
-//		   classUrlMongoBeanCreate.setCreate_date(new Date());
-//		   mongoOperations.save(classUrlMongoBean);
-//		  }else{
-//		   System.out.println(classUrlMongoBean.getUrl());
-//		   System.out.println("*************Url********************");
-//		  }
-		
 		if (classUrlMongoBean == null){
-			Map<String, String> map = new LinkedHashMap<String, String>();
-			Map<String, String> oriMatchMap = new HashMap<String, String>();
-			ArrayList<Map<String, String>> matchList = categoryLogBean.getList();
-			for (int i = 0; i < matchList.size(); i++) {
-				map.putAll(matchList.get(i));
-				oriMatchMap.putAll(matchList.get(i));
-			}
-
-			// delete adult
-			map.remove("0025000000000000");
-			oriMatchMap.remove("0025000000000000");
-
-			// modify for matching
-			for (Map.Entry<String, String> entry : map.entrySet()) {
-				entry.setValue(entry.getValue().replaceAll("/", "\u3001").replaceAll(" ", "\u3001")).replaceAll("\u3001\u3001\u3001", "\u3001").replaceAll("\u3001\u3001", "\u3001");
-			}
-			String url = sourceUrl.trim();
-
-			String type;
-			Pattern p = Pattern.compile("(http|https)://24h.pchome.com.tw/(store|region)/([a-zA-Z0-9]+)([&|\\?|\\.]\\S*)?");
-			Matcher m = p.matcher(url);
-			if (m.find()) {
-				String mGrp3 = m.group(3);
-				if (StringUtils.isNotBlank(m.group(3))) {
-					type = mGrp3;
-				} else {
-					return null;
-				}
-			} else {
-				return null;
-			}
-
-			StringBuffer urlTarget = new StringBuffer();
-			urlTarget.append("http://ecapi.pchome.com.tw/cdn/ecshop/cateapi/v1.5/region&region=");
-			urlTarget.append(type);
-			urlTarget.append("&_callback=cb_ecshopCategoryRegion");
-			NameValuePair result = requestGetAPI42(urlTarget.toString());
-			String content;
-			if (result != null && StringUtils.isNotBlank(result.getValue())) {
-				content = result.getValue();
-			} else {
-				return null;
-			}
-
-			Pattern p2 = Pattern.compile("\"Name\"[ :]+((?=\\[)\\[[^]]*\\]|(?=\\{)\\{[^\\}]*\\}|\\\"[^\"]*\\\")");
-			Matcher m2 = p2.matcher(content);
-			String breadCrumb;
-			String orig_breadCrumb;
-			if (m2.find()) {
-				orig_breadCrumb = m2.group(1).replaceAll("\"", "");
-				breadCrumb = m2.group(0).replaceAll("\"", "").replaceAll("@", "").replaceAll(" ", "").replaceAll("\u3000", "").replace("Name:", "").trim();
-			} else {
-				return null;
-			}
-
-			orig_breadCrumb = StringEscapeUtils.unescapeJava(orig_breadCrumb);
-			breadCrumb = StringEscapeUtils.unescapeJava(breadCrumb);
-			breadCrumb = breadCrumb.replaceAll("\"", "").replaceAll("@", "").replaceAll(" ", "").replaceAll("\u3000", "");
-
-			adClass = "";
-			// BreadCrumb Directly Match
-			for (EnumBreadCrumbDirectlyMatch item : EnumBreadCrumbDirectlyMatch.values()) {
-				if (orig_breadCrumb.matches(item.getMatchPattern())) {
-					adClass = item.getAdClass();
-					break;
-				}
-			}
-
-			if (StringUtils.isBlank(adClass)) {
-				// step1
-				String normalizeBreadCrumb = breadCrumb.replaceAll("\u5176\u4ed6", "").replaceAll("\u5176\u5b83", "").replaceAll("\u7528\u54c1", "").replaceAll("\u5de5\u5177", "").replaceAll("\u9031\u908a", "");
-				// step2
-				normalizeBreadCrumb = normalizeBreadCrumb.replaceAll("/", ",").replaceAll("\\.", ",").replaceAll(",,,,", ",").replaceAll(",,,", ",").replaceAll(",,", ",");
-				if (normalizeBreadCrumb.endsWith(",")) {
-					normalizeBreadCrumb = normalizeBreadCrumb.substring(0, normalizeBreadCrumb.length() - 1);
-				}
-				StringBuffer rdyToSplit = new StringBuffer().append(normalizeBreadCrumb);
-				// Split breadcrumb into keywords
-				// 全英數不補切
-				if (normalizeBreadCrumb.matches("[a-zA-Z0-9|,]*")) {
-					// log.info("normalizeBreadCrumb is all alphanumeric ,
-				}
-				// 含中英，補切中，英
-				else if (normalizeBreadCrumb.matches(".*[\u4E00-\u9FFF]+.*")
-						&& normalizeBreadCrumb.matches(".*[a-zA-Z0-9]+.*")) {
-					String commaed = ChiEngComma(normalizeBreadCrumb);
-					if (commaed.matches("\\S+,\\S+")) {
-						rdyToSplit.append(",");
-						rdyToSplit.append(commaed);
-					} else {
-						// log.warn("commaed error occured, normalizeBreadCrumb:" +
-						// normalizeBreadCrumb);
-					}
-				}
-				// 其餘照這補切
-				else {
-					String nmlzDeCommaStr = normalizeBreadCrumb.replaceAll(",", "");
-					if (nmlzDeCommaStr.length() == 3) {
-						rdyToSplit.append(",");
-						rdyToSplit.append(nmlzDeCommaStr.substring(0, 2));
-					}
-					if (nmlzDeCommaStr.length() == 4) {
-						rdyToSplit.append(",");
-						rdyToSplit.append(nmlzDeCommaStr.substring(0, 2));
-						rdyToSplit.append(",");
-						rdyToSplit.append(nmlzDeCommaStr.substring(2, 4));
-					}
-					if (nmlzDeCommaStr.length() == 5) {
-						rdyToSplit.append(",");
-						rdyToSplit.append(nmlzDeCommaStr.substring(0, 2));
-						rdyToSplit.append(",");
-						rdyToSplit.append(nmlzDeCommaStr.substring(2, 5));
-					}
-				}
-
-				String[] kwStrArray = rdyToSplit.toString().split(",");
-
-				adClass = likeStringSearchV2(map, kwStrArray);
-				adClass = StringUtils.isBlank(adClass) ? "unclassed" : adClass;
-
-				// second time (Broden&Extreme)
-				// 之前寫法,暫不異動但看似條件這樣下永遠不會進入以下判斷式
-				Boolean extremeWay = false;
-				String urlCated2nd = "";
-				if (extremeWay && adClass.equals("unclassed")) {
-					kwStrArray = normalizeBreadCrumb.replaceAll(",", "").split("");
-					urlCated2nd = likeStringSearchV2(map, kwStrArray);
-					urlCated2nd = StringUtils.isBlank(urlCated2nd) ? "unclassed" : urlCated2nd;
-				}
-			}
-			
-			
+			adClass = crawlerGetAdclass(categoryLogBean,sourceUrl);
 			Date date = new Date();
 			ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
 			classUrlMongoBeanCreate.setAd_class(adClass);
@@ -218,12 +68,16 @@ public class Ad24HLog extends ACategoryLogData {
 		}
 		
 		if(classUrlMongoBean != null){
-			if(classUrlMongoBean.getStatus() == "0" && StringUtils.isNotBlank(adClass)){
-			
+			if(classUrlMongoBean.getStatus() == "0"){
+				adClass = crawlerGetAdclass(categoryLogBean,sourceUrl);
+				if(StringUtils.isBlank(adClass)){
+					Date date = new Date();
+					classUrlMongoBean.setStatus("1");
+					classUrlMongoBean.setUpdate_dateDate(date);
+					mongoOperations.save(classUrlMongoBean);
+				}
 			}
 		}
-		
-		
 		
 		//1.enum比對不到且爬蟲也沒有
 		if(StringUtils.isBlank(adClass)){
@@ -297,7 +151,14 @@ public class Ad24HLog extends ACategoryLogData {
 ////		mongoOperations.save(ClassUrlMongoBean.class);
 //		mongoOperations.save(classUrlMongoBean2);
 		
-		
+//		Date date = new Date();
+//		ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
+//		classUrlMongoBeanCreate.setAd_class(adClass);
+//		classUrlMongoBeanCreate.setStatus(StringUtils.isBlank(adClass) ? "0" : "1");
+//		classUrlMongoBeanCreate.setUrl(sourceUrl); 
+//		classUrlMongoBeanCreate.setCreate_date(date);
+//		classUrlMongoBeanCreate.setUpdate_dateDate(date);
+//		mongoOperations.save(classUrlMongoBean);
 		
 
 
@@ -332,6 +193,158 @@ public class Ad24HLog extends ACategoryLogData {
 		}
 	}
 
+	
+	
+	
+	
+	public String crawlerGetAdclass(CategoryLogBean categoryLogBean,String sourceUrl) throws Exception{
+		String adClass="";
+		Map<String, String> map = new LinkedHashMap<String, String>();
+		Map<String, String> oriMatchMap = new HashMap<String, String>();
+		ArrayList<Map<String, String>> matchList = categoryLogBean.getList();
+		for (int i = 0; i < matchList.size(); i++) {
+			map.putAll(matchList.get(i));
+			oriMatchMap.putAll(matchList.get(i));
+		}
+
+		// delete adult
+		map.remove("0025000000000000");
+		oriMatchMap.remove("0025000000000000");
+
+		// modify for matching
+		for (Map.Entry<String, String> entry : map.entrySet()) {
+			entry.setValue(entry.getValue().replaceAll("/", "\u3001").replaceAll(" ", "\u3001")).replaceAll("\u3001\u3001\u3001", "\u3001").replaceAll("\u3001\u3001", "\u3001");
+		}
+		String url = sourceUrl.trim();
+
+		String type;
+		Pattern p = Pattern.compile("(http|https)://24h.pchome.com.tw/(store|region)/([a-zA-Z0-9]+)([&|\\?|\\.]\\S*)?");
+		Matcher m = p.matcher(url);
+		if (m.find()) {
+			String mGrp3 = m.group(3);
+			if (StringUtils.isNotBlank(m.group(3))) {
+				type = mGrp3;
+			} else {
+				return null;
+			}
+		} else {
+			return null;
+		}
+
+		StringBuffer urlTarget = new StringBuffer();
+		urlTarget.append("http://ecapi.pchome.com.tw/cdn/ecshop/cateapi/v1.5/region&region=");
+		urlTarget.append(type);
+		urlTarget.append("&_callback=cb_ecshopCategoryRegion");
+		NameValuePair result = requestGetAPI42(urlTarget.toString());
+		String content;
+		if (result != null && StringUtils.isNotBlank(result.getValue())) {
+			content = result.getValue();
+		} else {
+			return null;
+		}
+
+		Pattern p2 = Pattern.compile("\"Name\"[ :]+((?=\\[)\\[[^]]*\\]|(?=\\{)\\{[^\\}]*\\}|\\\"[^\"]*\\\")");
+		Matcher m2 = p2.matcher(content);
+		String breadCrumb;
+		String orig_breadCrumb;
+		if (m2.find()) {
+			orig_breadCrumb = m2.group(1).replaceAll("\"", "");
+			breadCrumb = m2.group(0).replaceAll("\"", "").replaceAll("@", "").replaceAll(" ", "").replaceAll("\u3000", "").replace("Name:", "").trim();
+		} else {
+			return null;
+		}
+
+		orig_breadCrumb = StringEscapeUtils.unescapeJava(orig_breadCrumb);
+		breadCrumb = StringEscapeUtils.unescapeJava(breadCrumb);
+		breadCrumb = breadCrumb.replaceAll("\"", "").replaceAll("@", "").replaceAll(" ", "").replaceAll("\u3000", "");
+
+		adClass = "";
+		// BreadCrumb Directly Match
+		for (EnumBreadCrumbDirectlyMatch item : EnumBreadCrumbDirectlyMatch.values()) {
+			if (orig_breadCrumb.matches(item.getMatchPattern())) {
+				adClass = item.getAdClass();
+				break;
+			}
+		}
+
+		if (StringUtils.isBlank(adClass)) {
+			// step1
+			String normalizeBreadCrumb = breadCrumb.replaceAll("\u5176\u4ed6", "").replaceAll("\u5176\u5b83", "").replaceAll("\u7528\u54c1", "").replaceAll("\u5de5\u5177", "").replaceAll("\u9031\u908a", "");
+			// step2
+			normalizeBreadCrumb = normalizeBreadCrumb.replaceAll("/", ",").replaceAll("\\.", ",").replaceAll(",,,,", ",").replaceAll(",,,", ",").replaceAll(",,", ",");
+			if (normalizeBreadCrumb.endsWith(",")) {
+				normalizeBreadCrumb = normalizeBreadCrumb.substring(0, normalizeBreadCrumb.length() - 1);
+			}
+			StringBuffer rdyToSplit = new StringBuffer().append(normalizeBreadCrumb);
+			// Split breadcrumb into keywords
+			// 全英數不補切
+			if (normalizeBreadCrumb.matches("[a-zA-Z0-9|,]*")) {
+				// log.info("normalizeBreadCrumb is all alphanumeric ,
+			}
+			// 含中英，補切中，英
+			else if (normalizeBreadCrumb.matches(".*[\u4E00-\u9FFF]+.*")
+					&& normalizeBreadCrumb.matches(".*[a-zA-Z0-9]+.*")) {
+				String commaed = ChiEngComma(normalizeBreadCrumb);
+				if (commaed.matches("\\S+,\\S+")) {
+					rdyToSplit.append(",");
+					rdyToSplit.append(commaed);
+				} else {
+					// log.warn("commaed error occured, normalizeBreadCrumb:" +
+					// normalizeBreadCrumb);
+				}
+			}
+			// 其餘照這補切
+			else {
+				String nmlzDeCommaStr = normalizeBreadCrumb.replaceAll(",", "");
+				if (nmlzDeCommaStr.length() == 3) {
+					rdyToSplit.append(",");
+					rdyToSplit.append(nmlzDeCommaStr.substring(0, 2));
+				}
+				if (nmlzDeCommaStr.length() == 4) {
+					rdyToSplit.append(",");
+					rdyToSplit.append(nmlzDeCommaStr.substring(0, 2));
+					rdyToSplit.append(",");
+					rdyToSplit.append(nmlzDeCommaStr.substring(2, 4));
+				}
+				if (nmlzDeCommaStr.length() == 5) {
+					rdyToSplit.append(",");
+					rdyToSplit.append(nmlzDeCommaStr.substring(0, 2));
+					rdyToSplit.append(",");
+					rdyToSplit.append(nmlzDeCommaStr.substring(2, 5));
+				}
+			}
+
+			String[] kwStrArray = rdyToSplit.toString().split(",");
+
+			adClass = likeStringSearchV2(map, kwStrArray);
+			adClass = StringUtils.isBlank(adClass) ? "unclassed" : adClass;
+
+			// second time (Broden&Extreme)
+			// 之前寫法,暫不異動但看似條件這樣下永遠不會進入以下判斷式
+			Boolean extremeWay = false;
+			String urlCated2nd = "";
+			if (extremeWay && adClass.equals("unclassed")) {
+				kwStrArray = normalizeBreadCrumb.replaceAll(",", "").split("");
+				urlCated2nd = likeStringSearchV2(map, kwStrArray);
+				urlCated2nd = StringUtils.isBlank(urlCated2nd) ? "unclassed" : urlCated2nd;
+			}
+		}
+		
+		
+
+		
+		
+		
+		
+		
+		
+		
+		return null;
+		
+	}
+	
+	
+	
 	public String ChiEngComma(String str) {
 		String[] strArray = str.split("");
 		List<String> chi = new ArrayList<String>();
