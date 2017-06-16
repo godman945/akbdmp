@@ -195,6 +195,13 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		
 		try {
 			String[] values = value.toString().split(SYMBOL);
+			
+			log.info(">>>>>> " + values[1]);
+			log.info(">>>>>> " + values[2]);
+			log.info(">>>>>> " + values[13]);
+			log.info(">>>>>> " + values[4]);
+			log.info(">>>>>> " + values[15]);
+			log.info(">>>>>> " + values[3]);
 
 			CategoryLogBean categoryLogBeanResult = null;
 			//click

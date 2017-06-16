@@ -71,36 +71,36 @@ public class CategoryLogDriver {
 	@Value("${input.path.testingpath}")
 	private String inputPathTestingPath;
 	
-	@Value("${kafka.metadata.broker.list}")
-	private String kafkaMetadataBrokerList;
-	
-	@Value("${kafka.acks}")
-	private String kafkaAcks;
-	
-	@Value("${kafka.retries}")
-	private String kafkaRetries;
-	
-	@Value("${kafka.batch.size}")
-	private String kafkaBatchSize;
-	
-	@Value("${kafka.linger.ms}")
-	private String kafkaLingerMs;
-	
-	@Value("${kafka.buffer.memory}")
-	private String kafkaBufferMemory;
-	
-	@Value("${kafka.serializer.class}")
-	private String kafkaSerializerClass;
-	
-	@Value("${kafka.key.serializer}")
-	private String kafkaKeySerializer;
-	
-	@Value("${kafka.value.serializer}")
-	private String kafkaValueSerializer;
-	
-	List<JSONObject> kafkaList = new ArrayList<>();
-	
-	Producer<String, String> producer = null;
+//	@Value("${kafka.metadata.broker.list}")
+//	private String kafkaMetadataBrokerList;
+//	
+//	@Value("${kafka.acks}")
+//	private String kafkaAcks;
+//	
+//	@Value("${kafka.retries}")
+//	private String kafkaRetries;
+//	
+//	@Value("${kafka.batch.size}")
+//	private String kafkaBatchSize;
+//	
+//	@Value("${kafka.linger.ms}")
+//	private String kafkaLingerMs;
+//	
+//	@Value("${kafka.buffer.memory}")
+//	private String kafkaBufferMemory;
+//	
+//	@Value("${kafka.serializer.class}")
+//	private String kafkaSerializerClass;
+//	
+//	@Value("${kafka.key.serializer}")
+//	private String kafkaKeySerializer;
+//	
+//	@Value("${kafka.value.serializer}")
+//	private String kafkaValueSerializer;
+//	
+//	List<JSONObject> kafkaList = new ArrayList<>();
+//	
+//	Producer<String, String> producer = null;
 
 	public void drive(String dateStr) throws Exception {
 
@@ -248,38 +248,38 @@ public class CategoryLogDriver {
 
 	}
 
-	private void deleteMongoOldDoc(String dateStr) throws Exception {
-//		IClassCountDAO dao = ClassCountDAO.getInstance();
-//		log.info("delete old doc for specific date: " + dao.deleteByDate(dateStr));
-		
-		Properties props = new Properties();
-		props.put("bootstrap.servers", kafkaMetadataBrokerList);
-		props.put("acks", kafkaAcks);
-		props.put("retries", kafkaRetries);
-		props.put("batch.size", kafkaBatchSize);
-		props.put("linger.ms",kafkaLingerMs );
-		props.put("buffer.memory", kafkaBufferMemory);
-		props.put("serializer.class", kafkaSerializerClass);
-		props.put("key.serializer", kafkaKeySerializer);
-		props.put("value.serializer", kafkaValueSerializer);
-		producer = new KafkaProducer<String, String>(props);
-		
-		
-		JSONObject json = new JSONObject();
-		json.put("type", "mongo");
-		json.put("action", "delete");
-		json.put("db", "dmp");
-		json.put("collection", "class_count");
-		json.put("column", "record_date");
-		json.put("condition", dateStr);
-		kafkaList.add(json);
-		
-		Future<RecordMetadata> deleteMongoOldDoc  = producer.send(new ProducerRecord<String, String>("TEST", "", kafkaList.toString()));
-		while (!deleteMongoOldDoc.isDone()) {
-		}
-		
-		log.info("CategoryDriver deleteMongoOldDoc send kafka: " + deleteMongoOldDoc);
-	}
+//	private void deleteMongoOldDoc(String dateStr) throws Exception {
+////		IClassCountDAO dao = ClassCountDAO.getInstance();
+////		log.info("delete old doc for specific date: " + dao.deleteByDate(dateStr));
+//		
+//		Properties props = new Properties();
+//		props.put("bootstrap.servers", kafkaMetadataBrokerList);
+//		props.put("acks", kafkaAcks);
+//		props.put("retries", kafkaRetries);
+//		props.put("batch.size", kafkaBatchSize);
+//		props.put("linger.ms",kafkaLingerMs );
+//		props.put("buffer.memory", kafkaBufferMemory);
+//		props.put("serializer.class", kafkaSerializerClass);
+//		props.put("key.serializer", kafkaKeySerializer);
+//		props.put("value.serializer", kafkaValueSerializer);
+//		producer = new KafkaProducer<String, String>(props);
+//		
+//		
+//		JSONObject json = new JSONObject();
+//		json.put("type", "mongo");
+//		json.put("action", "delete");
+//		json.put("db", "dmp");
+//		json.put("collection", "class_count");
+//		json.put("column", "record_date");
+//		json.put("condition", dateStr);
+//		kafkaList.add(json);
+//		
+//		Future<RecordMetadata> deleteMongoOldDoc  = producer.send(new ProducerRecord<String, String>("TEST", "", kafkaList.toString()));
+//		while (!deleteMongoOldDoc.isDone()) {
+//		}
+//		
+//		log.info("CategoryDriver deleteMongoOldDoc send kafka: " + deleteMongoOldDoc);
+//	}
 
 	public static void printUsage() {
 		System.out.println("Usage(hour): [DATE] [HOUR]");
