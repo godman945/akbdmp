@@ -192,8 +192,8 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			log.info("values.length < " + LOG_LENGTH);
 //			return;
 //		}
+		categoryLogBean=null;
 
-		categoryLogBean = null;
 		try {
 			String[] values = value.toString().split(SYMBOL);
 			if (values.length < LOG_LENGTH) {
@@ -208,7 +208,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			log.info(">>>15>>> " + values[15]);
 			log.info(">>>3>>> " + values[3]);
 
-			CategoryLogBean categoryLogBeanResult = null;
+			CategoryLogBean categoryLogBeanResult = new CategoryLogBean();
 			//click
 			if (values[13].equals("ck") && StringUtils.isNotBlank(values[4]) && StringUtils.isNotBlank(values[15])) {
 //				this.categoryLogBean = new CategoryLogBean();
