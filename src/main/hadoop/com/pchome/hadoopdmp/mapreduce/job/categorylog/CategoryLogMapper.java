@@ -258,16 +258,16 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //	 System.out.println("AAA");
 	 }
 
-	public static void main(String[] args) throws Exception {
-		 CategoryLogMapper categoryLogMapper = new CategoryLogMapper();
-		 categoryLogMapper.map(null, null, null);
-
-//		System.setProperty("spring.profiles.active", "prd");
-//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-//		CategoryLogMapper categoryLogMapper = ctx.getBean(CategoryLogMapper.class);
-//		categoryLogMapper.test();
-
-	}
+//	public static void main(String[] args) throws Exception {
+//		 CategoryLogMapper categoryLogMapper = new CategoryLogMapper();
+//		 categoryLogMapper.map(null, null, null);
+//
+////		System.setProperty("spring.profiles.active", "prd");
+////		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+////		CategoryLogMapper categoryLogMapper = ctx.getBean(CategoryLogMapper.class);
+////		categoryLogMapper.test();
+//
+//	}
 
 	public class combinedValue {
 		public String gender;
