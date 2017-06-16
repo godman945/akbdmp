@@ -193,7 +193,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			return;
 //		}
 
-		CategoryLogBean categoryLogBean = null;
+		categoryLogBean = null;
 		try {
 			String[] values = value.toString().split(SYMBOL);
 			if (values.length < LOG_LENGTH) {
