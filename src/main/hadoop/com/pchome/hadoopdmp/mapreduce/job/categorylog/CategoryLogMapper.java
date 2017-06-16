@@ -47,7 +47,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private Text valueOut = new Text();
 
 	public static String record_date;
-//	public CategoryLogBean categoryLogBean;
+	public CategoryLogBean categoryLogBean;
 	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();
 	public static ArrayList<Map<String, String>> list = new ArrayList<Map<String, String>>();
 
@@ -62,7 +62,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			this.mongoOperations = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
 			
 			record_date = context.getConfiguration().get("job.date");
-//			this.categoryLogBean = new CategoryLogBean();
+			this.categoryLogBean = new CategoryLogBean();
 
 			Configuration conf = context.getConfiguration();
 
@@ -193,7 +193,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			return;
 //		}
 
-		CategoryLogBean categoryLogBean = new CategoryLogBean();
+		CategoryLogBean categoryLogBean = null;
 		try {
 			String[] values = value.toString().split(SYMBOL);
 			if (values.length < LOG_LENGTH) {
