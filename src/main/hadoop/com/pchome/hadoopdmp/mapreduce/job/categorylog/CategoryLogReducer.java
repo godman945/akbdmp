@@ -1,27 +1,25 @@
 package com.pchome.hadoopdmp.mapreduce.job.categorylog;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Properties;
+import java.util.concurrent.Future;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.codehaus.jettison.json.JSONObject;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Component;
 
 import com.pchome.akbdmp.job.bean.ClassCountLogBean;
-import com.pchome.hadoopdmp.factory.job.AncestorJob;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
-import com.pchome.hadoopdmp.spring.config.bean.mongodb.MongodbHadoopConfig;
 
 @Component
 public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
@@ -37,28 +35,28 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	public static String record_date;
 
-//	
-//	private String kafkaMetadataBrokerlist;
-//	
-//	private String kafkaAcks;
-//	
-//	private String kafkaRetries;
-//	
-//	private String kafkaBatchSize;
-//	
-//	private String kafkaLingerMs;
-//	
-//	private String kafkaBufferMemory;
-//	
-//	private String kafkaSerializerClass;
-//	
-//	private String kafkaKeySerializer;
-//	
-//	private String kafkaValueSerializer;
-//	
-//	List<JSONObject> kafkaList = new ArrayList<>();
-//
-//	Producer<String, String> producer = null;
+	
+	private String kafkaMetadataBrokerlist;
+	
+	private String kafkaAcks;
+	
+	private String kafkaRetries;
+	
+	private String kafkaBatchSize;
+	
+	private String kafkaLingerMs;
+	
+	private String kafkaBufferMemory;
+	
+	private String kafkaSerializerClass;
+	
+	private String kafkaKeySerializer;
+	
+	private String kafkaValueSerializer;
+	
+	List<JSONObject> kafkaList = new ArrayList<>();
+
+	Producer<String, String> producer = null;
 	
 //	private CategoryLogReducer categoryLogReducer;
 
@@ -66,33 +64,33 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		try {
-//    		System.setProperty("spring.profiles.active", "prd");
-//    		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+    		System.setProperty("spring.profiles.active", "prd");
+    		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 
     		
     		//    		this.mongoOperations = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
     		
-//			this.kafkaMetadataBrokerlist = ctx.getEnvironment().getProperty("kafka.metadata.broker.list");
-//			this.kafkaAcks = ctx.getEnvironment().getProperty("kafka.acks");
-//			this.kafkaRetries = ctx.getEnvironment().getProperty("kafka.retries");
-//			this.kafkaBatchSize = ctx.getEnvironment().getProperty("kafka.batch.size");
-//			this.kafkaLingerMs = ctx.getEnvironment().getProperty("kafka.linger.ms");
-//			this.kafkaBufferMemory = ctx.getEnvironment().getProperty("kafka.buffer.memory");
-//			this.kafkaSerializerClass = ctx.getEnvironment().getProperty("kafka.serializer.class");
-//			this.kafkaKeySerializer = ctx.getEnvironment().getProperty("kafka.key.serializer");
-//			this.kafkaValueSerializer = ctx.getEnvironment().getProperty("kafka.value.serializer");
-//			
-//			Properties props = new Properties();
-//			props.put("bootstrap.servers", kafkaMetadataBrokerlist);
-//			props.put("acks", kafkaAcks);
-//			props.put("retries", kafkaRetries);
-//			props.put("batch.size", kafkaBatchSize);
-//			props.put("linger.ms",kafkaLingerMs );
-//			props.put("buffer.memory", kafkaBufferMemory);
-//			props.put("serializer.class", kafkaSerializerClass);
-//			props.put("key.serializer", kafkaKeySerializer);
-//			props.put("value.serializer", kafkaValueSerializer);
-//			producer = new KafkaProducer<String, String>(props);
+			this.kafkaMetadataBrokerlist = ctx.getEnvironment().getProperty("kafka.metadata.broker.list");
+			this.kafkaAcks = ctx.getEnvironment().getProperty("kafka.acks");
+			this.kafkaRetries = ctx.getEnvironment().getProperty("kafka.retries");
+			this.kafkaBatchSize = ctx.getEnvironment().getProperty("kafka.batch.size");
+			this.kafkaLingerMs = ctx.getEnvironment().getProperty("kafka.linger.ms");
+			this.kafkaBufferMemory = ctx.getEnvironment().getProperty("kafka.buffer.memory");
+			this.kafkaSerializerClass = ctx.getEnvironment().getProperty("kafka.serializer.class");
+			this.kafkaKeySerializer = ctx.getEnvironment().getProperty("kafka.key.serializer");
+			this.kafkaValueSerializer = ctx.getEnvironment().getProperty("kafka.value.serializer");
+			
+			Properties props = new Properties();
+			props.put("bootstrap.servers", kafkaMetadataBrokerlist);
+			props.put("acks", kafkaAcks);
+			props.put("retries", kafkaRetries);
+			props.put("batch.size", kafkaBatchSize);
+			props.put("linger.ms",kafkaLingerMs );
+			props.put("buffer.memory", kafkaBufferMemory);
+			props.put("serializer.class", kafkaSerializerClass);
+			props.put("key.serializer", kafkaKeySerializer);
+			props.put("value.serializer", kafkaValueSerializer);
+			producer = new KafkaProducer<String, String>(props);
     		
     		
 			
@@ -169,7 +167,19 @@ ClassCountLogBean classCountLogBean = new ClassCountLogBean();
 ////				json.put("update_date", date);
 ////				kafkaList.add(json);
 //			}
-
+			
+			ClassCountLogBean classCountLogBean = new ClassCountLogBean();
+			   classCountLogBean.setMemid(data[0]);
+			   classCountLogBean.setUuid(data[1]);
+			   classCountLogBean.setAdClass(data[2]);
+			   classCountLogBean.setAge(data[3]);
+			   classCountLogBean.setSex(data[4]);
+			   classCountLogBean.setSource(data[5]);
+			   classCountLogBean.setRecordDate(data[6]);
+			   classCountLogBean.setType(data[7]);
+    		Future<RecordMetadata> f  = producer.send(new ProducerRecord<String, String>("TEST", "",classCountLogBean.toString()));
+//			while (!f.isDone()) {
+//			}
 			
 			log.info(">>>>>> write key:" + key);
 			keyOut.set(key);
@@ -189,6 +199,7 @@ ClassCountLogBean classCountLogBean = new ClassCountLogBean();
     		mongoClient.close();
     		*/
 			
+			producer.close();
 			
 //    		Future<RecordMetadata> f  = producer.send(new ProducerRecord<String, String>("TEST", "", kafkaList.toString()));
 //			while (!f.isDone()) {
