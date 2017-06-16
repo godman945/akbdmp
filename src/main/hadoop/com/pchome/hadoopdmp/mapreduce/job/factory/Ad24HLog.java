@@ -63,6 +63,7 @@ public class Ad24HLog extends ACategoryLogData {
 				if(StringUtils.isNotBlank(adClass) && !adClass.equals("unclassed")){
 					Date date = new Date();
 					classUrlMongoBean.setStatus("1");
+					classUrlMongoBean.setAd_class(adClass);
 					classUrlMongoBean.setUpdate_dateDate(date);
 					mongoOperations.save(classUrlMongoBean);
 				}
@@ -92,28 +93,14 @@ public class Ad24HLog extends ACategoryLogData {
 		}
 		
 		//2取個資
-		if(StringUtils.isNotBlank(memid)){
-			if (memid.equals("neon09876666")){
-				Log.info(">>>>>>>>>>>>>>>>>>>>>>>>>I AM 24 member ");
-				Log.info(memid);
-				
-			}
-			
+		if(StringUtils.isNotBlank(memid) && (!memid.equals("null"))){
 			categoryLogBean.setAdClass(adClass);
 			categoryLogBean.setMemid(values[1]);
 			categoryLogBean.setUuid(values[2]);
 			categoryLogBean.setSource("24h");
 			categoryLogBean.setType("memid");
 			return categoryLogBean;
-		}else if(StringUtils.isNotBlank(uuid)){
-			
-			
-			if (memid.equals("neon09876666")){
-				Log.info(">>>>>>>>>>>>>>>>>>>>>>>>>I AM 24 UUID ");
-				Log.info(uuid);
-			}
-			
-			
+		}else if(StringUtils.isNotBlank(uuid) && (!uuid.equals("null"))){
 			APersonalInfo aPersonalInfo = PersonalInfoFactory.getAPersonalInfoFactory(PersonalInfoEnum.UUID);
 			Map<String, Object> uuidMap = aPersonalInfo.getMap();
 			uuidMap.put("adClass", adClass); 
