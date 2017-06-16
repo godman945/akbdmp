@@ -168,16 +168,19 @@ ClassCountLogBean classCountLogBean = new ClassCountLogBean();
 ////				kafkaList.add(json);
 //			}
 			
-			ClassCountLogBean classCountLogBean = new ClassCountLogBean();
-			   classCountLogBean.setMemid(data[0]);
-			   classCountLogBean.setUuid(data[1]);
-			   classCountLogBean.setAdClass(data[2]);
-			   classCountLogBean.setAge(data[3]);
-			   classCountLogBean.setSex(data[4]);
-			   classCountLogBean.setSource(data[5]);
-			   classCountLogBean.setRecordDate(data[6]);
-			   classCountLogBean.setType(data[7]);
-    		Future<RecordMetadata> f  = producer.send(new ProducerRecord<String, String>("TEST", "",classCountLogBean.toString()));
+			   
+				
+				JSONObject json = new JSONObject();
+				json.put("memid", data[0]);
+				json.put("uuid",data[1] );
+				json.put("adClass", data[2]);
+				json.put("age", data[3]);
+				json.put("sex",data[4]);
+				json.put("source", data[5]);
+				json.put("recordDate",data[6] );
+				
+				
+    		Future<RecordMetadata> f  = producer.send(new ProducerRecord<String, String>("TEST", "",json.toString()));
 //			while (!f.isDone()) {
 //			}
 			
