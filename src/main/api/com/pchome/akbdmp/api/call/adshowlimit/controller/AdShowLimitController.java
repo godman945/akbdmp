@@ -50,10 +50,6 @@ public class AdShowLimitController extends BaseController {
 	
 	Log log = LogFactory.getLog(AdShowLimitController.class);
 
-//	private static long time1 =  System.currentTimeMillis();
-//	
-//	private long time2;
-	
 	// @CrossOrigin(origins = {"http://pcbwebstg.pchome.com.tw"})
 	@RequestMapping(value = "/api/getAdShowLimit", method = RequestMethod.POST, headers = "Accept=application/json;charset=UTF-8")
 	@ResponseBody
@@ -119,7 +115,7 @@ public class AdShowLimitController extends BaseController {
 				}
 				
 				if(adKeyFlag){
-//					log.error(">>>>>> Fail adkey:"+Arrays.asList(adKey));
+					log.error(">>>>>> Fail adkey:"+Arrays.asList(adKey));
 				}
 				
 				ReturnData returnData = new ReturnData();
