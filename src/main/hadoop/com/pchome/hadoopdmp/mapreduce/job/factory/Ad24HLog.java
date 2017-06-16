@@ -30,6 +30,7 @@ import com.pchome.hadoopdmp.data.mongo.pojo.ClassCountMongoBean;
 import com.pchome.hadoopdmp.data.mongo.pojo.ClassUrlMongoBean;
 import com.pchome.hadoopdmp.enumerate.EnumBreadCrumbDirectlyMatch;
 import com.pchome.hadoopdmp.enumerate.PersonalInfoEnum;
+import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper;
 
 
 @SuppressWarnings({ "unchecked", "deprecation" ,"static-access","resource"})
@@ -103,7 +104,7 @@ public class Ad24HLog extends ACategoryLogData {
 			APersonalInfo aPersonalInfo = PersonalInfoFactory.getAPersonalInfoFactory(PersonalInfoEnum.UUID);
 			Map<String, Object> uuidMap = aPersonalInfo.getMap();
 			uuidMap.put("adClass", adClass); 
-			uuidMap.put("ClsfyCraspMap", categoryLogBean.getClsfyCraspMap());
+			uuidMap.put("ClsfyCraspMap", CategoryLogMapper.clsfyCraspMap);
 			Map<String, Object> userInfo = (Map<String, Object>) aPersonalInfo.personalData(uuidMap);
 			categoryLogBean.setAdClass(adClass);
 			categoryLogBean.setMemid(values[1]);
@@ -156,7 +157,7 @@ public class Ad24HLog extends ACategoryLogData {
 		String adClass="";
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		Map<String, String> oriMatchMap = new HashMap<String, String>();
-		ArrayList<Map<String, String>> matchList = categoryLogBean.getList();
+		ArrayList<Map<String, String>> matchList = CategoryLogMapper.list;
 		for (int i = 0; i < matchList.size(); i++) {
 			map.putAll(matchList.get(i));
 			oriMatchMap.putAll(matchList.get(i));

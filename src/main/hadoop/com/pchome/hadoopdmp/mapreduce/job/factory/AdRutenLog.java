@@ -19,6 +19,7 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import com.pchome.hadoopdmp.data.mongo.pojo.ClassUrlMongoBean;
 import com.pchome.hadoopdmp.enumerate.PersonalInfoEnum;
+import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper;
 
 public class AdRutenLog extends ACategoryLogData {
 
@@ -105,7 +106,7 @@ public class AdRutenLog extends ACategoryLogData {
 			APersonalInfo aPersonalInfo = PersonalInfoFactory.getAPersonalInfoFactory(PersonalInfoEnum.UUID);
 			Map<String, Object> uuidMap = aPersonalInfo.getMap();
 			uuidMap.put("adClass", adClass); 
-			uuidMap.put("ClsfyCraspMap", categoryLogBean.getClsfyCraspMap());
+			uuidMap.put("ClsfyCraspMap", CategoryLogMapper.clsfyCraspMap);
 			Map<String, Object> userInfo = (Map<String, Object>) aPersonalInfo.personalData(uuidMap);
 			categoryLogBean.setAdClass(adClass);
 			categoryLogBean.setMemid(values[1]);
@@ -170,7 +171,7 @@ public class AdRutenLog extends ACategoryLogData {
 			String[] catedLvl = breadcrumb.replaceAll(" ", "").replaceAll("\t", "").replaceAll("@", "").trim()
 					.split(">");
 
-			ArrayList<Map<String, String>> list = categoryLogBean.getList();
+			ArrayList<Map<String, String>> list = CategoryLogMapper.list;
 			List<String> urlCatedList = CateMatch((catedLvl.length > 4 ? 4 : (catedLvl.length - 1)), catedLvl, list);
 			urlCated = (urlCatedList.size() > 0 ? urlCatedList.get(0) : "unclassed");
 		}

@@ -7,6 +7,7 @@ import org.apache.hadoop.mapreduce.Mapper.Context;
 import org.springframework.data.mongodb.core.MongoOperations;
 
 import com.pchome.hadoopdmp.enumerate.PersonalInfoEnum;
+import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper;
 
 public class AdClickLog extends ACategoryLogData {
 
@@ -32,7 +33,7 @@ public class AdClickLog extends ACategoryLogData {
 			APersonalInfo aPersonalInfo = PersonalInfoFactory.getAPersonalInfoFactory(PersonalInfoEnum.UUID);
 			Map<String, Object> uuidMap = aPersonalInfo.getMap();
 			uuidMap.put("adClass", adClass); 
-			uuidMap.put("ClsfyCraspMap", categoryLogBean.getClsfyCraspMap());
+			uuidMap.put("ClsfyCraspMap", CategoryLogMapper.clsfyCraspMap);
 			Map<String, Object> userInfo = (Map<String, Object>) aPersonalInfo.personalData(uuidMap);
 			categoryLogBean.setAdClass(adClass);
 			categoryLogBean.setMemid(values[1]);
