@@ -54,12 +54,13 @@ public class AdShowLimitController extends BaseController {
 	@RequestMapping(value = "/api/getAdShowLimit", method = RequestMethod.POST, headers = "Accept=application/json;charset=UTF-8")
 	@ResponseBody
 	public Object adShowLimit(HttpServletRequest request,
-			@RequestParam(defaultValue = "", required = false) String[] adKey
+			@RequestParam(defaultValue = "", required = false) String adKey
 			) throws Exception {
 		try {
 			
+			String [] keyArray = adKey.split(",");
 			JSONObject paramaterJson = new JSONObject();
-			paramaterJson.put(DmpAdShowLimitParamaterEnum.AD_KEY.getKey(), adKey);
+			paramaterJson.put(DmpAdShowLimitParamaterEnum.AD_KEY.getKey(), keyArray);
 			ACheckData aCheckData = checkDataFactory.getaCheckData(DmpCheckObjNameEnum.CHECK_ADSHOW_LIMIT);
 			Object obj = aCheckData.checkData(paramaterJson);
 			String checkResult = getReturnData(obj);
@@ -68,12 +69,11 @@ public class AdShowLimitController extends BaseController {
 				return getReturnData(obj);
 			}
 			
-			
 			boolean adKeyFlag = false;
 			if(active.equals("stg")){
 				Jedis jedis = new Jedis("redisdev.mypchome.com.tw");
 				AdShowLimitBean adShowLimitBean = new AdShowLimitBean();
-				for (Object key : adKey) {
+				for (Object key : keyArray) {
 					
 					if(key == null || key.equals("")){
 						adKeyFlag = true;
@@ -89,7 +89,7 @@ public class AdShowLimitController extends BaseController {
 				jedis.close();
 				
 				if(adKeyFlag){
-//					log.error(">>>>>> Fail adkey:"+Arrays.asList(adKey));
+					log.error(">>>>>> Fail adkey:"+Arrays.asList(adKey));
 				}
 				
 				ReturnData returnData = new ReturnData();
@@ -100,7 +100,7 @@ public class AdShowLimitController extends BaseController {
 			}else{
 				
 				AdShowLimitBean adShowLimitBean = new AdShowLimitBean();
-				for (Object key : adKey) {
+				for (Object key : keyArray) {
 					
 					if(key == null || key.equals("")){
 						adKeyFlag = true;
