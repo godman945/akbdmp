@@ -89,7 +89,7 @@ public class AdShowLimitController extends BaseController {
 				jedis.close();
 				
 				if(adKeyFlag){
-					log.error(">>>>>> Fail adkey:"+Arrays.asList(adKey));
+//					log.error(">>>>>> Fail adkey:"+Arrays.asList(adKey));
 				}
 				
 				ReturnData returnData = new ReturnData();
