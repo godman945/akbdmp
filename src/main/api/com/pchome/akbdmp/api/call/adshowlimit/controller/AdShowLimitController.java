@@ -91,6 +91,11 @@ public class AdShowLimitController extends BaseController {
 					adShowLimitBean.getAdShowLimitMap().put(key.toString(), adLimit);
 				}
 				jedis.close();
+				
+				if(adKeyFlag){
+					log.error(">>>>>> Fail adkey:"+Arrays.asList(adKey));
+				}
+				
 				ReturnData returnData = new ReturnData();
 				returnData.setCode(DmpApiReturnCodeEnum.API_CODE_S001.getCode());
 				returnData.setResult(adShowLimitBean.getAdShowLimitMap());
@@ -114,7 +119,7 @@ public class AdShowLimitController extends BaseController {
 				}
 				
 				if(adKeyFlag){
-					log.error(">>>>>> Fail adkey:"+adKey);
+					log.error(">>>>>> Fail adkey:"+Arrays.asList(adKey));
 				}
 				
 				ReturnData returnData = new ReturnData();
