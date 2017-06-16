@@ -22,6 +22,7 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
+import org.mortbay.log.Log;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -92,6 +93,12 @@ public class Ad24HLog extends ACategoryLogData {
 		
 		//2取個資
 		if(StringUtils.isNotBlank(memid)){
+			if (memid.equals("neon09876666")){
+				Log.info(">>>>>>>>>>>>>>>>>>>>>>>>>I AM 24 member ");
+				Log.info(memid);
+				
+			}
+			
 			categoryLogBean.setAdClass(adClass);
 			categoryLogBean.setMemid(values[1]);
 			categoryLogBean.setUuid(values[2]);
@@ -99,6 +106,14 @@ public class Ad24HLog extends ACategoryLogData {
 			categoryLogBean.setType("memid");
 			return categoryLogBean;
 		}else if(StringUtils.isNotBlank(uuid)){
+			
+			
+			if (memid.equals("neon09876666")){
+				Log.info(">>>>>>>>>>>>>>>>>>>>>>>>>I AM 24 UUID ");
+				Log.info(uuid);
+			}
+			
+			
 			APersonalInfo aPersonalInfo = PersonalInfoFactory.getAPersonalInfoFactory(PersonalInfoEnum.UUID);
 			Map<String, Object> uuidMap = aPersonalInfo.getMap();
 			uuidMap.put("adClass", adClass); 
