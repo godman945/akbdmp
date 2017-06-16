@@ -194,8 +194,8 @@ public class CategoryLogDriver {
 
 			}
 
-//			String bessieTempPath="/home/webuser/akb/storedata/alllog/2017-05-01/00";
-			String bessieTempPath="/home/webuser/dmp/alex/input/";
+			String bessieTempPath="/home/webuser/akb/storedata/alllog/2017-05-01/00";
+//			String bessieTempPath="/home/webuser/dmp/alex/input/";
 			
 			
 			
