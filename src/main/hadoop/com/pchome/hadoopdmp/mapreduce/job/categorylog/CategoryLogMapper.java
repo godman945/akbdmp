@@ -47,7 +47,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private Text valueOut = new Text();
 
 	public static String record_date;
-	public CategoryLogBean categoryLogBean;
+//	public static CategoryLogBean categoryLogBean;
 	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();
 	public static ArrayList<Map<String, String>> list = new ArrayList<Map<String, String>>();
 
@@ -62,7 +62,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			this.mongoOperations = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
 			
 			record_date = context.getConfiguration().get("job.date");
-			this.categoryLogBean = new CategoryLogBean();
+//			this.categoryLogBean = new CategoryLogBean();
 
 			Configuration conf = context.getConfiguration();
 
@@ -192,8 +192,8 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			log.info("values.length < " + LOG_LENGTH);
 //			return;
 //		}
-		categoryLogBean=null;
 
+		
 		try {
 			String[] values = value.toString().split(SYMBOL);
 			if (values.length < LOG_LENGTH) {
@@ -208,13 +208,14 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			log.info(">>>15>>> " + values[15]);
 			log.info(">>>3>>> " + values[3]);
 
-			CategoryLogBean categoryLogBeanResult = new CategoryLogBean();
+			CategoryLogBean categoryLogBean = new CategoryLogBean();
+			CategoryLogBean categoryLogBeanResult = null;
 			//click
 			if (values[13].equals("ck") && StringUtils.isNotBlank(values[4]) && StringUtils.isNotBlank(values[15])) {
 //				this.categoryLogBean = new CategoryLogBean();
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
-				categoryLogBean.setClsfyCraspMap(clsfyCraspMap);
-				categoryLogBean.setList(list);
+//				categoryLogBean.setClsfyCraspMap(clsfyCraspMap);
+//				categoryLogBean.setList(list);
 				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean,mongoOperations);
 			}
 			
@@ -222,8 +223,8 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].contains("ruten")) {
 //				this.categoryLogBean = new CategoryLogBean();
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
-				categoryLogBean.setClsfyCraspMap(clsfyCraspMap);
-				categoryLogBean.setList(list);
+//				categoryLogBean.setClsfyCraspMap(clsfyCraspMap);
+//				categoryLogBean.setList(list);
 				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean,mongoOperations);
 			}
 
@@ -231,8 +232,8 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].contains("24h")) {
 //				this.categoryLogBean = new CategoryLogBean();
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
-				categoryLogBean.setList(list);
-				categoryLogBean.setClsfyCraspMap(clsfyCraspMap);
+//				categoryLogBean.setList(list);
+//				categoryLogBean.setClsfyCraspMap(clsfyCraspMap);
 				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean,mongoOperations);
 			}
 
