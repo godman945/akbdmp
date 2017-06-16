@@ -206,7 +206,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			CategoryLogBean categoryLogBeanResult = null;
 			//click
 			if (values[13].equals("ck") && StringUtils.isNotBlank(values[4]) && StringUtils.isNotBlank(values[15])) {
-				this.categoryLogBean = new CategoryLogBean();
+//				this.categoryLogBean = new CategoryLogBean();
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
 				categoryLogBean.setClsfyCraspMap(clsfyCraspMap);
 				categoryLogBean.setList(list);
@@ -215,7 +215,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			
 			// 露天
 			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].contains("ruten")) {
-				this.categoryLogBean = new CategoryLogBean();
+//				this.categoryLogBean = new CategoryLogBean();
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
 				categoryLogBean.setClsfyCraspMap(clsfyCraspMap);
 				categoryLogBean.setList(list);
