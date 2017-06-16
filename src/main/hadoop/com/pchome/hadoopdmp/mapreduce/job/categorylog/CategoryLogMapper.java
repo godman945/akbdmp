@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -195,7 +196,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		
 		try {
 			String[] values = value.toString().split(SYMBOL);
-			
+			log.info("bessie>>>>>>"+Arrays.asList(values));
 			log.info(">>>>>> " + values[1]);
 			log.info(">>>>>> " + values[2]);
 			log.info(">>>>>> " + values[13]);
