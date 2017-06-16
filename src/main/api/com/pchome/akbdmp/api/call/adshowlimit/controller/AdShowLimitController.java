@@ -50,9 +50,9 @@ public class AdShowLimitController extends BaseController {
 	
 	Log log = LogFactory.getLog(AdShowLimitController.class);
 
-	private static long time1 =  System.currentTimeMillis();
-	
-	private long time2;
+//	private static long time1 =  System.currentTimeMillis();
+//	
+//	private long time2;
 	
 	// @CrossOrigin(origins = {"http://pcbwebstg.pchome.com.tw"})
 	@RequestMapping(value = "/api/getAdShowLimit", method = RequestMethod.POST, headers = "Accept=application/json;charset=UTF-8")
@@ -61,12 +61,7 @@ public class AdShowLimitController extends BaseController {
 			@RequestParam(defaultValue = "", required = false) String[] adKey
 			) throws Exception {
 		try {
-			time2 = System.currentTimeMillis();
-			if(((double) time2 - time1) / 1000 >= 600){
-				log.info(">>>>>> call getAdShowLimit : adKey:" + Arrays.asList(adKey));
-				time1 = time2;
-			}
-
+			
 			JSONObject paramaterJson = new JSONObject();
 			paramaterJson.put(DmpAdShowLimitParamaterEnum.AD_KEY.getKey(), adKey);
 			ACheckData aCheckData = checkDataFactory.getaCheckData(DmpCheckObjNameEnum.CHECK_ADSHOW_LIMIT);
@@ -77,10 +72,21 @@ public class AdShowLimitController extends BaseController {
 				return getReturnData(obj);
 			}
 			
+			
+			boolean adKeyFlag = false;
 			if(active.equals("stg")){
 				Jedis jedis = new Jedis("redisdev.mypchome.com.tw");
 				AdShowLimitBean adShowLimitBean = new AdShowLimitBean();
 				for (Object key : adKey) {
+					
+					if(key == null || key.equals("")){
+						adKeyFlag = true;
+					}
+					String [] adKeyArray = key.toString().split("_");
+					if(adKeyArray.length != 4){
+						adKeyFlag = true;
+					}
+					
 					int adLimit = jedis.get(key.toString()) == null ? 0 : Integer.parseInt(jedis.get(key.toString()));
 					adShowLimitBean.getAdShowLimitMap().put(key.toString(), adLimit);
 				}
@@ -94,8 +100,21 @@ public class AdShowLimitController extends BaseController {
 				
 				AdShowLimitBean adShowLimitBean = new AdShowLimitBean();
 				for (Object key : adKey) {
+					
+					if(key == null || key.equals("")){
+						adKeyFlag = true;
+					}
+					String [] adKeyArray = key.toString().split("_");
+					if(adKeyArray.length != 4){
+						adKeyFlag = true;
+					}
+					
 					int adLimit = (int) ((redisTemplate.opsForValue().get(key) == null) ? 0 : Integer.parseInt(IOUtils.toString(jedisConnectionFactory.getClusterConnection().get(key.toString().getBytes()))));
 					adShowLimitBean.getAdShowLimitMap().put(key.toString(), adLimit);
+				}
+				
+				if(adKeyFlag){
+					log.error(">>>>>> Fail adkey:"+adKey);
 				}
 				
 				ReturnData returnData = new ReturnData();
