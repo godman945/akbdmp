@@ -28,7 +28,7 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	Log log = LogFactory.getLog("CategoryLogReducer");
 	
-	private MongoOperations mongoOperations;
+//	private MongoOperations mongoOperations;
 	
 	private final static String SYMBOL = String.valueOf(new char[]{9, 31});
 	
@@ -37,33 +37,28 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	public static String record_date;
 
-	public AncestorJob job = null;
-	
-	private String kafkaMetadataBrokerlist;
-	
-	private String kafkaAcks;
-	
-	private String kafkaRetries;
-	
-	private String kafkaBatchSize;
-	
-	private String kafkaLingerMs;
-	
-	private String kafkaBufferMemory;
-	
-	private String kafkaSerializerClass;
-	
-	private String kafkaKeySerializer;
-	
-	private String kafkaValueSerializer;
-	
-	List<JSONObject> kafkaList = new ArrayList<>();
-
-	Producer<String, String> producer = null;
-	
-	@Autowired
-	WriteAkbDmp writeAkbDmp;
-	
+//	
+//	private String kafkaMetadataBrokerlist;
+//	
+//	private String kafkaAcks;
+//	
+//	private String kafkaRetries;
+//	
+//	private String kafkaBatchSize;
+//	
+//	private String kafkaLingerMs;
+//	
+//	private String kafkaBufferMemory;
+//	
+//	private String kafkaSerializerClass;
+//	
+//	private String kafkaKeySerializer;
+//	
+//	private String kafkaValueSerializer;
+//	
+//	List<JSONObject> kafkaList = new ArrayList<>();
+//
+//	Producer<String, String> producer = null;
 	
 //	private CategoryLogReducer categoryLogReducer;
 
@@ -71,9 +66,11 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		try {
-    		System.setProperty("spring.profiles.active", "prd");
-    		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-    		this.mongoOperations = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
+//    		System.setProperty("spring.profiles.active", "prd");
+//    		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+
+    		
+    		//    		this.mongoOperations = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
     		
 //			this.kafkaMetadataBrokerlist = ctx.getEnvironment().getProperty("kafka.metadata.broker.list");
 //			this.kafkaAcks = ctx.getEnvironment().getProperty("kafka.acks");
@@ -124,16 +121,15 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 			
 			String data[] = key.toString().split(SYMBOL);
 			
-			ClassCountLogBean classCountLogBean = new ClassCountLogBean();
-			classCountLogBean.setMemid(data[0]);
-			classCountLogBean.setUuid(data[1]);
-			classCountLogBean.setAdClass(data[2]);
-			classCountLogBean.setAge(data[3]);
-			classCountLogBean.setSex(data[4]);
-			classCountLogBean.setSource(data[5]);
-			classCountLogBean.setRecordDate(data[6]);
-			classCountLogBean.setType(data[7]);
-			this.writeAkbDmp.process(classCountLogBean);
+//			ClassCountLogBean classCountLogBean = new ClassCountLogBean();
+//			classCountLogBean.setMemid(data[0]);
+//			classCountLogBean.setUuid(data[1]);
+//			classCountLogBean.setAdClass(data[2]);
+//			classCountLogBean.setAge(data[3]);
+//			classCountLogBean.setSex(data[4]);
+//			classCountLogBean.setSource(data[5]);
+//			classCountLogBean.setRecordDate(data[6]);
+//			classCountLogBean.setType(data[7]);
 			
 			
 			/*

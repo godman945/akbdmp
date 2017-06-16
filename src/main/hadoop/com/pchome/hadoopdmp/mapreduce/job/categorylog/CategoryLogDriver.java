@@ -194,7 +194,9 @@ public class CategoryLogDriver {
 
 			}
 
-			String bessieTempPath="/home/webuser/akb/storedata/alllog/2017-05-01/00";
+//			String bessieTempPath="/home/webuser/akb/storedata/alllog/2017-05-01/00";
+			String bessieTempPath="/home/webuser/dmp/alex/input/rawdata.txt";
+			
 			
 //			FileInputFormat.addInputPaths(job, alllogOpRange.toString());
 			FileInputFormat.addInputPaths(job, bessieTempPath);

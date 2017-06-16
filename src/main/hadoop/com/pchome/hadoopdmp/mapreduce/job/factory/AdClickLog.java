@@ -14,9 +14,11 @@ public class AdClickLog extends ACategoryLogData {
 		
 		String memid = values[1];
 		String uuid = values[2];
-//		String sourceUrl = values[4];
 		String adClass = values[15];
 		
+		if ((StringUtils.isBlank(memid) || memid.equals("null")) && (StringUtils.isBlank(uuid) || uuid.equals("null"))) {
+			return null;
+		}
 		
 	    //取個資
 	    if((StringUtils.isNotBlank(memid)) && (!memid.equals("null")) ) {
@@ -26,7 +28,7 @@ public class AdClickLog extends ACategoryLogData {
 			categoryLogBean.setSource("ad_click");
 			categoryLogBean.setType("memid");
 			return categoryLogBean;
-		}else if(StringUtils.isNotBlank(uuid)){
+		}else if((StringUtils.isNotBlank(uuid)) && (!uuid.equals("null"))){
 			APersonalInfo aPersonalInfo = PersonalInfoFactory.getAPersonalInfoFactory(PersonalInfoEnum.UUID);
 			Map<String, Object> uuidMap = aPersonalInfo.getMap();
 			uuidMap.put("adClass", adClass); 

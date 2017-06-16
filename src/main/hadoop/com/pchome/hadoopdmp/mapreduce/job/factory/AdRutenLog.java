@@ -74,9 +74,8 @@ public class AdRutenLog extends ACategoryLogData {
 			if(classUrlMongoBean.getStatus().equals("1")){
 				adClass = classUrlMongoBean.getAd_class();
 			}
-		}
-		
-		if (classUrlMongoBean == null){
+			
+		}else {
 			adClass = crawlerGetAdclass(categoryLogBean,sourceUrl);
 			Date date = new Date();
 			ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
@@ -87,8 +86,6 @@ public class AdRutenLog extends ACategoryLogData {
 			classUrlMongoBeanCreate.setUpdate_dateDate(date);
 			mongoOperations.save(classUrlMongoBeanCreate);
 		}
-		
-		
 		
 		
 		//1.爬蟲沒有adclass
@@ -125,6 +122,7 @@ public class AdRutenLog extends ACategoryLogData {
 	
 	public String crawlerGetAdclass(CategoryLogBean categoryLogBean, String sourceUrl) throws Exception {
 		StringBuffer url = new StringBuffer();
+		String urlCated = "";// ad_class
 		
 		// url transform
 		Pattern p = Pattern.compile("http://goods.ruten.com.tw/item/\\S+\\?\\d+");
@@ -134,10 +132,10 @@ public class AdRutenLog extends ACategoryLogData {
 			url.append(m.group().replaceAll("http://goods.ruten.com.tw/item/\\S+\\?", ""));
 		} else {
 			// log.info("unrecognized url: " + value.toString());
-			return null;
+			return urlCated;
 		}
 
-		Thread.sleep(500); // test
+//		Thread.sleep(500); // test
 
 		Document doc =  Jsoup.parse( new URL(url.toString()) , 10000 );
 
@@ -146,7 +144,6 @@ public class AdRutenLog extends ACategoryLogData {
 		String breadcrumb = breadcrumbE.size() > 0 ? breadcrumbE.get(0).text() : "nothing";
 		// log.info("breadcrumb=" + breadcrumb);
 
-		String urlCated = "";// ad_class
 		// adult
 		if (breadcrumb.equals("nothing")) {
 			p = Pattern
