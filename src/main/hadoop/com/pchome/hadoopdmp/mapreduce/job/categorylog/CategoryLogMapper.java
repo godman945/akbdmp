@@ -242,7 +242,8 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			keyOut.set(result);
 			context.write(keyOut, valueOut);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(">>>>>> " + e.getMessage());
+//			e.printStackTrace();
 		}
 
 	}
