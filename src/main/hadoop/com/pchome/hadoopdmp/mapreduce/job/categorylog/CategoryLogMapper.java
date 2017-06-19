@@ -47,9 +47,8 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private Text valueOut = new Text();
 
 	public static String record_date;
-//	public static CategoryLogBean categoryLogBean;
-	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();
-	public static ArrayList<Map<String, String>> list = new ArrayList<Map<String, String>>();
+	public static ArrayList<Map<String, String>> categoryList = new ArrayList<Map<String, String>>();//分類表	
+	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();	 //分類個資表
 
 	private MongoOperations mongoOperations;
 
@@ -62,10 +61,10 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			this.mongoOperations = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
 			
 			record_date = context.getConfiguration().get("job.date");
-//			this.categoryLogBean = new CategoryLogBean();
-
+			
 			Configuration conf = context.getConfiguration();
 
+			//load 分類個資表(ClsfyGndAgeCrspTable.txt)
 			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
 			Path clsfyTable = Paths.get(path[1].toString());
 			Charset charset = Charset.forName("UTF-8");
@@ -75,35 +74,31 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				String[] tmpStrAry2 = tmpStrAry[1].split(",");
 				clsfyCraspMap.put(tmpStrAry[0],new combinedValue(tmpStrAry[1].split(",")[0], tmpStrAry2.length > 1 ? tmpStrAry2[1] : ""));
 			}
+			
 
-			// get csv file
+			// load 分類表(pfp_ad_category_new.csv)
 			Path cate_path = Paths.get(path[0].toString());
 			charset = Charset.forName("UTF-8");
-
 			int maxCateLvl = 4;
-			list = new ArrayList<Map<String, String>>();
-
+			categoryList = new ArrayList<Map<String, String>>();
 			for (int i = 0; i < maxCateLvl; i++) {
-				list.add(new HashMap<String, String>());
+				categoryList.add(new HashMap<String, String>());
 			}
-
 			lines.clear();
 			lines = Files.readAllLines(cate_path, charset);
-
 			// 將 table: pfp_ad_category_new 內容放入list中(共有 maxCateLvl 層)
 			for (String line : lines) {
 				String[] tmpStr = line.split(";");
 				int lvl = Integer.parseInt(tmpStr[5].replaceAll("\"", "").trim());
 				if (lvl <= maxCateLvl) {
-					list.get(lvl - 1).put(tmpStr[3].replaceAll("\"", "").trim(),
+					categoryList.get(lvl - 1).put(tmpStr[3].replaceAll("\"", "").trim(),
 							tmpStr[4].replaceAll("\"", "").replaceAll("@", "").trim());
 				}
 
 			}
+			
 		} catch (Exception e) {
-			// log.error("ClsfyGndAgeCrspTable error:\n" + e.getMessage());
-			// e.printStackTrace();
-			// log.error("ClsfyGndAgeCrspTable error:\n" + e.pr);
+			log.info("Mapper  setup Exception: "+e.getMessage());
 		}
 	}
 
@@ -175,18 +170,6 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //		log.info(">>>>>> " + values[3]);
 //		log.info("----------------------------------- data");
 		
-		
-		
-		
-		//online版本
-		// 1.
-		// values[1] //mid
-		// values[2] //uuid
-		// values[13] //ck,pv
-		// values[4] //url
-		// values[15] //ad_class
-		// values[3] //behavior
-		
 //		String[] values = value.toString().split(SYMBOL);
 //		if (values.length < LOG_LENGTH) {
 //			log.info("values.length < " + LOG_LENGTH);
@@ -194,61 +177,59 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //		}
 
 		
+		
+		// values[1] //memid
+		// values[2] //uuid
+		// values[4] //url
+		// values[13] //ck,pv
+		// values[15] //ad_class
 		try {
 			String[] values = value.toString().split(SYMBOL);
 			if (values.length < LOG_LENGTH) {
 				log.info("values.length < " + LOG_LENGTH);
 				return;
 			}
-//			log.info("bessie>>>>>>"+Arrays.asList(values));
-			log.info(">>>1>>> " + values[1]);
-			log.info(">>>2>>> " + values[2]);
-			log.info(">>>13>>> " + values[13]);
-			log.info(">>>4>>> " + values[4]);
-			log.info(">>>15>>> " + values[15]);
-			log.info(">>>3>>> " + values[3]);
+			
+			log.info("raw_data [memid] : " + values[1]);
+			log.info("raw_data [uuid] : " + values[2]);
+			log.info("raw_data [url] : " + values[4]);
+			log.info("raw_data [ck,pv] : " + values[13]);
+			log.info("raw_data [ad_class] : " + values[15]);
 
 			CategoryLogBean categoryLogBean = new CategoryLogBean();
 			CategoryLogBean categoryLogBeanResult = null;
-			//click
+
+			// ad_click
 			if (values[13].equals("ck") && StringUtils.isNotBlank(values[4]) && StringUtils.isNotBlank(values[15])) {
-//				this.categoryLogBean = new CategoryLogBean();
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
-//				categoryLogBean.setClsfyCraspMap(clsfyCraspMap);
-//				categoryLogBean.setList(list);
-				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean,mongoOperations);
+				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean, mongoOperations);
 			}
 			
 			// 露天
 			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].contains("ruten")) {
-//				this.categoryLogBean = new CategoryLogBean();
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
-//				categoryLogBean.setClsfyCraspMap(clsfyCraspMap);
-//				categoryLogBean.setList(list);
-				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean,mongoOperations);
+				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean, mongoOperations);
 			}
 
 			// 24h
 			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].contains("24h")) {
-//				this.categoryLogBean = new CategoryLogBean();
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
-//				categoryLogBean.setList(list);
-//				categoryLogBean.setClsfyCraspMap(clsfyCraspMap);
-				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean,mongoOperations);
+				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean, mongoOperations);
 			}
 
 			if (categoryLogBeanResult == null) {
 				return;
 			}
+			
 			categoryLogBeanResult.setRecodeDate(record_date);
 			// 0:Memid + 1:Uuid + 2:AdClass + 3:Age + 4:Sex + 5:Source + 6:RecodeDate + 7:Type
 			String result = categoryLogBeanResult.getMemid() + SYMBOL + categoryLogBeanResult.getUuid() + SYMBOL + categoryLogBeanResult.getAdClass() + SYMBOL + categoryLogBeanResult.getAge() + SYMBOL + categoryLogBeanResult.getSex() + SYMBOL + categoryLogBeanResult.getSource()+ SYMBOL +categoryLogBeanResult.getRecodeDate() + SYMBOL + categoryLogBeanResult.getType();
-			log.info(">>>>>> write key:" + result);
+			log.info(">>>>>>Mapper write key:" + result);
 			keyOut.set(result);
 			context.write(keyOut, valueOut);
+			
 		} catch (Exception e) {
 			log.error(">>>>>> " + e.getMessage());
-//			e.printStackTrace();
 		}
 
 	}

@@ -3,12 +3,12 @@ package com.pchome.hadoopdmp.mapreduce.job.factory;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.hadoop.mapreduce.Mapper.Context;
 import org.springframework.data.mongodb.core.MongoOperations;
 
 import com.pchome.hadoopdmp.enumerate.PersonalInfoEnum;
 import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper;
 
+@SuppressWarnings({ "unchecked", "deprecation" ,"static-access","resource"})
 public class AdClickLog extends ACategoryLogData {
 
 	public Object processCategory(String[] values, CategoryLogBean categoryLogBean,MongoOperations mongoOperations) throws Exception {

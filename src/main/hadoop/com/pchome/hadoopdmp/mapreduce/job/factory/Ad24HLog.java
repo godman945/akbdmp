@@ -36,7 +36,6 @@ import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper;
 @SuppressWarnings({ "unchecked", "deprecation" ,"static-access","resource"})
 public class Ad24HLog extends ACategoryLogData {
 
-	
 	public Object processCategory(String[] values, CategoryLogBean categoryLogBean,MongoOperations mongoOperations) throws Exception {
 		
 		String memid = values[1];
@@ -59,8 +58,8 @@ public class Ad24HLog extends ACategoryLogData {
 		if(classUrlMongoBean != null){
 			//爬蟲
 			if(classUrlMongoBean.getStatus().equals("0")){
-				adClass = crawlerGetAdclass(categoryLogBean,sourceUrl);
-				if(StringUtils.isNotBlank(adClass) && !adClass.equals("unclassed")){
+				adClass = crawlerGetAdclass(sourceUrl);
+				if(adClass.matches("\\d{16}")){
 					Date date = new Date();
 					classUrlMongoBean.setStatus("1");
 					classUrlMongoBean.setAd_class(adClass);
@@ -69,30 +68,30 @@ public class Ad24HLog extends ACategoryLogData {
 				}
 			}
 			
-			//比對個資
+			//取得ad_class
 			if(classUrlMongoBean.getStatus().equals("1")){
 				adClass = classUrlMongoBean.getAd_class();
 			}
 		}
 		
 		if (classUrlMongoBean == null){
-			adClass = crawlerGetAdclass(categoryLogBean,sourceUrl);
+			adClass = crawlerGetAdclass(sourceUrl);
 			Date date = new Date();
 			ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
 			classUrlMongoBeanCreate.setAd_class(adClass);
-			classUrlMongoBeanCreate.setStatus((StringUtils.isBlank(adClass) || adClass.equals("unclassed")) ? "0" : "1");
+			classUrlMongoBeanCreate.setStatus(adClass.matches("\\d{16}") ? "1" : "0");
 			classUrlMongoBeanCreate.setUrl(sourceUrl); 
 			classUrlMongoBeanCreate.setCreate_date(date);
 			classUrlMongoBeanCreate.setUpdate_dateDate(date);
 			mongoOperations.save(classUrlMongoBeanCreate);
 		}
 		
-		//1.enum比對不到且爬蟲也沒有
-		if(StringUtils.isBlank(adClass) || adClass.equals("unclassed")){
+		//enum比對不到且爬蟲也沒有
+		if(!adClass.matches("\\d{16}")){
 			return null;
 		}
 		
-		//2取個資
+		//取個資
 		if(StringUtils.isNotBlank(memid) && (!memid.equals("null"))){
 			categoryLogBean.setAdClass(adClass);
 			categoryLogBean.setMemid(values[1]);
@@ -153,11 +152,11 @@ public class Ad24HLog extends ACategoryLogData {
 		}
 	}
 	
-	public String crawlerGetAdclass(CategoryLogBean categoryLogBean,String sourceUrl) throws Exception{
+	public String crawlerGetAdclass(String sourceUrl) throws Exception{
 		String adClass="";
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		Map<String, String> oriMatchMap = new HashMap<String, String>();
-		ArrayList<Map<String, String>> matchList = CategoryLogMapper.list;
+		ArrayList<Map<String, String>> matchList = CategoryLogMapper.categoryList;
 		for (int i = 0; i < matchList.size(); i++) {
 			map.putAll(matchList.get(i));
 			oriMatchMap.putAll(matchList.get(i));
@@ -286,6 +285,9 @@ public class Ad24HLog extends ACategoryLogData {
 			}
 		}
 		
+		map = null;
+		oriMatchMap = null;
+		
 		return adClass;
 	}
 	
@@ -312,9 +314,8 @@ public class Ad24HLog extends ACategoryLogData {
 		}
 		return strBuf.toString();
 	}
+	
 
-	/*-------------------*/
-	/*------ Match ------*/
 	public String likeStringSearchV2(Map<String, String> map, String[] kwCombi) throws Exception {
 		float maxScore = 0;
 		String maxScoreAdClass = "";
@@ -330,13 +331,8 @@ public class Ad24HLog extends ACategoryLogData {
 				if (highHit != null) {
 					for (String strH : highHit) {
 						if (strH.equals(str)) {
-							// log.info("High Hit , str:" + str + " , strH:" +
-							// strH + " , return this adClass:" +
-							// entry.getKey());
 							return entry.getKey();
 						}
-						// log.info("HighHit not hit, strH:" + strH + " ,str:" +
-						// str);
 					}
 				}
 				if (entry.getValue().contains(str)) {
@@ -351,6 +347,4 @@ public class Ad24HLog extends ACategoryLogData {
 		}
 		return maxScoreAdClass;
 	}
-	/*------ Match ------*/
-	/*-------------------*/
 }

@@ -21,6 +21,7 @@ import com.pchome.hadoopdmp.data.mongo.pojo.ClassUrlMongoBean;
 import com.pchome.hadoopdmp.enumerate.PersonalInfoEnum;
 import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper;
 
+@SuppressWarnings({ "unchecked", "deprecation" ,"static-access","resource"})
 public class AdRutenLog extends ACategoryLogData {
 
 	public Object processCategory(String[] values, CategoryLogBean categoryLogBean,MongoOperations mongoOperations) throws Exception {
@@ -39,21 +40,6 @@ public class AdRutenLog extends ACategoryLogData {
 			return null;
 		}
 		
-//		String urlStr = values[4].toString();
-//		StringBuffer url = new StringBuffer();
-
-		
-//		// url transform
-//		Pattern p = Pattern.compile("http://goods.ruten.com.tw/item/\\S+\\?\\d+");
-//		Matcher m = p.matcher(urlStr.toString());
-//		if( m.find() ) {
-//			url.append("http://m.ruten.com.tw/goods/show.php?g=");
-//			url.append( m.group().replaceAll("http://goods.ruten.com.tw/item/\\S+\\?", "") );
-// 		} else {
-// 			return null;
-// 		}
-
-		
 		ClassUrlMongoBean classUrlMongoBean = null;
 		Query query = new Query(Criteria.where("url").is(sourceUrl.trim()));
 		classUrlMongoBean = mongoOperations.findOne(query, ClassUrlMongoBean.class);
@@ -61,7 +47,7 @@ public class AdRutenLog extends ACategoryLogData {
 		if(classUrlMongoBean != null){
 			//爬蟲
 			if(classUrlMongoBean.getStatus().equals("0")){
-				adClass = crawlerGetAdclass(categoryLogBean,sourceUrl);
+				adClass = crawlerGetAdclass(sourceUrl);
 				if(StringUtils.isNotBlank(adClass)){
 					Date date = new Date();
 					classUrlMongoBean.setAd_class(adClass);
@@ -77,11 +63,11 @@ public class AdRutenLog extends ACategoryLogData {
 			}
 			
 		}else {
-			adClass = crawlerGetAdclass(categoryLogBean,sourceUrl);
+			adClass = crawlerGetAdclass(sourceUrl);
 			Date date = new Date();
 			ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
 			classUrlMongoBeanCreate.setAd_class(adClass);
-			classUrlMongoBeanCreate.setStatus(StringUtils.isBlank(adClass) ? "0" : "1");
+			classUrlMongoBeanCreate.setStatus(adClass.matches("\\d{16}") ? "1" : "0");
 			classUrlMongoBeanCreate.setUrl(sourceUrl); 
 			classUrlMongoBeanCreate.setCreate_date(date);
 			classUrlMongoBeanCreate.setUpdate_dateDate(date);
@@ -89,12 +75,12 @@ public class AdRutenLog extends ACategoryLogData {
 		}
 		
 		
-		//1.爬蟲沒有adclass
-	    if (StringUtils.isBlank(adClass)) {
+		//爬蟲沒有adclass
+		if(!adClass.matches("\\d{16}")){
 	    	return null;
 	    }
 
-	    //2取個資
+	    //取個資
 	    if((StringUtils.isNotBlank(memid)) && (!memid.equals("null")) ) {
 	    	categoryLogBean.setAdClass(adClass);
 			categoryLogBean.setMemid(values[1]);
@@ -102,7 +88,7 @@ public class AdRutenLog extends ACategoryLogData {
 			categoryLogBean.setSource("ruten");
 			categoryLogBean.setType("memid");
 			return categoryLogBean;
-		}else if(StringUtils.isNotBlank(uuid)){
+		}else if(StringUtils.isNotBlank(uuid) && (!uuid.equals("null"))){
 			APersonalInfo aPersonalInfo = PersonalInfoFactory.getAPersonalInfoFactory(PersonalInfoEnum.UUID);
 			Map<String, Object> uuidMap = aPersonalInfo.getMap();
 			uuidMap.put("adClass", adClass); 
@@ -121,7 +107,7 @@ public class AdRutenLog extends ACategoryLogData {
 		return null;
 	}
 	
-	public String crawlerGetAdclass(CategoryLogBean categoryLogBean, String sourceUrl) throws Exception {
+	public String crawlerGetAdclass(String sourceUrl) throws Exception {
 		StringBuffer url = new StringBuffer();
 		String urlCated = "";// ad_class
 		
@@ -132,18 +118,16 @@ public class AdRutenLog extends ACategoryLogData {
 			url.append("http://m.ruten.com.tw/goods/show.php?g=");
 			url.append(m.group().replaceAll("http://goods.ruten.com.tw/item/\\S+\\?", ""));
 		} else {
-			// log.info("unrecognized url: " + value.toString());
 			return urlCated;
 		}
 
-//		Thread.sleep(500); // test
+//		Thread.sleep(500); 
 
 		Document doc =  Jsoup.parse( new URL(url.toString()) , 10000 );
 
 		Elements breadcrumbE = doc.body().select("ul[class=rt-breadcrumb-list]");
 
 		String breadcrumb = breadcrumbE.size() > 0 ? breadcrumbE.get(0).text() : "nothing";
-		// log.info("breadcrumb=" + breadcrumb);
 
 		// adult
 		if (breadcrumb.equals("nothing")) {
@@ -152,28 +136,24 @@ public class AdRutenLog extends ACategoryLogData {
 			m = p.matcher(doc.toString());
 			if (m.find()) {
 				urlCated = "0025000000000000";
-				// context.write( new Text("0025000000000000") , value);
-				// log.info("contextWrite: "+ "0025000000000000" + "," +
-				// value.toString());
 			} else {
-				// context.write( new Text("unclassed") , value);
-				// log.info("contextWrite: "+ "unclassed" + "," +
-				// value.toString());
+				return urlCated;
 			}
 			return urlCated;
 		}
 
+		//如果ad_class不是16位數字，去分類表比對
 		if (!urlCated.matches("\\d{16}")) {
 			StringBuffer tmpBuf = new StringBuffer().append(">").append(breadcrumb.replaceAll(" ", ">"));
 			breadcrumb = tmpBuf.toString();
-			// log.info("breadcrumb(af)=" + breadcrumb);
 
 			String[] catedLvl = breadcrumb.replaceAll(" ", "").replaceAll("\t", "").replaceAll("@", "").trim()
 					.split(">");
 
-			ArrayList<Map<String, String>> list = CategoryLogMapper.list;
+			ArrayList<Map<String, String>> list = CategoryLogMapper.categoryList;
 			List<String> urlCatedList = CateMatch((catedLvl.length > 4 ? 4 : (catedLvl.length - 1)), catedLvl, list);
 			urlCated = (urlCatedList.size() > 0 ? urlCatedList.get(0) : "unclassed");
+			list=null;
 		}
 
 		urlCated = urlCated.matches("\\d{16}") ? urlCated : "";
