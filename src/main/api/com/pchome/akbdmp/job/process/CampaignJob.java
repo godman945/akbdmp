@@ -69,13 +69,13 @@ public class CampaignJob {
 
 		String line = null;
 		String[] lines = null;
-		String memid = null;
-		String uuid = null;
-		String adClass = null;
-		String age = null;
-		String sex = null;
-		String ipArea = null;
-		String recordDate = null;
+		String memid = "";
+		String uuid = "";
+		String adClass = "";
+		String age = "";
+		String sex = "";
+		String ipArea = "";
+		String recordDate = "";
 
 		java.io.File folder = new java.io.File(campaignlogPath);
 		String[] fileList = folder.list();
@@ -93,13 +93,13 @@ public class CampaignJob {
 					continue;
 				}
 
-				memid = null;
-				uuid = null;
-				adClass = null;
-				age = null;
-				sex = null;
-				ipArea = null;
-				recordDate = null;
+				memid = "";
+				uuid = "";
+				adClass = "";
+				age = "";
+				sex = "";
+				ipArea = "";
+				recordDate = "";
 				
 				memid = lines[0];
 				uuid = lines[1];
