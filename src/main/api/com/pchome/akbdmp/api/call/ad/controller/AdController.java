@@ -73,6 +73,7 @@ public class AdController extends BaseController {
 			return result;
 		} catch (Exception e) {
 			log.error(">>>>" + e.getMessage());
+			e.printStackTrace();
 			ReturnData returnData = new ReturnData();
 			returnData.setCode(DmpApiReturnCodeEnum.API_CODE_E002.getCode());
 			returnData.setResult(e.getMessage());
