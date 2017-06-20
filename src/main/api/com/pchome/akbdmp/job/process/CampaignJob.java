@@ -140,8 +140,8 @@ public class CampaignJob {
 			System.setProperty("spring.profiles.active", "stg");
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
 			CampaignJob campaignJob = ctx.getBean(CampaignJob.class);
-//			campaignJob.run();
-			 campaignJob.process2();
+			campaignJob.run();
+//			 campaignJob.process2();
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);
