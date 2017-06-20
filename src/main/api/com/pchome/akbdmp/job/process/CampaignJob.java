@@ -4,7 +4,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -14,7 +18,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Scope;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
@@ -23,6 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pchome.akbdmp.data.mongo.pojo.ClassCountMongoBean;
 import com.pchome.akbdmp.job.bean.ClassCountLogBean;
 import com.pchome.akbdmp.spring.config.bean.allbeanscan.SpringAllConfig;
+import com.pchome.hadoopdmp.data.mongo.pojo.ClassUrlMongoBean;
 import com.pchome.soft.depot.utils.KafkaUtil;
 
 @Component
@@ -48,14 +57,70 @@ public class CampaignJob {
 
 	public void process2() throws Exception {
 		// 593a7ff5e4b07296c3205a27
-		Query query = new Query();
-		query.addCriteria(Criteria.where("category_info.category").regex("0012000000000000"));
-		List<ClassCountMongoBean> classCountMongoList = mongoOperations.find(query, ClassCountMongoBean.class);
-		System.out.println(classCountMongoList.size());
-		for (ClassCountMongoBean classCountMongoBean : classCountMongoList) {
-			System.out.println(classCountMongoBean.get_id());
-		}
+//		Query query = new Query();
+//		query.addCriteria(Criteria.where("category_info.category").regex("0012000000000000"));
+//		List<ClassCountMongoBean> classCountMongoList = mongoOperations.find(query, ClassCountMongoBean.class);
+//		System.out.println(classCountMongoList.size());
+//		for (ClassCountMongoBean classCountMongoBean : classCountMongoList) {
+//			System.out.println(classCountMongoBean.get_id());
+//		}
 //		kafkaUtil.sendMessage("TEST", "", "123");
+		
+//		System.out.println(mongoOperations.findAll(ClassUrlMongoBean.class).size());
+//		List<ClassUrlMongoBean> list = mongoOperations.findAll(ClassUrlMongoBean.class);
+//		for (ClassUrlMongoBean classUrlMongoBean : list) {
+//			ClassCountMongoBean ClassCountMongoBean = new ClassCountMongoBean();
+//			ClassCountMongoBean.setUser_id(classUrlMongoBean.getUrl());
+//			mongoOperations.save(ClassCountMongoBean);
+//		}
+		Query query = new Query();
+		query.addCriteria(Criteria.where("user_id").is("alex"));
+		query.with(new Sort(Sort.Direction.ASC, "category_info.ad_class_day_count"));
+//		query.with(new Sort(new Order(Direction.ASC, "").ignoreCase());
+//		AggregationOperation sort = Aggregation.sort(Direction.ASC,"category_info.ad_class_day_count");
+//		query.with(new Sort(Sort.Direction.DESC,"category_info.ad_class_day_count"));
+		ClassCountMongoBean classCountMongoBean = mongoOperations.findOne(query, ClassCountMongoBean.class);
+		System.out.println(classCountMongoBean == null);
+//		classCountMongoBean.getUser_info().put("age", "");
+//		mongoOperations.save(classCountMongoBean);
+		
+		
+		
+		
+//		System.out.println(objectMapper.writeValueAsString(classCountMongoBean.getCategory_info()));
+		
+		List<Map<String, Object>> list = classCountMongoBean.getCategory_info();
+		
+		if (list.size() > 0) {
+			  Collections.sort(list, new Comparator<Map<String, Object>>() {
+			      public int compare(final Map<String, Object> object1, final Map<String, Object> object2) {
+			          return object2.get("w").toString().compareTo(object1.get("w").toString());
+			      }
+			  });
+			}
+			System.out.println(list);
+			
+			
+			AdclassApiReturnBean adclassApiReturnBean = new AdclassApiReturnBean();
+			String source = "";
+			for (Map<String, Object> map : list) {
+				if(StringUtils.isBlank(source)){
+					List<String> sourceList = (List<String>) map.get("source");
+					if(sourceList.size() > 0){
+						source = sourceList.get(0);
+					}
+//					source = map.get("source").toString();
+				}
+				adclassApiReturnBean.getAd_class().add(map.get("category").toString());
+			}
+			adclassApiReturnBean.setAge(classCountMongoBean.getUser_info().get("age").toString());
+			adclassApiReturnBean.setBehavior(source);
+			adclassApiReturnBean.setSex(classCountMongoBean.getUser_info().get("sex").toString());
+			System.out.println(objectMapper.writeValueAsString(adclassApiReturnBean));
+			
+//			{"sex":"M","ad_class":["0016024300000000"],"behavior":"24h","age":"56"}
+			
+			
 	}
 
 	public void run() throws Exception {
@@ -127,24 +192,32 @@ public class CampaignJob {
 			}
 			
 			br.close();
-			file.delete();
+//			file.delete();
 			log.info(">>>>>> delete: " + file);
 		}
 		log.info("====CampaignJob.process() end====");
 	}
 
 
-	@SuppressWarnings("resource")
 	public static void main(String[] args) {
-		try {
-			System.setProperty("spring.profiles.active", "stg");
-			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
-			CampaignJob campaignJob = ctx.getBean(CampaignJob.class);
-			campaignJob.run();
-//			 campaignJob.process2();
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
+		double w  = 0.5124973964842103;
+		double pExpv = 0;
+		pExpv = Math.exp(-1 * 0.05);
+		w = w + (1 / (1 + pExpv));
+		
+		System.out.println(w);
+		
+		
+		
+//		try {
+//			System.setProperty("spring.profiles.active", "stg");
+//			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
+//			CampaignJob campaignJob = ctx.getBean(CampaignJob.class);
+//			campaignJob.run();
+////			 campaignJob.process2();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			System.exit(1);
+//		}
 	}
 }

@@ -18,6 +18,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import redis.clients.jedis.JedisPoolConfig;
 
 @Configuration
+@Scope("prototype")
 public class RedisConfig {
 
 	@Value("${redis.server}")
@@ -42,7 +43,6 @@ public class RedisConfig {
 	private String active;
 	
 	
-	 @Bean
 	 JedisPoolConfig jedisPoolConfig() {
 		 JedisPoolConfig jedisConfig = new JedisPoolConfig();
 		 //空闲连接实例的最大数目，为负值时没有限制。Idle的实例在使用前，通常会通过
@@ -61,11 +61,7 @@ public class RedisConfig {
 		 return jedisConfig;
 	 }
 
-	@Bean
 	public RedisClusterConfiguration getClusterConfiguration() {
-		if(!active.equals("prd")){
-			return null;
-		}
 		Map<String, Object> source = new HashMap<String, Object>();
 		source.put("spring.redis.cluster.nodes", redisServer);
 		source.put("spring.redis.cluster.timeout", 10000000);
@@ -73,26 +69,34 @@ public class RedisConfig {
 		return new RedisClusterConfiguration(new MapPropertySource("RedisClusterConfiguration", source));
 	}
 
-	@Bean(name = "jedisConnectionFactory")
 	public JedisConnectionFactory getConnectionFactory() {
-		if(!active.equals("prd")){
-			return null;
-		}
 		JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(getClusterConfiguration());
 		jedisConnectionFactory.setPoolConfig(jedisPoolConfig());
 		return jedisConnectionFactory;
 	}
 
+	@Bean
+	JedisConnectionFactory jedisConnectionFactory() {
+	    JedisConnectionFactory jedisConFactory = new JedisConnectionFactory();
+	    jedisConFactory.setHostName(redisHost);
+	    jedisConFactory.setPort(redisPort);
+	    return jedisConFactory;
+	}
+	
 	@Bean(name = "redisTemplate")
 	public RedisTemplate<String, String> getRedisTemplate() {
-		if(!active.equals("prd")){
-			return null;
+		if(active.equals("prd")){
+			RedisTemplate<String, String> clusterTemplate = new RedisTemplate<String, String>();
+			clusterTemplate.setConnectionFactory(getConnectionFactory());
+			clusterTemplate.setKeySerializer(new StringRedisSerializer());
+			clusterTemplate.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
+			return clusterTemplate;
+		}else{
+			 RedisTemplate<String, String> template = new RedisTemplate<String, String>();
+			 template.setConnectionFactory(jedisConnectionFactory());
+			 template.setKeySerializer(new StringRedisSerializer());
+			 template.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
+			 return template;
 		}
-		RedisTemplate<String, String> clusterTemplate = new RedisTemplate<String, String>();
-		clusterTemplate.setConnectionFactory(getConnectionFactory());
-		clusterTemplate.setKeySerializer(new StringRedisSerializer());
-		clusterTemplate.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
-		return clusterTemplate;
 	}
-
 }
