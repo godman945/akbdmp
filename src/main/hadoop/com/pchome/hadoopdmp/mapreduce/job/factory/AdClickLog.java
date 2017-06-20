@@ -17,7 +17,7 @@ public class AdClickLog extends ACategoryLogData {
 		String uuid = values[2];
 		String adClass = values[15];
 		
-		if ((StringUtils.isBlank(memid) || memid.equals("null")) && (StringUtils.isBlank(uuid) || uuid.equals("null"))) {
+		if ((StringUtils.isBlank(memid) || memid.equals("null")) && (StringUtils.isBlank(uuid) || uuid.equals("null")) && adClass.matches("\\d{16}")) {
 			return null;
 		}
 		

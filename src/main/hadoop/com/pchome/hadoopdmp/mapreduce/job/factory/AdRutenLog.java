@@ -40,6 +40,12 @@ public class AdRutenLog extends ACategoryLogData {
 			return null;
 		}
 		
+		Pattern p = Pattern.compile("http://goods.ruten.com.tw/item/\\S+\\?\\d+");
+		Matcher m = p.matcher(sourceUrl);
+		if(!m.find() ) {
+			return null;
+ 		} 
+		
 		ClassUrlMongoBean classUrlMongoBean = null;
 		Query query = new Query(Criteria.where("url").is(sourceUrl.trim()));
 		classUrlMongoBean = mongoOperations.findOne(query, ClassUrlMongoBean.class);
@@ -52,7 +58,7 @@ public class AdRutenLog extends ACategoryLogData {
 					Date date = new Date();
 					classUrlMongoBean.setAd_class(adClass);
 					classUrlMongoBean.setStatus("1");
-					classUrlMongoBean.setUpdate_dateDate(date);
+					classUrlMongoBean.setUpdate_date(date);
 					mongoOperations.save(classUrlMongoBean);
 				}
 			}
@@ -66,11 +72,11 @@ public class AdRutenLog extends ACategoryLogData {
 			adClass = crawlerGetAdclass(sourceUrl);
 			Date date = new Date();
 			ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
-			classUrlMongoBeanCreate.setAd_class(adClass);
+			classUrlMongoBeanCreate.setAd_class(adClass.matches("\\d{16}") ?  adClass : "");
 			classUrlMongoBeanCreate.setStatus(adClass.matches("\\d{16}") ? "1" : "0");
 			classUrlMongoBeanCreate.setUrl(sourceUrl); 
 			classUrlMongoBeanCreate.setCreate_date(date);
-			classUrlMongoBeanCreate.setUpdate_dateDate(date);
+			classUrlMongoBeanCreate.setUpdate_date(date);
 			mongoOperations.save(classUrlMongoBeanCreate);
 		}
 		
@@ -118,7 +124,7 @@ public class AdRutenLog extends ACategoryLogData {
 			url.append("http://m.ruten.com.tw/goods/show.php?g=");
 			url.append(m.group().replaceAll("http://goods.ruten.com.tw/item/\\S+\\?", ""));
 		} else {
-			return urlCated;
+			return null;
 		}
 
 //		Thread.sleep(500); 

@@ -5,8 +5,8 @@ import java.util.Date;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "class_url")
-public class ClassUrlMongoBean {
+@Document(collection = "ad_log_class")
+public class AdLogClassMongoBean {
 
 	@Indexed
 	private String _id;
@@ -47,7 +47,7 @@ public class ClassUrlMongoBean {
 	public void setCreate_date(Date create_date) {
 		this.create_date = create_date;
 	}
-	
+
 	public Date getUpdate_date() {
 		return update_date;
 	}

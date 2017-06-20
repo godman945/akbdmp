@@ -51,6 +51,12 @@ public class Ad24HLog extends ACategoryLogData {
 			return null;
 		}
 		
+		Pattern p = Pattern.compile("(http|https)://24h.pchome.com.tw/(store|region)/([a-zA-Z0-9]+)([&|\\?|\\.]\\S*)?");
+		Matcher m = p.matcher(sourceUrl);
+		if (!m.find()) {
+			return null;
+		}
+		
 		ClassUrlMongoBean classUrlMongoBean = null;
 		Query query = new Query(Criteria.where("url").is(sourceUrl.trim()));
 		classUrlMongoBean = mongoOperations.findOne(query, ClassUrlMongoBean.class);
@@ -63,7 +69,7 @@ public class Ad24HLog extends ACategoryLogData {
 					Date date = new Date();
 					classUrlMongoBean.setStatus("1");
 					classUrlMongoBean.setAd_class(adClass);
-					classUrlMongoBean.setUpdate_dateDate(date);
+					classUrlMongoBean.setUpdate_date(date);
 					mongoOperations.save(classUrlMongoBean);
 				}
 			}
@@ -78,11 +84,11 @@ public class Ad24HLog extends ACategoryLogData {
 			adClass = crawlerGetAdclass(sourceUrl);
 			Date date = new Date();
 			ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
-			classUrlMongoBeanCreate.setAd_class(adClass);
+			classUrlMongoBeanCreate.setAd_class(adClass.matches("\\d{16}") ?  adClass : "");
 			classUrlMongoBeanCreate.setStatus(adClass.matches("\\d{16}") ? "1" : "0");
 			classUrlMongoBeanCreate.setUrl(sourceUrl); 
 			classUrlMongoBeanCreate.setCreate_date(date);
-			classUrlMongoBeanCreate.setUpdate_dateDate(date);
+			classUrlMongoBeanCreate.setUpdate_date(date);
 			mongoOperations.save(classUrlMongoBeanCreate);
 		}
 		
