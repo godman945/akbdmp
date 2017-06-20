@@ -80,6 +80,17 @@ public class RedisConfig {
 	    JedisConnectionFactory jedisConFactory = new JedisConnectionFactory();
 	    jedisConFactory.setHostName(redisHost);
 	    jedisConFactory.setPort(redisPort);
+	    jedisConFactory.setTimeout(0);
+	    
+	    JedisPoolConfig jedisConfig = new JedisPoolConfig();
+	    jedisConfig.setMaxIdle(maxIdle);
+	    jedisConfig.setTestOnBorrow(testOnBorrow);
+	    jedisConfig.setMaxWaitMillis(maxWait);
+	    jedisConfig.setMaxTotal(60000);
+	    jedisConfig.setTimeBetweenEvictionRunsMillis(-1);
+	    jedisConfig.setTestWhileIdle(false);
+	    jedisConfig.setEvictionPolicyClassName("org.apache.commons.pool2.impl.DefaultEvictionPolicy");
+	    jedisConFactory.setPoolConfig(jedisConfig);
 	    return jedisConFactory;
 	}
 	
