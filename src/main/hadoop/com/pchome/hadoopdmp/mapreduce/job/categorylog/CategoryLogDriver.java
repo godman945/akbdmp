@@ -115,7 +115,7 @@ public class CategoryLogDriver {
 		job.setNumReduceTasks(1);
 
 		// job.setOutputFormatClass(NullOutputFormat.class);
-		FileOutputFormat.setOutputPath(job, new Path("/home/webuser/dmp/crawlUrls_TEST_" + dateStr.substring(0, 10)));
+		FileOutputFormat.setOutputPath(job, new Path("/home/webuser/dmp/crawlUrls_TEST_1_" + dateStr.substring(0, 10)));
 
 		if (dateStr.matches("\\d{4}-\\d{2}-\\d{2}")) {
 			// opRange.add(Calendar.DAY_OF_YEAR, -1);
@@ -135,8 +135,9 @@ public class CategoryLogDriver {
 			}
 
 			// String
-			// bessieTempPath="/home/webuser/akb/storedata/alllog/2017-05-01/00";//跑1小時data
-			FileInputFormat.addInputPaths(job, alllogOpRange.toString());
+			 String bessieTempPath="/home/webuser/akb/storedata/alllog/2017-05-01/01";//跑1小時data
+			 FileInputFormat.addInputPaths(job, bessieTempPath);
+//			FileInputFormat.addInputPaths(job, alllogOpRange.toString());
 			log.info("file Input Path : " + alllogOpRange);
 
 		} else if (dateStr.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}")) {
