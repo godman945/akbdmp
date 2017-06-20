@@ -20,14 +20,10 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.Configuration;
 import com.pchome.akbdmp.data.mongo.pojo.ClassCountMongoBean;
 import com.pchome.akbdmp.job.bean.ClassCountLogBean;
-import com.pchome.akbdmp.mongo.db.service.classcount.IClassCountService;
 import com.pchome.akbdmp.spring.config.bean.allbeanscan.SpringAllConfig;
-import com.pchome.soft.depot.utils.DateFormatUtil;
 import com.pchome.soft.depot.utils.KafkaUtil;
-import com.pchome.soft.depot.utils.RestClientUtil;
 
 @Component
 @Scope("prototype")
@@ -39,25 +35,11 @@ public class CampaignJob {
 	private String campaignlogPath;
 
 	@Autowired
-	private IClassCountService classCountService;
-
-	@Autowired
-	private Configuration jsonpathConfiguration;
-
-	@Autowired
-	private DateFormatUtil dateFormatUtil;
-
-	@Autowired
 	private MongoOperations mongoOperations;
 	
-	@Autowired
-	private RestClientUtil restClientUtil;
 
 	@Autowired
 	private ObjectMapper objectMapper;
-	
-	@Autowired
-	private WriteAkbDmp writeAkbDmp;
 	
 	@Autowired
 	private KafkaUtil kafkaUtil;
@@ -97,7 +79,7 @@ public class CampaignJob {
 
 		java.io.File folder = new java.io.File(campaignlogPath);
 		String[] fileList = folder.list();
-		int i = 0;
+
 		for (String fileName : fileList) {
 			File file = new File(campaignlogPath + "/" + fileName);
 			if (file.getName().endsWith(".err")) {
@@ -138,24 +120,8 @@ public class CampaignJob {
 				classCountLogBean.setIpArea(ipArea);
 				classCountLogBean.setUserId(id);
 				classCountLogBean.setW(w);
-				
 				classCountLogBean.setRecordDate(recordDate);
-				classCountLogBean.setSource("24h");
-				
-				
-				if(StringUtils.isNotBlank(memid)){
-					classCountLogBean.setType("memid");
-					classCountLogBean.setUserId(memid);
-					writeAkbDmp.process(classCountLogBean);
-					
-				}
-				
-				if(StringUtils.isNotBlank(uuid)){
-					classCountLogBean.setType("uuid");
-					classCountLogBean.setUserId(uuid);
-					writeAkbDmp.process(classCountLogBean);
-					
-				}
+				classCountLogBean.setSource(BEHAVIOR);
 				
 				kafkaUtil.sendMessage("TEST", "", objectMapper.writeValueAsString(classCountLogBean));
 			}

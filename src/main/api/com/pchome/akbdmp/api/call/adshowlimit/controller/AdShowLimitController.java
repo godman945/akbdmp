@@ -79,7 +79,7 @@ public class AdShowLimitController extends BaseController {
 						adKeyFlag = true;
 					}
 					String [] adKeyArray = key.toString().split("_");
-					if(adKeyArray.length != 4){
+					if(adKeyArray.length < 4){
 						adKeyFlag = true;
 					}
 					
@@ -106,7 +106,7 @@ public class AdShowLimitController extends BaseController {
 						adKeyFlag = true;
 					}
 					String [] adKeyArray = key.toString().split("_");
-					if(adKeyArray.length != 4){
+					if(adKeyArray.length < 4){
 						adKeyFlag = true;
 					}
 					

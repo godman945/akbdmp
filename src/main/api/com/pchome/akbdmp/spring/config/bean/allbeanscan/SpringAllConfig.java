@@ -24,6 +24,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 	+ "com.pchome.dmp.mapreduce.crawlbreadcrumb,"
 	+ "com.pchome.akbdmp.job,"
 	+ "com.pchome.akbdmp.mongo,"
+	+ "com.pchome.akbdmp.spring.config.bean.kafka"
 	+ "alex.test,"
 // + "com.pchome.soft.depot.utils,"
 // + "com.pchome.akbdmp.api.data,"
