@@ -16,7 +16,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 	+"com.pchome.hadoopdmp.dao.sql,"
 	+"com.pchome.hadoopdmp.mapreduce.job.categorylog,"
 	+"com.pchome.hadoopdmp.spring.config.bean,"
-	+ "com.pchome.hadoopdmp.mongo,"
+	+"com.pchome.hadoopdmp.mongo,"
+	+"com.pchome.hadoopdmp.thread,"
 	
 )
 @PropertySource({ 
