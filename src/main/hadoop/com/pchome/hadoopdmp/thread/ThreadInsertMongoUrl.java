@@ -64,11 +64,11 @@ public class ThreadInsertMongoUrl {
 			
 
 			int total = 14081030;//14081030
-			int bulk = 10000;
+			int bulk = 1000;
 			int skip = 0;
-			int limit = 10000;
+			int limit = 1000;
 			
-			int threadNum = 5;
+			int threadNum = 3;
 			ExecutorService executor = Executors.newFixedThreadPool(threadNum);
 			int tc = threadNum;
 			int taskName=0;
