@@ -32,29 +32,39 @@ public class ThreadInsertMongoUrl {
 			
 			//用mongodb.prop撈正式機舊資料
 			MongoOperations oldMongoOperationsQuery = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
-	
+			MongoTemplate oldMongoOperationsQueryMongoTemplate = (MongoTemplate) oldMongoOperationsQuery;
+			oldMongoOperationsQueryMongoTemplate.getDb().setOptions(com.mongodb.Bytes.QUERYOPTION_NOTIMEOUT);
 			
-//			//測試機mongo
-//			//新的insert mongo 物件
-//			MongoOperations mongoOperationsInsert = new MongoTemplate(new SimpleMongoDbFactory(new Mongo("192.168.1.37", 27017), "pcbappdev", new UserCredentials("webuser", "axw2mP1i")));
-//			MongoTemplate newInsertmongoTemplate = (MongoTemplate)mongoOperationsInsert;
-//			newInsertmongoTemplate.setWriteConcern(WriteConcern.SAFE);
-//			
-//			//新的query mongo 物件
-//			MongoOperations newQueryMongoOperations = new MongoTemplate(new SimpleMongoDbFactory(new Mongo("192.168.1.37", 27017), "pcbappdev", new UserCredentials("webuser", "axw2mP1i")));
-	
+			
+			//測試機
+			String host="192.168.1.37";
+			int port=27017;
+			String db="pcbappdev";
+			String userName="webuser";
+			String password="axw2mP1i";
+			
+			
+			
+//			//正式機
+//			String host="mongodb.mypchome.com.tw";
+//			int port=27017;
+//			String db="dmp";
+//			String userName="webuser";
+//			String password="MonG0Dmp";
+			
 			
 			
 			//正式機mongo
 			//新的insert mongo 物件
-			MongoOperations mongoOperationsInsert = new MongoTemplate(new SimpleMongoDbFactory(new Mongo("mongodb.mypchome.com.tw", 27017), "dmp", new UserCredentials("webuser", "MonG0Dmp")));
+			MongoOperations mongoOperationsInsert = new MongoTemplate(new SimpleMongoDbFactory(new Mongo(host, port),db, new UserCredentials(userName, password)));
 			MongoTemplate newInsertmongoTemplate = (MongoTemplate)mongoOperationsInsert;
 			newInsertmongoTemplate.setWriteConcern(WriteConcern.SAFE);
+			newInsertmongoTemplate.getDb().setOptions(com.mongodb.Bytes.QUERYOPTION_NOTIMEOUT);
 			
 			//新的query mongo 物件
-			MongoOperations newQueryMongoOperations = new MongoTemplate(new SimpleMongoDbFactory(new Mongo("mongodb.mypchome.com.tw", 27017), "dmp", new UserCredentials("webuser", "MonG0Dmp")));
-
-		
+			MongoOperations newQueryMongoOperations = new MongoTemplate(new SimpleMongoDbFactory(new Mongo(host, port), db, new UserCredentials(userName, password)));
+			MongoTemplate mongoTemplate = (MongoTemplate) newQueryMongoOperations;
+			mongoTemplate.getDb().setOptions(com.mongodb.Bytes.QUERYOPTION_NOTIMEOUT);
 
 		
 //			int total = 5;
@@ -64,18 +74,18 @@ public class ThreadInsertMongoUrl {
 			
 
 			int total = 14081030;//14081030
-			int bulk = 1000;
+			int bulk = 50000;
 			int skip = 0;
-			int limit = 1000;
+			int limit = 50000;
 			
-			int threadNum = 3;
+			int threadNum = 10;
 			ExecutorService executor = Executors.newFixedThreadPool(threadNum);
 			int tc = threadNum;
 			int taskName=0;
 			while (total > 0) {
 				taskName++;
 				tc--;
-				Runnable worker = (new InsertMongoUrl(oldMongoOperationsQuery, skip, limit, newInsertmongoTemplate, newQueryMongoOperations));
+				Runnable worker = (new InsertMongoUrl(oldMongoOperationsQueryMongoTemplate, skip, limit, newInsertmongoTemplate, mongoTemplate));
 				executor.execute(worker);
 				
 				if (tc <= 0) {

@@ -25,7 +25,7 @@ public class InsertMongoUrl implements Runnable {
 
 	
 	
-	public InsertMongoUrl(MongoOperations oldMongoOperationsQuery, int skip, int limit, MongoTemplate newInsertmongoTemplate, MongoOperations newQueryMongoOperations) {
+	public InsertMongoUrl(MongoTemplate oldMongoOperationsQuery, int skip, int limit, MongoTemplate newInsertmongoTemplate, MongoTemplate newQueryMongoOperations) {
 		this.oldMongoOperationsQuery = oldMongoOperationsQuery;
 		this.skip=skip;
 		this.limit=limit;
