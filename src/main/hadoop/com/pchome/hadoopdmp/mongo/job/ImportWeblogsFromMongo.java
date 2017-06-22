@@ -65,7 +65,7 @@ public class ImportWeblogsFromMongo {
 
 			// String output = behavior+" "+record_date;
 
-			context.write(new Text(update_date), new Text(category));
+			context.write(new Text(user_id), new Text(update_date));
 		}
 	}
 
