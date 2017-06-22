@@ -1,32 +1,36 @@
 //package alex.test;
 //
-//import java.util.Date;
-//import java.util.Random;
+//import java.sql.Connection;
+//import java.sql.DriverManager;
 //
 //import org.apache.commons.logging.Log;
 //import org.apache.commons.logging.LogFactory;
 //import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.context.ApplicationContext;
-//import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 //import org.springframework.data.redis.core.RedisTemplate;
-//import org.springframework.data.redis.core.SetOperations;
 //import org.springframework.stereotype.Component;
 //
-//import com.pchome.akbdmp.spring.config.bean.allbeanscan.SpringAllConfig;
 //import com.pchome.soft.depot.utils.DateFormatUtil;
 //
 //@Component
 //public class TestRun {
 //
 //	Log log = LogFactory.getLog(TestRun.class);
-//	
+//
 //	@Autowired
 //	RedisTemplate<String, Object> redisTemplate;
-//	
+//
 //	@Autowired
 //	DateFormatUtil dateFormatUtil;
-//	
+//
 //	private void redisTest() throws Exception{
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
 ////		redisTemplate.
 ////		System.out.println("1>>>>"+redisTemplate.opsForValue().get("1"));
 ////		log.info("2>>>>"+redisTemplate.opsForValue().get("1"));
@@ -163,13 +167,62 @@
 ////		redisTemplate.expire(key, timeOut, TimeUnit.SECONDS);
 ////		redisTemplate.delete(key);
 //	}
-//	
-//	
-//	
+//
 //	public static void main(String[] args) throws Exception {
-//		System.setProperty("spring.profiles.active", "local");
-//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
-//		TestRun TestRun = (TestRun) ctx.getBean(TestRun.class);
-//		TestRun.redisTest();
+////		Connection conn = null;   
+////		 try {
+////	            Class.forName("com.mysql.jdbc.Driver").newInstance();   //Driver name
+////	            String url = "jdbc:mysql://dmpstg.mypchome.com.tw:3306/dmp";    
+////	            String user = "webuser";
+////	            String password = "7e5nL0H";
+////	            conn = DriverManager.getConnection(url, user, password);
+////	        } catch (Exception e) {
+////	            e.printStackTrace();
+////	        }
+//		
+//		 
+//		 
+//		 
+//		 Connection conn = null;
+//	        try
+//	        {
+//	            //連接MySQL
+//	            Class.forName("com.mysql.jdbc.Driver");
+//	            //建立讀取資料庫 (test 為資料庫名稱; user 為MySQL使用者名稱; passwrod 為MySQL使用者密碼)
+////	        	String url = "jdbc:mysql://dmpadm.mypchome.com.tw:3306/dmp";	//prd
+////	        	String url = "jdbc:mysql://dmpstg.mypchome.com.tw:3306/dmp";	//stg
+//	            
+//	            String url = "jdbc:mysql://dmpstg.mypchome.com.tw:3306/dmp";	//stg
+//	        	String user = "webuser";
+//	        	String password = "hadoop";
+//	        	
+////	        	String url = "jdbc:mysql://kdstg.mypchome.com.tw:3306/akb";	//stg
+////	        	String user = "keyword";
+////	        	String password = "K1y0nLine";
+//	        	
+//	        	
+//	            conn = DriverManager.getConnection(url, user, password);
+//	            System.out.println("連接成功MySQL");
+////	            Statement st = conn.createStatement();
+////	            //撈出剛剛新增的資料
+////	            st.execute("SELECT * FROM pcs_prod_category");
+////	            ResultSet rs = st.getResultSet();
+////	            while(rs.next())
+////	            {
+////	                System.out.println(rs.getRow());
+////	            }
+//	        }catch(Exception e)
+//	        {
+//	        	e.printStackTrace();
+//	        }
+//		 
+//		 
+//		 
+//		 
+//		 
+////		System.setProperty("spring.profiles.active", "local");
+////		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
+////		TestRun TestRun = (TestRun) ctx.getBean(TestRun.class);
+////		TestRun.redisTest();
 //	}
 //}
