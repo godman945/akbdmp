@@ -30,17 +30,17 @@ public class ImportWeblogsFromMongo {
 			String user_id = value.get("user_id").toString();
 			String category_info_str = value.get("category_info").toString();
 			
-			ObjectMapper mapper = new ObjectMapper();
-			ReadMongoBean user = mapper.readValue(category_info_str, ReadMongoBean.class);
-			System.out.println("user Bean: "+user.getCategory_info().size());
-				
-			String category="";
-			for (Map<String, Object> map : user.getCategory_info()) {
-				category=(String) map.get("category");
-				System.out.println("category : "+category);
-				
-			}
-			
+//			ObjectMapper mapper = new ObjectMapper();
+//			ReadMongoBean user = mapper.readValue(category_info_str, ReadMongoBean.class);
+//			System.out.println("user Bean: "+user.getCategory_info().size());
+//				
+//			String category="";
+//			for (Map<String, Object> map : user.getCategory_info()) {
+//				category=(String) map.get("category");
+//				System.out.println("category : "+category);
+//				
+//			}
+			System.out.println("category_info_str : "+category_info_str);
 			
 			// String date = value.get("date").toString();
 			// String time = value.get("time").toString();
@@ -48,7 +48,7 @@ public class ImportWeblogsFromMongo {
 
 			// String output = behavior+" "+record_date;
 
-			context.write(new Text(user_id), new Text(category));
+			context.write(new Text(user_id), new Text(category_info_str));
 		}
 	}
 
