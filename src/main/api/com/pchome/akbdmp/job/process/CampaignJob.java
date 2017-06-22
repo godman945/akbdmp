@@ -192,7 +192,7 @@ public class CampaignJob {
 			}
 			
 			br.close();
-//			file.delete();
+			file.delete();
 			log.info(">>>>>> delete: " + file);
 		}
 		log.info("====CampaignJob.process() end====");
@@ -200,24 +200,15 @@ public class CampaignJob {
 
 
 	public static void main(String[] args) {
-		double w  = 0.5124973964842103;
-		double pExpv = 0;
-		pExpv = Math.exp(-1 * 0.05);
-		w = w + (1 / (1 + pExpv));
-		
-		System.out.println(w);
-		
-		
-		
-//		try {
-//			System.setProperty("spring.profiles.active", "stg");
-//			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
-//			CampaignJob campaignJob = ctx.getBean(CampaignJob.class);
-//			campaignJob.run();
-////			 campaignJob.process2();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			System.exit(1);
-//		}
+		try {
+			System.setProperty("spring.profiles.active", "stg");
+			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
+			CampaignJob campaignJob = ctx.getBean(CampaignJob.class);
+			campaignJob.run();
+//			 campaignJob.process2();
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 }
