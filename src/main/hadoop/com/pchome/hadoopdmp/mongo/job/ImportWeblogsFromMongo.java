@@ -40,7 +40,7 @@ public class ImportWeblogsFromMongo {
 		}
 	}
 
-	public class MyReducer extends Reducer<Text, Text, Text, Text> {
+	public static class MyReducer extends Reducer<Text, Text, Text, Text> {
 
 		public void reduce(Text key, Text values, Context context) throws IOException, InterruptedException {
 
