@@ -81,7 +81,7 @@ public class ImportWeblogsFromMongo {
 	public static void main(String[] args) throws Exception {
 		final Configuration conf = new Configuration();
 		MongoConfigUtil.setInputURI(conf, "mongodb://192.168.1.37:27017/pcbappdev.pcb_area");
-		conf.set("mongo.input.query",  "{'_id':{'$gt':{'$update_date':'2017-06-01 23:59:59'}}}");
+		conf.set("mongo.input.query",  "{'$gt':{'$update_date':'2017-06-01 23:59:59'}}");
 		MongoConfigUtil.setCreateInputSplits(conf, false);
 		
 		System.out.println("Configuration: " + conf);
