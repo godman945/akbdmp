@@ -1,6 +1,7 @@
 package com.pchome.hadoopdmp.mongo.job;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -10,6 +11,7 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.htrace.fasterxml.jackson.databind.ObjectMapper;
 import org.bson.BSONObject;
 
 import com.mongodb.hadoop.MongoInputFormat;
@@ -25,15 +27,28 @@ public class ImportWeblogsFromMongo {
 			// String behavior = value.get("behavior").toString();
 			// String record_date = value.get("record_date").toString();
 
-			String uuid = value.get("url").toString();
-
+			String user_id = value.get("user_id").toString();
+			String category_info_str = value.get("category_info").toString();
+			
+			ObjectMapper mapper = new ObjectMapper();
+			ReadMongoBean user = mapper.readValue(category_info_str, ReadMongoBean.class);
+			System.out.println("user Bean: "+user.getCategory_info().size());
+				
+			String category="";
+			for (Map<String, Object> map : user.getCategory_info()) {
+				category=(String) map.get("category");
+				System.out.println("category : "+category);
+				
+			}
+			
+			
 			// String date = value.get("date").toString();
 			// String time = value.get("time").toString();
 			// String ip = value.get("ip").toString();
 
 			// String output = behavior+" "+record_date;
 
-			context.write(new Text(uuid), new Text());
+			context.write(new Text(user_id), new Text(category));
 		}
 	}
 
@@ -42,13 +57,13 @@ public class ImportWeblogsFromMongo {
 		public void reduce(Text key, Text values, Context context) throws IOException, InterruptedException {
 
 			
-			context.write(values, new Text());
+			context.write(key, values);
 		}
 	}
 
 	public static void main(String[] args) throws Exception {
 		final Configuration conf = new Configuration();
-		MongoConfigUtil.setInputURI(conf, "mongodb://192.168.1.37:27017/pcbappdev.class_url");
+		MongoConfigUtil.setInputURI(conf, "mongodb://192.168.1.37:27017/pcbappdev.pcb_area");
 		// MongoConfigUtil.setInputURI(conf,
 		// "mongodb://webuser:axw2mP1i@192.168.1.37:27017/dmp.class_count");s
 		MongoConfigUtil.setCreateInputSplits(conf, false);
