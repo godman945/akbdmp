@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -34,9 +35,9 @@ public class MongoIn {
 		}
 	}
 	
-	public class MyReducer extends Reducer<Text, Text, Text, BSONWritable> {
+	public class MyReducer extends Reducer<Text, Text, Text, Text> {
 		
-		public void reduce(Text key, Iterable<BSONWritable> values, Context context) throws IOException, InterruptedException {
+		public void reduce(Text key, Text values, Context context) throws IOException, InterruptedException {
 			
 //			MongoClient mongo = new MongoClient( "mgodev.mypchome.com.tw" , 27017 );
 //			DB db = mongo.getDB("dmp");
@@ -50,13 +51,20 @@ public class MongoIn {
 //			 DBObject builder = new BasicDBObjectBuilder().start()
 //		                .add("uuid", values).get();
 			
-			 
+		/*
            BSONObject outDoc = new BasicDBObjectBuilder().start()
         		              .add("url", values)
 	                          .get();
 	       BSONWritable pkeyOut = new BSONWritable(outDoc);
 	       context.write(key, pkeyOut); 
-			 
+			 */
+			
+			
+//			for (Text val : values) {
+//				sum += val.get();
+//			}
+			context.write(key, values);
+			
 			
 //			output.put("values", values);
 //			context.write(key, new BSONWritable(output));
