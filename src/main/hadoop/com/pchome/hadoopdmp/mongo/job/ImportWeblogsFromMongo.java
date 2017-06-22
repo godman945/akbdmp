@@ -31,6 +31,9 @@ public class ImportWeblogsFromMongo {
 			// String record_date = value.get("record_date").toString();
 
 			String user_id = value.get("user_id").toString();
+			
+			String update_date = value.get("update_date").toString();
+			
 			String category_info_str = value.get("category_info").toString();
 			
 			Gson gson = new Gson();
@@ -62,7 +65,7 @@ public class ImportWeblogsFromMongo {
 
 			// String output = behavior+" "+record_date;
 
-			context.write(new Text(user_id), new Text(category));
+			context.write(new Text(update_date), new Text(category));
 		}
 	}
 
@@ -78,9 +81,9 @@ public class ImportWeblogsFromMongo {
 	public static void main(String[] args) throws Exception {
 		final Configuration conf = new Configuration();
 		MongoConfigUtil.setInputURI(conf, "mongodb://192.168.1.37:27017/pcbappdev.pcb_area");
-		// MongoConfigUtil.setInputURI(conf,
-		// "mongodb://webuser:axw2mP1i@192.168.1.37:27017/dmp.class_count");s
+		conf.set("mongo.input.query",  "{'_id':{'$gt':{'$date':'2017-06-01 23:59:59'}}}");
 		MongoConfigUtil.setCreateInputSplits(conf, false);
+		
 		System.out.println("Configuration: " + conf);
 		final Job job = new Job(conf, "Mongo0622");
 		Path out = new Path("/home/webuser/bessie/mongo0622.txt");
