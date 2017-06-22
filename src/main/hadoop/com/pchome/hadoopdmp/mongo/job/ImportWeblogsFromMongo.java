@@ -1,6 +1,7 @@
 package com.pchome.hadoopdmp.mongo.job;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.hadoop.conf.Configuration;
@@ -14,6 +15,8 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.htrace.fasterxml.jackson.databind.ObjectMapper;
 import org.bson.BSONObject;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.mongodb.hadoop.MongoInputFormat;
 import com.mongodb.hadoop.util.MongoConfigUtil;
 
@@ -30,6 +33,17 @@ public class ImportWeblogsFromMongo {
 			String user_id = value.get("user_id").toString();
 			String category_info_str = value.get("category_info").toString();
 			
+			Gson gson = new Gson();
+			TypeToken<List<Map<String, Object>>> token = new TypeToken<List<Map<String, Object>>>(){};
+			List<Map<String, Object>> personList = gson.fromJson(category_info_str, token.getType());
+			
+			String category="";
+			for (Map<String, Object> map : personList) {
+				category=(String) map.get("category");
+				System.out.println("category : "+category);	
+				
+			}
+			
 //			ObjectMapper mapper = new ObjectMapper();
 //			ReadMongoBean user = mapper.readValue(category_info_str, ReadMongoBean.class);
 //			System.out.println("user Bean: "+user.getCategory_info().size());
@@ -40,7 +54,7 @@ public class ImportWeblogsFromMongo {
 //				System.out.println("category : "+category);
 //				
 //			}
-			System.out.println("category_info_str : "+category_info_str);
+			System.out.println("category_info_str : "+category);
 			
 			// String date = value.get("date").toString();
 			// String time = value.get("time").toString();
@@ -48,7 +62,7 @@ public class ImportWeblogsFromMongo {
 
 			// String output = behavior+" "+record_date;
 
-			context.write(new Text(user_id), new Text(category_info_str));
+			context.write(new Text(user_id), new Text(category));
 		}
 	}
 
