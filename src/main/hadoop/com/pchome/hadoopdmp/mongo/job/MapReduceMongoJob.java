@@ -56,20 +56,18 @@ private static Log log = LogFactory.getLog("MapReduceMongoJob");
 					}
 					context.write(new Text(categoryKey), new Text());
 				}
-				context.write(new Text("alex"), new Text("9"));
-//				Set<String> data = new HashSet<>();
-//				for (Map.Entry<String, Set<String>> entry : allMap.entrySet()) {
-//					
-//					if(entry.equals("0015022500000000")){
-//						data.addAll(entry.getValue());
-//					}
-//					if(entry.equals("0015022720350000")){
-//						data.addAll(entry.getValue());
-//					}
-//					context.write(new Text("0015022500000000_0015022720350000"), new Text(String.valueOf(data.size())));
-//				}
 				
-				
+				Set<String> data = new HashSet<>();
+				for (Map.Entry<String, Set<String>> entry : allMap.entrySet()) {
+					
+					if(entry.equals("0015022500000000")){
+						data.addAll(entry.getValue());
+					}
+					if(entry.equals("0015022720350000")){
+						data.addAll(entry.getValue());
+					}
+				}
+				context.write(new Text("0015022500000000_0015022720350000"), new Text(String.valueOf(data.size())));
 				
 				
 			}catch(Exception e){
