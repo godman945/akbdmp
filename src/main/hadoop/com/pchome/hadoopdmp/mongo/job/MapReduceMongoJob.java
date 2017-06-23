@@ -90,12 +90,12 @@ public class MapReduceMongoJob {
 				log.info(">>>>> reduce key: " + key);
 				
 				
-				if (key.toString().indexOf("0015022500000000") > 0) {
+				if (key.equals("0015022500000000")) {
 					for (Text text : values) {
 						log.info(">>>>>alex 0015022500000000 : " + text);
 					}
 				}
-				if(key.toString().indexOf("0015022720350000") > 0){
+				if(key.equals("0015022720350000")){
 					for (Text text : values) {
 						log.info(">>>>>alex 0015022720350000 : " + text);
 					}
