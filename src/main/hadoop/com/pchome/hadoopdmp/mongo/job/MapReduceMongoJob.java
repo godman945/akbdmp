@@ -45,7 +45,7 @@ private static Log log = LogFactory.getLog("MapReduceMongoJob");
 				
 				String userType= user_info.get("type").toString();
 				for (Map<String, Object> category : category_info) {
-					String categoryKey = category.get("category").toString()+"_"+userType;
+					String categoryKey = category.get("category").toString()+"_"+userType.toUpperCase();
 					
 					log.info(">>>>>> categoryKey:"+categoryKey);
 					
