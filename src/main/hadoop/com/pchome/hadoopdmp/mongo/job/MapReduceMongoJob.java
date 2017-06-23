@@ -30,24 +30,12 @@ private static Log log = LogFactory.getLog("MapReduceMongoJob");
 	public static class ReadWeblogsFromMongo extends Mapper<Object, BSONObject, Text, Text> {
 		public void map(Object key, BSONObject value, Context context) throws IOException, InterruptedException {
 			try{
-				// System.out.println("Key: " + key);
-				// System.out.println("Value: " + value);
-				// String uuid = value.get("uuid").toString();
-				// String behavior = value.get("behavior").toString();
-				// String record_date = value.get("record_date").toString();
-				
-				
-				
-				
-//				String type = value.get("type").toString();
 				String update_date = value.get("update_date").toString();
 				String category_info_str = value.get("category_info").toString();
 				String user_id = value.get("user_id").toString();
 				Map<String, Object> user_info = (Map<String, Object>) value.get("user_info");
 				List<Map<String, Object>> category_info =  (List<Map<String, Object>>) value.get("category_info");
 				String userType= user_info.get("type").toString();
-				
-				
 				Map<String,Set<String>> allMap = new HashMap<String, Set<String>>();
 				
 //				0015022500000000
@@ -55,7 +43,7 @@ private static Log log = LogFactory.getLog("MapReduceMongoJob");
 				String group = "bessie";
 				for (Map<String, Object> category : category_info) {
 					String ad_class = category.get("category").toString();
-					String categoryKey = category+"_"+userType.toUpperCase();
+					String categoryKey = ad_class+"_"+userType.toUpperCase();
 					log.info(">>>>>> categoryKey:"+categoryKey);
 					
 					if(!allMap.containsKey(ad_class)){
@@ -66,7 +54,6 @@ private static Log log = LogFactory.getLog("MapReduceMongoJob");
 						Set<String> set = allMap.get(ad_class);
 						set.add(user_id);
 					}
-					
 					context.write(new Text(categoryKey), new Text());
 				}
 				context.write(new Text("alex"), new Text("9"));
