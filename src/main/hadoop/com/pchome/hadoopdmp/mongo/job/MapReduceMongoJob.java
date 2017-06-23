@@ -33,7 +33,7 @@ private static Log log = LogFactory.getLog("MapReduceMongoJob");
 			// String record_date = value.get("record_date").toString();
 			
 			String user_id = value.get("user_id").toString();
-			String type = value.get("type").toString();
+//			String type = value.get("type").toString();
 			String update_date = value.get("update_date").toString();
 			String category_info_str = value.get("category_info").toString();
 			
@@ -42,10 +42,10 @@ private static Log log = LogFactory.getLog("MapReduceMongoJob");
 			List<Map<String, Object>> personList = gson.fromJson(category_info_str, token.getType());
 			
 			
-			
+			log.info(">>>>>> mapper value : "+value);
 			
 			log.info(">>>>>> mapper user_id : "+user_id);
-			log.info(">>>>>> mapper type : "+type);
+//			log.info(">>>>>> mapper type : "+type);
 			log.info(">>>>>> mapper update_date : "+update_date);
 			log.info(">>>>>> mapper category_info_str : "+category_info_str);
 			
