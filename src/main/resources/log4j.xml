@@ -38,6 +38,18 @@
 		</layout>
 	</appender>
 
+	<!-- mongo mapreduce listener -->
+	<appender name="mapReduceMongoJob" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="/home/webuser/log/dmp/MapReduceMongoJob.log" />
+		<param name="Append" value="true" />
+		<param name="MaxFileSize" value="10MB" />
+		<param name="MaxBackupIndex" value="20" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{yyyy/MM/dd HH:mm:ss} [%-5p] [%c@%t]%M(%L) %m%n" />
+		</layout>
+	</appender>
+
+
 	<logger name="com.pchome.akbdmp.job.campaign.CampaignJob" additivity="true">
 		<priority value="info" />
 		<appender-ref ref="AkbDmpJob" />
@@ -75,6 +87,11 @@
 	</logger>
 
 
+	<!-- mongo mapreduce test -->
+	<logger name="MapReduceMongoJob" additivity="true">
+		<priority value="info" />
+		<appender-ref ref="mapReduceMongoJob" />
+	</logger>
 
 	<root>
 		<level value="info" />
