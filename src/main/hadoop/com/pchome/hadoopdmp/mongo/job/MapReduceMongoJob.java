@@ -128,7 +128,7 @@ private static Log log = LogFactory.getLog("MapReduceMongoJob");
 		final Job job = new Job(conf, "alex_test");
 		Path out = new Path("/home/webuser/alex/mongo");
 		FileOutputFormat.setOutputPath(job, out);
-		job.setJarByClass(ImportWeblogsFromMongo.class);
+		job.setJarByClass(MapReduceMongoJob.class);
 		job.setMapperClass(ReadWeblogsFromMongo.class);
 		job.setReducerClass(MyReducer.class);
 
