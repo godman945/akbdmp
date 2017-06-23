@@ -87,7 +87,7 @@ public class MapReduceMongoJob {
 			try {
 				log.info(">>>>> reduce key: " + key);
 				
-				if (key.toString().indexOf("bessie") > 0) {
+				if (key.toString().indexOf("0015022500000000_0015022720350000") > 0) {
 					log.info(">>>>> reduce TEST: " + key);
 					Set<String> data = new HashSet<>();
 					for (Text text : values) {
