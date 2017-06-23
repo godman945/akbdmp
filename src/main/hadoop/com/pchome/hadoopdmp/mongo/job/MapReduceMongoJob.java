@@ -39,32 +39,42 @@ public class MapReduceMongoJob {
 				// 0015022500000000
 				// 0015022720350000
 				String group = "bessie";
+				String ad_class ="";
 				for (Map<String, Object> category : category_info) {
-					String ad_class = category.get("category").toString();
+					ad_class = category.get("category").toString();
 					String categoryKey = ad_class + "_" + userType.toUpperCase();
 					log.info(">>>>>> categoryKey:" + categoryKey);
 
-					if (!allMap.containsKey(ad_class)) {
-						Set<String> set = new HashSet<>();
-						set.add(user_id);
-						allMap.put(ad_class, set);
-					} else {
-						Set<String> set = allMap.get(ad_class);
-						set.add(user_id);
-					}
+//					if (!allMap.containsKey(ad_class)) {
+//						Set<String> set = new HashSet<>();
+//						set.add(user_id);
+//						allMap.put(ad_class, set);
+//					} else {
+//						Set<String> set = allMap.get(ad_class);
+//						set.add(user_id);
+//					}
 					context.write(new Text(categoryKey), new Text());
+					
 				}
 
-				Set<String> data = new HashSet<>();
-				for (Map.Entry<String, Set<String>> entry : allMap.entrySet()) {
-					if (entry.equals("0015022500000000")) {
-						data.addAll(entry.getValue());
-					}
-					if (entry.equals("0015022720350000")) {
-						data.addAll(entry.getValue());
-					}
+				if(ad_class.equals("0015022500000000")){
+					context.write(new Text("bessie"), new Text(user_id));
 				}
-				context.write(new Text("0015022500000000_0015022720350000_TOTAL"),	new Text(String.valueOf(data.size())));
+				if(ad_class.equals("0015022720350000")){
+					context.write(new Text("bessie"), new Text(user_id));
+				}
+				
+				
+//				Set<String> data = new HashSet<>();
+//				for (Map.Entry<String, Set<String>> entry : allMap.entrySet()) {
+//					if (entry.equals("0015022500000000")) {
+//						data.addAll(entry.getValue());
+//					}
+//					if (entry.equals("0015022720350000")) {
+//						data.addAll(entry.getValue());
+//					}
+//				}
+//				context.write(new Text("0015022500000000_0015022720350000_TOTAL"),	new Text(String.valueOf(data.size())));
 
 			} catch (Exception e) {
 				log.error(">>>>> mapper e : " + e.getMessage());
@@ -77,13 +87,14 @@ public class MapReduceMongoJob {
 			try {
 				log.info(">>>>> reduce key: " + key);
 				
-				if (key.toString().indexOf("TOTAL") > 0) {
+				if (key.toString().indexOf("bessie") > 0) {
 					log.info(">>>>> reduce TEST: " + key);
+					Set<String> data = new HashSet<>();
 					for (Text text : values) {
 						log.info(">>>>> reduce alex TEST: " + text);
-						context.write(key, new Text(text));
+						data.add(text.toString());
 					}
-
+					context.write(key, new Text(String.valueOf(data.size())));
 				} else {
 					int sum = 0;
 					for (Text text : values) {
