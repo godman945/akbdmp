@@ -1,8 +1,11 @@
 package com.pchome.hadoopdmp.mongo.job;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,69 +45,49 @@ private static Log log = LogFactory.getLog("MapReduceMongoJob");
 				String user_id = value.get("user_id").toString();
 				Map<String, Object> user_info = (Map<String, Object>) value.get("user_info");
 				List<Map<String, Object>> category_info =  (List<Map<String, Object>>) value.get("category_info");
-				
 				String userType= user_info.get("type").toString();
+				
+				
+				Map<String,Set<String>> allMap = new HashMap<String, Set<String>>();
+				
+//				0015022500000000
+//				0015022720350000
+				String group = "bessie";
 				for (Map<String, Object> category : category_info) {
-					String categoryKey = category.get("category").toString()+"_"+userType.toUpperCase();
-					
+					String ad_class = category.get("category").toString();
+					String categoryKey = category+"_"+userType.toUpperCase();
 					log.info(">>>>>> categoryKey:"+categoryKey);
+					
+					if(!allMap.containsKey(ad_class)){
+						Set<String> set = new HashSet<>();
+						set.add(user_id);
+						allMap.put(ad_class, set);
+					}else{
+						Set<String> set = allMap.get(ad_class);
+						set.add(user_id);
+					}
 					
 					context.write(new Text(categoryKey), new Text());
 				}
 				
-//				Gson gson = new Gson();
-//				TypeToken<List<Map<String, Object>>> token = new TypeToken<List<Map<String, Object>>>(){};
-//				List<Map<String, Object>> personList = gson.fromJson(category_info_str, token.getType());
-//				
-//				
-//				
-//				log.info(">>>>>>> alex:"+value);
-//				log.info(">>>>>> mapper user_id : "+user_id);
-//				log.info(">>>>>> mapper type : "+user_info.get("type"));
-//				log.info(">>>>>> mapper update_date : "+update_date);
-//				log.info(">>>>>> mapper category_info_str : "+category_info_str);
-//				
-//				
-//				String category = "";
-////				String user_adclass = user_id+"_"+type;
-//				for (Map<String, Object> map : personList) {
-//					category = (String) map.get("category");
-////					log.info(">>>>>> mapper category : "+category);	
-//					
-////					String adclass_user =  type + "_" + category;
-////					
-////					context.write(new Text(adclass_user), new Text("1"));
-//				}
-				
-//				context.write(new Text("TEST"), new Text("1"));
-				
-//				log.info(">>>>> mapper category_info_str : "+category);
-////				context.write(new Text(user_id), new Text(update_date));
-//				context.write(new Text("total_user"), new Text("1"));
+				Set<String> data = new HashSet<>();
+				for (Map.Entry<String, Set<String>> entry : allMap.entrySet()) {
+					
+					if(entry.equals("0015022500000000")){
+						data.addAll(entry.getValue());
+					}
+					if(entry.equals("0015022720350000")){
+						data.addAll(entry.getValue());
+					}
+					context.write(new Text("0015022500000000_0015022720350000"), new Text(String.valueOf(data.size())));
+				}
 				
 				
-//				ObjectMapper mapper = new ObjectMapper();
-//				ReadMongoBean user = mapper.readValue(category_info_str, ReadMongoBean.class);
-//				System.out.println("user Bean: "+user.getCategory_info().size());
-//					
-//				String category="";
-//				for (Map<String, Object> map : user.getCategory_info()) {
-//					category=(String) map.get("category");
-//					System.out.println("category : "+category);
-//					
-//				}
 				
 				
-				// String date = value.get("date").toString();
-				// String time = value.get("time").toString();
-				// String ip = value.get("ip").toString();
-				// String output = behavior+" "+record_date;
 			}catch(Exception e){
 				log.error(">>>>> mapper e : "+e.getMessage());
 			}
-	
-
-			
 		}
 	}
 
@@ -119,8 +102,11 @@ private static Log log = LogFactory.getLog("MapReduceMongoJob");
 				log.info(">>>>> reduce sum: "+sum);
 				
 			}
-			
 			context.write(key,new Text(String.valueOf(sum)));
+			if(key.equals("0015022500000000_0015022720350000")){
+				context.write(key,new Text(values.toString()));
+			}
+			
 		}
 	}
 
@@ -128,7 +114,7 @@ private static Log log = LogFactory.getLog("MapReduceMongoJob");
 		final Configuration conf = new Configuration();
 		MongoConfigUtil.setInputURI(conf, "mongodb://192.168.1.37:27017/pcbappdev.class_count");
 //		conf.set("mongo.input.query",  "{'update_date':{'$gt':{'$date':'2017-06-01 23:59:59'}}}");
-		conf.set("mongo.input.query",  "{'update_date':{'$gt':'2017-06-19 23:59:59'}}");
+//		conf.set("mongo.input.query",  "{'update_date':{'$gt':'2017-06-19 23:59:59'}}");
 		MongoConfigUtil.setCreateInputSplits(conf, false);
 		
 		System.out.println("Configuration: " + conf);
