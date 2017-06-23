@@ -12,7 +12,6 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.Reducer.Context;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.bson.BSONObject;
@@ -21,8 +20,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mongodb.hadoop.MongoInputFormat;
 import com.mongodb.hadoop.util.MongoConfigUtil;
-import com.pchome.hadoopdmp.mongo.job.ImportWeblogsFromMongo.MyReducer;
-import com.pchome.hadoopdmp.mongo.job.ImportWeblogsFromMongo.ReadWeblogsFromMongo;
 
 public class MapReduceMongoJob {
 private static Log log = LogFactory.getLog("MapReduceMongoJob");
@@ -54,12 +51,6 @@ private static Log log = LogFactory.getLog("MapReduceMongoJob");
 			log.info(">>>>> mapper category_info_str : "+category);
 //			context.write(new Text(user_id), new Text(update_date));
 			context.write(new Text("total_user"), new Text("1"));
-			
-			
-			
-			
-			
-			
 			
 			
 //			ObjectMapper mapper = new ObjectMapper();
@@ -101,7 +92,7 @@ private static Log log = LogFactory.getLog("MapReduceMongoJob");
 		MongoConfigUtil.setCreateInputSplits(conf, false);
 		
 		System.out.println("Configuration: " + conf);
-		final Job job = new Job(conf, "Mongo0622");
+		final Job job = new Job(conf, "alex_test");
 		Path out = new Path("/home/webuser/alex/mongo0622.txt");
 		FileOutputFormat.setOutputPath(job, out);
 		job.setJarByClass(ImportWeblogsFromMongo.class);
