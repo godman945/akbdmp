@@ -67,7 +67,7 @@ private static Log log = LogFactory.getLog("MapReduceMongoJob");
 						data.addAll(entry.getValue());
 					}
 				}
-				context.write(new Text("0015022500000000_0015022720350000"), new Text(String.valueOf(data.size())));
+				context.write(new Text("0015022500000000_0015022720350000_TATAL"), new Text(String.valueOf(data.size())));
 				
 				
 			}catch(Exception e){
@@ -82,20 +82,16 @@ private static Log log = LogFactory.getLog("MapReduceMongoJob");
 			log.info(">>>>> reduce values: "+values);
 			int sum = 0;
 			
-			for (Text text : values) {
-				sum = sum + 1;
-				log.info(">>>>> reduce sum: "+sum);
-				
+			if(key.toString().indexOf("0015022500000000_0015022720350000_TATAL") > 0){
+				context.write(key,new Text(values.toString()));
+			}else{
+				for (Text text : values) {
+					sum = sum + 1;
+					log.info(">>>>> reduce sum: "+sum);
+					
+				}
+				context.write(key,new Text(String.valueOf(sum)));
 			}
-			context.write(key,new Text(String.valueOf(sum)));
-			
-			
-			
-			
-//			if(key.equals("0015022500000000_0015022720350000")){
-//				context.write(key,new Text(values.toString()));
-//			}
-			
 		}
 	}
 
