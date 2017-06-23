@@ -33,6 +33,15 @@ private static Log log = LogFactory.getLog("MapReduceMongoJob");
 			// String record_date = value.get("record_date").toString();
 			
 			String user_id = value.get("user_id").toString();
+			
+			
+			
+			
+			System.out.println(user_id);
+			
+			
+			
+			
 //			String type = value.get("type").toString();
 			String update_date = value.get("update_date").toString();
 			String category_info_str = value.get("category_info").toString();
