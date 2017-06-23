@@ -57,7 +57,7 @@ public class InsertMongoUrl implements Runnable {
 					newAdLogClassBeanCreate.setCreate_date(oldUrlMongoBean2.getCreate_date());
 					newAdLogClassBeanCreate.setUpdate_date(oldUrlMongoBean2.getUpdate_date());
 					
-//					newInsertmongoTemplate.save(newAdLogClassBeanCreate);
+					newInsertmongoTemplate.save(newAdLogClassBeanCreate);
 					
 				}else{
 					
@@ -66,7 +66,7 @@ public class InsertMongoUrl implements Runnable {
 						newAdLogUrlMongoBeanQuery.setStatus("1");
 						newAdLogUrlMongoBeanQuery.setUpdate_date(oldUrlMongoBean2.getUpdate_date());
 						
-//						newInsertmongoTemplate.save(newAdLogUrlMongoBeanQuery);
+					newInsertmongoTemplate.save(newAdLogUrlMongoBeanQuery);
 					}
 					
 				}
