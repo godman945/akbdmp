@@ -75,14 +75,17 @@ private static Log log = LogFactory.getLog("MapReduceMongoJob");
 	}
 
 	public static class MyReducer extends Reducer<Text, Text, Text, Text> {
-
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 			log.info(">>>>> reduce key: "+key);
 			log.info(">>>>> reduce values: "+values);
 			int sum = 0;
-			while(values.iterator().hasNext()){
+			
+			for (Text text : values) {
 				sum = sum + 1;
+				log.info(">>>>> reduce sum: "+sum);
+				
 			}
+			
 			context.write(key,new Text(String.valueOf(sum)));
 		}
 	}
