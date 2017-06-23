@@ -69,18 +69,18 @@ private static Log log = LogFactory.getLog("MapReduceMongoJob");
 					
 					context.write(new Text(categoryKey), new Text());
 				}
-				
-				Set<String> data = new HashSet<>();
-				for (Map.Entry<String, Set<String>> entry : allMap.entrySet()) {
-					
-					if(entry.equals("0015022500000000")){
-						data.addAll(entry.getValue());
-					}
-					if(entry.equals("0015022720350000")){
-						data.addAll(entry.getValue());
-					}
-					context.write(new Text("0015022500000000_0015022720350000"), new Text(String.valueOf(data.size())));
-				}
+				context.write(new Text("alex"), new Text("9"));
+//				Set<String> data = new HashSet<>();
+//				for (Map.Entry<String, Set<String>> entry : allMap.entrySet()) {
+//					
+//					if(entry.equals("0015022500000000")){
+//						data.addAll(entry.getValue());
+//					}
+//					if(entry.equals("0015022720350000")){
+//						data.addAll(entry.getValue());
+//					}
+//					context.write(new Text("0015022500000000_0015022720350000"), new Text(String.valueOf(data.size())));
+//				}
 				
 				
 				
@@ -103,9 +103,13 @@ private static Log log = LogFactory.getLog("MapReduceMongoJob");
 				
 			}
 			context.write(key,new Text(String.valueOf(sum)));
-			if(key.equals("0015022500000000_0015022720350000")){
-				context.write(key,new Text(values.toString()));
-			}
+			
+			
+			
+			
+//			if(key.equals("0015022500000000_0015022720350000")){
+//				context.write(key,new Text(values.toString()));
+//			}
 			
 		}
 	}
