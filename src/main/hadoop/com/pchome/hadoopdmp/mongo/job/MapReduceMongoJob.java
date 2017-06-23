@@ -34,7 +34,7 @@ private static Log log = LogFactory.getLog("MapReduceMongoJob");
 			// String uuid = value.get("uuid").toString();
 			// String behavior = value.get("behavior").toString();
 			// String record_date = value.get("record_date").toString();
-
+			
 			String user_id = value.get("user_id").toString();
 			
 			String update_date = value.get("update_date").toString();
@@ -45,12 +45,22 @@ private static Log log = LogFactory.getLog("MapReduceMongoJob");
 			TypeToken<List<Map<String, Object>>> token = new TypeToken<List<Map<String, Object>>>(){};
 			List<Map<String, Object>> personList = gson.fromJson(category_info_str, token.getType());
 			
-			String category="";
+			String category = "";
 			for (Map<String, Object> map : personList) {
 				category = (String) map.get("category");
-				log.info(">>>>>> category : "+category);	
+				log.info(">>>>>> mapper category : "+category);	
 				
 			}
+			log.info(">>>>> mapper category_info_str : "+category);
+//			context.write(new Text(user_id), new Text(update_date));
+			context.write(new Text("total_user"), new Text("1"));
+			
+			
+			
+			
+			
+			
+			
 			
 //			ObjectMapper mapper = new ObjectMapper();
 //			ReadMongoBean user = mapper.readValue(category_info_str, ReadMongoBean.class);
@@ -62,14 +72,14 @@ private static Log log = LogFactory.getLog("MapReduceMongoJob");
 //				System.out.println("category : "+category);
 //				
 //			}
-			log.info(">>>>> category_info_str : "+category);
+			
 			
 			// String date = value.get("date").toString();
 			// String time = value.get("time").toString();
 			// String ip = value.get("ip").toString();
 			// String output = behavior+" "+record_date;
 
-			context.write(new Text(user_id), new Text(update_date));
+			
 		}
 	}
 
@@ -78,16 +88,16 @@ private static Log log = LogFactory.getLog("MapReduceMongoJob");
 		public void reduce(Text key, Text values, Context context) throws IOException, InterruptedException {
 			log.info(">>>>> reduce key: "+key);
 			log.info(">>>>> reduce values: "+values);
-			
-			context.write(key, values);
+			String [] total = values.toString().split(",");
+			context.write(key,new Text(String.valueOf(total.length)));
 		}
 	}
 
 	public static void main(String[] args) throws Exception {
 		final Configuration conf = new Configuration();
-		MongoConfigUtil.setInputURI(conf, "mongodb://192.168.1.37:27017/pcbappdev.pcb_area");
+		MongoConfigUtil.setInputURI(conf, "mongodb://192.168.1.37:27017/pcbappdev.class_count");
 //		conf.set("mongo.input.query",  "{'update_date':{'$gt':{'$date':'2017-06-01 23:59:59'}}}");
-		conf.set("mongo.input.query",  "{'update_date':{'$gt':'2017-06-01 23:59:59'}}");
+		conf.set("mongo.input.query",  "{'update_date':{'$gt':'2017-06-19 23:59:59'}}");
 		MongoConfigUtil.setCreateInputSplits(conf, false);
 		
 		System.out.println("Configuration: " + conf);
