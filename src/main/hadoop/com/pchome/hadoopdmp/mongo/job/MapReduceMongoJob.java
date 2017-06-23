@@ -87,15 +87,20 @@ public class MapReduceMongoJob {
 			try {
 				log.info(">>>>> reduce key: " + key);
 				
-				if (key.toString().indexOf("0015022500000000_0015022720350000") > 0) {
-					log.info(">>>>> reduce TEST: " + key);
-					Set<String> data = new HashSet<>();
+				
+				if (key.toString().indexOf("0015022500000000") > 0) {
 					for (Text text : values) {
-						log.info(">>>>> reduce alex TEST: " + text);
-						data.add(text.toString());
+						log.info(">>>>>alex 0015022500000000 : " + text);
 					}
-					context.write(key, new Text(String.valueOf(data.size())));
-				} else {
+				}
+				if(key.toString().indexOf("0015022720350000") > 0){
+					for (Text text : values) {
+						log.info(">>>>>alex 0015022720350000 : " + text);
+					}
+				}
+				
+				
+				if(key.toString().indexOf("_") > 0){
 					int sum = 0;
 					for (Text text : values) {
 						sum = sum + 1;
