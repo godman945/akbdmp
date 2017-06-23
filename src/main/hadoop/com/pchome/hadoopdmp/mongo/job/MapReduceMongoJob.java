@@ -84,7 +84,11 @@ private static Log log = LogFactory.getLog("MapReduceMongoJob");
 			if(key.toString().indexOf("TOTAL") > 0){
 				log.info(">>>>> reduce TEST: "+key);
 				log.info(">>>>> reduce TEST: "+values);
-				context.write(key,new Text(values.toString()));
+				for (Text text : values) {
+					log.info(">>>>> reduce alex TEST: "+values);
+					context.write(key,new Text(text));
+				}
+				
 			}else{
 				for (Text text : values) {
 					sum = sum + 1;
