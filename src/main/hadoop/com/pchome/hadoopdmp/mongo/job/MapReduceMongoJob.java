@@ -58,10 +58,10 @@ public class MapReduceMongoJob {
 				}
 
 				if(ad_class.equals("0015022500000000")){
-					context.write(new Text("bessie"), new Text(user_id));
+					context.write(new Text("0015022500000000_0015022720350000"), new Text(user_id));
 				}
 				if(ad_class.equals("0015022720350000")){
-					context.write(new Text("bessie"), new Text(user_id));
+					context.write(new Text("0015022500000000_0015022720350000"), new Text(user_id));
 				}
 				
 				
