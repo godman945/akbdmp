@@ -40,33 +40,43 @@ private static Log log = LogFactory.getLog("MapReduceMongoJob");
 				String update_date = value.get("update_date").toString();
 				String category_info_str = value.get("category_info").toString();
 				String user_id = value.get("user_id").toString();
-				
-				
-				
 				Map<String, Object> user_info = (Map<String, Object>) value.get("user_info");
+				List<Map<String, Object>> category_info =  (List<Map<String, Object>>) value.get("category_info");
 				
-				Gson gson = new Gson();
-				TypeToken<List<Map<String, Object>>> token = new TypeToken<List<Map<String, Object>>>(){};
-				List<Map<String, Object>> personList = gson.fromJson(category_info_str, token.getType());
-				log.info(">>>>>>> alex:"+value);
-				log.info(">>>>>> mapper user_id : "+user_id);
-				log.info(">>>>>> mapper type : "+user_info.get("type"));
-				log.info(">>>>>> mapper update_date : "+update_date);
-				log.info(">>>>>> mapper category_info_str : "+category_info_str);
-				
-				
-				String category = "";
-//				String user_adclass = user_id+"_"+type;
-				for (Map<String, Object> map : personList) {
-					category = (String) map.get("category");
-//					log.info(">>>>>> mapper category : "+category);	
+				String userType= user_info.get("type").toString();
+				for (Map<String, Object> category : category_info) {
+					String categoryKey = category.get("category").toString()+"_"+userType;
 					
-//					String adclass_user =  type + "_" + category;
-//					
-//					context.write(new Text(adclass_user), new Text("1"));
+					log.info(">>>>>> categoryKey:"+categoryKey);
+					
+					context.write(new Text(categoryKey), new Text());
 				}
 				
-				context.write(new Text("TEST"), new Text("1"));
+//				Gson gson = new Gson();
+//				TypeToken<List<Map<String, Object>>> token = new TypeToken<List<Map<String, Object>>>(){};
+//				List<Map<String, Object>> personList = gson.fromJson(category_info_str, token.getType());
+//				
+//				
+//				
+//				log.info(">>>>>>> alex:"+value);
+//				log.info(">>>>>> mapper user_id : "+user_id);
+//				log.info(">>>>>> mapper type : "+user_info.get("type"));
+//				log.info(">>>>>> mapper update_date : "+update_date);
+//				log.info(">>>>>> mapper category_info_str : "+category_info_str);
+//				
+//				
+//				String category = "";
+////				String user_adclass = user_id+"_"+type;
+//				for (Map<String, Object> map : personList) {
+//					category = (String) map.get("category");
+////					log.info(">>>>>> mapper category : "+category);	
+//					
+////					String adclass_user =  type + "_" + category;
+////					
+////					context.write(new Text(adclass_user), new Text("1"));
+//				}
+				
+//				context.write(new Text("TEST"), new Text("1"));
 				
 //				log.info(">>>>> mapper category_info_str : "+category);
 ////				context.write(new Text(user_id), new Text(update_date));
