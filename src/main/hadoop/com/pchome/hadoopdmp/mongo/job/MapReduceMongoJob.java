@@ -64,8 +64,7 @@ public class MapReduceMongoJob {
 						data.addAll(entry.getValue());
 					}
 				}
-				context.write(new Text("0015022500000000_0015022720350000_TOTAL"),
-						new Text(String.valueOf(data.size())));
+				context.write(new Text("0015022500000000_0015022720350000_TOTAL"),	new Text(String.valueOf(data.size())));
 
 			} catch (Exception e) {
 				log.error(">>>>> mapper e : " + e.getMessage());
@@ -77,23 +76,21 @@ public class MapReduceMongoJob {
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 			try {
 				log.info(">>>>> reduce key: " + key);
-				log.info(">>>>> reduce values: " + values);
-				int sum = 0;
-
+				
 				if (key.toString().indexOf("TOTAL") > 0) {
 					log.info(">>>>> reduce TEST: " + key);
-					log.info(">>>>> reduce TEST: " + values);
 					for (Text text : values) {
-						log.info(">>>>> reduce alex TEST: " + values);
+						log.info(">>>>> reduce alex TEST: " + text);
 						context.write(key, new Text(text));
 					}
 
 				} else {
+					int sum = 0;
 					for (Text text : values) {
 						sum = sum + 1;
-						log.info(">>>>> reduce sum: " + sum);
-
 					}
+					log.info(">>>>> reduce key: " + key);
+					log.info(">>>>> reduce sum: " + sum);
 					context.write(key, new Text(String.valueOf(sum)));
 				}
 			} catch (Exception e) {
