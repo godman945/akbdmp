@@ -12,7 +12,6 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
-import org.apache.htrace.fasterxml.jackson.databind.ObjectMapper;
 import org.bson.BSONObject;
 
 import com.google.gson.Gson;
@@ -22,7 +21,7 @@ import com.mongodb.hadoop.util.MongoConfigUtil;
 
 public class MongoCategoryCount {
 
-	public static class ReadWeblogsFromMongo extends Mapper<Object, BSONObject, Text, Text> {
+	public static class MongoCategoryCountMapper extends Mapper<Object, BSONObject, Text, Text> {
 		public void map(Object key, BSONObject value, Context context) throws IOException, InterruptedException {
 			// System.out.println("Key: " + key);
 			// System.out.println("Value: " + value);
@@ -69,7 +68,7 @@ public class MongoCategoryCount {
 		}
 	}
 
-	public static class MyReducer extends Reducer<Text, Text, Text, Text> {
+	public static class MongoCategoryCountReducer extends Reducer<Text, Text, Text, Text> {
 
 		public void reduce(Text key, Text values, Context context) throws IOException, InterruptedException {
 
@@ -90,8 +89,8 @@ public class MongoCategoryCount {
 		Path out = new Path("/home/webuser/bessie/mongo0622.txt");
 		FileOutputFormat.setOutputPath(job, out);
 		job.setJarByClass(MongoCategoryCount.class);
-		job.setMapperClass(ReadWeblogsFromMongo.class);
-		job.setReducerClass(MyReducer.class);
+		job.setMapperClass(MongoCategoryCountMapper.class);
+		job.setReducerClass(MongoCategoryCountReducer.class);
 
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(Text.class);
