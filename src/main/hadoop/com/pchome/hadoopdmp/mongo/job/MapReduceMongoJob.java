@@ -43,7 +43,7 @@ private static Log log = LogFactory.getLog("MapReduceMongoJob");
 				Gson gson = new Gson();
 				TypeToken<List<Map<String, Object>>> token = new TypeToken<List<Map<String, Object>>>(){};
 				List<Map<String, Object>> personList = gson.fromJson(category_info_str, token.getType());
-				System.out.println(">>>>>>> alex:"+value);
+				log.info(">>>>>>> alex:"+value);
 				log.info(">>>>>> mapper user_id : "+user_id);
 //				log.info(">>>>>> mapper type : "+type);
 				log.info(">>>>>> mapper update_date : "+update_date);
