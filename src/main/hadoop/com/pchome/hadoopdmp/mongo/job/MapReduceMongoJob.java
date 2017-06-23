@@ -79,11 +79,11 @@ private static Log log = LogFactory.getLog("MapReduceMongoJob");
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 			log.info(">>>>> reduce key: "+key);
 			log.info(">>>>> reduce values: "+values);
-			
-			
-			
-			String [] total = values.toString().split(",");
-			context.write(key,new Text(String.valueOf(total.length)));
+			int sum = 0;
+			while(values.iterator().hasNext()){
+				sum = sum + 1;
+			}
+			context.write(key,new Text(String.valueOf(sum)));
 		}
 	}
 
