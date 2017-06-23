@@ -41,20 +41,30 @@ private static Log log = LogFactory.getLog("MapReduceMongoJob");
 			TypeToken<List<Map<String, Object>>> token = new TypeToken<List<Map<String, Object>>>(){};
 			List<Map<String, Object>> personList = gson.fromJson(category_info_str, token.getType());
 			
+			
+			
+			
+			log.info(">>>>>> mapper user_id : "+user_id);
+			log.info(">>>>>> mapper type : "+type);
+			log.info(">>>>>> mapper update_date : "+update_date);
+			log.info(">>>>>> mapper category_info_str : "+category_info_str);
+			
+			
+			
+			
+			
 			String category = "";
 //			String user_adclass = user_id+"_"+type;
 			for (Map<String, Object> map : personList) {
 				category = (String) map.get("category");
-				log.info(">>>>>> mapper category : "+category);	
+//				log.info(">>>>>> mapper category : "+category);	
 				
-				String adclass_user =  type + "_" + category;
-				
-				
-				
-				context.write(new Text(adclass_user), new Text("1"));
+//				String adclass_user =  type + "_" + category;
+//				
+//				context.write(new Text(adclass_user), new Text("1"));
 			}
 			
-			
+			context.write(new Text("TEST"), new Text("1"));
 			
 //			log.info(">>>>> mapper category_info_str : "+category);
 ////			context.write(new Text(user_id), new Text(update_date));
