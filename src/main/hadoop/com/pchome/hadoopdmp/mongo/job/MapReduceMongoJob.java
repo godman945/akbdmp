@@ -90,7 +90,7 @@ public class MapReduceMongoJob {
 					Set<String> data = new HashSet<>();
 					int sum = 0;
 					for (Text text : values) {
-						log.info(">>>>> reduce alex TEST: " + text);
+//						log.info(">>>>> reduce alex TEST: " + text);
 						data.add(text.toString());
 						sum = sum + 1;
 					}
