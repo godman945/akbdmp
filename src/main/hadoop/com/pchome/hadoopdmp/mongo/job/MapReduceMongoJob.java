@@ -36,6 +36,9 @@ public class MapReduceMongoJob {
 				String userType = user_info.get("type").toString();
 				Map<String, Set<String>> allMap = new HashMap<String, Set<String>>();
 
+				// 0015022500000000
+				// 0015022720350000
+				String group = "bessie";
 				String ad_class ="";
 				for (Map<String, Object> category : category_info) {
 					ad_class = category.get("category").toString();
@@ -51,20 +54,15 @@ public class MapReduceMongoJob {
 //						set.add(user_id);
 //					}
 					context.write(new Text(categoryKey), new Text());
-					
+					if(ad_class.equals("0015022500000000")){
+						context.write(new Text("0015022500000000_0015022720350000"), new Text(user_id));
+					}
+					if(ad_class.equals("0015022720350000")){
+						context.write(new Text("0015022500000000_0015022720350000"), new Text(user_id));
+					}
 				}
 
-				
-				
-				// 0015022500000000
-				// 0015022720350000
-//				String group = "bessie";
-				if(ad_class.equals("0015022500000000")){
-					context.write(new Text("0015022500000000"), new Text(user_id));
-				}
-				if(ad_class.equals("0015022720350000")){
-					context.write(new Text("0015022720350000"), new Text(user_id));
-				}
+	
 				
 				
 //				Set<String> data = new HashSet<>();
@@ -89,24 +87,20 @@ public class MapReduceMongoJob {
 			try {
 				log.info(">>>>> reduce key: " + key);
 				
-				
-				if (key.toString().equals("0015022500000000")) {
+				if (key.toString().indexOf("0015022500000000_0015022720350000") > 0) {
+					log.info(">>>>> reduce TEST: " + key);
+					Set<String> data = new HashSet<>();
 					for (Text text : values) {
-						log.info(">>>>>alex 0015022500000000 : " + text);
+						log.info(">>>>> reduce alex TEST: " + text);
+						data.add(text.toString());
 					}
-				}
-				if(key.toString().equals("0015022720350000")){
-					for (Text text : values) {
-						log.info(">>>>>alex 0015022720350000 : " + text);
-					}
-				}
-				
-				
-				if(key.toString().indexOf("_") > 0){
+					context.write(key, new Text(String.valueOf(data.size())));
+				} else {
 					int sum = 0;
 					for (Text text : values) {
 						sum = sum + 1;
 					}
+					log.info(">>>>> reduce key: " + key);
 					log.info(">>>>> reduce sum: " + sum);
 					context.write(key, new Text(String.valueOf(sum)));
 				}
