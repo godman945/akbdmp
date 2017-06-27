@@ -86,7 +86,7 @@ public class MapReduceMongoJob {
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 			try {
 				
-				if (key.toString().indexOf("0015022500000000_0015022720350000") > 0) {
+				if (key.toString().equals("0015022500000000_0015022720350000")) {
 					Set<String> data = new HashSet<>();
 					int sum = 0;
 					for (Text text : values) {
