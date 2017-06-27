@@ -336,7 +336,7 @@
 		</dependency>
 		
 		
-		<!-- eclipse hibernate sl4j需要用1.5.8版 
+		<!-- eclipse hibernate sl4j需要用1.5.8版
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -348,7 +348,7 @@
 			<artifactId>jcl-over-slf4j</artifactId>
 			<version>1.5.8</version>
 		</dependency>
-		 -->
+		-->
 		<!-- -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -361,7 +361,7 @@
 			<artifactId>jcl-over-slf4j</artifactId>
 			<version>1.6.0</version>
 		</dependency>
-
+		
 		
 		 <dependency> 
  			<groupId>jdk.tools</groupId>
