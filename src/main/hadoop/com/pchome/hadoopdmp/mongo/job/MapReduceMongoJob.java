@@ -1,12 +1,14 @@
 package com.pchome.hadoopdmp.mongo.job;
-
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -18,13 +20,50 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.bson.BSONObject;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.mongodb.hadoop.MongoInputFormat;
 import com.mongodb.hadoop.util.MongoConfigUtil;
-
+import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategory;
+import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategoryGroup;
+import com.pchome.hadoopdmp.mysql.db.service.category.IAdmCategoryGroupService;
+import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 public class MapReduceMongoJob {
 	private static Log log = LogFactory.getLog("MapReduceMongoJob");
+	
+	
 	public static class ReadWeblogsFromMongo extends Mapper<Object, BSONObject, Text, Text> {
+		
+		private IAdmCategoryGroupService admCategoryGroupService;
+		
+		Map<String,String> categoryMap = new HashMap<>();
+		
+		public void setup(Context context) {
+			System.setProperty("spring.profiles.active", "stg");
+			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+			admCategoryGroupService = ctx.getBean(IAdmCategoryGroupService.class);
+		
+			List<AdmCategoryGroup> admGroupList = admCategoryGroupService.loadAll();
+			for (AdmCategoryGroup admCategoryGroup : admGroupList) {
+				Set<AdmCategory> admCategorySet = admCategoryGroup.getAdmCategories();
+				String key = "";
+				List<AdmCategory> admCategoryList = new ArrayList<>(admCategorySet);
+				int admCategorySize = admCategoryList.size();
+				for (AdmCategory admCategory : admCategoryList) {
+					if(admCategoryList.indexOf(admCategory) == admCategorySize){
+						key = key + admCategory.getAdClass();
+					}else{
+						key = key + admCategory.getAdClass()+"_";
+					}
+				}
+				
+				if(StringUtils.isNotBlank(key)){
+					categoryMap.put(key, admCategoryGroup.getGroupId()+"_TOTAL");
+				}
+			}
+		}
+		
 		public void map(Object key, BSONObject value, Context context) throws IOException, InterruptedException {
 			try {
 				String update_date = value.get("update_date").toString();
@@ -35,69 +74,21 @@ public class MapReduceMongoJob {
 				String userType = user_info.get("type").toString();
 				Map<String, Set<String>> allMap = new HashMap<String, Set<String>>();
 
-				// 0015022500000000
-				// 0015022720350000
-				String group = "bessie";
-				String ad_class ="";
 				for (Map<String, Object> category : category_info) {
-					ad_class = category.get("category").toString();
+					String ad_class = category.get("category").toString();
 					String categoryKey = ad_class + "_" + userType.toUpperCase();
-//					log.info(">>>>>> categoryKey:" + categoryKey);
-
-//					if (!allMap.containsKey(ad_class)) {
-//						Set<String> set = new HashSet<>();
-//						set.add(user_id);
-//						allMap.put(ad_class, set);
-//					} else {
-//						Set<String> set = allMap.get(ad_class);
-//						set.add(user_id);
-//					}
 					context.write(new Text(categoryKey), new Text());
-					
-					
-					
-					
-					
-					
-					
-					
-					Map<String,String> map = new HashMap<>();
-					map.put("0015022500000000_0015022720350000", "A01");
-					map.put("0015022500000000_0015022720350000_0015022720350000", "A02");
-					for (Map.Entry<String, String> entry : map.entrySet()){
-						if(entry.getKey().contains(ad_class)){
-							context.write(new Text(entry.getValue()+"_TOTAL"), new Text(user_id));
-						}
-						
-					}
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					//process parent
-					if(ad_class.equals("0015022500000000")){
-						context.write(new Text("A01_TOTAL"), new Text(user_id));
-					}
-					if(ad_class.equals("0015022720350000")){
-						context.write(new Text("0015022500000000_0015022720350000"), new Text(user_id));
-					}
-					
-					
-					
-					
-					
-					
-					
-					
-				}
 
-	
-				
+					//process parent
+					for (Entry<String, String> entry : categoryMap.entrySet()) {
+						log.info(">>>>>> entry_key:"+entry.getKey());
+						log.info(">>>>>> entry_value:"+entry.getValue());
+						
+						if(entry.getKey().contains(ad_class)){
+							context.write(new Text(entry.getValue()), new Text(user_id));
+						}
+					}
+				}
 				
 //				Set<String> data = new HashSet<>();
 //				for (Map.Entry<String, Set<String>> entry : allMap.entrySet()) {
@@ -125,14 +116,10 @@ public class MapReduceMongoJob {
 				
 				if (key.toString().indexOf("TOTAL") > 0) {
 					
-					String [] b = key.toString().split("_");
-					
-					
-					
-					
+					String [] array = key.toString().split("_");
+					String parentKey = array[0];
 					int sum = 0;
 					for (Text text : values) {
-//						log.info(">>>>> reduce alex TEST: " + text);
 						data.add(text.toString());
 						sum = sum + 1;
 					}
@@ -140,7 +127,7 @@ public class MapReduceMongoJob {
 					log.info(">>>>> reduce key: " + key);
 					log.info(">>>>> reduce dataSize: " + data.size());
 					log.info(">>>>> reduce sum: " + sum);
-					context.write(key, new Text(String.valueOf(data.size())));
+					context.write(new Text(parentKey), new Text(String.valueOf(data.size())));
 				} else {
 					int sum = 0;
 					for (Text text : values) {
@@ -183,5 +170,6 @@ public class MapReduceMongoJob {
 		job.setOutputFormatClass(TextOutputFormat.class);
 		job.setNumReduceTasks(1);
 		System.exit(job.waitForCompletion(true) ? 0 : 1);
+		
 	}
 }
