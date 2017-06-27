@@ -43,7 +43,7 @@ public class MapReduceMongoJob {
 				for (Map<String, Object> category : category_info) {
 					ad_class = category.get("category").toString();
 					String categoryKey = ad_class + "_" + userType.toUpperCase();
-					log.info(">>>>>> categoryKey:" + categoryKey);
+//					log.info(">>>>>> categoryKey:" + categoryKey);
 
 //					if (!allMap.containsKey(ad_class)) {
 //						Set<String> set = new HashSet<>();
@@ -88,14 +88,16 @@ public class MapReduceMongoJob {
 				
 				if (key.toString().indexOf("0015022500000000_0015022720350000") > 0) {
 					Set<String> data = new HashSet<>();
+					int sum = 0;
 					for (Text text : values) {
 						log.info(">>>>> reduce alex TEST: " + text);
 						data.add(text.toString());
+						sum = sum + 1;
 					}
 					
 					log.info(">>>>> reduce key: " + key);
-					log.info(">>>>> reduce sum: " + data.size());
-					
+					log.info(">>>>> reduce dataSize: " + data.size());
+					log.info(">>>>> reduce sum: " + sum);
 					context.write(key, new Text(String.valueOf(data.size())));
 				} else {
 					int sum = 0;
