@@ -90,14 +90,14 @@ public class MapReduceMongoJob {
 					context.write(new Text(categoryKey), new Text());
 
 					//process parent
-//					for (Entry<String, String> entry : categoryMap.entrySet()) {
-//						log.info(">>>>>> entry_key:"+entry.getKey());
-//						log.info(">>>>>> entry_value:"+entry.getValue());
-//						
-//						if(entry.getKey().contains(ad_class)){
-//							context.write(new Text(entry.getValue()), new Text(user_id));
-//						}
-//					}
+					for (Entry<String, String> entry : categoryMap.entrySet()) {
+						log.info(">>>>>> entry_key:"+entry.getKey());
+						log.info(">>>>>> entry_value:"+entry.getValue());
+						
+						if(entry.getKey().contains(ad_class)){
+							context.write(new Text(entry.getValue()), new Text(user_id));
+						}
+					}
 				}
 				
 //				Set<String> data = new HashSet<>();
