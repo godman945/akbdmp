@@ -85,15 +85,17 @@ public class MapReduceMongoJob {
 	public static class MyReducer extends Reducer<Text, Text, Text, Text> {
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 			try {
-				log.info(">>>>> reduce key: " + key);
 				
 				if (key.toString().indexOf("0015022500000000_0015022720350000") > 0) {
-					log.info(">>>>> reduce TEST: " + key);
 					Set<String> data = new HashSet<>();
 					for (Text text : values) {
 						log.info(">>>>> reduce alex TEST: " + text);
 						data.add(text.toString());
 					}
+					
+					log.info(">>>>> reduce key: " + key);
+					log.info(">>>>> reduce sum: " + data.size());
+					
 					context.write(key, new Text(String.valueOf(data.size())));
 				} else {
 					int sum = 0;
