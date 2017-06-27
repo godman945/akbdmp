@@ -18,6 +18,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 	+"com.pchome.hadoopdmp.spring.config.bean,"
 	+"com.pchome.hadoopdmp.mongo,"
 	+"com.pchome.hadoopdmp.thread,"
+	+"com.pchome.hadoopdmp.mysql.db,"
+	+"test.bessie,"
 	
 )
 @PropertySource({ 

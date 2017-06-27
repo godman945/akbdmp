@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
@@ -38,7 +38,6 @@
 		</layout>
 	</appender>
 
-	<!-- mongo mapreduce listener -->
 	<appender name="mapReduceMongoJob" class="org.apache.log4j.RollingFileAppender">
 		<param name="File" value="/home/webuser/log/dmp/MapReduceMongoJob.log" />
 		<param name="Append" value="true" />
@@ -49,54 +48,58 @@
 		</layout>
 	</appender>
 
-
 	<logger name="com.pchome.akbdmp.job.campaign.CampaignJob" additivity="true">
-		<priority value="info" />
+		<level value="info" />
 		<appender-ref ref="AkbDmpJob" />
 	</logger>
 	
 	<logger name="com.pchome.dmp.mapreduce.category.CategoryDriver" additivity="true">
-		<priority value="info" />
+		<level value="info" />
 		<appender-ref ref="AkbDmpJob" />
 	</logger>
 	
 	<logger name="com.pchome.dmp.mapreduce.category.CategoryMapper" additivity="true">
-		<priority value="info" />
+		<level value="info" />
 		<appender-ref ref="AkbDmpJob" />
 	</logger>
 	
 	<logger name="com.pchome.dmp.mapreduce.category.CategoryReducer" additivity="true">
-		<priority value="info" />
+		<level value="info" />
 		<appender-ref ref="AkbDmpJob" />
 	</logger>
-
 	
 	<logger name="CategoryLogDriver" additivity="true">
-		<priority value="info" />
+		<level value="info" />
 		<appender-ref ref="AkbDmpJob" />
 	</logger>
 	<logger name="CategoryLogMapper" additivity="true">
-		<priority value="info" />
+		<level value="info" />
 		<appender-ref ref="AkbDmpJob" />
 	</logger>
 	
-	
 	<logger name="MongoInsertClassUrl" additivity="true">
-		<priority value="info" />
+		<level value="info" />
 		<appender-ref ref="MongoInsertUrl" />
 	</logger>
 
-
 	<!-- mongo mapreduce test -->
 	<logger name="MapReduceMongoJob" additivity="true">
-		<priority value="info" />
+		<level value="info" />
 		<appender-ref ref="mapReduceMongoJob" />
 	</logger>
 
+	<logger name="org.hibernate" additivity="true">
+    	<level value="ERROR" />
+	</logger>
+	
+	<logger name="com.mchange" additivity="true">
+    	<level value="ERROR" />
+	</logger>
+	
 	<root>
 		<level value="info" />
-		<appender-ref ref="stdout" />
 		<appender-ref ref="AkbDmp" />
+		<appender-ref ref="stdout" />
 	</root>
 
 </log4j:configuration>

@@ -24,7 +24,6 @@ import com.mongodb.hadoop.util.MongoConfigUtil;
 
 public class MapReduceMongoJob {
 	private static Log log = LogFactory.getLog("MapReduceMongoJob");
-
 	public static class ReadWeblogsFromMongo extends Mapper<Object, BSONObject, Text, Text> {
 		public void map(Object key, BSONObject value, Context context) throws IOException, InterruptedException {
 			try {
@@ -54,12 +53,47 @@ public class MapReduceMongoJob {
 //						set.add(user_id);
 //					}
 					context.write(new Text(categoryKey), new Text());
+					
+					
+					
+					
+					
+					
+					
+					
+					Map<String,String> map = new HashMap<>();
+					map.put("0015022500000000_0015022720350000", "A01");
+					map.put("0015022500000000_0015022720350000_0015022720350000", "A02");
+					for (Map.Entry<String, String> entry : map.entrySet()){
+						if(entry.getKey().contains(ad_class)){
+							context.write(new Text(entry.getValue()+"_TOTAL"), new Text(user_id));
+						}
+						
+					}
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					//process parent
 					if(ad_class.equals("0015022500000000")){
-						context.write(new Text("0015022500000000_0015022720350000"), new Text(user_id));
+						context.write(new Text("A01_TOTAL"), new Text(user_id));
 					}
 					if(ad_class.equals("0015022720350000")){
 						context.write(new Text("0015022500000000_0015022720350000"), new Text(user_id));
 					}
+					
+					
+					
+					
+					
+					
+					
+					
 				}
 
 	
@@ -83,11 +117,19 @@ public class MapReduceMongoJob {
 	}
 
 	public static class MyReducer extends Reducer<Text, Text, Text, Text> {
+		private static Set<String> data = new HashSet<>();
+		
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 			try {
+				data.clear();
 				
-				if (key.toString().equals("0015022500000000_0015022720350000")) {
-					Set<String> data = new HashSet<>();
+				if (key.toString().indexOf("TOTAL") > 0) {
+					
+					String [] b = key.toString().split("_");
+					
+					
+					
+					
 					int sum = 0;
 					for (Text text : values) {
 //						log.info(">>>>> reduce alex TEST: " + text);
