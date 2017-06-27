@@ -2,8 +2,12 @@
 <!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd" >
 
 <hibernate-reverse-engineering>
-	<table-filter match-name="adm_ad_class" match-catalog="dmp">
+	<table-filter match-name="adm_category" match-catalog="dmp"></table-filter>
+	<table-filter match-name="adm_category_group" match-catalog="dmp"></table-filter>
+	<table-filter match-name=" adm_category_group_analyze"
+		match-catalog="dmp">
 	</table-filter>
-	<table-filter match-name="adm_ad_group" match-catalog="dmp">
+	<table-filter match-name="adm_category_analyze"
+		match-catalog="dmp">
 	</table-filter>
 </hibernate-reverse-engineering>
