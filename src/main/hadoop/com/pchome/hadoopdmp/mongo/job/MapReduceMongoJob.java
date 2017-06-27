@@ -40,28 +40,38 @@ public class MapReduceMongoJob {
 		Map<String,String> categoryMap = new HashMap<>();
 		
 		public void setup(Context context) {
-			System.setProperty("spring.profiles.active", "stg");
-			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-			admCategoryGroupService = ctx.getBean(IAdmCategoryGroupService.class);
-		
-			List<AdmCategoryGroup> admGroupList = admCategoryGroupService.loadAll();
-			for (AdmCategoryGroup admCategoryGroup : admGroupList) {
-				Set<AdmCategory> admCategorySet = admCategoryGroup.getAdmCategories();
-				String key = "";
-				List<AdmCategory> admCategoryList = new ArrayList<>(admCategorySet);
-				int admCategorySize = admCategoryList.size();
-				for (AdmCategory admCategory : admCategoryList) {
-					if(admCategoryList.indexOf(admCategory) == admCategorySize){
-						key = key + admCategory.getAdClass();
-					}else{
-						key = key + admCategory.getAdClass()+"_";
+			try {
+				log.info(">>>>>> setup:");
+				
+				
+				System.setProperty("spring.profiles.active", "stg");
+				ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+				admCategoryGroupService = ctx.getBean(IAdmCategoryGroupService.class);
+			
+				List<AdmCategoryGroup> admGroupList = admCategoryGroupService.loadAll();
+				for (AdmCategoryGroup admCategoryGroup : admGroupList) {
+					Set<AdmCategory> admCategorySet = admCategoryGroup.getAdmCategories();
+					String key = "";
+					List<AdmCategory> admCategoryList = new ArrayList<>(admCategorySet);
+					int admCategorySize = admCategoryList.size();
+					for (AdmCategory admCategory : admCategoryList) {
+						if(admCategoryList.indexOf(admCategory) == admCategorySize){
+							key = key + admCategory.getAdClass();
+						}else{
+							key = key + admCategory.getAdClass()+"_";
+						}
+					}
+					
+					if(StringUtils.isNotBlank(key)){
+						categoryMap.put(key, admCategoryGroup.getGroupId()+"_TOTAL");
 					}
 				}
-				
-				if(StringUtils.isNotBlank(key)){
-					categoryMap.put(key, admCategoryGroup.getGroupId()+"_TOTAL");
-				}
+			
+				log.info(">>>>>> categoryMap:"+categoryMap);
+			} catch (Exception e) {
+				log.error(">>>>> mapper e : " + e.getMessage());
 			}
+			
 		}
 		
 		public void map(Object key, BSONObject value, Context context) throws IOException, InterruptedException {
@@ -80,14 +90,14 @@ public class MapReduceMongoJob {
 					context.write(new Text(categoryKey), new Text());
 
 					//process parent
-					for (Entry<String, String> entry : categoryMap.entrySet()) {
-						log.info(">>>>>> entry_key:"+entry.getKey());
-						log.info(">>>>>> entry_value:"+entry.getValue());
-						
-						if(entry.getKey().contains(ad_class)){
-							context.write(new Text(entry.getValue()), new Text(user_id));
-						}
-					}
+//					for (Entry<String, String> entry : categoryMap.entrySet()) {
+//						log.info(">>>>>> entry_key:"+entry.getKey());
+//						log.info(">>>>>> entry_value:"+entry.getValue());
+//						
+//						if(entry.getKey().contains(ad_class)){
+//							context.write(new Text(entry.getValue()), new Text(user_id));
+//						}
+//					}
 				}
 				
 //				Set<String> data = new HashSet<>();
@@ -170,6 +180,6 @@ public class MapReduceMongoJob {
 		job.setOutputFormatClass(TextOutputFormat.class);
 		job.setNumReduceTasks(1);
 		System.exit(job.waitForCompletion(true) ? 0 : 1);
-		
+//		new ReadWeblogsFromMongo().setup(null);
 	}
 }
