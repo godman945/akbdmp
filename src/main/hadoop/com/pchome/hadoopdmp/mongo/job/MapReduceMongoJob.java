@@ -161,6 +161,7 @@ public class MapReduceMongoJob {
 					log.info(">>>>> reduce dataSize: " + data.size());
 					log.info(">>>>> reduce sum: " + sum);
 					log.info(">>>>> 大分類: " + parentKey + " : " + data.size());
+					log.info(">>>>> TEST-------------------------------------------");
 					log.info(">>>>> Service: " + admGroupAnalyzeService);
 					
 					AdmCategoryGroupAnalyze admCategoryGroupAnalyze = new AdmCategoryGroupAnalyze();
