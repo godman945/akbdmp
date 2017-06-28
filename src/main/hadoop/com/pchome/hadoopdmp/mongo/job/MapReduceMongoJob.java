@@ -1,6 +1,7 @@
 package com.pchome.hadoopdmp.mongo.job;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -20,18 +21,26 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.bson.BSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import com.mongodb.hadoop.MongoInputFormat;
 import com.mongodb.hadoop.util.MongoConfigUtil;
 import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategory;
 import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategoryGroup;
+import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategoryGroupAnalyze;
+import com.pchome.hadoopdmp.mysql.db.service.categoryanalyze.IAdmCategoryGroupAnalyzeService;
 import com.pchome.hadoopdmp.mysql.db.service.categorygroup.IAdmCategoryGroupService;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
+
+@Component
+@Scope("prototype")
 public class MapReduceMongoJob {
-	private static Log log = LogFactory.getLog("MapReduceMongoJob");
 	
+	private static Log log = LogFactory.getLog("MapReduceMongoJob");
 	
 	public static class ReadWeblogsFromMongo extends Mapper<Object, BSONObject, Text, Text> {
 		
@@ -112,11 +121,14 @@ public class MapReduceMongoJob {
 	public static class MyReducer extends Reducer<Text, Text, Text, Text> {
 		private static Set<String> data = new HashSet<>();
 		
+		@Autowired
+		private IAdmCategoryGroupAnalyzeService admGroupAnalyzeService;
+		
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 			try {
 				data.clear();
-				//"0000000000000001_TOTAL"  大分類
-				//0015022500000000_uuid		小分類
+				//"0000000000000001_TOTAL"  大分類KEY
+				//0015022500000000_uuid		小分類KEY
 				if (key.toString().indexOf("TOTAL") > 0) {
 					
 					String [] array = key.toString().split("_");
@@ -131,6 +143,14 @@ public class MapReduceMongoJob {
 					log.info(">>>>> reduce dataSize: " + data.size());
 					log.info(">>>>> reduce sum: " + sum);
 					log.info(">>>>> 大分類: " + parentKey + " : " + data.size());
+					
+					AdmCategoryGroupAnalyze admCategoryGroupAnalyze = new AdmCategoryGroupAnalyze();
+					admCategoryGroupAnalyze.setAdClassCountByHistory(data.size());
+					admCategoryGroupAnalyze.setAdGroupId(parentKey);
+					admCategoryGroupAnalyze.setUserIdType("");
+					admCategoryGroupAnalyze.setCreateDate(new Date());
+					admGroupAnalyzeService.save(admCategoryGroupAnalyze);
+					
 					context.write(new Text(parentKey), new Text(String.valueOf(data.size())));
 				} else {
 					int sum = 0;
