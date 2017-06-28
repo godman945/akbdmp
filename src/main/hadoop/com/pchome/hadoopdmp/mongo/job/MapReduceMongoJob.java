@@ -58,7 +58,6 @@ public class MapReduceMongoJob {
 							key = key + admCategory.getAdClass()+"_";
 						}
 					}
-					
 					if(StringUtils.isNotBlank(key)){
 						categoryMap.put(key, admCategoryGroup.getGroupId()+"_TOTAL");
 					}
