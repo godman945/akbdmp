@@ -89,7 +89,7 @@ public class MapReduceMongoJob {
 
 					//process parent
 					for (Entry<String, String> entry : categoryMap.entrySet()) {
-						if(entry.getKey().contains(ad_class)){
+						if(entry.getKey().indexOf(ad_class) != -1){
 							if(entry.getValue().equals("0000000000000001_TOTAL")){
 								sum =  sum + 1;
 								log.info(">>>>>> user_id:"+user_id);
