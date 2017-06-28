@@ -88,12 +88,13 @@ public class MapReduceMongoJob {
 						continue;
 					}
 					String categoryKey = ad_class + "_" + userType.toUpperCase();
+					//
 					context.write(new Text(categoryKey), new Text());
 
 					//process parent
 					for (Entry<String, String> entry : categoryMap.entrySet()) {
 						if(entry.getKey().indexOf(ad_class) != -1){
-							if(entry.getValue().equals("0000000000000001_TOTAL")){
+							if(entry.getValue().equals(entry.getValue())){//if(entry.getValue().equals("0000000000000001_TOTAL")){
 								sum =  sum + 1;
 								log.info(">>>>>> user_id:"+user_id);
 								log.info(">>>>>> sum:"+sum + " :ad_class:"+ad_class );
