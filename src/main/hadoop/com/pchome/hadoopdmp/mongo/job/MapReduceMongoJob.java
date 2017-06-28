@@ -119,10 +119,21 @@ public class MapReduceMongoJob {
 	}
 
 	public static class MyReducer extends Reducer<Text, Text, Text, Text> {
+		
 		private static Set<String> data = new HashSet<>();
 		
-		@Autowired
 		private IAdmCategoryGroupAnalyzeService admGroupAnalyzeService;
+		
+		public void setup(Context context) {
+			try {
+				System.setProperty("spring.profiles.active", "stg");
+				ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+				admGroupAnalyzeService = ctx.getBean(IAdmCategoryGroupAnalyzeService.class);
+			} catch (Exception e) {
+				log.error(">>>>> mapper e : " + e.getMessage());
+			}
+			
+		}
 		
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 			try {
