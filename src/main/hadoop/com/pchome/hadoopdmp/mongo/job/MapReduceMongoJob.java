@@ -84,6 +84,9 @@ public class MapReduceMongoJob {
 
 				for (Map<String, Object> category : category_info) {
 					String ad_class = category.get("category").toString();
+					if(StringUtils.isBlank(ad_class)){
+						continue;
+					}
 					String categoryKey = ad_class + "_" + userType.toUpperCase();
 					context.write(new Text(categoryKey), new Text());
 
