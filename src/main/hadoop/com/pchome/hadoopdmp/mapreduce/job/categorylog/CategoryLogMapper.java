@@ -223,7 +223,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			
 			categoryLogBeanResult.setRecodeDate(record_date);
 			// 0:Memid + 1:Uuid + 2:AdClass + 3:Age + 4:Sex + 5:Source + 6:RecodeDate + 7:Type
-			String result = categoryLogBeanResult.getMemid() + SYMBOL + categoryLogBeanResult.getUuid() + SYMBOL + categoryLogBeanResult.getAdClass() + SYMBOL + categoryLogBeanResult.getAge() + SYMBOL + categoryLogBeanResult.getSex() + SYMBOL + categoryLogBeanResult.getSource()+ SYMBOL +categoryLogBeanResult.getRecodeDate() + SYMBOL + categoryLogBeanResult.getType();
+			String result = categoryLogBeanResult.getMemid() + SYMBOL + categoryLogBeanResult.getUuid() + SYMBOL + categoryLogBeanResult.getAdClass() + SYMBOL + categoryLogBeanResult.getAge() + SYMBOL + categoryLogBeanResult.getSex() + SYMBOL + categoryLogBeanResult.getSource()+ SYMBOL +categoryLogBeanResult.getRecodeDate() + SYMBOL + categoryLogBeanResult.getType() + SYMBOL + values[4];
 			log.info(">>>>>>Mapper write key:" + result);
 			keyOut.set(result);
 			context.write(keyOut, valueOut);

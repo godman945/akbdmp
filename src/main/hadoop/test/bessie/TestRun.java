@@ -3,7 +3,6 @@ package test.bessie;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,11 +11,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.pchome.hadoopdmp.data.mysql.pojo.AdmAdClass;
-import com.pchome.hadoopdmp.data.mysql.pojo.AdmAdGroup;
 import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategory;
 import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategoryGroup;
-import com.pchome.hadoopdmp.mysql.db.service.ad.IAdmAdGroupService;
 import com.pchome.hadoopdmp.mysql.db.service.category.IAdmCategoryService;
 import com.pchome.hadoopdmp.mysql.db.service.categorygroup.IAdmCategoryGroupService;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
@@ -28,9 +24,6 @@ public class TestRun {
 	Log log = LogFactory.getLog(TestRun.class);
 	
 	@Autowired
-	private IAdmAdGroupService admAdGroupService;
-	
-	@Autowired
 	private DateFormatUtil dateFormatUtil;
 	
 	@Autowired
@@ -40,17 +33,19 @@ public class TestRun {
 	private IAdmCategoryService admCategoryService;
 	
 	//查詢
-	private void hibernateDbTest(){
-		List<AdmAdGroup> admAdGroupList = admAdGroupService.loadAll();
-		for (AdmAdGroup admAdGroup : admAdGroupList) {
-			System.out.println("Group name:"+admAdGroup.getName());
-			Set<AdmAdClass> admAdClassSet = admAdGroup.getAdmAdClasses();
-			for (AdmAdClass admAdClass : admAdClassSet) {
-				System.out.println(admAdClass.getName());
-			}
-			
-		}
-	}
+//	private void hibernateDbTest(){
+//		List<AdmAdGroup> admAdGroupList = admAdGroupService.loadAll();
+//		for (AdmAdGroup admAdGroup : admAdGroupList) {
+//			System.out.println("Group name:"+admAdGroup.getName());
+//			Set<AdmAdClass> admAdClassSet = admAdGroup.getAdmAdClasses();
+//			for (AdmAdClass admAdClass : admAdClassSet) {
+//				System.out.println(admAdClass.getName());
+//			}
+//			
+//		}
+//	}
+	
+	
 	
 	
 	//新增大類別
@@ -109,7 +104,7 @@ public class TestRun {
 //			TestRun.hibernateDbTest();
 //			TestRun.listTest();
 //			TestRun.hibernateDbTest2();
-			TestRun.hibernateDbTest3();
+//			TestRun.hibernateDbTest3();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
