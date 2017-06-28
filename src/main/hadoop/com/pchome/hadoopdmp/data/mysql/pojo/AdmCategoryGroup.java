@@ -1,5 +1,5 @@
 package com.pchome.hadoopdmp.data.mysql.pojo;
-// Generated 2017/6/27 �U�� 06:43:24 by Hibernate Tools 3.4.0.CR1
+// Generated 2017/6/28 �U�� 02:12:26 by Hibernate Tools 3.4.0.CR1
 
 import java.util.Date;
 import java.util.HashSet;
@@ -97,7 +97,7 @@ public class AdmCategoryGroup implements java.io.Serializable {
 	public void setUpdateDate(Date updateDate) {
 		this.updateDate = updateDate;
 	}
-
+ 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "admCategoryGroup")
 	public Set<AdmCategory> getAdmCategories() {
 		return this.admCategories;
