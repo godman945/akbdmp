@@ -37,7 +37,9 @@ public class MapReduceMongoJob {
 		
 		private IAdmCategoryGroupService admCategoryGroupService;
 		
-		Map<String,String> categoryMap = new HashMap<>();
+		private static Map<String,String> categoryMap = new HashMap<>();
+		
+		private int sum = 0;
 		
 		public void setup(Context context) {
 			try {
@@ -49,7 +51,7 @@ public class MapReduceMongoJob {
 				for (AdmCategoryGroup admCategoryGroup : admGroupList) {
 					Set<AdmCategory> admCategorySet = admCategoryGroup.getAdmCategories();
 					String key = "";
-					List<AdmCategory> admCategoryList = new ArrayList<>(admCategorySet);
+					List<AdmCategory> admCategoryList = new ArrayList<AdmCategory>(admCategorySet);
 					int admCategorySize = admCategoryList.size();
 					for (AdmCategory admCategory : admCategoryList) {
 						if(admCategoryList.indexOf(admCategory) == admCategorySize - 1){
@@ -88,8 +90,13 @@ public class MapReduceMongoJob {
 					//process parent
 					for (Entry<String, String> entry : categoryMap.entrySet()) {
 						if(entry.getKey().contains(ad_class)){
-							log.info(">>>>>> ad_class:"+ad_class);
-							log.info(">>>>>> entry.getValue():"+entry.getValue());
+							if(entry.getValue().equals("0000000000000001_TOTAL")){
+								sum =  sum + 1;
+								log.info(">>>>>> ad_class:"+ad_class);
+								log.info(">>>>>> entry.getValue():"+entry.getValue());
+								log.info(">>>>>> user_id:"+user_id);
+								log.info(">>>>>> sum:"+sum);
+							}
 							context.write(new Text(entry.getValue()), new Text(user_id));
 						}
 					}
