@@ -88,10 +88,9 @@ public class MapReduceMongoJob {
 
 					//process parent
 					for (Entry<String, String> entry : categoryMap.entrySet()) {
-						log.info(">>>>>> entry_key:" + entry.getKey());
-						log.info(">>>>>> entry_value:" + entry.getValue());
-						if(entry.getKey().indexOf(ad_class) > 0){
-							log.info(">>>>>> TRUE:" +entry.getValue()+":"+ user_id);
+						if(entry.getKey().contains(ad_class)){
+							log.info(">>>>>> ad_class:"+ad_class);
+							log.info(">>>>>> entry.getValue():"+entry.getValue());
 							context.write(new Text(entry.getValue()), new Text(user_id));
 						}
 					}
