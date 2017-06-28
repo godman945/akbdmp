@@ -161,6 +161,7 @@ public class MapReduceMongoJob {
 					log.info(">>>>> reduce dataSize: " + data.size());
 					log.info(">>>>> reduce sum: " + sum);
 					log.info(">>>>> 大分類: " + parentKey + " : " + data.size());
+					log.info(">>>>> Service: " + admGroupAnalyzeService);
 					
 					AdmCategoryGroupAnalyze admCategoryGroupAnalyze = new AdmCategoryGroupAnalyze();
 					admCategoryGroupAnalyze.setAdClassCountByHistory(data.size());
@@ -168,8 +169,6 @@ public class MapReduceMongoJob {
 					admCategoryGroupAnalyze.setUserIdType("");
 					admCategoryGroupAnalyze.setCreateDate(new Date());
 					admGroupAnalyzeService.save(admCategoryGroupAnalyze);					
-					
-					log.info(">>>>> Service: " + admGroupAnalyzeService);
 					
 					context.write(new Text(parentKey), new Text(String.valueOf(data.size())));
 				} else {
