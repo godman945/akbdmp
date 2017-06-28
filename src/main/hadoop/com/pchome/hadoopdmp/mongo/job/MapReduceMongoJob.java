@@ -129,8 +129,15 @@ public class MapReduceMongoJob {
 				System.setProperty("spring.profiles.active", "stg");
 				ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 				admGroupAnalyzeService = ctx.getBean(IAdmCategoryGroupAnalyzeService.class);
+				
+				AdmCategoryGroupAnalyze admCategoryGroupAnalyze = new AdmCategoryGroupAnalyze();
+				admCategoryGroupAnalyze.setAdClassCountByHistory(365);
+				admCategoryGroupAnalyze.setAdGroupId("0000000000000076");
+				admCategoryGroupAnalyze.setUserIdType("");
+				admCategoryGroupAnalyze.setCreateDate(new Date());
+				admGroupAnalyzeService.save(admCategoryGroupAnalyze);
 			} catch (Exception e) {
-				log.error(">>>>> mapper e : " + e.getMessage());
+				log.error(">>>>> Reducer e : " + e.getMessage());
 			}
 			
 		}
@@ -174,7 +181,7 @@ public class MapReduceMongoJob {
 					context.write(key, new Text(String.valueOf(sum)));
 				}
 			} catch (Exception e) {
-				log.error(">>>>> mapper e : " + e.getMessage());
+				log.error(">>>>> Reducer e : " + e.getMessage());
 			}
 		}
 	}
