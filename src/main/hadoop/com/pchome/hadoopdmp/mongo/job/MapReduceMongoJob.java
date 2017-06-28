@@ -92,10 +92,8 @@ public class MapReduceMongoJob {
 						if(entry.getKey().contains(ad_class)){
 							if(entry.getValue().equals("0000000000000001_TOTAL")){
 								sum =  sum + 1;
-								log.info(">>>>>> ad_class:"+ad_class);
-								log.info(">>>>>> entry.getValue():"+entry.getValue());
 								log.info(">>>>>> user_id:"+user_id);
-								log.info(">>>>>> sum:"+sum);
+								log.info(">>>>>> sum:"+sum + " :ad_class:"+ad_class );
 							}
 							context.write(new Text(entry.getValue()), new Text(user_id));
 						}//13840     1.4713 2.9126  = 13839
