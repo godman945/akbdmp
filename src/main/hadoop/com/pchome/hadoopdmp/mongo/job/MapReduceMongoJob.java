@@ -115,7 +115,8 @@ public class MapReduceMongoJob {
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 			try {
 				data.clear();
-				
+				//"0000000000000001_TOTAL"  大分類
+				//0015022500000000_uuid		小分類
 				if (key.toString().indexOf("TOTAL") > 0) {
 					
 					String [] array = key.toString().split("_");
@@ -129,6 +130,7 @@ public class MapReduceMongoJob {
 					log.info(">>>>> reduce key: " + key);
 					log.info(">>>>> reduce dataSize: " + data.size());
 					log.info(">>>>> reduce sum: " + sum);
+					log.info(">>>>> 大分類: " + parentKey + " : " + data.size());
 					context.write(new Text(parentKey), new Text(String.valueOf(data.size())));
 				} else {
 					int sum = 0;
@@ -137,6 +139,7 @@ public class MapReduceMongoJob {
 					}
 					log.info(">>>>> reduce key: " + key);
 					log.info(">>>>> reduce sum: " + sum);
+					log.info(">>>>> 小分類: " + key + " : " + sum);
 					context.write(key, new Text(String.valueOf(sum)));
 				}
 			} catch (Exception e) {
