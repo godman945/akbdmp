@@ -7,8 +7,11 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -56,69 +59,26 @@ public class CampaignJob {
 	private final static String BEHAVIOR = "campaign";
 
 	public void process2() throws Exception {
-		// 593a7ff5e4b07296c3205a27
-//		Query query = new Query();
-//		query.addCriteria(Criteria.where("category_info.category").regex("0012000000000000"));
-//		List<ClassCountMongoBean> classCountMongoList = mongoOperations.find(query, ClassCountMongoBean.class);
-//		System.out.println(classCountMongoList.size());
-//		for (ClassCountMongoBean classCountMongoBean : classCountMongoList) {
-//			System.out.println(classCountMongoBean.get_id());
-//		}
-//		kafkaUtil.sendMessage("TEST", "", "123");
 		
-//		System.out.println(mongoOperations.findAll(ClassUrlMongoBean.class).size());
-//		List<ClassUrlMongoBean> list = mongoOperations.findAll(ClassUrlMongoBean.class);
-//		for (ClassUrlMongoBean classUrlMongoBean : list) {
-//			ClassCountMongoBean ClassCountMongoBean = new ClassCountMongoBean();
-//			ClassCountMongoBean.setUser_id(classUrlMongoBean.getUrl());
-//			mongoOperations.save(ClassCountMongoBean);
-//		}
+		Set<String> set = new HashSet<>();
+		
 		Query query = new Query();
-		query.addCriteria(Criteria.where("user_id").is("alex"));
-		query.with(new Sort(Sort.Direction.ASC, "category_info.ad_class_day_count"));
-//		query.with(new Sort(new Order(Direction.ASC, "").ignoreCase());
-//		AggregationOperation sort = Aggregation.sort(Direction.ASC,"category_info.ad_class_day_count");
-//		query.with(new Sort(Sort.Direction.DESC,"category_info.ad_class_day_count"));
-		ClassCountMongoBean classCountMongoBean = mongoOperations.findOne(query, ClassCountMongoBean.class);
-		System.out.println(classCountMongoBean == null);
-//		classCountMongoBean.getUser_info().put("age", "");
-//		mongoOperations.save(classCountMongoBean);
+		query.addCriteria(Criteria.where("category_info.category").regex("0015022500000000"));
+		List<ClassCountMongoBean> classCountMongoList = mongoOperations.find(query, ClassCountMongoBean.class);
+		System.out.println(classCountMongoList.size());
+		for (ClassCountMongoBean classCountMongoBean : classCountMongoList) {
+			set.add(classCountMongoBean.getUser_id());
+		}
 		
+		Query query2 = new Query();
+		query2.addCriteria(Criteria.where("category_info.category").regex("0015022720350000"));
+		List<ClassCountMongoBean> classCountMongoList2 = mongoOperations.find(query2, ClassCountMongoBean.class);
+		System.out.println(classCountMongoList2.size());
+		for (ClassCountMongoBean classCountMongoBean : classCountMongoList2) {
+			set.add(classCountMongoBean.getUser_id());
+		}
 		
-		
-		
-//		System.out.println(objectMapper.writeValueAsString(classCountMongoBean.getCategory_info()));
-		
-		List<Map<String, Object>> list = classCountMongoBean.getCategory_info();
-		
-		if (list.size() > 0) {
-			  Collections.sort(list, new Comparator<Map<String, Object>>() {
-			      public int compare(final Map<String, Object> object1, final Map<String, Object> object2) {
-			          return object2.get("w").toString().compareTo(object1.get("w").toString());
-			      }
-			  });
-			}
-			System.out.println(list);
-			
-			
-			AdclassApiReturnBean adclassApiReturnBean = new AdclassApiReturnBean();
-			String source = "";
-			for (Map<String, Object> map : list) {
-				if(StringUtils.isBlank(source)){
-					List<String> sourceList = (List<String>) map.get("source");
-					if(sourceList.size() > 0){
-						source = sourceList.get(0);
-					}
-//					source = map.get("source").toString();
-				}
-				adclassApiReturnBean.getAd_class().add(map.get("category").toString());
-			}
-			adclassApiReturnBean.setAge(classCountMongoBean.getUser_info().get("age").toString());
-			adclassApiReturnBean.setBehavior(source);
-			adclassApiReturnBean.setSex(classCountMongoBean.getUser_info().get("sex").toString());
-			System.out.println(objectMapper.writeValueAsString(adclassApiReturnBean));
-			
-//			{"sex":"M","ad_class":["0016024300000000"],"behavior":"24h","age":"56"}
+		System.out.println(set.size());
 			
 			
 	}
@@ -175,6 +135,11 @@ public class CampaignJob {
 				recordDate = lines[7];
 				double w = 0;
 				String id = StringUtils.isNotBlank(memid) ? memid : uuid;
+				
+				if(StringUtils.isBlank(id) || StringUtils.isBlank(adClass)){
+					continue;
+				}
+				
 				
 				ClassCountLogBean classCountLogBean = new ClassCountLogBean();
 				classCountLogBean.setMemid(memid);
