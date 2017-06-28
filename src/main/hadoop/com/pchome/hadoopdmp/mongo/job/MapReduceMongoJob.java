@@ -39,7 +39,7 @@ public class MapReduceMongoJob {
 		
 		private static Map<String,String> categoryMap = new HashMap<>();
 		
-		private int sum = 0;
+		private static int sum = 0;
 		
 		public void setup(Context context) {
 			try {
@@ -98,7 +98,7 @@ public class MapReduceMongoJob {
 								log.info(">>>>>> sum:"+sum);
 							}
 							context.write(new Text(entry.getValue()), new Text(user_id));
-						}
+						}//13840     1.4713 2.9126  = 13839
 					}
 				}
 			} catch (Exception e) {
