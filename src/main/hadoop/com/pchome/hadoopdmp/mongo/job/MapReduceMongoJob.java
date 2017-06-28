@@ -167,7 +167,9 @@ public class MapReduceMongoJob {
 					admCategoryGroupAnalyze.setAdGroupId(parentKey);
 					admCategoryGroupAnalyze.setUserIdType("");
 					admCategoryGroupAnalyze.setCreateDate(new Date());
-					admGroupAnalyzeService.save(admCategoryGroupAnalyze);
+					admGroupAnalyzeService.save(admCategoryGroupAnalyze);					
+					
+					log.info(">>>>> Service: " + admGroupAnalyzeService);
 					
 					context.write(new Text(parentKey), new Text(String.valueOf(data.size())));
 				} else {
