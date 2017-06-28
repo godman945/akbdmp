@@ -27,7 +27,7 @@ import com.mongodb.hadoop.MongoInputFormat;
 import com.mongodb.hadoop.util.MongoConfigUtil;
 import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategory;
 import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategoryGroup;
-import com.pchome.hadoopdmp.mysql.db.service.category.IAdmCategoryGroupService;
+import com.pchome.hadoopdmp.mysql.db.service.categorygroup.IAdmCategoryGroupService;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 public class MapReduceMongoJob {
 	private static Log log = LogFactory.getLog("MapReduceMongoJob");
@@ -41,9 +41,6 @@ public class MapReduceMongoJob {
 		
 		public void setup(Context context) {
 			try {
-				log.info(">>>>>> setup:");
-				
-				
 				System.setProperty("spring.profiles.active", "stg");
 				ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 				admCategoryGroupService = ctx.getBean(IAdmCategoryGroupService.class);
@@ -55,7 +52,7 @@ public class MapReduceMongoJob {
 					List<AdmCategory> admCategoryList = new ArrayList<>(admCategorySet);
 					int admCategorySize = admCategoryList.size();
 					for (AdmCategory admCategory : admCategoryList) {
-						if(admCategoryList.indexOf(admCategory) == admCategorySize){
+						if(admCategoryList.indexOf(admCategory) == admCategorySize - 1){
 							key = key + admCategory.getAdClass();
 						}else{
 							key = key + admCategory.getAdClass()+"_";
@@ -99,18 +96,6 @@ public class MapReduceMongoJob {
 						}
 					}
 				}
-				
-//				Set<String> data = new HashSet<>();
-//				for (Map.Entry<String, Set<String>> entry : allMap.entrySet()) {
-//					if (entry.equals("0015022500000000")) {
-//						data.addAll(entry.getValue());
-//					}
-//					if (entry.equals("0015022720350000")) {
-//						data.addAll(entry.getValue());
-//					}
-//				}
-//				context.write(new Text("0015022500000000_0015022720350000_TOTAL"),	new Text(String.valueOf(data.size())));
-
 			} catch (Exception e) {
 				log.error(">>>>> mapper e : " + e.getMessage());
 			}
