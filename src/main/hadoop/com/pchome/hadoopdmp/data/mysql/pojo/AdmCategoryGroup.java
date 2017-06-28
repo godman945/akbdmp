@@ -97,7 +97,7 @@ public class AdmCategoryGroup implements java.io.Serializable {
 	public void setUpdateDate(Date updateDate) {
 		this.updateDate = updateDate;
 	}
-
+ 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "admCategoryGroup")
 	public Set<AdmCategory> getAdmCategories() {
 		return this.admCategories;
