@@ -1,5 +1,5 @@
 package com.pchome.hadoopdmp.data.mysql.pojo;
-// Generated 2017/6/29 �W�� 10:29:11 by Hibernate Tools 3.4.0.CR1
+// Generated 2017/6/29 �U�� 04:08:33 by Hibernate Tools 3.4.0.CR1
 
 import java.util.Date;
 import java.util.HashSet;

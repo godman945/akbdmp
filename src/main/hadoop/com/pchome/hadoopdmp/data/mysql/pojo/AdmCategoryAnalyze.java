@@ -1,5 +1,5 @@
 package com.pchome.hadoopdmp.data.mysql.pojo;
-// Generated 2017/6/29 �W�� 10:29:11 by Hibernate Tools 3.4.0.CR1
+// Generated 2017/6/29 �U�� 04:08:33 by Hibernate Tools 3.4.0.CR1
 
 import java.util.Date;
 import javax.persistence.Column;
@@ -23,9 +23,6 @@ public class AdmCategoryAnalyze implements java.io.Serializable {
 	private String adClass;
 	private String userIdType;
 	private int adClassCountByDay;
-	private int behaviorSource24hCount;
-	private int behaviorSourceRutenCount;
-	private int behaviorSourceAdClickCount;
 	private int sexManCount;
 	private int sexWomanCount;
 	private int ageRangeCount1to10;
@@ -45,18 +42,14 @@ public class AdmCategoryAnalyze implements java.io.Serializable {
 	}
 
 	public AdmCategoryAnalyze(Date recodeDate, String adClass, String userIdType, int adClassCountByDay,
-			int behaviorSource24hCount, int behaviorSourceRutenCount, int behaviorSourceAdClickCount, int sexManCount,
-			int sexWomanCount, int ageRangeCount1to10, int ageRangeCount11to20, int ageRangeCount21to30,
-			int ageRangeCount31to40, int ageRangeCount41to50, int ageRangeCount51to60, int ageRangeCount61to70,
-			int ageRangeCount71to80, int ageRangeCount81to90, int ageRangeCount91to100, Date createDate,
-			Date udpateDate) {
+			int sexManCount, int sexWomanCount, int ageRangeCount1to10, int ageRangeCount11to20,
+			int ageRangeCount21to30, int ageRangeCount31to40, int ageRangeCount41to50, int ageRangeCount51to60,
+			int ageRangeCount61to70, int ageRangeCount71to80, int ageRangeCount81to90, int ageRangeCount91to100,
+			Date createDate, Date udpateDate) {
 		this.recodeDate = recodeDate;
 		this.adClass = adClass;
 		this.userIdType = userIdType;
 		this.adClassCountByDay = adClassCountByDay;
-		this.behaviorSource24hCount = behaviorSource24hCount;
-		this.behaviorSourceRutenCount = behaviorSourceRutenCount;
-		this.behaviorSourceAdClickCount = behaviorSourceAdClickCount;
 		this.sexManCount = sexManCount;
 		this.sexWomanCount = sexWomanCount;
 		this.ageRangeCount1to10 = ageRangeCount1to10;
@@ -120,33 +113,6 @@ public class AdmCategoryAnalyze implements java.io.Serializable {
 
 	public void setAdClassCountByDay(int adClassCountByDay) {
 		this.adClassCountByDay = adClassCountByDay;
-	}
-
-	@Column(name = "behavior_source_24h_count", nullable = false)
-	public int getBehaviorSource24hCount() {
-		return this.behaviorSource24hCount;
-	}
-
-	public void setBehaviorSource24hCount(int behaviorSource24hCount) {
-		this.behaviorSource24hCount = behaviorSource24hCount;
-	}
-
-	@Column(name = "behavior_source_ruten_count", nullable = false)
-	public int getBehaviorSourceRutenCount() {
-		return this.behaviorSourceRutenCount;
-	}
-
-	public void setBehaviorSourceRutenCount(int behaviorSourceRutenCount) {
-		this.behaviorSourceRutenCount = behaviorSourceRutenCount;
-	}
-
-	@Column(name = "behavior_source_ad_click_count", nullable = false)
-	public int getBehaviorSourceAdClickCount() {
-		return this.behaviorSourceAdClickCount;
-	}
-
-	public void setBehaviorSourceAdClickCount(int behaviorSourceAdClickCount) {
-		this.behaviorSourceAdClickCount = behaviorSourceAdClickCount;
 	}
 
 	@Column(name = "sex_man_count", nullable = false)

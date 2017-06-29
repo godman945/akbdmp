@@ -98,11 +98,8 @@ public class MapReduceMongoJob {
 					if(StringUtils.isBlank(ad_class)){
 						continue;
 					}
-					String categoryKey = ad_class + "_" + userType.toUpperCase();
-					//(000123_uuid,<"","","">
-					context.write(new Text(categoryKey), new Text());
-
-					//process parent
+					
+					//process parent處理大分類
 					for (Entry<String, String> entry : categoryMap.entrySet()) {
 						if(entry.getKey().indexOf(ad_class) != -1){
 							
@@ -120,6 +117,11 @@ public class MapReduceMongoJob {
 							context.write(new Text(mapKey), new Text(user_id));
 						}//13840     1.4713 2.9126  = 13839
 					}
+					
+					//處理小分類
+					String categoryKey = ad_class + "_" + userType.toUpperCase();
+					//(000123_uuid,<"","","">
+					context.write(new Text(categoryKey), new Text());
 				}
 			} catch (Exception e) {
 				log.error(">>>>> mapper e : " + e.getMessage());
@@ -197,9 +199,6 @@ public class MapReduceMongoJob {
 					admCategoryAnalyze.setAdClassCountByDay(sum);
 					admCategoryAnalyze.setCreateDate(new Date());
 					admCategoryAnalyze.setUdpateDate(new Date());
-					admCategoryAnalyze.setBehaviorSourceAdClickCount(0);
-					admCategoryAnalyze.setBehaviorSource24hCount(0);
-					admCategoryAnalyze.setBehaviorSourceRutenCount(0);
 					admCategoryAnalyze.setSexManCount(0);
 					admCategoryAnalyze.setSexWomanCount(0);
 					admCategoryAnalyze.setAgeRangeCount1to10(0);
