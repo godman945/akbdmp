@@ -186,6 +186,7 @@ public class MapReduceMongoJob {
 					admCategoryAnalyze.setAdClass(key.toString().split("_")[0]);
 					admCategoryAnalyze.setUserIdType(key.toString().split("_")[1]);
 					admCategoryAnalyze.setAdClassCountByDay(sum);
+					admCategoryAnalyze.setCreateDate(new Date());
 					admCategoryAnalyze.setUdpateDate(new Date());
 					admCategoryAnalyze.setBehaviorSourceAdClickCount(0);
 					admCategoryAnalyze.setBehaviorSource24hCount(0);
