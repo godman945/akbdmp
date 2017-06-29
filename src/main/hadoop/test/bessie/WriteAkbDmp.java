@@ -51,7 +51,6 @@ public class WriteAkbDmp {
 	
 	@SuppressWarnings("unchecked")
 	public boolean process(ClassCountLogBean classCountLogBean) throws Exception{
-		
 		MongoTemplate mongoTemplate = AdLogClassCount.newDBMongoTemplate;
 		this.mongoOperations = mongoTemplate;
 		
@@ -208,22 +207,32 @@ public class WriteAkbDmp {
 				}
 			}else{
 				List<Map<String, Object>> sexInfoDataList = (List<Map<String, Object>>) userInfo.get("sex_info");
-				if(JsonPath.using(jsonpathConfiguration).parse(userInfo.get("sex_info")).jsonString().contains(logSex) && StringUtils.isNotBlank(logSex)){
-					for (Map<String, Object> map : sexInfoDataList) {
-						if(map.get("sex").equals(logSex)){
-							double w = Double.valueOf(map.get("w").toString());
-							double sex_w = w + (1 / (1 + pExpv));
-							map.put("w", sex_w);
-							break;
-						}
-					}
-				}else{
+				if(userInfo.get("sex_info") == null){
+					sexInfoDataList = new ArrayList<>();
 					Map<String, Object> sexInfoData = new HashMap<String, Object>();
 					double sex_w = (1 / (1 + pExpv));
 					sexInfoData.put("sex", logSex);
 					sexInfoData.put("w", sex_w);
 					sexInfoDataList.add(sexInfoData);
 					userInfo.put("sex_info", sexInfoDataList);
+				}else{
+					if(JsonPath.using(jsonpathConfiguration).parse(userInfo.get("sex_info")).jsonString().contains(logSex) && StringUtils.isNotBlank(logSex)){
+						for (Map<String, Object> map : sexInfoDataList) {
+							if(map.get("sex").equals(logSex)){
+								double w = Double.valueOf(map.get("w").toString());
+								double sex_w = w + (1 / (1 + pExpv));
+								map.put("w", sex_w);
+								break;
+							}
+						}
+					}else{
+						Map<String, Object> sexInfoData = new HashMap<String, Object>();
+						double sex_w = (1 / (1 + pExpv));
+						sexInfoData.put("sex", logSex);
+						sexInfoData.put("w", sex_w);
+						sexInfoDataList.add(sexInfoData);
+						userInfo.put("sex_info", sexInfoDataList);
+					}
 				}
 			}
 		}
@@ -276,7 +285,6 @@ public class WriteAkbDmp {
 		
 		if(userInfo.get("type").equals("uuid")){
 			double pExpv = Math.exp(-1 * 0.05);
-			
 			if(userInfo.get("age_info") == null){
 				if(StringUtils.isNotBlank(logAge)){
 					List<Map<String, Object>> ageInfoDataList = new ArrayList<Map<String, Object>>();
@@ -289,22 +297,32 @@ public class WriteAkbDmp {
 				}
 			}else{
 				List<Map<String, Object>> ageInfoDataList = (List<Map<String, Object>>) userInfo.get("age_info");
-				if(JsonPath.using(jsonpathConfiguration).parse(userInfo.get("age_info")).jsonString().contains(logAge) && StringUtils.isNotBlank(logAge)){
-					for (Map<String, Object> map : ageInfoDataList) {
-						if(map.get("age").equals(logAge)){
-							double w = Double.valueOf(map.get("w").toString());
-							double age_w = w + (1 / (1 + pExpv));
-							map.put("w", age_w);
-							break;
-						}
-					}
-				}else{
+				if(userInfo.get("age_info") == null){
+					ageInfoDataList = new ArrayList<>();
 					Map<String, Object> ageInfoData = new HashMap<String, Object>();
-					double age_w = (1 / (1 + pExpv));
+					double sex_w = (1 / (1 + pExpv));
 					ageInfoData.put("age", logAge);
-					ageInfoData.put("w", age_w);
+					ageInfoData.put("w", sex_w);
 					ageInfoDataList.add(ageInfoData);
 					userInfo.put("age_info", ageInfoDataList);
+				}else{
+					if(JsonPath.using(jsonpathConfiguration).parse(userInfo.get("age_info")).jsonString().contains(logAge) && StringUtils.isNotBlank(logAge)){
+						for (Map<String, Object> map : ageInfoDataList) {
+							if(map.get("age").equals(logAge)){
+								double w = Double.valueOf(map.get("w").toString());
+								double sex_w = w + (1 / (1 + pExpv));
+								map.put("w", sex_w);
+								break;
+							}
+						}
+					}else{
+						Map<String, Object> ageInfoData = new HashMap<String, Object>();
+						double age_w = (1 / (1 + pExpv));
+						ageInfoData.put("age", logAge);
+						ageInfoData.put("w", age_w);
+						ageInfoDataList.add(ageInfoData);
+						userInfo.put("age_info", ageInfoDataList);
+					}
 				}
 			}
 		}

@@ -34,6 +34,7 @@ public class AdLogClassCount {
 
 	@Autowired
 	private MongoOperations mongoOperations;
+	
 	@Autowired
 	private DateFormatUtil dateFormatUtil;
 	
@@ -43,7 +44,7 @@ public class AdLogClassCount {
 	public static MongoTemplate newDBMongoTemplate;
 	
 	public void test() throws Exception {
-		log.info("================處理開始==========================");
+		log.info("================START　PROCESS==========================");
 		//新的insert mongo 物件
 		MongoOperations newDBMongoOperations = new MongoTemplate(new SimpleMongoDbFactory(new Mongo("192.168.1.37", 27017), "pcbappdev", new UserCredentials("webuser", "axw2mP1i")));
 		MongoTemplate newDBMongoTemplate = (MongoTemplate)newDBMongoOperations;
@@ -55,10 +56,11 @@ public class AdLogClassCount {
 		boolean processFlag = false;
 		processFlag = record(start);
 		while(processFlag){
+			log.info(">>>>>>page:"+start);
 			start = start + 1;
 			processFlag = record(start);
 		}
-		log.info("================處理完畢==========================");
+		log.info("================START　END==========================");
 	}
 
 	
@@ -75,7 +77,7 @@ public class AdLogClassCount {
 		timeLong = timeLong/(24*60*60*1000);
 		long index = 3600;
 		if(timeLong > index){
-			log.info(">>>>>>>>>"+dateStr+": 離現在"+timeLong+"天前");
+//			log.info(">>>>>>>>>"+dateStr+": 離現在"+timeLong+"天前");
 		}
 		return timeLong > index ? false : true;
 	}
@@ -103,7 +105,6 @@ public class AdLogClassCount {
 				if(StringUtils.isBlank(uuid) || StringUtils.isBlank(memid)){
 					continue;
 				}
-				
 				
 				PersonalInformationProdMongoBean personalInformationProdMongoBean = null;
 				if(StringUtils.isNotBlank(memid)){
@@ -148,7 +149,6 @@ public class AdLogClassCount {
 			classCountLogBean.setType("uuid");
 			writeAkbDmp.process(classCountLogBean);
 		}
-		
 	}
 	
 	
