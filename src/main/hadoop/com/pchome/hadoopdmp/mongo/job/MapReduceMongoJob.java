@@ -131,9 +131,12 @@ public class MapReduceMongoJob {
 		
 		public void setup(Context context) {
 			try {
+				
 				System.setProperty("spring.profiles.active", "stg");
 				ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 				admGroupAnalyzeService = ctx.getBean(IAdmCategoryGroupAnalyzeService.class);
+				admCategoryAnalyzeService = ctx.getBean(IAdmCategoryAnalyzeService.class);
+				
 			} catch (Exception e) {
 				log.error(">>>>> Reducer e : " + e.getMessage());
 			}
