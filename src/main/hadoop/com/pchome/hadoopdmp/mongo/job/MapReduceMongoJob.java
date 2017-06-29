@@ -91,6 +91,7 @@ public class MapReduceMongoJob {
 				List<Map<String, Object>> category_info = (List<Map<String, Object>>) value.get("category_info");
 				String userType = user_info.get("type").toString();
 				Map<String, Set<String>> allMap = new HashMap<String, Set<String>>();
+				String mapKey="";
 
 				for (Map<String, Object> category : category_info) {
 					String ad_class = category.get("category").toString();
@@ -98,7 +99,7 @@ public class MapReduceMongoJob {
 						continue;
 					}
 					String categoryKey = ad_class + "_" + userType.toUpperCase();
-					//(000123_uuid,<"">
+					//(000123_uuid,<"","","">
 					context.write(new Text(categoryKey), new Text());
 
 					//process parent
@@ -109,8 +110,14 @@ public class MapReduceMongoJob {
 //							log.info(">>>>>> ad_class:"+ad_class);
 //							log.info(">>>>>> entry.getValue():"+entry.getValue());
 							
-							//(000001_TOTAL,<123,456>)
-							context.write(new Text(entry.getValue()), new Text(user_id));
+							//(000001_TOTAL_UUID,<123,456>)
+							if(StringUtils.equals("UUID", userType.toUpperCase())){
+								mapKey=entry.getValue()+"_UUID";
+							}
+							if(StringUtils.equals("MEMID", userType.toUpperCase())){
+								mapKey=entry.getValue()+"_MEMID";
+							}
+							context.write(new Text(), new Text(user_id));
 						}//13840     1.4713 2.9126  = 13839
 					}
 				}
@@ -131,7 +138,6 @@ public class MapReduceMongoJob {
 		
 		public void setup(Context context) {
 			try {
-				
 				System.setProperty("spring.profiles.active", "stg");
 				ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 				admGroupAnalyzeService = ctx.getBean(IAdmCategoryGroupAnalyzeService.class);
@@ -152,6 +158,8 @@ public class MapReduceMongoJob {
 					
 					String [] array = key.toString().split("_");
 					String parentKey = array[0];
+					String userType = array[2];
+					
 					int sum = 0;
 					for (Text text : values) {
 						data.add(text.toString());
@@ -161,16 +169,16 @@ public class MapReduceMongoJob {
 //					log.info(">>>>> reduce key: " + key);
 //					log.info(">>>>> reduce dataSize: " + data.size());
 //					log.info(">>>>> reduce sum: " + sum);
+					context.write(new Text(parentKey), new Text(String.valueOf(data.size())));
 					
 					//insert 大分類 mysql
 					AdmCategoryGroupAnalyze admCategoryGroupAnalyze = new AdmCategoryGroupAnalyze();
 					admCategoryGroupAnalyze.setAdClassCountByHistory(data.size());
 					admCategoryGroupAnalyze.setAdGroupId(parentKey);
-					admCategoryGroupAnalyze.setUserIdType("");
+					admCategoryGroupAnalyze.setUserIdType(userType);
 					admCategoryGroupAnalyze.setCreateDate(new Date());
 					admGroupAnalyzeService.save(admCategoryGroupAnalyze);					
 					
-					context.write(new Text(parentKey), new Text(String.valueOf(data.size())));
 				} else {
 					int sum = 0;
 					for (Text text : values) {
@@ -179,6 +187,7 @@ public class MapReduceMongoJob {
 //					log.info(">>>>> reduce key: " + key);
 //					log.info(">>>>> reduce sum: " + sum);
 //					log.info(">>>>> 小分類: " + key + " : " + sum);
+					context.write(key, new Text(String.valueOf(sum)));
 					
 					//insert 小分類 mysql
 					AdmCategoryAnalyze admCategoryAnalyze = new AdmCategoryAnalyze();
@@ -205,7 +214,6 @@ public class MapReduceMongoJob {
 					admCategoryAnalyze.setAgeRangeCount91to100(0);
 					admCategoryAnalyzeService.save(admCategoryAnalyze);				
 					
-					context.write(key, new Text(String.valueOf(sum)));
 				}
 			} catch (Exception e) {
 				log.error(">>>>> Reducer e : " + e.getMessage());
