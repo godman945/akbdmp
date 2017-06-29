@@ -1,5 +1,7 @@
 package com.pchome.hadoopdmp.mongo.job;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -51,12 +53,21 @@ public class MapReduceMongoJob {
 		
 		private static int sum = 0;
 		
+		private static String today = "";
+		
 		public void setup(Context context) {
 			try {
 				System.setProperty("spring.profiles.active", "stg");
 				ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 				admCategoryGroupService = ctx.getBean(IAdmCategoryGroupService.class);
-			
+				
+				//取得今天時間
+				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+				Date date = new Date();
+				today=dateFormat.format(date);
+				
+				
+				//讀mysql大小分類表
 				List<AdmCategoryGroup> admGroupList = admCategoryGroupService.loadAll();
 				for (AdmCategoryGroup admCategoryGroup : admGroupList) {
 					Set<AdmCategory> admCategorySet = admCategoryGroup.getAdmCategories();
@@ -84,7 +95,6 @@ public class MapReduceMongoJob {
 		
 		public void map(Object key, BSONObject value, Context context) throws IOException, InterruptedException {
 			try {
-				String update_date = value.get("update_date").toString();
 				String category_info_str = value.get("category_info").toString();
 				String user_id = value.get("user_id").toString();
 				Map<String, Object> user_info = (Map<String, Object>) value.get("user_info");
@@ -95,7 +105,12 @@ public class MapReduceMongoJob {
 
 				for (Map<String, Object> category : category_info) {
 					String ad_class = category.get("category").toString();
+					String update_date = category.get("update_date").toString();
+					
 					if(StringUtils.isBlank(ad_class)){
+						continue;
+					}
+					if(StringUtils.isBlank(update_date)){
 						continue;
 					}
 					
@@ -118,7 +133,10 @@ public class MapReduceMongoJob {
 						}//13840     1.4713 2.9126  = 13839
 					}
 					
-					//處理小分類
+					//處理今日小分類計數
+					if(!StringUtils.equals(today, update_date)){
+						continue;
+					}
 					String categoryKey = ad_class + "_" + userType.toUpperCase();
 					//(000123_uuid,<"","","">
 					context.write(new Text(categoryKey), new Text());
