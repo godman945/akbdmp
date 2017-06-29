@@ -134,6 +134,7 @@ public class MapReduceMongoJob {
 					}
 					
 					//處理今日小分類計數
+					today="2017-06-28";//test
 					if(!StringUtils.equals(today, update_date)){
 						continue;
 					}
