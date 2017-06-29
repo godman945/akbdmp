@@ -21,7 +21,6 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.bson.BSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Scope;
@@ -30,8 +29,10 @@ import org.springframework.stereotype.Component;
 import com.mongodb.hadoop.MongoInputFormat;
 import com.mongodb.hadoop.util.MongoConfigUtil;
 import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategory;
+import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategoryAnalyze;
 import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategoryGroup;
 import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategoryGroupAnalyze;
+import com.pchome.hadoopdmp.mysql.db.service.categoryanalyze.IAdmCategoryAnalyzeService;
 import com.pchome.hadoopdmp.mysql.db.service.categoryanalyze.IAdmCategoryGroupAnalyzeService;
 import com.pchome.hadoopdmp.mysql.db.service.categorygroup.IAdmCategoryGroupService;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
@@ -97,21 +98,18 @@ public class MapReduceMongoJob {
 						continue;
 					}
 					String categoryKey = ad_class + "_" + userType.toUpperCase();
-					//
+					//(000123_uuid,<"">
 					context.write(new Text(categoryKey), new Text());
 
 					//process parent
 					for (Entry<String, String> entry : categoryMap.entrySet()) {
 						if(entry.getKey().indexOf(ad_class) != -1){
-							log.info(">>>>>> entry.getKey():"+entry.getKey());
-							log.info(">>>>>> ad_class:"+ad_class);
-							log.info(">>>>>> entry.getValue():"+entry.getValue());
 							
-//							if(entry.getValue().equals(entry.getValue())){//if(entry.getValue().equals("0000000000000001_TOTAL")){
-//								sum =  sum + 1;
-//								log.info(">>>>>> user_id:"+user_id);
-//								log.info(">>>>>> sum:"+sum + " :ad_class:"+ad_class );
-//							}
+//							log.info(">>>>>> entry.getKey():"+entry.getKey());
+//							log.info(">>>>>> ad_class:"+ad_class);
+//							log.info(">>>>>> entry.getValue():"+entry.getValue());
+							
+							//(000001_TOTAL,<123,456>)
 							context.write(new Text(entry.getValue()), new Text(user_id));
 						}//13840     1.4713 2.9126  = 13839
 					}
@@ -128,18 +126,14 @@ public class MapReduceMongoJob {
 		
 		private IAdmCategoryGroupAnalyzeService admGroupAnalyzeService;
 		
+		private IAdmCategoryAnalyzeService admCategoryAnalyzeService;
+		
+		
 		public void setup(Context context) {
 			try {
 				System.setProperty("spring.profiles.active", "stg");
 				ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 				admGroupAnalyzeService = ctx.getBean(IAdmCategoryGroupAnalyzeService.class);
-				
-				AdmCategoryGroupAnalyze admCategoryGroupAnalyze = new AdmCategoryGroupAnalyze();
-				admCategoryGroupAnalyze.setAdClassCountByHistory(365);
-				admCategoryGroupAnalyze.setAdGroupId("0000000000000076");
-				admCategoryGroupAnalyze.setUserIdType("");
-				admCategoryGroupAnalyze.setCreateDate(new Date());
-				admGroupAnalyzeService.save(admCategoryGroupAnalyze);
 			} catch (Exception e) {
 				log.error(">>>>> Reducer e : " + e.getMessage());
 			}
@@ -161,13 +155,11 @@ public class MapReduceMongoJob {
 						sum = sum + 1;
 					}
 					
-					log.info(">>>>> reduce key: " + key);
-					log.info(">>>>> reduce dataSize: " + data.size());
-					log.info(">>>>> reduce sum: " + sum);
-					log.info(">>>>> 大分類: " + parentKey + " : " + data.size());
-					log.info(">>>>> TEST-------------------------------------------");
-					log.info(">>>>> Service: " + admGroupAnalyzeService);
+//					log.info(">>>>> reduce key: " + key);
+//					log.info(">>>>> reduce dataSize: " + data.size());
+//					log.info(">>>>> reduce sum: " + sum);
 					
+					//insert 大分類 mysql
 					AdmCategoryGroupAnalyze admCategoryGroupAnalyze = new AdmCategoryGroupAnalyze();
 					admCategoryGroupAnalyze.setAdClassCountByHistory(data.size());
 					admCategoryGroupAnalyze.setAdGroupId(parentKey);
@@ -181,9 +173,34 @@ public class MapReduceMongoJob {
 					for (Text text : values) {
 						sum = sum + 1;
 					}
-					log.info(">>>>> reduce key: " + key);
-					log.info(">>>>> reduce sum: " + sum);
-					log.info(">>>>> 小分類: " + key + " : " + sum);
+//					log.info(">>>>> reduce key: " + key);
+//					log.info(">>>>> reduce sum: " + sum);
+//					log.info(">>>>> 小分類: " + key + " : " + sum);
+					
+					//insert 小分類 mysql
+					AdmCategoryAnalyze admCategoryAnalyze = new AdmCategoryAnalyze();
+					admCategoryAnalyze.setRecodeDate(new Date());
+					admCategoryAnalyze.setAdClass(key.toString().split("_")[0]);
+					admCategoryAnalyze.setUserIdType(key.toString().split("_")[1]);
+					admCategoryAnalyze.setAdClassCountByDay(sum);
+					admCategoryAnalyze.setUdpateDate(new Date());
+					admCategoryAnalyze.setBehaviorSourceAdClickCount(0);
+					admCategoryAnalyze.setBehaviorSource24hCount(0);
+					admCategoryAnalyze.setBehaviorSourceRutenCount(0);
+					admCategoryAnalyze.setSexManCount(0);
+					admCategoryAnalyze.setSexWomanCount(0);
+					admCategoryAnalyze.setAgeRangeCount1to10(0);
+					admCategoryAnalyze.setAgeRangeCount11to20(0);
+					admCategoryAnalyze.setAgeRangeCount21to30(0);
+					admCategoryAnalyze.setAgeRangeCount31to40(0);
+					admCategoryAnalyze.setAgeRangeCount41to50(0);
+					admCategoryAnalyze.setAgeRangeCount51to60(0);
+					admCategoryAnalyze.setAgeRangeCount61to70(0);
+					admCategoryAnalyze.setAgeRangeCount71to80(0);
+					admCategoryAnalyze.setAgeRangeCount81to90(0);
+					admCategoryAnalyze.setAgeRangeCount91to100(0);
+					admCategoryAnalyzeService.save(admCategoryAnalyze);				
+					
 					context.write(key, new Text(String.valueOf(sum)));
 				}
 			} catch (Exception e) {
