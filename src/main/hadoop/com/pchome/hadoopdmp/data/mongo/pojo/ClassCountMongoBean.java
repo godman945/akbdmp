@@ -8,7 +8,7 @@ import java.util.Map;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "class_count")
+@Document(collection = "class_count_test")
 public class ClassCountMongoBean {
 
 	private String _id;
