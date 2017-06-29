@@ -117,7 +117,7 @@ public class MapReduceMongoJob {
 							if(StringUtils.equals("MEMID", userType.toUpperCase())){
 								mapKey=entry.getValue()+"_MEMID";
 							}
-							context.write(new Text(), new Text(user_id));
+							context.write(new Text(mapKey), new Text(user_id));
 						}//13840     1.4713 2.9126  = 13839
 					}
 				}
