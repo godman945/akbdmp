@@ -136,7 +136,7 @@ public class AdLogClassCount {
 				saveUserInfo(classCountLogBean);
 			}
 		}
-		return false;
+		return flag;
 	}
 	
 	
