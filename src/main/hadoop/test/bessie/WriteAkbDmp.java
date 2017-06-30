@@ -218,10 +218,16 @@ public class WriteAkbDmp {
 					if(StringUtils.isBlank(logSex)){
 						return userInfo;
 					}
+					
+					System.out.println(JsonPath.using(jsonpathConfiguration).parse(userInfo.get("sex_info"))
+							.jsonString().contains(logSex));
 					if(JsonPath.using(jsonpathConfiguration).parse(userInfo.get("sex_info")).jsonString().contains(logSex) && StringUtils.isNotBlank(logSex)){
 						for (Map<String, Object> map : sexInfoDataList) {
 							if(map.get("sex").equals(logSex)){
 								double w = Double.valueOf(map.get("w").toString());
+								if(w == -1){
+									return userInfo;
+								}
 								double sex_w = w + (1 / (1 + pExpv));
 								map.put("w", sex_w);
 								break;
@@ -315,6 +321,9 @@ public class WriteAkbDmp {
 						for (Map<String, Object> map : ageInfoDataList) {
 							if(map.get("age").equals(logAge)){
 								double w = Double.valueOf(map.get("w").toString());
+								if(w == -1){
+									return userInfo;
+								}
 								double sex_w = w + (1 / (1 + pExpv));
 								map.put("w", sex_w);
 								break;
