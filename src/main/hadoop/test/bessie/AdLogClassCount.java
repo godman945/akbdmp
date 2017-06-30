@@ -75,7 +75,7 @@ public class AdLogClassCount {
 		
 		long timeLong = nowCalendar.getTimeInMillis() - recodeDateCalender.getTimeInMillis();
 		timeLong = timeLong/(24*60*60*1000);
-		long index = 3600;
+		long index = 5;
 		if(timeLong > index){
 //			log.info(">>>>>>>>>"+dateStr+": 離現在"+timeLong+"天前");
 		}
@@ -86,7 +86,7 @@ public class AdLogClassCount {
 		String date = "";
 		boolean flag = false;
 //		.where("uuid").is("b2b8d3ba-edd1-4cdc-8e21-378c69eabf3b")
-//		.where("memid").is("nv35")
+//		.where("uuid").is("0fd00298-7b01-4600-a63e-065557420279")
 		Query query = new Query(new Criteria());
 		query.with(new Sort(Sort.Direction.DESC, "_id"));
 		query.with(new PageRequest(start, 5000));

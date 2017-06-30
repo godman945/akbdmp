@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Scope;
+import org.springframework.data.mongodb.core.BulkOperations;
+import org.springframework.data.mongodb.core.BulkOperations.BulkMode;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Component;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
+import com.mongodb.BulkWriteOperation;
 import com.pchome.akbdmp.job.bean.ClassCountLogBean;
 import com.pchome.hadoopdmp.data.mongo.pojo.ClassCountMongoBean;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
@@ -53,6 +56,8 @@ public class WriteAkbDmp {
 	public boolean process(ClassCountLogBean classCountLogBean) throws Exception{
 		MongoTemplate mongoTemplate = AdLogClassCount.newDBMongoTemplate;
 		this.mongoOperations = mongoTemplate;
+//		BulkWriteOperation bulkWriteOperation = mongoOperations.getCollection("dd").initializeOrderedBulkOperation();
+//		BulkOperations bulkOperations = mongoOperations.bulkOps(BulkMode.UNORDERED, ClassCountMongoBean.class);
 		
 		boolean processFlag = false;
 		ClassCountMongoBean classCountMongoBean = null;
@@ -65,11 +70,11 @@ public class WriteAkbDmp {
 			if(classCountLogBean.getType().equals("memid")){
 				if(StringUtils.isBlank(classCountLogBean.getSex()) && StringUtils.isBlank(classCountLogBean.getAge())){
 					Map<String,String> sexAgeMap = callMemberApi(classCountLogBean.getUserId());
-					userInfo = processSexWeight(userInfo,sexAgeMap.get("sex"),classCountLogBean.getSex());
-					userInfo = processAgeWeight(userInfo,sexAgeMap.get("age"),classCountLogBean.getAge());
+					userInfo = processSexWeight(userInfo,sexAgeMap.get("sex"),classCountLogBean.getSex(),classCountLogBean.getSource());
+					userInfo = processAgeWeight(userInfo,sexAgeMap.get("age"),classCountLogBean.getAge(),classCountLogBean.getSource());
 				}else{
-					userInfo = processSexWeight(userInfo,classCountLogBean.getSex(),classCountLogBean.getSex());
-					userInfo = processAgeWeight(userInfo,classCountLogBean.getAge(),classCountLogBean.getAge());
+					userInfo = processSexWeight(userInfo,classCountLogBean.getSex(),classCountLogBean.getSex(),classCountLogBean.getSource());
+					userInfo = processAgeWeight(userInfo,classCountLogBean.getAge(),classCountLogBean.getAge(),classCountLogBean.getSource());
 				}
 			}
 			
@@ -82,8 +87,8 @@ public class WriteAkbDmp {
 				}else{
 					Map<String,String> sexAgeMap = new HashMap<String,String>();
 					sexAgeMap.put("sex", classCountLogBean.getSex());
-					userInfo = processSexWeight(userInfo,null,classCountLogBean.getSex());
-					userInfo = processAgeWeight(userInfo,null,classCountLogBean.getAge());
+					userInfo = processSexWeight(userInfo,null,classCountLogBean.getSex(),classCountLogBean.getSource());
+					userInfo = processAgeWeight(userInfo,null,classCountLogBean.getAge(),classCountLogBean.getSource());
 				}
 				
 			}
@@ -156,17 +161,9 @@ public class WriteAkbDmp {
 			
 			Map<String, Object> userInfo = classCountMongoBean.getUser_info();
 			//記算性別分數
-			userInfo = processSexWeight(userInfo,null,classCountLogBean.getSex());
-//			if(classCountLogBean.getType().equals("uuid")){
-//				Map<String, Object> userInfo = classCountMongoBean.getUser_info();
-//				Map<String,String> sexAgeMap = new HashMap<String,String>();
-//				sexAgeMap.put("sex", classCountLogBean.getSex());
-//				sexAgeMap.put("age", classCountLogBean.getAge());
-//				userInfo = processSexWeight(userInfo,sexAgeMap);
-//				classCountMongoBean.setUser_info(userInfo);
-//			}
+			userInfo = processSexWeight(userInfo,null,classCountLogBean.getSex(),classCountLogBean.getSource());
 			//記算年齡分數
-			userInfo = processAgeWeight(userInfo,null,classCountLogBean.getAge());
+			userInfo = processAgeWeight(userInfo,null,classCountLogBean.getAge(),classCountLogBean.getSource());
 			
 		}
 
@@ -177,24 +174,47 @@ public class WriteAkbDmp {
 		return processFlag;
 	}
 	
+	/*
+	 * 處理來源
+	 * return:userInfo
+	 * */
+	public Map<String,Object> processResource(Map<String,Object> ageSexMapData,String source) throws Exception {
+		if(StringUtils.isNotBlank(source)){
+			if(ageSexMapData.get("source") == null){
+				List<String> sourceList = new ArrayList<>();
+				sourceList.add(source);
+				ageSexMapData.put("source", sourceList);
+			}else{
+				List<String> sourceList = (List<String>) ageSexMapData.get("source");
+				Set<String> set = new HashSet<String>();
+				set.addAll(sourceList);
+				set.add(source);
+				sourceList.clear();
+				sourceList = new ArrayList<String>(set);
+				ageSexMapData.put("source", sourceList);
+			}
+		}
+		return ageSexMapData;
+	}
+	
+	
 	//處理性別權重
-	public Map<String,Object> processSexWeight(Map<String,Object> userInfo,String apiSex,String logSex) throws Exception {
-		if(userInfo.get("type").equals("memid")){
+	public Map<String,Object> processSexWeight(Map<String,Object> userInfo,String apiSex,String logSex,String source) throws Exception {
+		if(userInfo.get("type").equals("memid") && StringUtils.isNotBlank(apiSex)){
 			if(userInfo.get("sex_info") == null){
-				if(StringUtils.isNotBlank(apiSex)){
-					List<Map<String, Object>> sexInfoDataList = new ArrayList<Map<String, Object>>();
-					Map<String, Object> ageInfoData = new HashMap<String, Object>();
-					ageInfoData.put("sex", apiSex);
-					ageInfoData.put("w", -1);
-					sexInfoDataList.add(ageInfoData);
-					userInfo.put("sex_info", sexInfoDataList);
-				}
+				List<Map<String, Object>> sexInfoDataList = new ArrayList<Map<String, Object>>();
+				Map<String, Object> sexInfoData = new HashMap<String, Object>();
+				sexInfoData.put("sex", apiSex);
+				sexInfoData.put("w", -1);
+				sexInfoDataList.add(sexInfoData);
+				userInfo.put("sex_info", sexInfoDataList);
+				processResource(sexInfoData,source);
 			}
 		}
 		
-		if(userInfo.get("type").equals("uuid")){
+		if(userInfo.get("type").equals("uuid") && StringUtils.isNotBlank(logSex)){
 			double pExpv = Math.exp(-1 * 0.05);
-			if(userInfo.get("age_info") == null){
+			if(userInfo.get("sex_info") == null){
 				if(StringUtils.isNotBlank(logSex)){
 					List<Map<String, Object>> sexInfoDataList = new ArrayList<Map<String, Object>>();
 					Map<String, Object> sexInfoData = new HashMap<String, Object>();
@@ -206,43 +226,30 @@ public class WriteAkbDmp {
 				}
 			}else{
 				List<Map<String, Object>> sexInfoDataList = (List<Map<String, Object>>) userInfo.get("sex_info");
-				if(userInfo.get("sex_info") == null){
-					sexInfoDataList = new ArrayList<>();
+				if(JsonPath.using(jsonpathConfiguration).parse(userInfo.get("sex_info")).jsonString().contains(logSex)){
+					for (Map<String, Object> map : sexInfoDataList) {
+						if(map.get("sex").equals(logSex)){
+							double w = Double.valueOf(map.get("w").toString());
+							if(w == -1){
+								return userInfo;
+							}
+							double sex_w = w + (1 / (1 + pExpv));
+							map.put("w", sex_w);
+							processResource(map,source);
+							break;
+						}
+					}
+				}else{
 					Map<String, Object> sexInfoData = new HashMap<String, Object>();
-					double sex_w = 0 + (1 / (1 + pExpv));
+					double sex_w = (1 / (1 + pExpv));
 					sexInfoData.put("sex", logSex);
 					sexInfoData.put("w", sex_w);
 					sexInfoDataList.add(sexInfoData);
 					userInfo.put("sex_info", sexInfoDataList);
-				}else{
-					if(StringUtils.isBlank(logSex)){
-						return userInfo;
-					}
-					
-					if(JsonPath.using(jsonpathConfiguration).parse(userInfo.get("sex_info")).jsonString().contains(logSex) && StringUtils.isNotBlank(logSex)){
-						for (Map<String, Object> map : sexInfoDataList) {
-							if(map.get("sex").equals(logSex)){
-								double w = Double.valueOf(map.get("w").toString());
-								if(w == -1){
-									return userInfo;
-								}
-								double sex_w = w + (1 / (1 + pExpv));
-								map.put("w", sex_w);
-								break;
-							}
-						}
-					}else{
-						Map<String, Object> sexInfoData = new HashMap<String, Object>();
-						double sex_w = (1 / (1 + pExpv));
-						sexInfoData.put("sex", logSex);
-						sexInfoData.put("w", sex_w);
-						sexInfoDataList.add(sexInfoData);
-						userInfo.put("sex_info", sexInfoDataList);
-					}
+					processResource(sexInfoData,source);
 				}
 			}
 		}
-		
 		
 		String sex = "";
 		double w = 0;
@@ -269,13 +276,11 @@ public class WriteAkbDmp {
 		return userInfo;
 	}
 	
-	
-	
 	/*
 	 * 處理年齡權重
 	 * return:userInfo
 	 * */
-	public Map<String,Object> processAgeWeight(Map<String,Object> userInfo,String apiAge,String logAge) throws Exception {
+	public Map<String,Object> processAgeWeight(Map<String,Object> userInfo,String apiAge,String logAge,String source) throws Exception {
 		if(userInfo.get("type").equals("memid")){
 			if(userInfo.get("age_info") == null){
 				if(StringUtils.isNotBlank(apiAge)){
@@ -285,11 +290,12 @@ public class WriteAkbDmp {
 					ageInfoData.put("w", -1);
 					ageInfoDataList.add(ageInfoData);
 					userInfo.put("age_info", ageInfoDataList);
+					processResource(ageInfoData,source);
 				}
 			}
 		}
 		
-		if(userInfo.get("type").equals("uuid")){
+		if(userInfo.get("type").equals("uuid") && StringUtils.isNotBlank(logAge)){
 			double pExpv = Math.exp(-1 * 0.05);
 			if(userInfo.get("age_info") == null){
 				if(StringUtils.isNotBlank(logAge)){
@@ -300,41 +306,30 @@ public class WriteAkbDmp {
 					ageInfoData.put("w", age_w);
 					ageInfoDataList.add(ageInfoData);
 					userInfo.put("age_info", ageInfoDataList);
+					processResource(ageInfoData,source);
 				}
 			}else{
 				List<Map<String, Object>> ageInfoDataList = (List<Map<String, Object>>) userInfo.get("age_info");
-				if(userInfo.get("age_info") == null){
-					ageInfoDataList = new ArrayList<>();
-					Map<String, Object> ageInfoData = new HashMap<String, Object>();
-					double sex_w = (1 / (1 + pExpv));
-					ageInfoData.put("age", logAge);
-					ageInfoData.put("w", sex_w);
-					ageInfoDataList.add(ageInfoData);
-					userInfo.put("age_info", ageInfoDataList);
-				}else{
-					if(StringUtils.isBlank(logAge)){
-						return userInfo;
-					}
-					if(JsonPath.using(jsonpathConfiguration).parse(userInfo.get("age_info")).jsonString().contains(logAge) && StringUtils.isNotBlank(logAge)){
-						for (Map<String, Object> map : ageInfoDataList) {
-							if(map.get("age").equals(logAge)){
-								double w = Double.valueOf(map.get("w").toString());
-								if(w == -1){
-									return userInfo;
-								}
-								double sex_w = w + (1 / (1 + pExpv));
-								map.put("w", sex_w);
-								break;
+				if(JsonPath.using(jsonpathConfiguration).parse(userInfo.get("age_info")).jsonString().contains(logAge)){
+					for (Map<String, Object> map : ageInfoDataList) {
+						if(map.get("age").equals(logAge)){
+							double w = Double.valueOf(map.get("w").toString());
+							if(w == -1){
+								return userInfo;
 							}
+							double sex_w = w + (1 / (1 + pExpv));
+							map.put("w", sex_w);
+							processResource(map,source);
+							break;
 						}
-					}else{
-						Map<String, Object> ageInfoData = new HashMap<String, Object>();
-						double age_w = (1 / (1 + pExpv));
-						ageInfoData.put("age", logAge);
-						ageInfoData.put("w", age_w);
-						ageInfoDataList.add(ageInfoData);
-						userInfo.put("age_info", ageInfoDataList);
 					}
+				}else{
+					Map<String, Object> ageInfoData = new HashMap<String, Object>();
+					double age_w = (1 / (1 + pExpv));
+					ageInfoData.put("age", logAge);
+					ageInfoData.put("w", age_w);
+					ageInfoDataList.add(ageInfoData);
+					processResource(ageInfoData,source);
 				}
 			}
 		}
