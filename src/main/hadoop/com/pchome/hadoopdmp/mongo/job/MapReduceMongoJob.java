@@ -100,6 +100,8 @@ public class MapReduceMongoJob {
 				Map<String, Set<String>> allMap = new HashMap<String, Set<String>>();
 				String mapKey="";
 				
+				
+				
 				//加總男女
 				if(StringUtils.equals("F", sex)){
 					context.write(new Text("F"), new Text("1"));
@@ -116,11 +118,6 @@ public class MapReduceMongoJob {
 				
 				
 				
-				
-				
-				
-				
-
 				for (Map<String, Object> category : category_info) {
 					String ad_class = category.get("category").toString();
 					String update_date = category.get("update_date").toString();
