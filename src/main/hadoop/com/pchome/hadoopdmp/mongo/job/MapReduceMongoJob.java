@@ -39,6 +39,8 @@ import com.pchome.hadoopdmp.mysql.db.service.categoryanalyze.IAdmCategoryGroupAn
 import com.pchome.hadoopdmp.mysql.db.service.categorygroup.IAdmCategoryGroupService;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 
+import freemarker.template.utility.StringUtil;
+
 @Component
 @Scope("prototype")
 public class MapReduceMongoJob {
@@ -53,19 +55,12 @@ public class MapReduceMongoJob {
 		
 		private static int sum = 0;
 		
-		private static String today = "";
 		
 		public void setup(Context context) {
 			try {
 				System.setProperty("spring.profiles.active", "stg");
 				ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 				admCategoryGroupService = ctx.getBean(IAdmCategoryGroupService.class);
-				
-				//取得今天時間
-				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-				Date date = new Date();
-				today=dateFormat.format(date);
-				
 				
 				//讀mysql大小分類表
 				List<AdmCategoryGroup> admGroupList = admCategoryGroupService.loadAll();
@@ -100,8 +95,31 @@ public class MapReduceMongoJob {
 				Map<String, Object> user_info = (Map<String, Object>) value.get("user_info");
 				List<Map<String, Object>> category_info = (List<Map<String, Object>>) value.get("category_info");
 				String userType = user_info.get("type").toString();
+				String sex =(String) user_info.get("sex");
+				String age =(String) user_info.get("age");
 				Map<String, Set<String>> allMap = new HashMap<String, Set<String>>();
 				String mapKey="";
+				
+				//加總男女
+				if(StringUtils.equals("F", sex)){
+					context.write(new Text("F"), new Text());
+					log.info(">>>>>> map F: "+sex);
+				}	
+				
+				if(StringUtils.equals("M", sex)){
+					context.write(new Text("M"), new Text());
+					log.info(">>>>>> map M: "+sex);
+				}
+				
+				//加總性別
+				
+				
+				
+				
+				
+				
+				
+				
 
 				for (Map<String, Object> category : category_info) {
 					String ad_class = category.get("category").toString();
@@ -133,11 +151,7 @@ public class MapReduceMongoJob {
 						}//13840     1.4713 2.9126  = 13839
 					}
 					
-					//處理今日小分類計數
-					today="2017-06-28";//test
-					if(!StringUtils.equals(today, update_date)){
-						continue;
-					}
+					//處理小分類
 					String categoryKey = ad_class + "_" + userType.toUpperCase();
 					//(000123_uuid,<"","","">
 					context.write(new Text(categoryKey), new Text());
@@ -173,6 +187,28 @@ public class MapReduceMongoJob {
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 			try {
 				data.clear();
+				
+				//女生
+				if(StringUtils.equals("F", key.toString())){
+					int sum = 0;
+					for (Text text : values) {
+						sum = sum + 1;
+					}
+					log.info(">>>>>> reduce F: "+sum);
+					context.write(key, new Text(String.valueOf(sum)));
+				}
+				
+				//男生
+				if(StringUtils.equals("M", key.toString())){
+					int sum = 0;
+					for (Text text : values) {
+						sum = sum + 1;
+					}
+					log.info(">>>>>> reduce M: "+sum);
+					context.write(key, new Text(String.valueOf(sum)));
+				}
+				
+				
 				//"0000000000000001_TOTAL"  大分類KEY
 				//0015022500000000_uuid		小分類KEY
 				if (key.toString().indexOf("TOTAL") > 0) {
@@ -190,7 +226,7 @@ public class MapReduceMongoJob {
 //					log.info(">>>>> reduce key: " + key);
 //					log.info(">>>>> reduce dataSize: " + data.size());
 //					log.info(">>>>> reduce sum: " + sum);
-					context.write(new Text(parentKey), new Text(String.valueOf(data.size())));
+					context.write(new Text(parentKey+userType), new Text(String.valueOf(data.size())));
 					
 					//insert 大分類 mysql
 					AdmCategoryGroupAnalyze admCategoryGroupAnalyze = new AdmCategoryGroupAnalyze();
