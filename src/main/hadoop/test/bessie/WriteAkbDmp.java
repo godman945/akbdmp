@@ -219,8 +219,6 @@ public class WriteAkbDmp {
 						return userInfo;
 					}
 					
-					System.out.println(JsonPath.using(jsonpathConfiguration).parse(userInfo.get("sex_info"))
-							.jsonString().contains(logSex));
 					if(JsonPath.using(jsonpathConfiguration).parse(userInfo.get("sex_info")).jsonString().contains(logSex) && StringUtils.isNotBlank(logSex)){
 						for (Map<String, Object> map : sexInfoDataList) {
 							if(map.get("sex").equals(logSex)){
