@@ -103,15 +103,13 @@ public class MapReduceMongoJob {
 				//加總男女
 				if(StringUtils.equals("F", sex)){
 					context.write(new Text("F"), new Text());
+					log.info(">>>>>> map F: "+sex);
 				}	
 				
 				if(StringUtils.equals("M", sex)){
 					context.write(new Text("M"), new Text());
+					log.info(">>>>>> map M: "+sex);
 				}
-				
-				
-				
-				
 				
 				//加總性別
 				
@@ -196,6 +194,7 @@ public class MapReduceMongoJob {
 					for (Text text : values) {
 						sum = sum + 1;
 					}
+					log.info(">>>>>> reduce F: "+sum);
 					context.write(key, new Text(String.valueOf(sum)));
 				}
 				
@@ -205,6 +204,7 @@ public class MapReduceMongoJob {
 					for (Text text : values) {
 						sum = sum + 1;
 					}
+					log.info(">>>>>> reduce M: "+sum);
 					context.write(key, new Text(String.valueOf(sum)));
 				}
 				
