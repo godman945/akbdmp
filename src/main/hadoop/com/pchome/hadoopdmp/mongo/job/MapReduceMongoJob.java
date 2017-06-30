@@ -100,14 +100,16 @@ public class MapReduceMongoJob {
 				Map<String, Set<String>> allMap = new HashMap<String, Set<String>>();
 				String mapKey="";
 				
+				
+				
 				//加總男女
 				if(StringUtils.equals("F", sex)){
-					context.write(new Text("F"), new Text());
+					context.write(new Text("F"), new Text("1"));
 					log.info(">>>>>> map F: "+sex);
 				}	
 				
 				if(StringUtils.equals("M", sex)){
-					context.write(new Text("M"), new Text());
+					context.write(new Text("M"), new Text("1"));
 					log.info(">>>>>> map M: "+sex);
 				}
 				
@@ -116,11 +118,6 @@ public class MapReduceMongoJob {
 				
 				
 				
-				
-				
-				
-				
-
 				for (Map<String, Object> category : category_info) {
 					String ad_class = category.get("category").toString();
 					String update_date = category.get("update_date").toString();
@@ -236,39 +233,40 @@ public class MapReduceMongoJob {
 					admCategoryGroupAnalyze.setCreateDate(new Date());
 					admGroupAnalyzeService.save(admCategoryGroupAnalyze);					
 					
-				} else {
-					int sum = 0;
-					for (Text text : values) {
-						sum = sum + 1;
-					}
-//					log.info(">>>>> reduce key: " + key);
-//					log.info(">>>>> reduce sum: " + sum);
-//					log.info(">>>>> 小分類: " + key + " : " + sum);
-					context.write(key, new Text(String.valueOf(sum)));
-					
-					//insert 小分類 mysql
-					AdmCategoryAnalyze admCategoryAnalyze = new AdmCategoryAnalyze();
-					admCategoryAnalyze.setRecodeDate(new Date());
-					admCategoryAnalyze.setAdClass(key.toString().split("_")[0]);
-					admCategoryAnalyze.setUserIdType(key.toString().split("_")[1]);
-					admCategoryAnalyze.setAdClassCountByDay(sum);
-					admCategoryAnalyze.setCreateDate(new Date());
-					admCategoryAnalyze.setUdpateDate(new Date());
-					admCategoryAnalyze.setSexManCount(0);
-					admCategoryAnalyze.setSexWomanCount(0);
-					admCategoryAnalyze.setAgeRangeCount1to10(0);
-					admCategoryAnalyze.setAgeRangeCount11to20(0);
-					admCategoryAnalyze.setAgeRangeCount21to30(0);
-					admCategoryAnalyze.setAgeRangeCount31to40(0);
-					admCategoryAnalyze.setAgeRangeCount41to50(0);
-					admCategoryAnalyze.setAgeRangeCount51to60(0);
-					admCategoryAnalyze.setAgeRangeCount61to70(0);
-					admCategoryAnalyze.setAgeRangeCount71to80(0);
-					admCategoryAnalyze.setAgeRangeCount81to90(0);
-					admCategoryAnalyze.setAgeRangeCount91to100(0);
-					admCategoryAnalyzeService.save(admCategoryAnalyze);				
-					
-				}
+				} 
+//				else {
+//					int sum = 0;
+//					for (Text text : values) {
+//						sum = sum + 1;
+//					}
+////					log.info(">>>>> reduce key: " + key);
+////					log.info(">>>>> reduce sum: " + sum);
+////					log.info(">>>>> 小分類: " + key + " : " + sum);
+//					context.write(key, new Text(String.valueOf(sum)));
+//					
+//					//insert 小分類 mysql
+//					AdmCategoryAnalyze admCategoryAnalyze = new AdmCategoryAnalyze();
+//					admCategoryAnalyze.setRecodeDate(new Date());
+//					admCategoryAnalyze.setAdClass(key.toString().split("_")[0]);
+//					admCategoryAnalyze.setUserIdType(key.toString().split("_")[1]);
+//					admCategoryAnalyze.setAdClassCountByDay(sum);
+//					admCategoryAnalyze.setCreateDate(new Date());
+//					admCategoryAnalyze.setUdpateDate(new Date());
+//					admCategoryAnalyze.setSexManCount(0);
+//					admCategoryAnalyze.setSexWomanCount(0);
+//					admCategoryAnalyze.setAgeRangeCount1to10(0);
+//					admCategoryAnalyze.setAgeRangeCount11to20(0);
+//					admCategoryAnalyze.setAgeRangeCount21to30(0);
+//					admCategoryAnalyze.setAgeRangeCount31to40(0);
+//					admCategoryAnalyze.setAgeRangeCount41to50(0);
+//					admCategoryAnalyze.setAgeRangeCount51to60(0);
+//					admCategoryAnalyze.setAgeRangeCount61to70(0);
+//					admCategoryAnalyze.setAgeRangeCount71to80(0);
+//					admCategoryAnalyze.setAgeRangeCount81to90(0);
+//					admCategoryAnalyze.setAgeRangeCount91to100(0);
+//					admCategoryAnalyzeService.save(admCategoryAnalyze);				
+//					
+//				}
 			} catch (Exception e) {
 				log.error(">>>>> Reducer e : " + e.getMessage());
 			}
