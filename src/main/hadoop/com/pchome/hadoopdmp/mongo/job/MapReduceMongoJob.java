@@ -102,12 +102,12 @@ public class MapReduceMongoJob {
 				
 				//加總男女
 				if(StringUtils.equals("F", sex)){
-					context.write(new Text("F"), new Text());
+					context.write(new Text("F"), new Text("1"));
 					log.info(">>>>>> map F: "+sex);
 				}	
 				
 				if(StringUtils.equals("M", sex)){
-					context.write(new Text("M"), new Text());
+					context.write(new Text("M"), new Text("1"));
 					log.info(">>>>>> map M: "+sex);
 				}
 				
