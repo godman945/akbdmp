@@ -86,7 +86,7 @@ public class AdLogClassCount {
 		String date = "";
 		boolean flag = false;
 //		.where("uuid").is("b2b8d3ba-edd1-4cdc-8e21-378c69eabf3b")
-		Query query = new Query(new Criteria().where("uuid").is("b2b8d3ba-edd1-4cdc-8e21-378c69eabf3b"));
+		Query query = new Query(new Criteria());
 		query.with(new Sort(Sort.Direction.DESC, "_id"));
 		query.with(new PageRequest(start, 5000));
 		
