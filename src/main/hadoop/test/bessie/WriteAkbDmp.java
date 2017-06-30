@@ -194,7 +194,6 @@ public class WriteAkbDmp {
 		
 		if(userInfo.get("type").equals("uuid")){
 			double pExpv = Math.exp(-1 * 0.05);
-			
 			if(userInfo.get("age_info") == null){
 				if(StringUtils.isNotBlank(logSex)){
 					List<Map<String, Object>> sexInfoDataList = new ArrayList<Map<String, Object>>();
@@ -216,6 +215,9 @@ public class WriteAkbDmp {
 					sexInfoDataList.add(sexInfoData);
 					userInfo.put("sex_info", sexInfoDataList);
 				}else{
+					if(StringUtils.isBlank(logSex)){
+						return userInfo;
+					}
 					if(JsonPath.using(jsonpathConfiguration).parse(userInfo.get("sex_info")).jsonString().contains(logSex) && StringUtils.isNotBlank(logSex)){
 						for (Map<String, Object> map : sexInfoDataList) {
 							if(map.get("sex").equals(logSex)){
@@ -306,6 +308,9 @@ public class WriteAkbDmp {
 					ageInfoDataList.add(ageInfoData);
 					userInfo.put("age_info", ageInfoDataList);
 				}else{
+					if(StringUtils.isBlank(logAge)){
+						return userInfo;
+					}
 					if(JsonPath.using(jsonpathConfiguration).parse(userInfo.get("age_info")).jsonString().contains(logAge) && StringUtils.isNotBlank(logAge)){
 						for (Map<String, Object> map : ageInfoDataList) {
 							if(map.get("age").equals(logAge)){

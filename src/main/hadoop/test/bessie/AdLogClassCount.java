@@ -81,7 +81,7 @@ public class AdLogClassCount {
 		}
 		return timeLong > index ? false : true;
 	}
-	
+
 	public boolean record(int start) throws Exception {
 		String date = "";
 		boolean flag = false;
