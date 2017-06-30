@@ -85,10 +85,10 @@ public class AdLogClassCount {
 	public boolean record(int start) throws Exception {
 		String date = "";
 		boolean flag = false;
-		
+//		.where("uuid").is("729faa4c-1164-43f4-b891-c5b1be0818ed")
 		Query query = new Query(new Criteria());
 		query.with(new Sort(Sort.Direction.DESC, "_id"));
-		query.with(new PageRequest(start, 5000));
+		query.with(new PageRequest(start, 1000));
 		
 		List<ClassCountProdMongoBean> classCountProdMongoBeanList = mongoOperations.find(query, ClassCountProdMongoBean.class);
 		for (ClassCountProdMongoBean classCountProdMongoBean : classCountProdMongoBeanList) {
@@ -134,10 +134,13 @@ public class AdLogClassCount {
 				classCountLogBean.setSource(source);
 				classCountLogBean.setType(type);
 				classCountLogBean.setRecordDate(recodeDate);
+				
+				
+				System.out.println(user_id);
 				saveUserInfo(classCountLogBean);
 			}
 		}
-		return flag;
+		return false;
 	}
 	
 	

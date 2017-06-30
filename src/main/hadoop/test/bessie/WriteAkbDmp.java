@@ -210,7 +210,7 @@ public class WriteAkbDmp {
 				if(userInfo.get("sex_info") == null){
 					sexInfoDataList = new ArrayList<>();
 					Map<String, Object> sexInfoData = new HashMap<String, Object>();
-					double sex_w = (1 / (1 + pExpv));
+					double sex_w = 0 + (1 / (1 + pExpv));
 					sexInfoData.put("sex", logSex);
 					sexInfoData.put("w", sex_w);
 					sexInfoDataList.add(sexInfoData);
@@ -377,7 +377,7 @@ public class WriteAkbDmp {
 				int betweenDate = (int) ((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
 				if (betweenDate > 0) {
 					double w = Double.valueOf(categoryInfo.get("w").toString());
-					double nw = w * Math.exp(-0.1 * (betweenDate * 0.1));
+					double nw = w * Math.exp(- 0.1 * (betweenDate * 0.1));
 					categoryInfo.put("w", nw);
 					categoryInfo.put("update_date", recodeDate);
 				}
