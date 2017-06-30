@@ -16,7 +16,7 @@ public class ClassCountMongoBean {
 	private String user_id = "";
 	private String create_date = "";
 	private String update_date = "";
-	private long quert_times = 0;
+	private long query_times = 0;
 	private List<Map<String, Object>> category_info = new ArrayList<>();
 	private Map<String, Object> user_info = new HashMap<>();
 
@@ -28,13 +28,12 @@ public class ClassCountMongoBean {
 		this.user_id = user_id;
 	}
 
-
-	public long getQuert_times() {
-		return quert_times;
+	public long getQuery_times() {
+		return query_times;
 	}
 
-	public void setQuert_times(long quert_times) {
-		this.quert_times = quert_times;
+	public void setQuery_times(long query_times) {
+		this.query_times = query_times;
 	}
 
 	public List<Map<String, Object>> getCategory_info() {
