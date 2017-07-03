@@ -47,6 +47,7 @@ public class MapReduceMongoJob {
 	
 	private static Log log = LogFactory.getLog("MapReduceMongoJob");
 	
+
 	public static class ReadWeblogsFromMongo extends Mapper<Object, BSONObject, Text, Text> {
 		
 		private IAdmCategoryGroupService admCategoryGroupService;
@@ -54,7 +55,7 @@ public class MapReduceMongoJob {
 		private static Map<String,String> categoryMap = new HashMap<>();
 		
 		private static int sum = 0;
-		
+
 		
 		public void setup(Context context) {
 			try {
@@ -88,71 +89,116 @@ public class MapReduceMongoJob {
 			
 		}
 		
+//		//大分類
+//		2_uuid_24h_大分類代號
+//		2_memid_24h_大分類代號
+//		2_uuid_ruten_大分類代號
+//		2_memid_ruten_大分類代號
+//		2_uuid_adclick_大分類代號
+//		2_memid_adclick_大分類代號
+//
+//
+//		//男性別
+//		3_uuid_24h_man
+//		3_memid_24h_man
+//		3_uuid_ruten_man
+//		3_memid_ruten_man
+//		3_uuid_adclick_man
+//		3_memid_adclick_man
+//
+//
+//		//女性別
+//		3_uuid_24h_female
+//		3_memid_24h_female
+//		3_uuid_ruten_female
+//		3_memid_ruten_female
+//		3_uuid_adclick_female
+//		3_memid_adclick_female
+//
+//
+//		//1to10年齡
+//		4_uuid_24h_age01to10
+//		4_memid_24h_age01to10
+//		4_uuid_ruten_age01to10
+//		4_memid_ruten_age01to10
+//		4_uuid_adclick_age01to10
+//		4_memid_adclick_age01to10
 		public void map(Object key, BSONObject value, Context context) throws IOException, InterruptedException {
 			try {
-				String category_info_str = value.get("category_info").toString();
-				String user_id = value.get("user_id").toString();
+				String category_info_str = value.get("category_info").toString().trim();
+				String user_id = value.get("user_id").toString().trim();
 				Map<String, Object> user_info = (Map<String, Object>) value.get("user_info");
 				List<Map<String, Object>> category_info = (List<Map<String, Object>>) value.get("category_info");
-				String userType = user_info.get("type").toString();
-				String sex =(String) user_info.get("sex");
-				String age =(String) user_info.get("age");
+				String userType = user_info.get("type").toString().trim();
+				String sex = user_info.get("sex").toString().trim();
+				List<Map<String, Object>> sexInfoDataList = (List<Map<String, Object>>) user_info.get("sex_info");
+				
+				String age = user_info.get("age").toString().trim();
 				Map<String, Set<String>> allMap = new HashMap<String, Set<String>>();
 				String mapKey="";
 				
 				
-				
+				String sexInfo="";
+				String sexMapKey="";
 				//加總男女
-				if(StringUtils.equals("F", sex)){
-					context.write(new Text("F"), new Text("1"));
-					log.info(">>>>>> map F: "+sex);
-				}	
-				
-				if(StringUtils.equals("M", sex)){
-					context.write(new Text("M"), new Text("1"));
-					log.info(">>>>>> map M: "+sex);
+				if (StringUtils.isNotBlank(sex)){
+					for (Map<String, Object> sexInfoObj : sexInfoDataList) {
+						sexInfo= sexInfoObj.get("sex").toString().trim();
+						if (StringUtils.equals(sex, sexInfo)){
+							ArrayList<String> sourceList = (ArrayList<String>) sexInfoObj.get("source");
+							for (String source : sourceList) {
+								sexMapKey="3_"+userType+"_"+source.trim()+"_"+sex; //ex : 3_uuid_24h_M
+								context.write(new Text(sexMapKey), new Text("1"));
+								log.info(">>>>>> sexMapKey : "+sexMapKey);
+								
+							}
+						}
+					}
 				}
+				
+				
 				
 				//加總性別
 				
 				
 				
+				//mark
+//				for (Map<String, Object> category : category_info) {
+//					String ad_class = category.get("category").toString();
+//					String update_date = category.get("update_date").toString();
+//					
+//					if(StringUtils.isBlank(ad_class)){
+//						continue;
+//					}
+//					if(StringUtils.isBlank(update_date)){
+//						continue;
+//					}
+//					
+//					//process parent處理大分類
+//					for (Entry<String, String> entry : categoryMap.entrySet()) {
+//						if(entry.getKey().indexOf(ad_class) != -1){
+//							
+////							log.info(">>>>>> entry.getKey():"+entry.getKey());
+////							log.info(">>>>>> ad_class:"+ad_class);
+////							log.info(">>>>>> entry.getValue():"+entry.getValue());
+//							
+//							//(000001_TOTAL_UUID,<123,456>)
+//							if(StringUtils.equals("UUID", userType.toUpperCase())){
+//								mapKey=entry.getValue()+"_UUID";
+//							}
+//							if(StringUtils.equals("MEMID", userType.toUpperCase())){
+//								mapKey=entry.getValue()+"_MEMID";
+//							}
+//							context.write(new Text(mapKey), new Text(user_id));
+//						}//13840     1.4713 2.9126  = 13839
+//					}
+//					
+//					//處理小分類
+//					String categoryKey = ad_class + "_" + userType.toUpperCase();
+//					//(000123_uuid,<"","","">
+//					context.write(new Text(categoryKey), new Text());
+//				}
 				
-				for (Map<String, Object> category : category_info) {
-					String ad_class = category.get("category").toString();
-					String update_date = category.get("update_date").toString();
-					
-					if(StringUtils.isBlank(ad_class)){
-						continue;
-					}
-					if(StringUtils.isBlank(update_date)){
-						continue;
-					}
-					
-					//process parent處理大分類
-					for (Entry<String, String> entry : categoryMap.entrySet()) {
-						if(entry.getKey().indexOf(ad_class) != -1){
-							
-//							log.info(">>>>>> entry.getKey():"+entry.getKey());
-//							log.info(">>>>>> ad_class:"+ad_class);
-//							log.info(">>>>>> entry.getValue():"+entry.getValue());
-							
-							//(000001_TOTAL_UUID,<123,456>)
-							if(StringUtils.equals("UUID", userType.toUpperCase())){
-								mapKey=entry.getValue()+"_UUID";
-							}
-							if(StringUtils.equals("MEMID", userType.toUpperCase())){
-								mapKey=entry.getValue()+"_MEMID";
-							}
-							context.write(new Text(mapKey), new Text(user_id));
-						}//13840     1.4713 2.9126  = 13839
-					}
-					
-					//處理小分類
-					String categoryKey = ad_class + "_" + userType.toUpperCase();
-					//(000123_uuid,<"","","">
-					context.write(new Text(categoryKey), new Text());
-				}
 			} catch (Exception e) {
 				log.error(">>>>> mapper e : " + e.getMessage());
 			}
@@ -183,10 +229,9 @@ public class MapReduceMongoJob {
 		
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 			try {
-				data.clear();
-				
-				//女生
-				if(StringUtils.equals("F", key.toString())){
+				//ex : 3_uuid_24h_M
+				//SEX
+				if (StringUtils.equals("3", key.toString().split("_")[0])){
 					int sum = 0;
 					for (Text text : values) {
 						sum = sum + 1;
@@ -195,46 +240,38 @@ public class MapReduceMongoJob {
 					context.write(key, new Text(String.valueOf(sum)));
 				}
 				
-				//男生
-				if(StringUtils.equals("M", key.toString())){
-					int sum = 0;
-					for (Text text : values) {
-						sum = sum + 1;
-					}
-					log.info(">>>>>> reduce M: "+sum);
-					context.write(key, new Text(String.valueOf(sum)));
-				}
 				
 				
-				//"0000000000000001_TOTAL"  大分類KEY
-				//0015022500000000_uuid		小分類KEY
-				if (key.toString().indexOf("TOTAL") > 0) {
-					
-					String [] array = key.toString().split("_");
-					String parentKey = array[0];
-					String userType = array[2];
-					
-					int sum = 0;
-					for (Text text : values) {
-						data.add(text.toString());
-						sum = sum + 1;
-					}
-					
-//					log.info(">>>>> reduce key: " + key);
-//					log.info(">>>>> reduce dataSize: " + data.size());
-//					log.info(">>>>> reduce sum: " + sum);
-					context.write(new Text(parentKey+userType), new Text(String.valueOf(data.size())));
-					
-					//insert 大分類 mysql
-					AdmCategoryGroupAnalyze admCategoryGroupAnalyze = new AdmCategoryGroupAnalyze();
-					admCategoryGroupAnalyze.setAdClassCountByHistory(data.size());
-					admCategoryGroupAnalyze.setAdGroupId(parentKey);
-					admCategoryGroupAnalyze.setUserIdType(userType);
-					admCategoryGroupAnalyze.setCreateDate(new Date());
-					admGroupAnalyzeService.save(admCategoryGroupAnalyze);					
-					
-				} 
-//				else {
+				//mark
+//				//"0000000000000001_TOTAL"  大分類KEY
+//				//0015022500000000_uuid		小分類KEY
+//				data.clear();
+//				if (key.toString().indexOf("TOTAL") > 0) {
+//					
+//					String [] array = key.toString().split("_");
+//					String parentKey = array[0];
+//					String userType = array[2];
+//					
+//					int sum = 0;
+//					for (Text text : values) {
+//						data.add(text.toString());
+//						sum = sum + 1;
+//					}
+//					
+////					log.info(">>>>> reduce key: " + key);
+////					log.info(">>>>> reduce dataSize: " + data.size());
+////					log.info(">>>>> reduce sum: " + sum);
+//					context.write(new Text(parentKey+userType), new Text(String.valueOf(data.size())));
+//					
+//					//insert 大分類 mysql
+//					AdmCategoryGroupAnalyze admCategoryGroupAnalyze = new AdmCategoryGroupAnalyze();
+//					admCategoryGroupAnalyze.setAdClassCountByHistory(data.size());
+//					admCategoryGroupAnalyze.setAdGroupId(parentKey);
+//					admCategoryGroupAnalyze.setUserIdType(userType);
+//					admCategoryGroupAnalyze.setCreateDate(new Date());
+//					admGroupAnalyzeService.save(admCategoryGroupAnalyze);					
+//					
+//				} else {
 //					int sum = 0;
 //					for (Text text : values) {
 //						sum = sum + 1;
