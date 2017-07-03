@@ -78,7 +78,7 @@ public class MapReduceMongoJob {
 						}
 					}
 					if(StringUtils.isNotBlank(key)){
-						categoryMap.put(key, admCategoryGroup.getGroupId()+"_TOTAL");
+						categoryMap.put(key, admCategoryGroup.getGroupId());//+"_TOTAL"
 					}
 				}
 			
@@ -147,6 +147,9 @@ public class MapReduceMongoJob {
 						if (StringUtils.equals(sex, matchSex)){
 							ArrayList<String> sourceList = (ArrayList<String>) sexInfoObj.get("source");
 							for (String source : sourceList) {
+								if (StringUtils.equals("ad_click", source.trim())){
+									source="adclick";
+								}
 								sexMapKey="3_"+userType+"_"+source.trim()+"_"+sex; //性別 ex : 3_uuid_24h_M(受眾類型_會員型態_來源_性別)
 								context.write(new Text(sexMapKey), new Text("1"));
 								log.info(">>>>>> sexMapKey : "+sexMapKey);
@@ -161,27 +164,38 @@ public class MapReduceMongoJob {
 				
 				
 				
-				//mark
-//				for (Map<String, Object> category : category_info) {
-//					String ad_class = category.get("category").toString();
-//					String update_date = category.get("update_date").toString();
-//					
-//					if(StringUtils.isBlank(ad_class)){
-//						continue;
-//					}
-//					if(StringUtils.isBlank(update_date)){
-//						continue;
-//					}
-//					
-//					//process parent處理大分類
-//					for (Entry<String, String> entry : categoryMap.entrySet()) {
-//						if(entry.getKey().indexOf(ad_class) != -1){
-//							
-////							log.info(">>>>>> entry.getKey():"+entry.getKey());
-////							log.info(">>>>>> ad_class:"+ad_class);
-////							log.info(">>>>>> entry.getValue():"+entry.getValue());
-//							
-//							//(000001_TOTAL_UUID,<123,456>)
+				//小分類 & 大分類
+				for (Map<String, Object> category : category_info) {
+					String ad_class = category.get("category").toString();
+					String update_date = category.get("update_date").toString();
+					ArrayList<String> sourceList = (ArrayList<String>) category.get("source");
+					
+					if(StringUtils.isBlank(ad_class)){
+						continue;
+					}
+					if(StringUtils.isBlank(update_date)){
+						continue;
+					}
+					
+					//process parent處理大分類
+					//categoryMap : 00001_00002=0123456
+					String parentcategoryMapKey="";
+					for (Entry<String, String> entry : categoryMap.entrySet()) {
+						if(entry.getKey().indexOf(ad_class) != -1){
+							for (String source : sourceList) {
+								if (StringUtils.equals("ad_click",source.trim())){
+									source="adclick";
+								}
+								parentcategoryMapKey="2_"+userType+"_"+source.trim()+"_"+entry.getValue();//2_uuid_24h_大分類代號
+								log.info(">>>>>> parentcategoryMapKey : "+parentcategoryMapKey);
+								context.write(new Text(parentcategoryMapKey), new Text(user_id));
+							}
+							
+//							log.info(">>>>>> entry.getKey():"+entry.getKey());
+//							log.info(">>>>>> ad_class:"+ad_class);
+//							log.info(">>>>>> entry.getValue():"+entry.getValue());
+							
+							//(000001_TOTAL_UUID,<123,456>)
 //							if(StringUtils.equals("UUID", userType.toUpperCase())){
 //								mapKey=entry.getValue()+"_UUID";
 //							}
@@ -189,14 +203,15 @@ public class MapReduceMongoJob {
 //								mapKey=entry.getValue()+"_MEMID";
 //							}
 //							context.write(new Text(mapKey), new Text(user_id));
-//						}//13840     1.4713 2.9126  = 13839
-//					}
-//					
+
+						}
+					}
+					
 //					//處理小分類
 //					String categoryKey = ad_class + "_" + userType.toUpperCase();
 //					//(000123_uuid,<"","","">
 //					context.write(new Text(categoryKey), new Text());
-//				}
+				}
 				
 			} catch (Exception e) {
 				log.error(">>>>> mapper e : " + e.getMessage());
@@ -234,42 +249,44 @@ public class MapReduceMongoJob {
 					for (Text text : values) {
 						sum = sum + 1;
 					}
-					log.info(">>>>>> sex reduce Key : "+key.toString());
+					log.info(">>>>>> sex reduce Key test : "+key.toString());
 					context.write(key, new Text(String.valueOf(sum)));
 				}
 				
 				
 				
-				//mark
-//				//"0000000000000001_TOTAL"  大分類KEY
-//				//0015022500000000_uuid		小分類KEY
-//				data.clear();
-//				if (key.toString().indexOf("TOTAL") > 0) {
-//					
+				
+				//大分類KEY : 2_uuid_24h_大分類代號   
+				//0015022500000000_uuid		小分類KEY
+				data.clear();
+				if (StringUtils.equals("2", key.toString().split("_")[0])) {
+					
 //					String [] array = key.toString().split("_");
 //					String parentKey = array[0];
 //					String userType = array[2];
-//					
-//					int sum = 0;
-//					for (Text text : values) {
-//						data.add(text.toString());
-//						sum = sum + 1;
-//					}
-//					
-////					log.info(">>>>> reduce key: " + key);
-////					log.info(">>>>> reduce dataSize: " + data.size());
-////					log.info(">>>>> reduce sum: " + sum);
-//					context.write(new Text(parentKey+userType), new Text(String.valueOf(data.size())));
-//					
-//					//insert 大分類 mysql
+					
+					int sum = 0;
+					for (Text text : values) {
+						data.add(text.toString());
+						sum = sum + 1;
+					}
+					
+//					log.info(">>>>> reduce key: " + key);
+//					log.info(">>>>> reduce dataSize: " + data.size());
+//					log.info(">>>>> reduce sum: " + sum);
+					context.write(new Text(key), new Text(String.valueOf(data.size())));
+					
+					//insert 大分類 mysql
 //					AdmCategoryGroupAnalyze admCategoryGroupAnalyze = new AdmCategoryGroupAnalyze();
 //					admCategoryGroupAnalyze.setAdClassCountByHistory(data.size());
 //					admCategoryGroupAnalyze.setAdGroupId(parentKey);
 //					admCategoryGroupAnalyze.setUserIdType(userType);
 //					admCategoryGroupAnalyze.setCreateDate(new Date());
 //					admGroupAnalyzeService.save(admCategoryGroupAnalyze);					
-//					
-//				} else {
+					
+				} 
+				//mark
+//				else {
 //					int sum = 0;
 //					for (Text text : values) {
 //						sum = sum + 1;
