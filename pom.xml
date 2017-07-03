@@ -350,9 +350,10 @@
 			<artifactId>jcl-over-slf4j</artifactId>
 			<version>1.5.8</version>
 		</dependency>
-		-->
-
 		
+		
+
+		-->
 		<!-- -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -366,10 +367,7 @@
 			<version>1.6.0</version>
 		</dependency>
 		
-		
-		
-		
-		<!--  -->
+		<!--  
 		<dependency> 
  			<groupId>jdk.tools</groupId>
  			<artifactId>jdk.tools</artifactId> 
@@ -377,7 +375,7 @@
  			<scope>system</scope> 
 			<systemPath>D:\java\lib\tools.jar</systemPath> 
  		</dependency> 
- 		
+ 		-->
  		
  		
 	</dependencies>
