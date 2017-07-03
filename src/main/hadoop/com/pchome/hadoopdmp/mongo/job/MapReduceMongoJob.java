@@ -194,23 +194,25 @@ public class MapReduceMongoJob {
 //							log.info(">>>>>> entry.getKey():"+entry.getKey());
 //							log.info(">>>>>> ad_class:"+ad_class);
 //							log.info(">>>>>> entry.getValue():"+entry.getValue());
-							
-							//(000001_TOTAL_UUID,<123,456>)
-//							if(StringUtils.equals("UUID", userType.toUpperCase())){
-//								mapKey=entry.getValue()+"_UUID";
-//							}
-//							if(StringUtils.equals("MEMID", userType.toUpperCase())){
-//								mapKey=entry.getValue()+"_MEMID";
-//							}
-//							context.write(new Text(mapKey), new Text(user_id));
-
 						}
 					}
 					
+					
+					
 //					//處理小分類
+					//1_uuid_24h_小分類代號
+					String childCategoryMapKey="";
+					for (String source : sourceList) {
+						if (StringUtils.equals("ad_click",source.trim())){
+							source="adclick";
+						}
+						childCategoryMapKey="1_"+userType+"_"+source.trim()+"_"+ad_class;//1_uuid_24h_小分類代號
+						log.info(">>>>>> parentCategoryMapKey : "+childCategoryMapKey);
+						context.write(new Text(childCategoryMapKey), new Text("1"));
+					}
 //					String categoryKey = ad_class + "_" + userType.toUpperCase();
 //					//(000123_uuid,<"","","">
-//					context.write(new Text(categoryKey), new Text());
+//					context.write(new Text(categoryKey), new Text("1"));
 				}
 				
 			} catch (Exception e) {
@@ -286,18 +288,20 @@ public class MapReduceMongoJob {
 //					admGroupAnalyzeService.save(admCategoryGroupAnalyze);					
 					
 				} 
-				//mark
-//				else {
-//					int sum = 0;
-//					for (Text text : values) {
-//						sum = sum + 1;
-//					}
-////					log.info(">>>>> reduce key: " + key);
-////					log.info(">>>>> reduce sum: " + sum);
-////					log.info(">>>>> 小分類: " + key + " : " + sum);
-//					context.write(key, new Text(String.valueOf(sum)));
-//					
-//					//insert 小分類 mysql
+
+				
+				//處理小分類 : 1_uuid_24h_小分類代號
+				if (StringUtils.equals("1", key.toString().split("_")[0])) {
+					int sum = 0;
+					for (Text text : values) {
+						sum = sum + 1;
+					}
+//					log.info(">>>>> reduce key: " + key);
+//					log.info(">>>>> reduce sum: " + sum);
+//					log.info(">>>>> 小分類: " + key + " : " + sum);
+					context.write(key, new Text(String.valueOf(sum)));
+					
+					//insert 小分類 mysql
 //					AdmCategoryAnalyze admCategoryAnalyze = new AdmCategoryAnalyze();
 //					admCategoryAnalyze.setRecodeDate(new Date());
 //					admCategoryAnalyze.setAdClass(key.toString().split("_")[0]);
@@ -318,8 +322,7 @@ public class MapReduceMongoJob {
 //					admCategoryAnalyze.setAgeRangeCount81to90(0);
 //					admCategoryAnalyze.setAgeRangeCount91to100(0);
 //					admCategoryAnalyzeService.save(admCategoryAnalyze);				
-//					
-//				}
+				}
 			} catch (Exception e) {
 				log.error(">>>>> Reducer e : " + e.getMessage());
 			}
