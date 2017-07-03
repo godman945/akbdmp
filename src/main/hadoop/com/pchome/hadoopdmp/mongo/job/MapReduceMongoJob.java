@@ -108,7 +108,7 @@ public class MapReduceMongoJob {
 //
 //
 //		//女性別
-//		3_uuid_24h_female
+//		3_uuid_24h_female	
 //		3_memid_24h_female
 //		3_uuid_ruten_female
 //		3_memid_ruten_female
@@ -138,19 +138,18 @@ public class MapReduceMongoJob {
 				String mapKey="";
 				
 				
-				String sexInfo="";
+				String matchSex="";
 				String sexMapKey="";
 				//加總男女
 				if (StringUtils.isNotBlank(sex)){
 					for (Map<String, Object> sexInfoObj : sexInfoDataList) {
-						sexInfo= sexInfoObj.get("sex").toString().trim();
-						if (StringUtils.equals(sex, sexInfo)){
+						matchSex= sexInfoObj.get("sex").toString().trim();
+						if (StringUtils.equals(sex, matchSex)){
 							ArrayList<String> sourceList = (ArrayList<String>) sexInfoObj.get("source");
 							for (String source : sourceList) {
-								sexMapKey="3_"+userType+"_"+source.trim()+"_"+sex; //ex : 3_uuid_24h_M
+								sexMapKey="3_"+userType+"_"+source.trim()+"_"+sex; //性別 ex : 3_uuid_24h_M(受眾類型_會員型態_來源_性別)
 								context.write(new Text(sexMapKey), new Text("1"));
 								log.info(">>>>>> sexMapKey : "+sexMapKey);
-								
 							}
 						}
 					}
@@ -229,14 +228,13 @@ public class MapReduceMongoJob {
 		
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 			try {
-				//ex : 3_uuid_24h_M
-				//SEX
+				//性別 ex : 3_uuid_24h_M(受眾類型_會員型態_來源_性別)
 				if (StringUtils.equals("3", key.toString().split("_")[0])){
 					int sum = 0;
 					for (Text text : values) {
 						sum = sum + 1;
 					}
-					log.info(">>>>>> reduce F: "+sum);
+					log.info(">>>>>> sex reduce Key : "+key.toString());
 					context.write(key, new Text(String.valueOf(sum)));
 				}
 				

@@ -4,13 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -21,20 +16,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Scope;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pchome.akbdmp.data.mongo.pojo.ClassCountMongoBean;
 import com.pchome.akbdmp.job.bean.ClassCountLogBean;
 import com.pchome.akbdmp.spring.config.bean.allbeanscan.SpringAllConfig;
-import com.pchome.hadoopdmp.data.mongo.pojo.ClassUrlMongoBean;
+import com.pchome.hadoopdmp.data.mongo.pojo.ClassCountMongoBean;
 import com.pchome.soft.depot.utils.KafkaUtil;
 
 @Component
@@ -63,7 +53,7 @@ public class CampaignJob {
 		Set<String> set = new HashSet<>();
 		
 		Query query = new Query();
-		query.addCriteria(Criteria.where("category_info.category").regex("0015022500000000"));
+		query.addCriteria(Criteria.where("category_info.category").regex("0015022500000000").and("user_info.type").is("uuid"));
 		List<ClassCountMongoBean> classCountMongoList = mongoOperations.find(query, ClassCountMongoBean.class);
 		System.out.println(classCountMongoList.size());
 		for (ClassCountMongoBean classCountMongoBean : classCountMongoList) {
@@ -71,7 +61,7 @@ public class CampaignJob {
 		}
 		
 		Query query2 = new Query();
-		query2.addCriteria(Criteria.where("category_info.category").regex("0015022720350000"));
+		query2.addCriteria(Criteria.where("category_info.category").regex("0015022720350000").and("user_info.type").is("uuid"));
 		List<ClassCountMongoBean> classCountMongoList2 = mongoOperations.find(query2, ClassCountMongoBean.class);
 		System.out.println(classCountMongoList2.size());
 		for (ClassCountMongoBean classCountMongoBean : classCountMongoList2) {
@@ -80,8 +70,60 @@ public class CampaignJob {
 		
 		System.out.println(set.size());
 			
+	}
+	
+	public void process3() throws Exception {
+		
+		Set<String> set = new HashSet<>();
+		
+		Query query = new Query();
+		query.addCriteria(Criteria.where("category_info.category").regex("0015022500000000").and("user_info.type").is("memid"));
+		List<ClassCountMongoBean> classCountMongoList = mongoOperations.find(query, ClassCountMongoBean.class);
+		System.out.println(classCountMongoList.size());
+		for (ClassCountMongoBean classCountMongoBean : classCountMongoList) {
+			set.add(classCountMongoBean.getUser_id());
+		}
+		
+		Query query2 = new Query();
+		query2.addCriteria(Criteria.where("category_info.category").regex("0015022720350000").and("user_info.type").is("memid"));
+		List<ClassCountMongoBean> classCountMongoList2 = mongoOperations.find(query2, ClassCountMongoBean.class);
+		System.out.println(classCountMongoList2.size());
+		for (ClassCountMongoBean classCountMongoBean : classCountMongoList2) {
+			set.add(classCountMongoBean.getUser_id());
+		}
+		
+		System.out.println(set.size());
 			
 	}
+	
+	
+	public void sex() throws Exception {
+		
+		Set<String> set = new HashSet<>();
+		
+		Query query = new Query();
+		//3_memid_ad_click_F      180
+		query.addCriteria(Criteria.where("user_info.sex").regex("F").and("user_info.type").is("memid"));
+		List<ClassCountMongoBean> classCountMongoList = mongoOperations.find(query, ClassCountMongoBean.class);
+		System.out.println(classCountMongoList.size());
+		for (ClassCountMongoBean classCountMongoBean : classCountMongoList) {
+			System.out.println(classCountMongoBean.getUser_id());
+		}
+		
+		System.out.println("print OK OK OK");
+		
+//		Query query2 = new Query();
+//		query2.addCriteria(Criteria.where("category_info.category").regex("0015022720350000").and("user_info.type").is("memid"));
+//		List<ClassCountMongoBean> classCountMongoList2 = mongoOperations.find(query2, ClassCountMongoBean.class);
+//		System.out.println(classCountMongoList2.size());
+//		for (ClassCountMongoBean classCountMongoBean : classCountMongoList2) {
+//			set.add(classCountMongoBean.getUser_id());
+//		}
+//		
+//		System.out.println(set.size());
+			
+	}
+	
 
 	public void run() throws Exception {
 		log.info("====CampaignJob.process() start====");
@@ -169,8 +211,10 @@ public class CampaignJob {
 			System.setProperty("spring.profiles.active", "stg");
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
 			CampaignJob campaignJob = ctx.getBean(CampaignJob.class);
-			campaignJob.run();
-//			 campaignJob.process2();
+//			campaignJob.run();
+//			campaignJob.process2();
+//			campaignJob.process3();
+			campaignJob.sex();
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);
