@@ -132,8 +132,8 @@ public class MapReduceMongoJob {
 				String userType = user_info.get("type").toString().trim();
 				String sex = user_info.get("sex").toString().trim();
 				List<Map<String, Object>> sexInfoDataList = (List<Map<String, Object>>) user_info.get("sex_info");
-				
 				String age = user_info.get("age").toString().trim();
+				List<Map<String, Object>> ageInfoDataList = (List<Map<String, Object>>) user_info.get("age_info");
 				Map<String, Set<String>> allMap = new HashMap<String, Set<String>>();
 				String mapKey="";
 				
@@ -160,9 +160,62 @@ public class MapReduceMongoJob {
 				
 				
 				
+				
 				//加總性別
+				String matchAge="";
+				String ageMapKey="";
+				String ageStr="";
+				int ageInt;
+				if(StringUtils.isNotBlank(age)){
+					for (Map<String, Object> ageInfoObj : ageInfoDataList) {
+						matchAge= ageInfoObj.get("age").toString().trim();
+						if (StringUtils.equals(age, matchAge)){
+							ArrayList<String> ageSourceList = (ArrayList<String>) ageInfoObj.get("source");
+							for (String source : ageSourceList) {
+								if (StringUtils.equals("ad_click", source.trim())){
+									source="adclick";
+								}
+								ageInt=Integer.valueOf(age);
+								if ((ageInt>=1) && (ageInt<=10)){
+									ageStr="age01to10";
+								}
+								if ((ageInt>=11) && (ageInt<=20)){
+									ageStr="age11to20";
+								}
+								if ((ageInt>=21) && (ageInt<=30)){
+									ageStr="age21to30";
+								}
+								if ((ageInt>=31) && (ageInt<=40)){
+									ageStr="age31to40";
+								}
+								if ((ageInt>=41) && (ageInt<=50)){
+									ageStr="age41to50";
+								}
+								if ((ageInt>=51) && (ageInt<=60)){
+									ageStr="age51to60";
+								}
+								if ((ageInt>=61) && (ageInt<=70)){
+									ageStr="age61to70";
+								}
+								if ((ageInt>=71) && (ageInt<=80)){
+									ageStr="age71to80";
+								}
+								if ((ageInt>=81) && (ageInt<=90)){
+									ageStr="age81to90";
+								}
+								if ((ageInt>=91) && (ageInt<=100)){
+									ageStr="age91to100";
+								}
+								ageMapKey="4_"+userType+"_"+source.trim()+"_"+ageStr; //性別 ex : 4_uuid_24h_age01to10(受眾類型_會員型態_來源_年齡)
+								context.write(new Text(ageMapKey), new Text("1"));
+								log.info(">>>>>> sexMapKey : "+sexMapKey);
+							}
+						}
+					}
+					
+				}
 				
-				
+
 				
 				//小分類 & 大分類
 				for (Map<String, Object> category : category_info) {
@@ -245,21 +298,30 @@ public class MapReduceMongoJob {
 		
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 			try {
+				
 				//性別 ex : 3_uuid_24h_M(受眾類型_會員型態_來源_性別)
 				if (StringUtils.equals("3", key.toString().split("_")[0])){
 					int sum = 0;
 					for (Text text : values) {
 						sum = sum + 1;
 					}
-					log.info(">>>>>> sex reduce Key test : "+key.toString());
+					log.info(">>>>>> sex reduce Key : "+key.toString());
 					context.write(key, new Text(String.valueOf(sum)));
 				}
 				
 				
+				//年齡 ex :4_uuid_24h_age01to10(受眾類型_會員型態_來源_年齡範圍)
+				if (StringUtils.equals("4", key.toString().split("_")[0])){
+					int sum = 0;
+					for (Text text : values) {
+						sum = sum + 1;
+					}
+					log.info(">>>>>> age reduce Key : "+key.toString());
+					context.write(key, new Text(String.valueOf(sum)));
+				}
 				
 				
 				//大分類KEY : 2_uuid_24h_大分類代號   
-				//0015022500000000_uuid		小分類KEY
 				data.clear();
 				if (StringUtils.equals("2", key.toString().split("_")[0])) {
 					
