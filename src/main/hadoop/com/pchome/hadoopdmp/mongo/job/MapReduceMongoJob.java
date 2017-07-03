@@ -179,16 +179,16 @@ public class MapReduceMongoJob {
 					
 					//process parent處理大分類
 					//categoryMap : 00001_00002=0123456
-					String parentcategoryMapKey="";
+					String parentCategoryMapKey="";
 					for (Entry<String, String> entry : categoryMap.entrySet()) {
 						if(entry.getKey().indexOf(ad_class) != -1){
 							for (String source : sourceList) {
 								if (StringUtils.equals("ad_click",source.trim())){
 									source="adclick";
 								}
-								parentcategoryMapKey="2_"+userType+"_"+source.trim()+"_"+entry.getValue();//2_uuid_24h_大分類代號
-								log.info(">>>>>> parentcategoryMapKey : "+parentcategoryMapKey);
-								context.write(new Text(parentcategoryMapKey), new Text(user_id));
+								parentCategoryMapKey="2_"+userType+"_"+source.trim()+"_"+entry.getValue();//2_uuid_24h_大分類代號
+								log.info(">>>>>> parentCategoryMapKey : "+parentCategoryMapKey);
+								context.write(new Text(parentCategoryMapKey), new Text(user_id));
 							}
 							
 //							log.info(">>>>>> entry.getKey():"+entry.getKey());
@@ -214,7 +214,7 @@ public class MapReduceMongoJob {
 				}
 				
 			} catch (Exception e) {
-				log.error(">>>>> mapper e : " + e.getMessage());
+				log.error(">>>>> Mapper e : " + e.getMessage());
 			}
 		}
 	}
@@ -274,6 +274,7 @@ public class MapReduceMongoJob {
 //					log.info(">>>>> reduce key: " + key);
 //					log.info(">>>>> reduce dataSize: " + data.size());
 //					log.info(">>>>> reduce sum: " + sum);
+					log.info(">>>>>> parentCategoryReduceKey : "+key.toString()+"_"+sum);
 					context.write(new Text(key), new Text(String.valueOf(data.size())));
 					
 					//insert 大分類 mysql
