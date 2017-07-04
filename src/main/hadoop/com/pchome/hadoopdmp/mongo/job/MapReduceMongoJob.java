@@ -382,7 +382,7 @@ public class MapReduceMongoJob {
 			AdmCategoryAudienceAnalyze admCategoryAudienceAnalyze = new AdmCategoryAudienceAnalyze();
 			admCategoryAudienceAnalyze.setRecordDate(new Date());
 			admCategoryAudienceAnalyze.setKeyId(mysqlColumnStr[3]);
-//			admCategoryAudienceAnalyze.setKeyName(mysqlColumnStr[4]);
+			admCategoryAudienceAnalyze.setKeyName(mysqlColumnStr[4]);
 			admCategoryAudienceAnalyze.setKeyType(mysqlColumnStr[0]);
 			admCategoryAudienceAnalyze.setUserType(mysqlColumnStr[1]);
 			admCategoryAudienceAnalyze.setSource(mysqlColumnStr[2]);
