@@ -320,6 +320,7 @@ public class MapReduceMongoJob {
 					for (Text text : values) {
 						categoryMap = text.toString();
 					}
+					log.info(">>>>>> categoryMap : "+categoryMap);
 					context.write(new Text(categoryMap), new Text(""));
 				}
 				
@@ -330,6 +331,7 @@ public class MapReduceMongoJob {
 					for (Text text : values) {
 						sum = sum + 1;
 					}
+					log.info(">>>>>> 性別 : "+reduceKeyStr);
 					context.write(new Text(reduceKeyStr), new Text(String.valueOf(sum)));
 					insertMysqlAudienceTable(reduceKeyStr.toString(),sum);
 						
@@ -342,6 +344,7 @@ public class MapReduceMongoJob {
 					for (Text text : values) {
 						sum = sum + 1;
 					}
+					log.info(">>>>>> 年齡 : "+reduceKeyStr);
 					context.write(new Text(reduceKeyStr), new Text(String.valueOf(sum)));
 					insertMysqlAudienceTable(reduceKeyStr.toString(),sum);
 				}
@@ -355,6 +358,7 @@ public class MapReduceMongoJob {
 						data.add(text.toString());
 					}
 					sum =data.size();
+					log.info(">>>>>> 大分類: "+reduceKeyStr);
 					context.write(new Text(reduceKeyStr), new Text(String.valueOf(sum)));
 					insertMysqlAudienceTable(reduceKeyStr,sum);
 				} 
@@ -366,6 +370,7 @@ public class MapReduceMongoJob {
 					for (Text text : values) {
 						sum = sum + 1;
 					}
+					log.info(">>>>>> 小分類: "+reduceKeyStr);
 					context.write(new Text(reduceKeyStr), new Text(String.valueOf(sum)));
 					insertMysqlAudienceTable(reduceKeyStr.toString(),sum);
 				}
