@@ -295,23 +295,23 @@ public class MapReduceMongoJob {
 		
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 			try {
-//				String reduceKeyStr=key.toString().trim();
-//				//找到key name
-//				String keyId = reduceKeyStr.toString().split("_")[3].trim();
-//				String keyName="";
-//				for (CategoryComparisonTableEnum item : CategoryComparisonTableEnum.values()) {
-//					if (StringUtils.equals(keyId, item.getKey())) {
-//						keyName=item.getName();
-//						break;
-//
-//					}else{
-//						keyName="null";
-//					}
-//				}
-//				reduceKeyStr="_"+keyName;
+				String reduceKeyStr=key.toString().trim();
+				//找到key name
+				String keyId = reduceKeyStr.split("_")[3].trim();
+				String keyName="";
+				for (CategoryComparisonTableEnum item : CategoryComparisonTableEnum.values()) {
+					if (StringUtils.equals(keyId, item.getKey())) {
+						keyName=item.getName();
+						break;
+
+					}else{
+						keyName="null";
+					}
+				}
+				reduceKeyStr="_"+keyName;
 //				reduceKeyArray=reduceKeyStr.trim().split("_");
 				
-				log.info(">>>>>> reduceKeyStr : "+key.toString());
+				log.info(">>>>>> reduceKeyStr : "+reduceKeyStr);
 //				log.info(">>>>>> reduceKeyArray : "+Arrays.toString(reduceKeyArray));
 				
 				//輸出每日大小分類對照表
@@ -378,13 +378,13 @@ public class MapReduceMongoJob {
 		
 		public void insertMysqlAudienceTable(String key ,int sum) {
 			
-			log.info(">>>>>> mysql String : "+key.toString().trim());
+//			log.info(">>>>>> mysql String : "+key.toString().trim());
+//			
+//			mysqlColumnStr = key.toString().trim().split("_");
+//			log.info(">>>>>>  mysql Array : "+Arrays.toString(mysqlColumnStr));
 			
-			mysqlColumnStr = key.toString().trim().split("_");
-			log.info(">>>>>>  mysql Array : "+Arrays.toString(mysqlColumnStr));
 			
-			
-//			mysqlColumnStr = key.toString().split("_");
+			mysqlColumnStr = key.toString().split("_");
 			AdmCategoryAudienceAnalyze admCategoryAudienceAnalyze = new AdmCategoryAudienceAnalyze();
 			admCategoryAudienceAnalyze.setRecordDate(new Date());
 			admCategoryAudienceAnalyze.setKeyId(mysqlColumnStr[3]);
