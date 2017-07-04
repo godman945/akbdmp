@@ -31,6 +31,7 @@ import com.mongodb.hadoop.util.MongoConfigUtil;
 import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategory;
 import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategoryAudienceAnalyze;
 import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategoryGroup;
+import com.pchome.hadoopdmp.enumerate.CategoryComparisonTableEnum;
 import com.pchome.hadoopdmp.mysql.db.service.category.IAdmCategoryAudienceAnalyzeService;
 import com.pchome.hadoopdmp.mysql.db.service.categoryanalyze.IAdmCategoryAnalyzeService;
 import com.pchome.hadoopdmp.mysql.db.service.categoryanalyze.IAdmCategoryGroupAnalyzeService;
@@ -276,21 +277,17 @@ public class MapReduceMongoJob {
 		
 		private static Set<String> data = new HashSet<>();
 		
-		private IAdmCategoryGroupAnalyzeService admGroupAnalyzeService;
-		
-		private IAdmCategoryAnalyzeService admCategoryAnalyzeService;
-		
 		private IAdmCategoryAudienceAnalyzeService admCategoryAudienceAnalyzeService;
 		
 		private static String[] mysqlColumnStr = null;
+		
+		private static String[] reduceKeyArray = null;
 		
 		
 		public void setup(Context context) {
 			try {
 				System.setProperty("spring.profiles.active", "stg");
 				ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-				admGroupAnalyzeService = ctx.getBean(IAdmCategoryGroupAnalyzeService.class);
-				admCategoryAnalyzeService = ctx.getBean(IAdmCategoryAnalyzeService.class);
 				admCategoryAudienceAnalyzeService=ctx.getBean(IAdmCategoryAudienceAnalyzeService.class);
 				
 			} catch (Exception e) {
@@ -301,109 +298,24 @@ public class MapReduceMongoJob {
 		
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 			try {
-				
-				//性別 ex : 3_uuid_24h_M(受眾類型_會員型態_來源_性別)
-				if (StringUtils.equals("3", key.toString().split("_")[0])){
-					int sum = 0;
-					for (Text text : values) {
-						sum = sum + 1;
-					}
-					log.info(">>>>>> sex reduce Key : "+key.toString());
-					context.write(key, new Text(String.valueOf(sum)));
-					//insert mysql
-					mysqlColumnStr=key.toString().trim().split("_");
-					AdmCategoryAudienceAnalyze admCategoryAudienceAnalyze = new AdmCategoryAudienceAnalyze();
-					admCategoryAudienceAnalyze.setRecordDate(new Date());
-					admCategoryAudienceAnalyze.setKeyId(mysqlColumnStr[3]);
-					admCategoryAudienceAnalyze.setKeyType(mysqlColumnStr[0]);
-					admCategoryAudienceAnalyze.setUserType(mysqlColumnStr[1]);
-					admCategoryAudienceAnalyze.setSource(mysqlColumnStr[2]);
-					admCategoryAudienceAnalyze.setKeyCount(sum);
-					admCategoryAudienceAnalyze.setCreateDate(new Date());
-					admCategoryAudienceAnalyze.setUpdateDate(new Date());
-					admCategoryAudienceAnalyzeService.save(admCategoryAudienceAnalyze);	
-				}
-				
-				
-				//年齡 ex :4_uuid_24h_age01to10(受眾類型_會員型態_來源_年齡範圍)
-				if (StringUtils.equals("4", key.toString().split("_")[0])){
-					int sum = 0;
-					for (Text text : values) {
-						sum = sum + 1;
-					}
-					log.info(">>>>>> age reduce Key : "+key.toString());
-					context.write(key, new Text(String.valueOf(sum)));
-					//insert mysql
-					mysqlColumnStr=key.toString().trim().split("_");
-					AdmCategoryAudienceAnalyze admCategoryAudienceAnalyze = new AdmCategoryAudienceAnalyze();
-					admCategoryAudienceAnalyze.setRecordDate(new Date());
-					admCategoryAudienceAnalyze.setKeyId(mysqlColumnStr[3]);
-					admCategoryAudienceAnalyze.setKeyType(mysqlColumnStr[0]);
-					admCategoryAudienceAnalyze.setUserType(mysqlColumnStr[1]);
-					admCategoryAudienceAnalyze.setSource(mysqlColumnStr[2]);
-					admCategoryAudienceAnalyze.setKeyCount(sum);
-					admCategoryAudienceAnalyze.setCreateDate(new Date());
-					admCategoryAudienceAnalyze.setUpdateDate(new Date());
-					admCategoryAudienceAnalyzeService.save(admCategoryAudienceAnalyze);	
-				}
-				
-				
-				//大分類KEY : 2_uuid_24h_大分類代號   
-				data.clear();
-				if (StringUtils.equals("2", key.toString().split("_")[0])) {
-					
-					int sum = 0;
-					for (Text text : values) {
-						data.add(text.toString());
-						sum = sum + 1;
-					}
-					
-//					log.info(">>>>> reduce key: " + key);
-//					log.info(">>>>> reduce dataSize: " + data.size());
-//					log.info(">>>>> reduce sum: " + sum);
-					log.info(">>>>>> parentCategoryReduceKey : "+key.toString()+"_"+sum);
-					context.write(new Text(key), new Text(String.valueOf(data.size())));
-					//insert mysql
-					mysqlColumnStr=key.toString().trim().split("_");
-					AdmCategoryAudienceAnalyze admCategoryAudienceAnalyze = new AdmCategoryAudienceAnalyze();
-					admCategoryAudienceAnalyze.setRecordDate(new Date());
-					admCategoryAudienceAnalyze.setKeyId(mysqlColumnStr[3]);
-					admCategoryAudienceAnalyze.setKeyType(mysqlColumnStr[0]);
-					admCategoryAudienceAnalyze.setUserType(mysqlColumnStr[1]);
-					admCategoryAudienceAnalyze.setSource(mysqlColumnStr[2]);
-					admCategoryAudienceAnalyze.setKeyCount(sum);
-					admCategoryAudienceAnalyze.setCreateDate(new Date());
-					admCategoryAudienceAnalyze.setUpdateDate(new Date());
-					admCategoryAudienceAnalyzeService.save(admCategoryAudienceAnalyze);	
-				} 
+				String reduceKeyStr=key.toString().trim();
+				//找到key name
+				String keyId = reduceKeyStr.toString().split("_")[3].trim();
+				String keyName="";
+				for (CategoryComparisonTableEnum item : CategoryComparisonTableEnum.values()) {
+					if (StringUtils.equals(keyId, item.getKey())) {
+						keyName=item.getName();
+						break;
 
-				
-				//處理小分類 : 1_uuid_24h_小分類代號
-				if (StringUtils.equals("1", key.toString().split("_")[0])) {
-					int sum = 0;
-					for (Text text : values) {
-						sum = sum + 1;
+					}else{
+						keyName="null";
 					}
-//					log.info(">>>>> reduce key: " + key);
-//					log.info(">>>>> reduce sum: " + sum);
-//					log.info(">>>>> 小分類: " + key + " : " + sum);
-					context.write(key, new Text(String.valueOf(sum)));
-					//insert mysql
-					mysqlColumnStr=key.toString().trim().split("_");
-					AdmCategoryAudienceAnalyze admCategoryAudienceAnalyze = new AdmCategoryAudienceAnalyze();
-					admCategoryAudienceAnalyze.setRecordDate(new Date());
-					admCategoryAudienceAnalyze.setKeyId(mysqlColumnStr[3]);
-					admCategoryAudienceAnalyze.setKeyType(mysqlColumnStr[0]);
-					admCategoryAudienceAnalyze.setUserType(mysqlColumnStr[1]);
-					admCategoryAudienceAnalyze.setSource(mysqlColumnStr[2]);
-					admCategoryAudienceAnalyze.setKeyCount(sum);
-					admCategoryAudienceAnalyze.setCreateDate(new Date());
-					admCategoryAudienceAnalyze.setUpdateDate(new Date());
-					admCategoryAudienceAnalyzeService.save(admCategoryAudienceAnalyze);	
 				}
+				reduceKeyStr="_"+keyName;
+				reduceKeyArray=reduceKeyStr.trim().split("_");
 				
 				//輸出每日大小分類對照表
-				if (StringUtils.equals("categoryMap", key.toString().trim())) {
+				if (StringUtils.equals("categoryMap", reduceKeyArray[0].trim())) {
 					String categoryMap = "";
 					for (Text text : values) {
 						categoryMap = text.toString();
@@ -411,10 +323,73 @@ public class MapReduceMongoJob {
 					context.write(new Text(categoryMap), new Text(""));
 				}
 				
+				
+				//性別 ex : 3_uuid_24h_M(受眾類型_會員型態_來源_性別_key中文name)
+				if (StringUtils.equals("3", reduceKeyArray[0].trim())){
+					int sum = 0;
+					for (Text text : values) {
+						sum = sum + 1;
+					}
+					context.write(new Text(reduceKeyStr), new Text(String.valueOf(sum)));
+					insertMysqlAudienceTable(reduceKeyStr.toString(),sum);
+						
+				}
+				
+				
+				//年齡 ex :4_uuid_24h_age01to10(受眾類型_會員型態_來源_年齡範圍)
+				if (StringUtils.equals("4", reduceKeyArray[0].trim())){
+					int sum = 0;
+					for (Text text : values) {
+						sum = sum + 1;
+					}
+					context.write(new Text(reduceKeyStr), new Text(String.valueOf(sum)));
+					insertMysqlAudienceTable(reduceKeyStr.toString(),sum);
+				}
+				
+				
+				//大分類KEY : 2_uuid_24h_大分類代號   
+				data.clear();
+				if (StringUtils.equals("2", reduceKeyArray[0].trim())) {
+					int sum = 0;
+					for (Text text : values) {
+						data.add(text.toString());
+					}
+					sum =data.size();
+					context.write(new Text(reduceKeyStr), new Text(String.valueOf(sum)));
+					insertMysqlAudienceTable(reduceKeyStr,sum);
+				} 
+
+				
+				//處理小分類 : 1_uuid_24h_小分類代號
+				if (StringUtils.equals("1", reduceKeyArray[0].trim())) {
+					int sum = 0;
+					for (Text text : values) {
+						sum = sum + 1;
+					}
+					context.write(new Text(reduceKeyStr), new Text(String.valueOf(sum)));
+					insertMysqlAudienceTable(reduceKeyStr.toString(),sum);
+				}
+				
+				
 			} catch (Exception e) {
 				log.error(">>>>> Reducer e : " + e.getMessage());
 			}
 		}
+		
+		public void insertMysqlAudienceTable(String key ,int sum) {
+			mysqlColumnStr = key.toString().trim().split("_");
+			AdmCategoryAudienceAnalyze admCategoryAudienceAnalyze = new AdmCategoryAudienceAnalyze();
+			admCategoryAudienceAnalyze.setRecordDate(new Date());
+			admCategoryAudienceAnalyze.setKeyId(mysqlColumnStr[3]);
+			admCategoryAudienceAnalyze.setKeyType(mysqlColumnStr[0]);
+			admCategoryAudienceAnalyze.setUserType(mysqlColumnStr[1]);
+			admCategoryAudienceAnalyze.setSource(mysqlColumnStr[2]);
+			admCategoryAudienceAnalyze.setKeyCount(sum);
+			admCategoryAudienceAnalyze.setCreateDate(new Date());
+			admCategoryAudienceAnalyze.setUpdateDate(new Date());
+			admCategoryAudienceAnalyzeService.save(admCategoryAudienceAnalyze);
+		}
+		
 	}
 
 	public static void main(String[] args) throws Exception {
