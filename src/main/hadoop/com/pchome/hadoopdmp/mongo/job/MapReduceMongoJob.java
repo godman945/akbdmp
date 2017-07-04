@@ -280,8 +280,6 @@ public class MapReduceMongoJob {
 		
 		private static String[] mysqlColumnStr = null;
 		
-		private static String[] reduceKeyArray = null;
-		
 		
 		public void setup(Context context) {
 			try {
@@ -297,84 +295,79 @@ public class MapReduceMongoJob {
 		
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 			try {
-				String reduceKeyStr=key.toString().trim();
-				//找到key name
-				String keyId = reduceKeyStr.toString().split("_")[3].trim();
-				String keyName="";
-				for (CategoryComparisonTableEnum item : CategoryComparisonTableEnum.values()) {
-					if (StringUtils.equals(keyId, item.getKey())) {
-						keyName=item.getName();
-						break;
-
-					}else{
-						keyName="null";
-					}
-				}
-				reduceKeyStr="_"+keyName;
-				reduceKeyArray=reduceKeyStr.trim().split("_");
+//				String reduceKeyStr=key.toString().trim();
+//				//找到key name
+//				String keyId = reduceKeyStr.toString().split("_")[3].trim();
+//				String keyName="";
+//				for (CategoryComparisonTableEnum item : CategoryComparisonTableEnum.values()) {
+//					if (StringUtils.equals(keyId, item.getKey())) {
+//						keyName=item.getName();
+//						break;
+//
+//					}else{
+//						keyName="null";
+//					}
+//				}
+//				reduceKeyStr="_"+keyName;
+//				reduceKeyArray=reduceKeyStr.trim().split("_");
 				
-				log.info(">>>>>> reduceKeyStr : "+reduceKeyStr);
-				log.info(">>>>>> reduceKeyArray : "+Arrays.toString(reduceKeyArray));
+				log.info(">>>>>> reduceKeyStr : "+key.toString());
+//				log.info(">>>>>> reduceKeyArray : "+Arrays.toString(reduceKeyArray));
 				
 				//輸出每日大小分類對照表
-				if (StringUtils.equals("categoryMap", reduceKeyArray[0].trim())) {
+				if (StringUtils.equals("categoryMap", key.toString().trim())) {
 					String categoryMap = "";
 					for (Text text : values) {
 						categoryMap = text.toString();
 					}
-					log.info(">>>>>> categoryMap : "+categoryMap);
 					context.write(new Text(categoryMap), new Text(""));
 				}
 				
 				
 				//性別 ex : 3_uuid_24h_M(受眾類型_會員型態_來源_性別_key中文name)
-				if (StringUtils.equals("3", reduceKeyArray[0].trim())){
+				if (StringUtils.equals("3", key.toString().split("_")[0].trim())){
 					int sum = 0;
 					for (Text text : values) {
 						sum = sum + 1;
 					}
-					log.info(">>>>>> 性別 : "+reduceKeyStr);
-					context.write(new Text(reduceKeyStr), new Text(String.valueOf(sum)));
-					insertMysqlAudienceTable(reduceKeyStr.toString(),sum);
+					context.write(new Text(key), new Text(String.valueOf(sum)));
+					insertMysqlAudienceTable(key.toString(),sum);
 						
 				}
 				
 				
 				//年齡 ex :4_uuid_24h_age01to10(受眾類型_會員型態_來源_年齡範圍)
-				if (StringUtils.equals("4", reduceKeyArray[0].trim())){
+				if (StringUtils.equals("4", key.toString().split("_")[0].trim())){
 					int sum = 0;
 					for (Text text : values) {
 						sum = sum + 1;
 					}
-					log.info(">>>>>> 年齡 : "+reduceKeyStr);
-					context.write(new Text(reduceKeyStr), new Text(String.valueOf(sum)));
-					insertMysqlAudienceTable(reduceKeyStr.toString(),sum);
+					context.write(new Text(key), new Text(String.valueOf(sum)));
+					insertMysqlAudienceTable(key.toString(),sum);
 				}
 				
 				
 				//大分類KEY : 2_uuid_24h_大分類代號   
 				data.clear();
-				if (StringUtils.equals("2", reduceKeyArray[0].trim())) {
+				if (StringUtils.equals("2", key.toString().split("_")[0].trim())) {
 					int sum = 0;
 					for (Text text : values) {
 						data.add(text.toString());
 					}
 					sum =data.size();
-					log.info(">>>>>> 大分類: "+reduceKeyStr);
-					context.write(new Text(reduceKeyStr), new Text(String.valueOf(sum)));
-					insertMysqlAudienceTable(reduceKeyStr,sum);
+					context.write(new Text(key), new Text(String.valueOf(sum)));
+					insertMysqlAudienceTable(key.toString(),sum);
 				} 
 
 				
 				//處理小分類 : 1_uuid_24h_小分類代號
-				if (StringUtils.equals("1", reduceKeyArray[0].trim())) {
+				if (StringUtils.equals("1", key.toString().split("_")[0].trim())) {
 					int sum = 0;
 					for (Text text : values) {
 						sum = sum + 1;
 					}
-					log.info(">>>>>> 小分類: "+reduceKeyStr);
-					context.write(new Text(reduceKeyStr), new Text(String.valueOf(sum)));
-					insertMysqlAudienceTable(reduceKeyStr.toString(),sum);
+					context.write(new Text(key), new Text(String.valueOf(sum)));
+					insertMysqlAudienceTable(key.toString(),sum);
 				}
 				
 				
