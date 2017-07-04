@@ -79,7 +79,7 @@ public class MapReduceMongoJob {
 				}
 			
 				log.info(">>>>>> categoryMap:"+categoryMap);
-				context.write(new Text("categoryMap"), new Text(categoryMap.toString()));
+				context.write(new Text("Daily_Category_Comparison_Table"), new Text(categoryMap.toString()));
 			} catch (Exception e) {
 				log.error(">>>>> mapper e : " + e.getMessage());
 			}
@@ -316,7 +316,7 @@ public class MapReduceMongoJob {
 				String key_type=reduceKeyArray[0].trim();//受眾類型 1:小分類2:大分類3:性別4:年齡
 				
 				//輸出每日大小分類對照表
-				if (StringUtils.equals("categoryMap", key_type)) {
+				if (StringUtils.equals("Daily_Category_Comparison_Table", key.toString().trim())) {
 					String categoryMap = "";
 					for (Text text : values) {
 						categoryMap = text.toString();
