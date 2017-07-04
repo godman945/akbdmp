@@ -1,5 +1,5 @@
 package com.pchome.hadoopdmp.data.mysql.pojo;
-// Generated 2017/7/4 �W�� 09:43:47 by Hibernate Tools 3.4.0.CR1
+// Generated 2017/7/4 �U�� 05:58:06 by Hibernate Tools 3.4.0.CR1
 
 import java.util.Date;
 import javax.persistence.Column;
@@ -21,6 +21,7 @@ public class AdmCategoryAudienceAnalyze implements java.io.Serializable {
 	private Integer id;
 	private Date recordDate;
 	private String keyId;
+	private String keyName;
 	private String keyType;
 	private String userType;
 	private String source;
@@ -31,10 +32,11 @@ public class AdmCategoryAudienceAnalyze implements java.io.Serializable {
 	public AdmCategoryAudienceAnalyze() {
 	}
 
-	public AdmCategoryAudienceAnalyze(Date recordDate, String keyId, String keyType, String userType, String source,
-			int keyCount, Date createDate, Date updateDate) {
+	public AdmCategoryAudienceAnalyze(Date recordDate, String keyId, String keyName, String keyType, String userType,
+			String source, int keyCount, Date createDate, Date updateDate) {
 		this.recordDate = recordDate;
 		this.keyId = keyId;
+		this.keyName = keyName;
 		this.keyType = keyType;
 		this.userType = userType;
 		this.source = source;
@@ -72,6 +74,15 @@ public class AdmCategoryAudienceAnalyze implements java.io.Serializable {
 
 	public void setKeyId(String keyId) {
 		this.keyId = keyId;
+	}
+
+	@Column(name = "key_name", nullable = false, length = 15)
+	public String getKeyName() {
+		return this.keyName;
+	}
+
+	public void setKeyName(String keyName) {
+		this.keyName = keyName;
 	}
 
 	@Column(name = "key_type", nullable = false, length = 5)

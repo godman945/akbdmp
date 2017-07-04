@@ -378,17 +378,11 @@ public class MapReduceMongoJob {
 		}
 		
 		public void insertMysqlAudienceTable(String key ,int sum) {
-			
-//			log.info(">>>>>> mysql String : "+key.toString().trim());
-//			
-//			mysqlColumnStr = key.toString().trim().split("_");
-//			log.info(">>>>>>  mysql Array : "+Arrays.toString(mysqlColumnStr));
-			
-			
 			mysqlColumnStr = key.toString().split("_");
 			AdmCategoryAudienceAnalyze admCategoryAudienceAnalyze = new AdmCategoryAudienceAnalyze();
 			admCategoryAudienceAnalyze.setRecordDate(new Date());
 			admCategoryAudienceAnalyze.setKeyId(mysqlColumnStr[3]);
+//			admCategoryAudienceAnalyze.setKeyName(mysqlColumnStr[4]);
 			admCategoryAudienceAnalyze.setKeyType(mysqlColumnStr[0]);
 			admCategoryAudienceAnalyze.setUserType(mysqlColumnStr[1]);
 			admCategoryAudienceAnalyze.setSource(mysqlColumnStr[2]);
