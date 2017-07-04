@@ -1,6 +1,7 @@
 package com.pchome.hadoopdmp.mongo.job;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,8 +34,6 @@ import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategoryAudienceAnalyze;
 import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategoryGroup;
 import com.pchome.hadoopdmp.enumerate.CategoryComparisonTableEnum;
 import com.pchome.hadoopdmp.mysql.db.service.category.IAdmCategoryAudienceAnalyzeService;
-import com.pchome.hadoopdmp.mysql.db.service.categoryanalyze.IAdmCategoryAnalyzeService;
-import com.pchome.hadoopdmp.mysql.db.service.categoryanalyze.IAdmCategoryGroupAnalyzeService;
 import com.pchome.hadoopdmp.mysql.db.service.categorygroup.IAdmCategoryGroupService;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 
@@ -313,6 +312,9 @@ public class MapReduceMongoJob {
 				}
 				reduceKeyStr="_"+keyName;
 				reduceKeyArray=reduceKeyStr.trim().split("_");
+				
+				log.info(">>>>>> reduceKeyStr : "+reduceKeyStr);
+				log.info(">>>>>> reduceKeyArray : "+Arrays.toString(reduceKeyArray));
 				
 				//輸出每日大小分類對照表
 				if (StringUtils.equals("categoryMap", reduceKeyArray[0].trim())) {
