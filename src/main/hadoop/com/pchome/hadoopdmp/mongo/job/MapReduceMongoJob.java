@@ -1,7 +1,5 @@
 package com.pchome.hadoopdmp.mongo.job;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -31,15 +29,13 @@ import org.springframework.stereotype.Component;
 import com.mongodb.hadoop.MongoInputFormat;
 import com.mongodb.hadoop.util.MongoConfigUtil;
 import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategory;
-import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategoryAnalyze;
+import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategoryAudienceAnalyze;
 import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategoryGroup;
-import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategoryGroupAnalyze;
+import com.pchome.hadoopdmp.mysql.db.service.category.IAdmCategoryAudienceAnalyzeService;
 import com.pchome.hadoopdmp.mysql.db.service.categoryanalyze.IAdmCategoryAnalyzeService;
 import com.pchome.hadoopdmp.mysql.db.service.categoryanalyze.IAdmCategoryGroupAnalyzeService;
 import com.pchome.hadoopdmp.mysql.db.service.categorygroup.IAdmCategoryGroupService;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
-
-import freemarker.template.utility.StringUtil;
 
 @Component
 @Scope("prototype")
@@ -48,7 +44,7 @@ public class MapReduceMongoJob {
 	private static Log log = LogFactory.getLog("MapReduceMongoJob");
 	
 
-	public static class ReadWeblogsFromMongo extends Mapper<Object, BSONObject, Text, Text> {
+	public static class MyMapper extends Mapper<Object, BSONObject, Text, Text> {
 		
 		private IAdmCategoryGroupService admCategoryGroupService;
 		
@@ -206,6 +202,9 @@ public class MapReduceMongoJob {
 								if ((ageInt>=91) && (ageInt<=100)){
 									ageStr="age91to100";
 								}
+								if (ageInt>100){
+									ageStr="ageover100";
+								}
 								ageMapKey="4_"+userType+"_"+source.trim()+"_"+ageStr; //性別 ex : 4_uuid_24h_age01to10(受眾類型_會員型態_來源_年齡)
 								context.write(new Text(ageMapKey), new Text("1"));
 								log.info(">>>>>> sexMapKey : "+sexMapKey);
@@ -282,6 +281,10 @@ public class MapReduceMongoJob {
 		
 		private IAdmCategoryAnalyzeService admCategoryAnalyzeService;
 		
+		private IAdmCategoryAudienceAnalyzeService admCategoryAudienceAnalyzeService;
+		
+		private static String[] mysqlColumnStr = null;
+		
 		
 		public void setup(Context context) {
 			try {
@@ -289,6 +292,7 @@ public class MapReduceMongoJob {
 				ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 				admGroupAnalyzeService = ctx.getBean(IAdmCategoryGroupAnalyzeService.class);
 				admCategoryAnalyzeService = ctx.getBean(IAdmCategoryAnalyzeService.class);
+				admCategoryAudienceAnalyzeService=ctx.getBean(IAdmCategoryAudienceAnalyzeService.class);
 				
 			} catch (Exception e) {
 				log.error(">>>>> Reducer e : " + e.getMessage());
@@ -307,6 +311,18 @@ public class MapReduceMongoJob {
 					}
 					log.info(">>>>>> sex reduce Key : "+key.toString());
 					context.write(key, new Text(String.valueOf(sum)));
+					//insert mysql
+					mysqlColumnStr=key.toString().trim().split("_");
+					AdmCategoryAudienceAnalyze admCategoryAudienceAnalyze = new AdmCategoryAudienceAnalyze();
+					admCategoryAudienceAnalyze.setRecordDate(new Date());
+					admCategoryAudienceAnalyze.setKeyId(mysqlColumnStr[3]);
+					admCategoryAudienceAnalyze.setKeyType(mysqlColumnStr[0]);
+					admCategoryAudienceAnalyze.setUserType(mysqlColumnStr[1]);
+					admCategoryAudienceAnalyze.setSource(mysqlColumnStr[2]);
+					admCategoryAudienceAnalyze.setKeyCount(sum);
+					admCategoryAudienceAnalyze.setCreateDate(new Date());
+					admCategoryAudienceAnalyze.setUpdateDate(new Date());
+					admCategoryAudienceAnalyzeService.save(admCategoryAudienceAnalyze);	
 				}
 				
 				
@@ -318,6 +334,18 @@ public class MapReduceMongoJob {
 					}
 					log.info(">>>>>> age reduce Key : "+key.toString());
 					context.write(key, new Text(String.valueOf(sum)));
+					//insert mysql
+					mysqlColumnStr=key.toString().trim().split("_");
+					AdmCategoryAudienceAnalyze admCategoryAudienceAnalyze = new AdmCategoryAudienceAnalyze();
+					admCategoryAudienceAnalyze.setRecordDate(new Date());
+					admCategoryAudienceAnalyze.setKeyId(mysqlColumnStr[3]);
+					admCategoryAudienceAnalyze.setKeyType(mysqlColumnStr[0]);
+					admCategoryAudienceAnalyze.setUserType(mysqlColumnStr[1]);
+					admCategoryAudienceAnalyze.setSource(mysqlColumnStr[2]);
+					admCategoryAudienceAnalyze.setKeyCount(sum);
+					admCategoryAudienceAnalyze.setCreateDate(new Date());
+					admCategoryAudienceAnalyze.setUpdateDate(new Date());
+					admCategoryAudienceAnalyzeService.save(admCategoryAudienceAnalyze);	
 				}
 				
 				
@@ -340,6 +368,18 @@ public class MapReduceMongoJob {
 //					log.info(">>>>> reduce sum: " + sum);
 					log.info(">>>>>> parentCategoryReduceKey : "+key.toString()+"_"+sum);
 					context.write(new Text(key), new Text(String.valueOf(data.size())));
+					//insert mysql
+					mysqlColumnStr=key.toString().trim().split("_");
+					AdmCategoryAudienceAnalyze admCategoryAudienceAnalyze = new AdmCategoryAudienceAnalyze();
+					admCategoryAudienceAnalyze.setRecordDate(new Date());
+					admCategoryAudienceAnalyze.setKeyId(mysqlColumnStr[3]);
+					admCategoryAudienceAnalyze.setKeyType(mysqlColumnStr[0]);
+					admCategoryAudienceAnalyze.setUserType(mysqlColumnStr[1]);
+					admCategoryAudienceAnalyze.setSource(mysqlColumnStr[2]);
+					admCategoryAudienceAnalyze.setKeyCount(sum);
+					admCategoryAudienceAnalyze.setCreateDate(new Date());
+					admCategoryAudienceAnalyze.setUpdateDate(new Date());
+					admCategoryAudienceAnalyzeService.save(admCategoryAudienceAnalyze);	
 					
 					//insert 大分類 mysql
 //					AdmCategoryGroupAnalyze admCategoryGroupAnalyze = new AdmCategoryGroupAnalyze();
@@ -362,6 +402,18 @@ public class MapReduceMongoJob {
 //					log.info(">>>>> reduce sum: " + sum);
 //					log.info(">>>>> 小分類: " + key + " : " + sum);
 					context.write(key, new Text(String.valueOf(sum)));
+					//insert mysql
+					mysqlColumnStr=key.toString().trim().split("_");
+					AdmCategoryAudienceAnalyze admCategoryAudienceAnalyze = new AdmCategoryAudienceAnalyze();
+					admCategoryAudienceAnalyze.setRecordDate(new Date());
+					admCategoryAudienceAnalyze.setKeyId(mysqlColumnStr[3]);
+					admCategoryAudienceAnalyze.setKeyType(mysqlColumnStr[0]);
+					admCategoryAudienceAnalyze.setUserType(mysqlColumnStr[1]);
+					admCategoryAudienceAnalyze.setSource(mysqlColumnStr[2]);
+					admCategoryAudienceAnalyze.setKeyCount(sum);
+					admCategoryAudienceAnalyze.setCreateDate(new Date());
+					admCategoryAudienceAnalyze.setUpdateDate(new Date());
+					admCategoryAudienceAnalyzeService.save(admCategoryAudienceAnalyze);	
 					
 					//insert 小分類 mysql
 //					AdmCategoryAnalyze admCategoryAnalyze = new AdmCategoryAnalyze();
@@ -405,7 +457,7 @@ public class MapReduceMongoJob {
 		Path out = new Path("/home/webuser/alex/mongo");
 		FileOutputFormat.setOutputPath(job, out);
 		job.setJarByClass(MapReduceMongoJob.class);
-		job.setMapperClass(ReadWeblogsFromMongo.class);
+		job.setMapperClass(MyMapper.class);
 		job.setReducerClass(MyReducer.class);
 
 		job.setMapOutputKeyClass(Text.class);
@@ -418,6 +470,6 @@ public class MapReduceMongoJob {
 		job.setOutputFormatClass(TextOutputFormat.class);
 		job.setNumReduceTasks(1);
 		System.exit(job.waitForCompletion(true) ? 0 : 1);
-//		new ReadWeblogsFromMongo().setup(null);
+//		new MyMapper().setup(null);
 	}
 }
