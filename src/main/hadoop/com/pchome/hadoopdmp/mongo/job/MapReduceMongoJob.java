@@ -280,6 +280,9 @@ public class MapReduceMongoJob {
 		
 		private static String[] mysqlColumnStr = null;
 		
+		private static String[] reduceKeyArray = null;
+		
+		
 		
 		public void setup(Context context) {
 			try {
@@ -308,14 +311,12 @@ public class MapReduceMongoJob {
 						keyName="null";
 					}
 				}
-				reduceKeyStr="_"+keyName;
-//				reduceKeyArray=reduceKeyStr.trim().split("_");
-				
-				log.info(">>>>>> reduceKeyStr : "+reduceKeyStr);
-//				log.info(">>>>>> reduceKeyArray : "+Arrays.toString(reduceKeyArray));
+				reduceKeyStr=reduceKeyStr+"_"+keyName.trim();
+				reduceKeyArray=reduceKeyStr.split("_");
+				String key_type=reduceKeyArray[0].trim();//受眾類型 1:小分類2:大分類3:性別4:年齡
 				
 				//輸出每日大小分類對照表
-				if (StringUtils.equals("categoryMap", key.toString().trim())) {
+				if (StringUtils.equals("categoryMap", key_type)) {
 					String categoryMap = "";
 					for (Text text : values) {
 						categoryMap = text.toString();
@@ -325,38 +326,38 @@ public class MapReduceMongoJob {
 				
 				
 				//性別 ex : 3_uuid_24h_M(受眾類型_會員型態_來源_性別_key中文name)
-				if (StringUtils.equals("3", key.toString().split("_")[0].trim())){
+				if (StringUtils.equals("3",key_type)){
 					int sum = 0;
 					for (Text text : values) {
 						sum = sum + 1;
 					}
-					context.write(new Text(key), new Text(String.valueOf(sum)));
-					insertMysqlAudienceTable(key.toString(),sum);
+					context.write(new Text(reduceKeyStr), new Text(String.valueOf(sum)));
+					insertMysqlAudienceTable(reduceKeyStr.toString(),sum);
 						
 				}
 				
 				
 				//年齡 ex :4_uuid_24h_age01to10(受眾類型_會員型態_來源_年齡範圍)
-				if (StringUtils.equals("4", key.toString().split("_")[0].trim())){
+				if (StringUtils.equals("4", key_type)){
 					int sum = 0;
 					for (Text text : values) {
 						sum = sum + 1;
 					}
-					context.write(new Text(key), new Text(String.valueOf(sum)));
-					insertMysqlAudienceTable(key.toString(),sum);
+					context.write(new Text(reduceKeyStr), new Text(String.valueOf(sum)));
+					insertMysqlAudienceTable(reduceKeyStr.toString(),sum);
 				}
 				
 				
 				//大分類KEY : 2_uuid_24h_大分類代號   
 				data.clear();
-				if (StringUtils.equals("2", key.toString().split("_")[0].trim())) {
+				if (StringUtils.equals("2", key_type)) {
 					int sum = 0;
 					for (Text text : values) {
 						data.add(text.toString());
 					}
 					sum =data.size();
-					context.write(new Text(key), new Text(String.valueOf(sum)));
-					insertMysqlAudienceTable(key.toString(),sum);
+					context.write(new Text(reduceKeyStr), new Text(String.valueOf(sum)));
+					insertMysqlAudienceTable(reduceKeyStr.toString(),sum);
 				} 
 
 				
@@ -366,8 +367,8 @@ public class MapReduceMongoJob {
 					for (Text text : values) {
 						sum = sum + 1;
 					}
-					context.write(new Text(key), new Text(String.valueOf(sum)));
-					insertMysqlAudienceTable(key.toString(),sum);
+					context.write(new Text(reduceKeyStr), new Text(String.valueOf(sum)));
+					insertMysqlAudienceTable(reduceKeyStr.toString(),sum);
 				}
 				
 				
