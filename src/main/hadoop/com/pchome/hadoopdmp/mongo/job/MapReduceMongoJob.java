@@ -74,11 +74,12 @@ public class MapReduceMongoJob {
 						}
 					}
 					if(StringUtils.isNotBlank(key)){
-						categoryMap.put(key, admCategoryGroup.getGroupId());//+"_TOTAL"
+						categoryMap.put(key, admCategoryGroup.getGroupId());
 					}
 				}
 			
 				log.info(">>>>>> categoryMap:"+categoryMap);
+				context.write(new Text("categoryMap"), new Text(categoryMap.toString()));
 			} catch (Exception e) {
 				log.error(">>>>> mapper e : " + e.getMessage());
 			}
@@ -262,9 +263,6 @@ public class MapReduceMongoJob {
 						log.info(">>>>>> parentCategoryMapKey : "+childCategoryMapKey);
 						context.write(new Text(childCategoryMapKey), new Text("1"));
 					}
-//					String categoryKey = ad_class + "_" + userType.toUpperCase();
-//					//(000123_uuid,<"","","">
-//					context.write(new Text(categoryKey), new Text("1"));
 				}
 				
 			} catch (Exception e) {
@@ -272,6 +270,7 @@ public class MapReduceMongoJob {
 			}
 		}
 	}
+	
 
 	public static class MyReducer extends Reducer<Text, Text, Text, Text> {
 		
@@ -353,10 +352,6 @@ public class MapReduceMongoJob {
 				data.clear();
 				if (StringUtils.equals("2", key.toString().split("_")[0])) {
 					
-//					String [] array = key.toString().split("_");
-//					String parentKey = array[0];
-//					String userType = array[2];
-					
 					int sum = 0;
 					for (Text text : values) {
 						data.add(text.toString());
@@ -380,15 +375,6 @@ public class MapReduceMongoJob {
 					admCategoryAudienceAnalyze.setCreateDate(new Date());
 					admCategoryAudienceAnalyze.setUpdateDate(new Date());
 					admCategoryAudienceAnalyzeService.save(admCategoryAudienceAnalyze);	
-					
-					//insert 大分類 mysql
-//					AdmCategoryGroupAnalyze admCategoryGroupAnalyze = new AdmCategoryGroupAnalyze();
-//					admCategoryGroupAnalyze.setAdClassCountByHistory(data.size());
-//					admCategoryGroupAnalyze.setAdGroupId(parentKey);
-//					admCategoryGroupAnalyze.setUserIdType(userType);
-//					admCategoryGroupAnalyze.setCreateDate(new Date());
-//					admGroupAnalyzeService.save(admCategoryGroupAnalyze);					
-					
 				} 
 
 				
@@ -414,29 +400,17 @@ public class MapReduceMongoJob {
 					admCategoryAudienceAnalyze.setCreateDate(new Date());
 					admCategoryAudienceAnalyze.setUpdateDate(new Date());
 					admCategoryAudienceAnalyzeService.save(admCategoryAudienceAnalyze);	
-					
-					//insert 小分類 mysql
-//					AdmCategoryAnalyze admCategoryAnalyze = new AdmCategoryAnalyze();
-//					admCategoryAnalyze.setRecodeDate(new Date());
-//					admCategoryAnalyze.setAdClass(key.toString().split("_")[0]);
-//					admCategoryAnalyze.setUserIdType(key.toString().split("_")[1]);
-//					admCategoryAnalyze.setAdClassCountByDay(sum);
-//					admCategoryAnalyze.setCreateDate(new Date());
-//					admCategoryAnalyze.setUdpateDate(new Date());
-//					admCategoryAnalyze.setSexManCount(0);
-//					admCategoryAnalyze.setSexWomanCount(0);
-//					admCategoryAnalyze.setAgeRangeCount1to10(0);
-//					admCategoryAnalyze.setAgeRangeCount11to20(0);
-//					admCategoryAnalyze.setAgeRangeCount21to30(0);
-//					admCategoryAnalyze.setAgeRangeCount31to40(0);
-//					admCategoryAnalyze.setAgeRangeCount41to50(0);
-//					admCategoryAnalyze.setAgeRangeCount51to60(0);
-//					admCategoryAnalyze.setAgeRangeCount61to70(0);
-//					admCategoryAnalyze.setAgeRangeCount71to80(0);
-//					admCategoryAnalyze.setAgeRangeCount81to90(0);
-//					admCategoryAnalyze.setAgeRangeCount91to100(0);
-//					admCategoryAnalyzeService.save(admCategoryAnalyze);				
 				}
+				
+				//輸出每日大小分類對照表
+				if (StringUtils.equals("categoryMap", key.toString().trim())) {
+					String categoryMap = "";
+					for (Text text : values) {
+						categoryMap = text.toString();
+					}
+					context.write(new Text(categoryMap), new Text(""));
+				}
+				
 			} catch (Exception e) {
 				log.error(">>>>> Reducer e : " + e.getMessage());
 			}
