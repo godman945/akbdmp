@@ -342,7 +342,7 @@ public class MapReduceMongoJob {
 		String date = sdFormat.format(current);
 
 		final Configuration conf = new Configuration();
-		MongoConfigUtil.setInputURI(conf, "mongodb://192.168.1.37:27017/pcbappdev.class_count_test");
+		MongoConfigUtil.setInputURI(conf, "mongodb://192.168.1.37:27017/pcbappdev.class_count");
 		// conf.set("mongo.input.query",
 		// "{'update_date':{'$gt':{'$date':'2017-06-01 23:59:59'}}}");
 		// conf.set("mongo.input.query", "{'update_date':{'$gt':'2017-06-19
