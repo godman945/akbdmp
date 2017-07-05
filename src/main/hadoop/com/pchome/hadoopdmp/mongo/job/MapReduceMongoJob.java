@@ -77,7 +77,7 @@ public class MapReduceMongoJob {
 					}
 				}
 
-//				log.info(">>>>>> categoryMap:" + categoryMap);
+				log.info(">>>>>> map setup categoryMap:" + categoryMap);
 				
 				//output每日大小分類對照表至hdfs
 				context.write(new Text("Daily_Category_Comparison_Table"), new Text(categoryMap.toString()));
@@ -251,6 +251,7 @@ public class MapReduceMongoJob {
 					for (Text text : values) {
 						categoryMap = text.toString();
 					}
+					log.info(">>>>>> reduce categoryMap : " + categoryMap.toString());
 					context.write(new Text(categoryMap), new Text(""));
 				}
 				
