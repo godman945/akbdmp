@@ -19,7 +19,7 @@ public enum CategoryComparisonTableEnum {
 	type0000015("age71to80", "年齡 71 ~ 80"),
 	type0000016("age81to90", "年齡 81 ~ 90"),
 	type0000017("age91to100", "年齡 91 ~ 100"),
-	type0000018("ageover100", "年齡 100以上");
+	type0000018("ageover100", "年齡超過 100");
 	
 	private final String key;
 	private final String name;
