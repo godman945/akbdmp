@@ -262,7 +262,7 @@ public class CategoryLogDriver {
 			return;
 		}
 
-		System.setProperty("spring.profiles.active", "local");
+		System.setProperty("spring.profiles.active", "stg");
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 		CategoryLogDriver CategoryDriver = (CategoryLogDriver) ctx.getBean(CategoryLogDriver.class);
 

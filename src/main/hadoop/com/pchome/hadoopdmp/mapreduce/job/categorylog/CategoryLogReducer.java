@@ -60,7 +60,7 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		try {
-			System.setProperty("spring.profiles.active", "prd");
+			System.setProperty("spring.profiles.active", "stg");
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 
 			// this.mongoOperations = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
@@ -142,7 +142,7 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	}
 
 	// public static void main(String[] args) throws Exception {
-	// System.setProperty("spring.profiles.active", "prd");
+	// System.setProperty("spring.profiles.active", "stg");
 	// ApplicationContext ctx = new
 	// AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 	// CategoryLogReducer categoryLogReducer =
