@@ -90,7 +90,7 @@ public class MapReduceMongoJob {
 	    List<AdmCategoryAudienceAnalyze> todayRecordList= (List<AdmCategoryAudienceAnalyze>)admCategoryAudienceAnalyzeService.findHql(query, queryParam);
 	    
 	    log.info(">>>>>> hibername delete all before : " + todayRecordList.size());
-//	    admCategoryAudienceAnalyzeService.deleteAll(todayRecordList);
+	    admCategoryAudienceAnalyzeService.deleteAll(todayRecordList);
 	    List<AdmCategoryAudienceAnalyze> allList=admCategoryAudienceAnalyzeService.loadAll();
 	    log.info(">>>>>> hibername delete all List size after : " + allList.size());
 		
