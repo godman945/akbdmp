@@ -23,6 +23,7 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.bson.BSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Scope;
@@ -43,8 +44,91 @@ import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig
 public class MapReduceMongoJob {
 
 	private static Log log = LogFactory.getLog("MapReduceMongoJob");
-
 	
+	@Autowired
+	private IAdmCategoryAudienceAnalyzeService admCategoryAudienceAnalyzeService;
+	
+	
+	public static void main(String[] args) throws Exception {
+		/*test
+//		List<AdmCategoryAudienceAnalyze> list=admCategoryAudienceAnalyzeService.loadAll();
+//		System.out.println("all size: "+list.size());
+//		
+//		AdmCategoryAudienceAnalyze admCategoryAudienceAnalyze = new AdmCategoryAudienceAnalyze();
+//		admCategoryAudienceAnalyze.setRecordDate(new Date());
+//		admCategoryAudienceAnalyze.setKeyId("test");
+//		admCategoryAudienceAnalyze.setKeyName("3C");
+//		admCategoryAudienceAnalyze.setKeyType("uuid");
+//		admCategoryAudienceAnalyze.setUserType("uuid");
+//		admCategoryAudienceAnalyze.setSource("24h");
+//		admCategoryAudienceAnalyze.setKeyCount(100);
+//		admCategoryAudienceAnalyze.setCreateDate(new Date());
+//		admCategoryAudienceAnalyze.setUpdateDate(new Date());
+//		admCategoryAudienceAnalyzeService.save(admCategoryAudienceAnalyze);
+//		
+//		List<AdmCategoryAudienceAnalyze> list=admCategoryAudienceAnalyzeService.loadAll();
+//		System.out.println("add size: "+list.size());
+//		*/
+		
+		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Date current = new Date();
+		String date = sdFormat.format(current);
+		
+		System.setProperty("spring.profiles.active", "stg");
+		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+		MapReduceMongoJob mapReduceMongoJob = ctx.getBean(MapReduceMongoJob.class);
+		mapReduceMongoJob.drive(date);
+	}
+	
+	public void drive(String date) throws Exception {
+		
+		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd");
+//		Date current = new Date();
+//		String date = sdFormat.format(current);
+	    Date today = sdFormat.parse(date);;
+
+	    //hibernate delete mysql today all record 
+		String query = " from AdmCategoryAudienceAnalyze where recordDate = ? ";
+	    Object[] queryParam = {today};//2017-07-05
+	    List<AdmCategoryAudienceAnalyze> todayRecordList= (List<AdmCategoryAudienceAnalyze>)admCategoryAudienceAnalyzeService.findHql(query, queryParam);
+	    
+	    log.info(">>>>>> hibername delete all before : " + todayRecordList.size());
+	    admCategoryAudienceAnalyzeService.deleteAll(todayRecordList);
+	    List<AdmCategoryAudienceAnalyze> allList=admCategoryAudienceAnalyzeService.loadAll();
+	    log.info(">>>>>> hibername delete all List size after : " + allList.size());
+		
+	    
+	    
+	    
+		final Configuration conf = new Configuration();
+		MongoConfigUtil.setInputURI(conf, "mongodb://192.168.1.37:27017/pcbappdev.class_count");
+		// conf.set("mongo.input.query",
+		// "{'update_date':{'$gt':{'$date':'2017-06-01 23:59:59'}}}");
+		// conf.set("mongo.input.query", "{'update_date':{'$gt':'2017-06-19
+		// 23:59:59'}}");
+		MongoConfigUtil.setCreateInputSplits(conf, false);
+
+		final Job job = new Job(conf, "AkbDmp_Category_Audience_Analyze_" + date);
+		Path out = new Path("/home/webuser/alex/mongo");
+		FileOutputFormat.setOutputPath(job, out);
+		job.setJarByClass(MapReduceMongoJob.class);
+		job.setMapperClass(MyMapper.class);
+		job.setReducerClass(MyReducer.class);
+
+		job.setMapOutputKeyClass(Text.class);
+		job.setMapOutputValueClass(Text.class);
+
+		job.setOutputKeyClass(Text.class);
+		job.setOutputValueClass(Text.class);
+
+		job.setInputFormatClass(MongoInputFormat.class);
+		job.setOutputFormatClass(TextOutputFormat.class);
+		job.setNumReduceTasks(1);
+		System.exit(job.waitForCompletion(true) ? 0 : 1);
+		
+	}
+	
+
 	
 	public static class MyMapper extends Mapper<Object, BSONObject, Text, Text> {
 
@@ -337,75 +421,4 @@ public class MapReduceMongoJob {
 
 	}
 
-	public static void main(String[] args) throws Exception {
-		/*test
-//		List<AdmCategoryAudienceAnalyze> list=admCategoryAudienceAnalyzeService.loadAll();
-//		System.out.println("all size: "+list.size());
-//		
-//		AdmCategoryAudienceAnalyze admCategoryAudienceAnalyze = new AdmCategoryAudienceAnalyze();
-//		admCategoryAudienceAnalyze.setRecordDate(new Date());
-//		admCategoryAudienceAnalyze.setKeyId("test");
-//		admCategoryAudienceAnalyze.setKeyName("3C");
-//		admCategoryAudienceAnalyze.setKeyType("uuid");
-//		admCategoryAudienceAnalyze.setUserType("uuid");
-//		admCategoryAudienceAnalyze.setSource("24h");
-//		admCategoryAudienceAnalyze.setKeyCount(100);
-//		admCategoryAudienceAnalyze.setCreateDate(new Date());
-//		admCategoryAudienceAnalyze.setUpdateDate(new Date());
-//		admCategoryAudienceAnalyzeService.save(admCategoryAudienceAnalyze);
-//		
-//		List<AdmCategoryAudienceAnalyze> list=admCategoryAudienceAnalyzeService.loadAll();
-//		System.out.println("add size: "+list.size());
-//		*/
-		
-		
-		
-//		System.setProperty("spring.profiles.active", "stg");
-//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-//		IAdmCategoryAudienceAnalyzeService admCategoryAudienceAnalyzeService = ctx.getBean(IAdmCategoryAudienceAnalyzeService.class);
-//
-		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd");
-		Date current = new Date();
-		String date = sdFormat.format(current);
-//	    Date today = sdFormat.parse(date);;
-//
-//	    //hibernate delete mysql today all record 
-//		String query = " from AdmCategoryAudienceAnalyze where recordDate = ? ";
-//	    Object[] queryParam = {today};//2017-07-05
-//	    List<AdmCategoryAudienceAnalyze> todayRecordList= (List<AdmCategoryAudienceAnalyze>)admCategoryAudienceAnalyzeService.findHql(query, queryParam);
-//	    
-//	    log.info(">>>>>> hibername delete all before : " + todayRecordList.size());
-//	    admCategoryAudienceAnalyzeService.deleteAll(todayRecordList);
-//	    List<AdmCategoryAudienceAnalyze> allList=admCategoryAudienceAnalyzeService.loadAll();
-//	    log.info(">>>>>> hibername delete all List size after : " + allList.size());
-		
-	    
-	    
-	    
-		final Configuration conf = new Configuration();
-		MongoConfigUtil.setInputURI(conf, "mongodb://192.168.1.37:27017/pcbappdev.class_count");
-		// conf.set("mongo.input.query",
-		// "{'update_date':{'$gt':{'$date':'2017-06-01 23:59:59'}}}");
-		// conf.set("mongo.input.query", "{'update_date':{'$gt':'2017-06-19
-		// 23:59:59'}}");
-		MongoConfigUtil.setCreateInputSplits(conf, false);
-
-		final Job job = new Job(conf, "AkbDmp_Category_Audience_Analyze_" + date);
-		Path out = new Path("/home/webuser/alex/mongo");
-		FileOutputFormat.setOutputPath(job, out);
-		job.setJarByClass(MapReduceMongoJob.class);
-		job.setMapperClass(MyMapper.class);
-		job.setReducerClass(MyReducer.class);
-
-		job.setMapOutputKeyClass(Text.class);
-		job.setMapOutputValueClass(Text.class);
-
-		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(Text.class);
-
-		job.setInputFormatClass(MongoInputFormat.class);
-		job.setOutputFormatClass(TextOutputFormat.class);
-		job.setNumReduceTasks(1);
-		System.exit(job.waitForCompletion(true) ? 0 : 1);
-	}
 }
