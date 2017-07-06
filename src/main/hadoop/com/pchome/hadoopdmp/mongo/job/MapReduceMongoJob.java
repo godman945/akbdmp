@@ -54,7 +54,7 @@ public class MapReduceMongoJob {
 		Date current = new Date();
 		String date = sdFormat.format(current);
 		
-		System.setProperty("spring.profiles.active", "local");
+		System.setProperty("spring.profiles.active", "stg");
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 		MapReduceMongoJob mapReduceMongoJob = ctx.getBean(MapReduceMongoJob.class);
 		mapReduceMongoJob.drive(date);
