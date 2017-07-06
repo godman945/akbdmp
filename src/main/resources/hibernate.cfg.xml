@@ -8,7 +8,7 @@
         <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
         <property name="hibernate.connection.url">jdbc:mysql://dmpstg.mypchome.com.tw:3306/dmp</property>
         <property name="hibernate.connection.username">webuser</property>
-        <property name="hibernate.connection.password">7e5nL0H</property>
+        <property name="hibernate.connection.password">hadoop</property>
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
     </session-factory>
 </hibernate-configuration>
