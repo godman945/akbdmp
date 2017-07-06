@@ -338,7 +338,7 @@ public class MapReduceMongoJob {
 	}
 
 	public static void main(String[] args) throws Exception {
-		System.setProperty("spring.profiles.active", "local");
+		System.setProperty("spring.profiles.active", "stg");
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 		IAdmCategoryAudienceAnalyzeService admCategoryAudienceAnalyzeService = ctx.getBean(IAdmCategoryAudienceAnalyzeService.class);
 
