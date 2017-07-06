@@ -338,10 +338,7 @@ public class MapReduceMongoJob {
 	}
 
 	public static void main(String[] args) throws Exception {
-		System.setProperty("spring.profiles.active", "stg");
-		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-		IAdmCategoryAudienceAnalyzeService admCategoryAudienceAnalyzeService = ctx.getBean(IAdmCategoryAudienceAnalyzeService.class);
-
+		/*test
 //		List<AdmCategoryAudienceAnalyze> list=admCategoryAudienceAnalyzeService.loadAll();
 //		System.out.println("all size: "+list.size());
 //		
@@ -359,29 +356,32 @@ public class MapReduceMongoJob {
 //		
 //		List<AdmCategoryAudienceAnalyze> list=admCategoryAudienceAnalyzeService.loadAll();
 //		System.out.println("add size: "+list.size());
-//		
+//		*/
 		
 		
 		
+//		System.setProperty("spring.profiles.active", "stg");
+//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//		IAdmCategoryAudienceAnalyzeService admCategoryAudienceAnalyzeService = ctx.getBean(IAdmCategoryAudienceAnalyzeService.class);
+//
 		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd");
 		Date current = new Date();
 		String date = sdFormat.format(current);
-	    Date today = sdFormat.parse(date);;
+//	    Date today = sdFormat.parse(date);;
+//
+//	    //hibernate delete mysql today all record 
+//		String query = " from AdmCategoryAudienceAnalyze where recordDate = ? ";
+//	    Object[] queryParam = {today};//2017-07-05
+//	    List<AdmCategoryAudienceAnalyze> todayRecordList= (List<AdmCategoryAudienceAnalyze>)admCategoryAudienceAnalyzeService.findHql(query, queryParam);
 //	    
-	    //hibernate delete mysql today all record 
-		String query = " from AdmCategoryAudienceAnalyze where recordDate = ? ";
-	    Object[] queryParam = {today};//2017-07-05
-	    List<AdmCategoryAudienceAnalyze> todayRecordList= (List<AdmCategoryAudienceAnalyze>)admCategoryAudienceAnalyzeService.findHql(query, queryParam);
-	    
-	    log.info(">>>>>> hibername delete all before : " + todayRecordList.size());
-	    admCategoryAudienceAnalyzeService.deleteAll(todayRecordList);
-	    List<AdmCategoryAudienceAnalyze> allList=admCategoryAudienceAnalyzeService.loadAll();
-	    log.info(">>>>>> hibername delete all List size after : " + allList.size());
+//	    log.info(">>>>>> hibername delete all before : " + todayRecordList.size());
+//	    admCategoryAudienceAnalyzeService.deleteAll(todayRecordList);
+//	    List<AdmCategoryAudienceAnalyze> allList=admCategoryAudienceAnalyzeService.loadAll();
+//	    log.info(">>>>>> hibername delete all List size after : " + allList.size());
 		
 	    
 	    
 	    
-//
 		final Configuration conf = new Configuration();
 		MongoConfigUtil.setInputURI(conf, "mongodb://192.168.1.37:27017/pcbappdev.class_count");
 		// conf.set("mongo.input.query",
