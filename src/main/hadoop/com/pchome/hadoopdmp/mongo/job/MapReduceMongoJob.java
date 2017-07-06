@@ -48,9 +48,19 @@ public class MapReduceMongoJob {
 	@Autowired
 	private IAdmCategoryAudienceAnalyzeService admCategoryAudienceAnalyzeService;
 	
-	
+
 	public static void main(String[] args) throws Exception {
-		/*test
+		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Date current = new Date();
+		String date = sdFormat.format(current);
+		
+		System.setProperty("spring.profiles.active", "stg");
+		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+		MapReduceMongoJob mapReduceMongoJob = ctx.getBean(MapReduceMongoJob.class);
+		mapReduceMongoJob.drive(date);
+	}
+	
+	public void drive(String date) throws Exception {
 //		List<AdmCategoryAudienceAnalyze> list=admCategoryAudienceAnalyzeService.loadAll();
 //		System.out.println("all size: "+list.size());
 //		
@@ -66,25 +76,12 @@ public class MapReduceMongoJob {
 //		admCategoryAudienceAnalyze.setUpdateDate(new Date());
 //		admCategoryAudienceAnalyzeService.save(admCategoryAudienceAnalyze);
 //		
-//		List<AdmCategoryAudienceAnalyze> list=admCategoryAudienceAnalyzeService.loadAll();
-//		System.out.println("add size: "+list.size());
-//		*/
+//		List<AdmCategoryAudienceAnalyze> loadAll=admCategoryAudienceAnalyzeService.loadAll();
+//		System.out.println("add size: "+loadAll.size());
+		
+		
 		
 		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd");
-		Date current = new Date();
-		String date = sdFormat.format(current);
-		
-		System.setProperty("spring.profiles.active", "stg");
-		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-		MapReduceMongoJob mapReduceMongoJob = ctx.getBean(MapReduceMongoJob.class);
-		mapReduceMongoJob.drive(date);
-	}
-	
-	public void drive(String date) throws Exception {
-		
-		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd");
-//		Date current = new Date();
-//		String date = sdFormat.format(current);
 	    Date today = sdFormat.parse(date);;
 
 	    //hibernate delete mysql today all record 
