@@ -61,26 +61,6 @@ public class MapReduceMongoJob {
 	}
 	
 	public void drive(String date) throws Exception {
-//		List<AdmCategoryAudienceAnalyze> list=admCategoryAudienceAnalyzeService.loadAll();
-//		System.out.println("all size: "+list.size());
-//		
-//		AdmCategoryAudienceAnalyze admCategoryAudienceAnalyze = new AdmCategoryAudienceAnalyze();
-//		admCategoryAudienceAnalyze.setRecordDate(new Date());
-//		admCategoryAudienceAnalyze.setKeyId("test");
-//		admCategoryAudienceAnalyze.setKeyName("3C");
-//		admCategoryAudienceAnalyze.setKeyType("uuid");
-//		admCategoryAudienceAnalyze.setUserType("uuid");
-//		admCategoryAudienceAnalyze.setSource("24h");
-//		admCategoryAudienceAnalyze.setKeyCount(100);
-//		admCategoryAudienceAnalyze.setCreateDate(new Date());
-//		admCategoryAudienceAnalyze.setUpdateDate(new Date());
-//		admCategoryAudienceAnalyzeService.save(admCategoryAudienceAnalyze);
-//		
-//		List<AdmCategoryAudienceAnalyze> loadAll=admCategoryAudienceAnalyzeService.loadAll();
-//		System.out.println("add size: "+loadAll.size());
-		
-		
-		
 		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd");
 	    Date today = sdFormat.parse(date);;
 
@@ -88,13 +68,7 @@ public class MapReduceMongoJob {
 		String query = " from AdmCategoryAudienceAnalyze where recordDate = ? ";
 	    Object[] queryParam = {today};//2017-07-05
 	    List<AdmCategoryAudienceAnalyze> todayRecordList= (List<AdmCategoryAudienceAnalyze>)admCategoryAudienceAnalyzeService.findHql(query, queryParam);
-	    
-	    log.info(">>>>>> hibername delete all before : " + todayRecordList.size());
 	    admCategoryAudienceAnalyzeService.deleteAll(todayRecordList);
-	    List<AdmCategoryAudienceAnalyze> allList=admCategoryAudienceAnalyzeService.loadAll();
-	    log.info(">>>>>> hibername delete all List size after : " + allList.size());
-		
-	    
 	    
 	    
 		final Configuration conf = new Configuration();
