@@ -24,7 +24,7 @@ public abstract class BaseService<T, PK extends Serializable> implements IBaseSe
         return dao.loadAllSize();
     }
     
-    public List<T> findHql(String hql,Object[] value) {
+    public List<T> findHql(String hql, Object[] value) {
         return dao.findHql(hql, value);
     }
 
@@ -53,6 +53,10 @@ public abstract class BaseService<T, PK extends Serializable> implements IBaseSe
         dao.delete(entity);
     }
 
+    public void deleteAll(List<T> entities) {
+        dao.deleteAll(entities);
+    }
+    
     public IBaseDAO<T, PK> getDao() {
         return dao;
     }

@@ -24,4 +24,6 @@ public interface IBaseService<T, PK extends Serializable> {
     public void saveOrUpdate(T entity);
 
     public void delete(T entity);
+    
+    public void deleteAll(List<T> entities);
 }

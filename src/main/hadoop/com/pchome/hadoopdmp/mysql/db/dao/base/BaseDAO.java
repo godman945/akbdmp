@@ -28,6 +28,7 @@ public abstract class BaseDAO<T, PK extends Serializable> extends HibernateDaoSu
     	super.setSessionFactory(sessionFactory);
 	 } 
     
+    
     private Class<T> clazz;
 
     @SuppressWarnings("unchecked")
@@ -90,7 +91,14 @@ public abstract class BaseDAO<T, PK extends Serializable> extends HibernateDaoSu
         getHibernateTemplate().flush();
         getHibernateTemplate().clear();
     }
-
+    
+    public void deleteAll(List<T> entities) {
+    	getHibernateTemplate().getSessionFactory().getCurrentSession().setFlushMode(FlushMode.AUTO);
+        getHibernateTemplate().deleteAll(entities);
+        getHibernateTemplate().flush();
+        getHibernateTemplate().clear();
+    }
+    
     protected int nextVal(final String sql) {
         BigInteger nextval = getHibernateTemplate().execute(
             new HibernateCallback<BigInteger>() {

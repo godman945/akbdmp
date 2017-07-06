@@ -338,9 +338,22 @@ public class MapReduceMongoJob {
 	}
 
 	public static void main(String[] args) throws Exception {
+		System.setProperty("spring.profiles.active", "stg");
+		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+		IAdmCategoryAudienceAnalyzeService admCategoryAudienceAnalyzeService = ctx.getBean(IAdmCategoryAudienceAnalyzeService.class);
+
+		
 		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd");
 		Date current = new Date();
 		String date = sdFormat.format(current);
+	    Date today = sdFormat.parse(date);;
+	    
+	    //hibernate delete mysql today all record 
+		String query = " from AdmCategoryAudienceAnalyze where recordDate = ? ";
+	    Object[] queryParam = {today};//2017-07-05
+	    List<AdmCategoryAudienceAnalyze> list= (List<AdmCategoryAudienceAnalyze>)admCategoryAudienceAnalyzeService.findHql(query, queryParam);
+	    admCategoryAudienceAnalyzeService.deleteAll(list);
+		
 
 		final Configuration conf = new Configuration();
 		MongoConfigUtil.setInputURI(conf, "mongodb://192.168.1.37:27017/pcbappdev.class_count");
