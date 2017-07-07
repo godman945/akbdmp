@@ -14,16 +14,19 @@ import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.util.Log4jConfigListener;
 
 import com.pchome.akbdmp.spring.config.bean.allbeanscan.SpringAllConfig;
 import com.pchome.akbdmp.spring.config.bean.aop.AopConfig;
+import com.pchome.akbdmp.spring.config.bean.freemarker.FreeMarkerConfig;
 import com.pchome.akbdmp.spring.config.bean.multipart.MultipartConfig;
+import com.pchome.akbdmp.spring.config.bean.tiles.TilesConfig;
 import com.pchome.akbdmp.spring.config.restful.restfulscan.DispatcherConfig;
 import com.pchome.filter.session.DisableUrlSessionFilter;
 
 @SuppressWarnings("deprecation")
-public class SpringWebAppInitializer implements WebApplicationInitializer {
+public class SpringWebAppInitializer extends WebMvcConfigurerAdapter implements WebApplicationInitializer {
 
 	public void onStartup(ServletContext servletContext) throws ServletException {
 		//log4j setup
@@ -42,7 +45,11 @@ public class SpringWebAppInitializer implements WebApplicationInitializer {
 		rootContext.register(MultipartConfig.class);
 		//註冊AOP攔截器
         rootContext.register(AopConfig.class);
-		
+    	//註冊freemarker
+        rootContext.register(FreeMarkerConfig.class);
+     	//註冊tiles
+        rootContext.register(TilesConfig.class);
+        
 		//頁面相關設定
 		FilterRegistration.Dynamic filterRegistration = servletContext.addFilter("encodingFilter", CharacterEncodingFilter.class);
 		filterRegistration.setInitParameter("encoding", String.valueOf(StandardCharsets.UTF_8));
@@ -59,10 +66,9 @@ public class SpringWebAppInitializer implements WebApplicationInitializer {
 		// rest setup
 		ServletRegistration.Dynamic dispatcher = servletContext.addServlet("AkbDmp", new DispatcherServlet(rootContext));
 		dispatcher.setLoadOnStartup(1);
-		dispatcher.addMapping("/*");
-		
+		dispatcher.addMapping("/");
 		//spring setup
 		servletContext.addListener(new ContextLoaderListener(rootContext));
-		
+	
 	}
 }

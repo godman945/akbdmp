@@ -159,7 +159,7 @@ public class AdLogClassCount {
 	
 	public static void main(String[] args) {
 		try {
-			System.setProperty("spring.profiles.active", "prd");
+			System.setProperty("spring.profiles.active", "stg");
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			AdLogClassCount adLogUrlThread = ctx.getBean(AdLogClassCount.class);
 			adLogUrlThread.test();

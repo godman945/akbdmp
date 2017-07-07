@@ -1,4 +1,4 @@
-package com.pchome.akbdmp.spring.config.freemarker;
+package com.pchome.akbdmp.spring.config.bean.freemarker;
 
 import javax.servlet.ServletException;
 

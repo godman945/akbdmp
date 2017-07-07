@@ -1,0 +1,42 @@
+body {
+	font-family: Arial, Verdana, sans-serif;
+	background-color: aliceblue;
+}
+
+.header, .footer, .leftPane, .rightPane {
+	
+}
+
+.header, .main, .footer {
+	color: #665544;
+	margin: 0px auto;
+	clear: both;
+	display:flex;
+}
+
+.leftPane, .rightPane {
+	float: left;
+	height: 80%;
+	
+}
+
+.leftPane {
+	
+}
+
+.rightPane {
+	width:96%;
+}
+
+.leftMenu {
+	list-style: none;
+	padding: 0;
+	margin: 10px;
+	width:55px;
+}
+
+.error-message {
+	margin: 4px 0 0 0;
+	padding: 0;
+	color: red;
+}

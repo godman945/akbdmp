@@ -137,7 +137,7 @@ public class TestRun {
 			System.setProperty("spring.profiles.active", "local");
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			TestRun TestRun = (TestRun) ctx.getBean(TestRun.class);
-//			TestRun.hibernateDbTest();
+			TestRun.hibernateDbTest();
 //			TestRun.listTest();
 //			TestRun.hibernateDbTest2();
 //			TestRun.hibernateDbTest3();
