@@ -6,13 +6,13 @@ $(document).ready(function () {
 		var test = localStorage.getItem("pchome_dmp_adm");
 		console.log(test);
 		$.ajax({
-			url : "http://localhost:8080/AkbDmp/index.html",
+			url : "http://dmpstg.mypchome.com.tw/AkbDmp/index.html",
 			type : 'GET',
 			data : {
 				'localStorage' : test
 			},
 			success : function(obj) {
-				window.location.href='http://localhost:8080/AkbDmp/index.html';
+				window.location.href='http://dmpstg.mypchome.com.tw/AkbDmp/index.html';
 			},
 			error : function(e) {
 				console.log("error");
@@ -36,7 +36,7 @@ function loginSubmit(){
 	}else{
 		var result = null;
 		$.ajax({
-			url : "http://localhost:8080/AkbDmp/checklogin",
+			url : "http://dmpstg.mypchome.com.tw/AkbDmp/checklogin",
 			type : 'POST',
 			data : {
 				'account' : $("#account").val(),
