@@ -6,7 +6,7 @@ $(document).ready(function () {
 
 function loginOut(){
 	localStorage.removeItem("pchome_dmp_adm");
-	window.location.href='http://localhost:8080/AkbDmp/login.html';
+	window.location.href='http://dmpstg/AkbDmp/login.html';
 }
 
 function errMsg(){
