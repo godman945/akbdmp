@@ -4,6 +4,8 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,11 +16,14 @@ import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import com.pchome.akbdmp.adm.call.index.controller.AdmIndexController;
 
 @Configuration
 @EnableTransactionManagement
 public class HibernetConfig {
 
+	Log log = LogFactory.getLog(HibernetConfig.class);
+	
 	@Value("${jdbc.driverClass}")
 	private String driverClass;
 	
@@ -68,6 +73,12 @@ public class HibernetConfig {
 			dataSource.setIdleConnectionTestPeriod(idleConnectionTestPeriod);
 			dataSource.setAcquireRetryAttempts(acquireRetryAttempts);
 
+			
+			
+			log.info(driverClass);
+			log.info(userName);
+			log.info(userPassword);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
