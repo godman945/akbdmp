@@ -74,7 +74,7 @@ public class HibernetConfig {
 			dataSource.setAcquireRetryAttempts(acquireRetryAttempts);
 
 			
-			
+			log.info(dbUrl);
 			log.info(driverClass);
 			log.info(userName);
 			log.info(userPassword);
