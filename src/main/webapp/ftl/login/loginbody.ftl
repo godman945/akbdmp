@@ -1,6 +1,6 @@
  <#ftl encoding='UTF-8'/>
  <h2>DMP後台登入</h2>
-    <div class="easyui-panel" title="Register" style="width:100%;max-width:400px;margin-left:30%;">
+    <div  title="" style="width:100%;max-width:400px;margin-left:30%;">
         <div style="margin-bottom:20px">
             <label for="account" class="label-top">帳號:</label>
             <input id="account" class="easyui-validatebox tb" data-options="required:true,validateOnCreate:false,validateOnBlur:true" style="width:500px;">

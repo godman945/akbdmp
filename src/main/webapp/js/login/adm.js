@@ -5,10 +5,36 @@ $(document).ready(function () {
 	    	loginSubmit();
 	    }
 	});
-
+	
+	
+	$("#tt span").on("click", function(){
+		var treeUl = $(this).parent().parent().parent();
+		if($(treeUl).attr('style') == 'display:block'){
+//			console.log($(treeUl).attr('style'));
+//			$(treeUl).attr('style','display:none');
+//			console.log($(this).attr('class'));
+//			console.log("SSS");
+		}else{
+//			$(treeUl).attr('style','display:block');
+		}
+//		
+//		var treeDiv = $(this).parent().parent().parent();
+//		
+//		
+//		if('display:block' == $(treeDiv).attr('style')){
+//			
+////			$(treeDiv).attr('display','none');
+//		}
+	});
+	
+	
+	
+	
+	
+	
+	
+	
 });
-
-
 
 function loginOut(){
 	$.ajax({
@@ -78,3 +104,16 @@ function loginSubmit(){
 function errMsg(){
 	$("#errMsg").remove();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

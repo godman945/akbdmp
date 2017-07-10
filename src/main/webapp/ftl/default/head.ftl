@@ -7,16 +7,14 @@
 <title>DMP 後台中心</title>
 
 <script src="../js/easyui/jquery.min.js"></script>
+<script src="../js/easyui/jquery.easyui.min.js"></script>
 <script src="../js/login/adm.js"></script>
-<script src="../js/easyui/prettify.js"></script>
-
-
 
 
 <!--
+<script src="../js/easyui/prettify.js"></script>
 <script src="../js/easyui/easyloader.js"></script>
 <script src="../js/easyui/jquery.parser.js"></script>
-<script src="../js/easyui/jquery.easyui.min.js"></script>
 <script src="../js/easyui/datagrid-bufferview.js"></script>
 <script src="../js/easyui/datagrid-detailview.js"></script>
 <script src="../js/easyui/datagrid-groupview.js"></script>

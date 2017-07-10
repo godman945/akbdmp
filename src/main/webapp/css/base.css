@@ -21,11 +21,11 @@ body {
 }
 
 .leftPane {
-	
+	padding-top:20px;
 }
 
 .rightPane {
-	width:96%;
+	width:100%;
 }
 
 .leftMenu {
