@@ -1,7 +1,7 @@
 <#ftl encoding='UTF-8'/>
 <div class="panel panel-htop" style="display: block;">
 <div id="demo" data-options="href:'../../easyui/demo/panel/basic.html',border:false,onLoad:onLoad" style="padding: 20px; overflow: auto;  min-height: 350px;" title="" class="panel-body panel-body-noheader panel-body-noborder">
-	<div class="panel panel-htop" style="display: block; width: 92%;"><div class="panel-header" ><div class="panel-title">樣版</div><div class="panel-tool"></div></div><div id="p" class="easyui-panel panel-body" title="" style="padding: 10px;  height: 100%;">
+	<div class="panel panel-htop" style="display: block;"><div class="panel-header" ><div class="panel-title">樣版</div><div class="panel-tool"></div></div><div id="p" class="easyui-panel panel-body" title="" style="padding: 10px;  height: 100%;">
 	
 	
 		<div>

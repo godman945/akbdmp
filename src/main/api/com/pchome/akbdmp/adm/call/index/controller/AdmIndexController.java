@@ -1,9 +1,11 @@
 package com.pchome.akbdmp.adm.call.index.controller;
 
-import java.util.ArrayList;
+import java.net.URLEncoder;
 import java.util.List;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -43,39 +45,45 @@ public class AdmIndexController extends BaseController {
 	@Autowired
 	private IAdmCategoryAudienceAnalyzeService admCategoryAudienceAnalyzeService;
 	
+	
+	
 	// @CrossOrigin(origins = {"http://pcbwebstg.pchome.com.tw"})
-	@RequestMapping(value = "/login.html", method = RequestMethod.GET)
-	public ModelAndView admLogin(HttpServletRequest request, ModelAndView modelAndView,
+	@RequestMapping(value = "/adm/index", method = RequestMethod.GET)
+	public ModelAndView dmpIndex(
+			HttpServletRequest request, 
+			ModelAndView modelAndView,
 			@CookieValue(value = "pchome_dmp_adm", required = false, defaultValue = "") String dmpAdmCookie,
-			@RequestParam(defaultValue = "", required = false) String localStorage) {
-		JSONObject result = new JSONObject();
+			@RequestParam(defaultValue = "", required = false) String localStorage
+			) {
 		try {
-			if (StringUtils.isNotBlank(localStorage)) {
-				String loginInfo = new String((new BASE64Decoder()).decodeBuffer(localStorage));
+			if (StringUtils.isNotBlank(dmpAdmCookie)) {
+				String loginInfo = new String((new BASE64Decoder()).decodeBuffer(dmpAdmCookie));
 				String[] user = loginInfo.split("_");
 				boolean flag = admUserService.checkUser(user[0], user[1]);
 				if (flag) {
-					ModelAndView modelAndView2 = new ModelAndView("redirect:/index.html");
-					return modelAndView2;
+					modelAndView = new ModelAndView("forward:/index.html");
+					modelAndView.addObject("login", "false");
+					return modelAndView;
+				}else{
+					modelAndView.setViewName("login");
+					modelAndView.addObject("login", "false");
+					return modelAndView;
 				}
-			}else{
-				modelAndView.setViewName("login");
-				modelAndView.addObject("login", "false");
 			}
-
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		modelAndView.setViewName("login");
+		modelAndView.addObject("login", "false");
 		return modelAndView;
 	}
-
+	
+	
 	@RequestMapping(value = "/index.html", method = RequestMethod.GET)
 	public ModelAndView index(HttpServletRequest request, ModelAndView modelAndView,
 			@CookieValue(value = "pchome_dmp_adm", required = false, defaultValue = "") String dmpAdmCookie,
 			@RequestParam(defaultValue = "", required = false) String localStorage) {
 		try {
-			
 			List<AdmCategoryAudienceAnalyze> admCategoryAudienceAnalyzeList = admCategoryAudienceAnalyzeService.loadAll();
 			List<AdmMenu> admMenuList = admMenuService.loadAll();
 			modelAndView.addObject("admMenuList", admMenuList);
@@ -91,12 +99,16 @@ public class AdmIndexController extends BaseController {
 		modelAndView.addObject("login", "false");
 		return modelAndView;
 	}
-
-	// @CrossOrigin(origins = {"http://pcbwebstg.pchome.com.tw"})
-	@RequestMapping(value = "/checklogin", method = RequestMethod.POST)
-	public String checkLogin(HttpServletRequest request, ModelAndView modelAndView,
+	
+	
+	@RequestMapping(value = "/adm/userlogin", method = RequestMethod.POST)
+	public String dmpUserlogin(
+			HttpServletRequest request, 
+			HttpServletResponse response,
+			ModelAndView modelAndView,
 			@RequestParam(defaultValue = "", required = false) String account,
-			@RequestParam(defaultValue = "", required = false) String password) {
+			@RequestParam(defaultValue = "", required = false) String password
+			) {
 		JSONObject result = new JSONObject();
 		try {
 			boolean flag = admUserService.checkUser(account, password);
@@ -105,6 +117,13 @@ public class AdmIndexController extends BaseController {
 				result.put("result", "OK");
 				result.put("msg", data);
 				result.put("url", "index.html");
+				log.info(">>>>>> account:"+account);
+				log.info(">>>>>> password:"+password);
+				log.info(">>>>>> write cookie:"+data);
+				log.info(">>>>>> write cookie time:"+60*60);
+				Cookie cookie = new Cookie("pchome_dmp_adm",URLEncoder.encode(data, "UTF-8"));
+				cookie.setMaxAge(60*60);
+				response.addCookie(cookie);
 				return result.toString();
 			} else {
 				result.put("result", "FAIL");
@@ -119,33 +138,30 @@ public class AdmIndexController extends BaseController {
 		}
 	}
 	
-	
-	
-	
-	@RequestMapping(value = "/test.html", method = RequestMethod.POST)
-	public ModelAndView test(HttpServletRequest request, ModelAndView modelAndView,
-			@RequestParam(defaultValue = "", required = false) String localStorage
-		) {
+	@RequestMapping(value = "/adm/userlogout", method = RequestMethod.POST)
+	public String dmpUserlogout(
+			@CookieValue(value = "pchome_dmp_adm", required = false, defaultValue = "") String dmpAdmCookie,
+			HttpServletRequest request,
+			HttpServletResponse response,
+			ModelAndView modelAndView
+			) {
+		JSONObject result = new JSONObject();
 		try {
-			if (StringUtils.isNotBlank(localStorage)) {
-				String loginInfo = new String((new BASE64Decoder()).decodeBuffer(localStorage));
-				String[] user = loginInfo.split("_");
-				boolean flag = admUserService.checkUser(user[0], user[1]);
-				if (true) {
-					ModelAndView modelAndView2 = new ModelAndView("redirect:/index.html");
-					return modelAndView2;
-				}
-			}
+			 
+			Cookie cookie = new Cookie("pchome_dmp_adm",null);
+			cookie.setMaxAge(0);
+			response.addCookie(cookie);
+			
+			result.put("result", "FAIL");
+			result.put("msg", "system error");
+			return result.toString();
+	        
 		} catch (Exception e) {
 			e.printStackTrace();
-			
+			result.put("result", "FAIL");
+			result.put("msg", "system error");
+			return result.toString();
 		}
-		modelAndView.setViewName("login");
-		modelAndView.addObject("login", "false");
-		return modelAndView;
 	}
-	
-	
-	
 	
 }

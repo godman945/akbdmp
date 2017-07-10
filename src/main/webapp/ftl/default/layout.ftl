@@ -13,10 +13,10 @@
   	<@tiles.insertAttribute name="menu" />
   </#if>
 </#if>
-<table width="99%" border="0" cellpadding="0" cellspacing="0">
+<table width="87.5%" border="0" cellpadding="0" cellspacing="0">
    <tbody>
    		<tr>
-           <td width="500px">
+           <td>
   				<div class="rightPane">
    					<@tiles.insertAttribute name="body" />
   				</div>
