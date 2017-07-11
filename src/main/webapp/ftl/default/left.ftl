@@ -5,8 +5,8 @@
     <li>
         <span>會員權限管理</span>
         <ul>
-            <li><span>新增IP</span></li>
-            <li><span>移除IP</span></li>
+            <li><span><a href="ipAdd.html">新增IP</a></span></li>
+            <li><span><a href="ipDelete.html">移除IP</a></span></li>
         </ul>
     </li>
     
@@ -16,7 +16,7 @@
             <li>
                 <span>DMP</span>
                 <ul>
-                    <li><span>會員點擊行為分析</span></li>
+                    <li><span><a href="behavior.html">會員點擊行為分析</a></span></li>
                 </ul>
             </li>
         </ul>

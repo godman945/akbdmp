@@ -5,7 +5,7 @@
                 	<tr>
 	                    <td>
 	                        <img src="../imgs/logo_pchome.gif" border="0"></a>
-	                        <img src="../imgs/logo2.gif" border="0"></a>
+	                        <img src="../imgs/logo.gif" border="0"></a>
 	                    </td>
 	                    <#if login?exists>
 						  <#assign login = "${login!}">

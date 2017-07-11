@@ -13,11 +13,15 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.pchome.akbdmp.api.call.base.controller.BaseController;
 import com.pchome.akbdmp.data.mysql.pojo.AdmCategoryAudienceAnalyze;
@@ -48,12 +52,13 @@ public class AdmIndexController extends BaseController {
 	
 	
 	// @CrossOrigin(origins = {"http://pcbwebstg.pchome.com.tw"})
+	@CrossOrigin(origins = {"http://pcbwebstg.pchome.com.tw"})
 	@RequestMapping(value = "/adm/index", method = RequestMethod.GET)
 	public ModelAndView dmpIndex(
 			HttpServletRequest request, 
 			ModelAndView modelAndView,
-			@CookieValue(value = "pchome_dmp_adm", required = false, defaultValue = "") String dmpAdmCookie,
-			@RequestParam(defaultValue = "", required = false) String localStorage
+			String action,
+			@CookieValue(value = "pchome_dmp_adm", required = false, defaultValue = "") String dmpAdmCookie
 			) {
 		try {
 			if (StringUtils.isNotBlank(dmpAdmCookie)) {
@@ -61,7 +66,7 @@ public class AdmIndexController extends BaseController {
 				String[] user = loginInfo.split("_");
 				boolean flag = admUserService.checkUser(user[0], user[1]);
 				if (flag) {
-					modelAndView = new ModelAndView("forward:/index.html");
+					modelAndView = new ModelAndView("forward:/adm/menu.html");
 					modelAndView.addObject("login", "false");
 					return modelAndView;
 				}else{
@@ -79,17 +84,13 @@ public class AdmIndexController extends BaseController {
 	}
 	
 	
-	@RequestMapping(value = "/index.html", method = RequestMethod.GET)
-	public ModelAndView index(HttpServletRequest request, ModelAndView modelAndView,
+	@RequestMapping(value = "/adm/menu.html", method = RequestMethod.GET)
+	public ModelAndView menu(HttpServletRequest request, ModelAndView modelAndView,
 			@CookieValue(value = "pchome_dmp_adm", required = false, defaultValue = "") String dmpAdmCookie,
-			@RequestParam(defaultValue = "", required = false) String localStorage) {
+			@RequestParam(defaultValue = "", required = false) String alex) {
 		try {
-			List<AdmCategoryAudienceAnalyze> admCategoryAudienceAnalyzeList = admCategoryAudienceAnalyzeService.loadAll();
-			List<AdmMenu> admMenuList = admMenuService.loadAll();
-			modelAndView.addObject("admMenuList", admMenuList);
-			modelAndView.addObject("admCategoryAudienceAnalyzeList", admCategoryAudienceAnalyzeList);
 			modelAndView.addObject("login", "true");
-			modelAndView.setViewName("homePage");
+			modelAndView.setViewName("menu");
 			return modelAndView;
 
 		} catch (Exception e) {
@@ -99,6 +100,70 @@ public class AdmIndexController extends BaseController {
 		modelAndView.addObject("login", "false");
 		return modelAndView;
 	}
+	
+	
+	@RequestMapping(value = "/adm/ipAdd.html", method = RequestMethod.GET)
+	public ModelAndView ipadd(HttpServletRequest request, ModelAndView modelAndView,
+			@CookieValue(value = "pchome_dmp_adm", required = false, defaultValue = "") String dmpAdmCookie,
+			@RequestParam(defaultValue = "", required = false) String alex) {
+		try {
+			modelAndView.addObject("login", "true");
+			modelAndView.setViewName("ipAdd");
+			return modelAndView;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		modelAndView.setViewName("login");
+		modelAndView.addObject("login", "false");
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/adm/ipDelete.html", method = RequestMethod.GET)
+	public ModelAndView ipDelete(HttpServletRequest request, ModelAndView modelAndView,
+			@CookieValue(value = "pchome_dmp_adm", required = false, defaultValue = "") String dmpAdmCookie,
+			@RequestParam(defaultValue = "", required = false) String alex) {
+		try {
+			modelAndView.addObject("login", "true");
+			modelAndView.setViewName("ipDelete");
+			return modelAndView;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		modelAndView.setViewName("login");
+		modelAndView.addObject("login", "false");
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/adm/behavior.html", method = RequestMethod.GET)
+	public ModelAndView behavior(HttpServletRequest request, ModelAndView modelAndView,
+			@CookieValue(value = "pchome_dmp_adm", required = false, defaultValue = "") String dmpAdmCookie,
+			@RequestParam(defaultValue = "", required = false) String alex) {
+		try {
+//			List<AdmCategoryAudienceAnalyze> admCategoryAudienceAnalyzeList = admCategoryAudienceAnalyzeService.loadAll();
+//			List<AdmMenu> admMenuList = admMenuService.loadAll();
+//			modelAndView.addObject("admMenuList", admMenuList);
+//			modelAndView.addObject("admCategoryAudienceAnalyzeList", admCategoryAudienceAnalyzeList);
+			modelAndView.addObject("login", "true");
+			modelAndView.setViewName("behavior");
+			return modelAndView;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		modelAndView.setViewName("login");
+		modelAndView.addObject("login", "false");
+		return modelAndView;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	@RequestMapping(value = "/adm/userlogin", method = RequestMethod.POST)
@@ -140,8 +205,8 @@ public class AdmIndexController extends BaseController {
 	
 	@RequestMapping(value = "/adm/userlogout", method = RequestMethod.POST)
 	public String dmpUserlogout(
-			@CookieValue(value = "pchome_dmp_adm", required = false, defaultValue = "") String dmpAdmCookie,
 			HttpServletRequest request,
+			@CookieValue(value = "pchome_dmp_adm", required = false, defaultValue = "") String dmpAdmCookie,
 			HttpServletResponse response,
 			ModelAndView modelAndView
 			) {
@@ -163,5 +228,75 @@ public class AdmIndexController extends BaseController {
 			return result.toString();
 		}
 	}
+
+	
+	
+	
+	
+	
+	
+	
+	@RequestMapping(value = "/adm/alex2.html", method = RequestMethod.GET)
+	public ModelAndView alex2(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			ModelAndView modelAndView,
+			@ModelAttribute("alex") String username,
+			@RequestParam(defaultValue = "", required = false) String account
+			) {
+		try {
+			System.out.println(username);
+			modelAndView.setViewName("homePage");
+			modelAndView.addObject("login", "true");
+			return modelAndView;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	
+	
+	@RequestMapping(value = "/adm/alex.html", method = RequestMethod.POST)
+	public ModelAndView alex(
+			HttpServletRequest request,
+			RedirectAttributes attrs,
+			HttpServletResponse response,
+			ModelAndView modelAndView,
+			@RequestParam(defaultValue = "", required = false) String account
+			) {
+		try {
+			
+			
+			
+			ModelAndView modelAndView2 = new ModelAndView();
+			modelAndView2.setViewName("homePage");
+			modelAndView2.addObject("login", "false");
+			response.setHeader("Location", "/54545454");
+			
+			return modelAndView2;
+//			System.out.println(account);
+//			modelAndView.setViewName("homePage");
+//			modelAndView.addObject("login", "true");
+//			attrs.addAttribute("alex","9999");
+//			return new RedirectView("/AkbDmp/adm/alex2.html");
+//			modelAndView = new ModelAndView("forward:/index.html");
+//			modelAndView.addObject("login", "false");
+//			return modelAndView;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 }

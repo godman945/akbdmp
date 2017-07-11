@@ -5,6 +5,7 @@
 	<tiles-definitions>
 	
 	<definition name="homePage" extends="baseLayout">
+		<put-attribute name="localhead" type="freemarker" value="./ftl/login/loginhead.ftl" />
 		<put-attribute name="body" type="freemarker" value="./ftl/login/indexBody.ftl" />
 	</definition>
 	

@@ -10,8 +10,9 @@
             <input id="password" class="easyui-validatebox tb" data-options="required:true,validateOnCreate:false,validateOnBlur:true" style="width:500px;>
         </div>
     </div>
-	
+
 	<div style="margin:20px 0" id="submitDiv">
 		<a href="#" onclick="loginSubmit()"; class="easyui-linkbutton c8 l-btn l-btn-small" style="width:500px;margin-top:30px;" group="" id=""><span class="l-btn-left" style="margin-top: 0px;"><span class="l-btn-text">登入</span></span></a>
 	</div>
-	
+		
+	<div style="color:red;">${ERR!}<div>
