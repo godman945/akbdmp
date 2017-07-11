@@ -16,8 +16,7 @@ body {
 
 .leftPane, .rightPane {
 	float: left;
-	height: 80%;
-	
+
 }
 
 .leftPane {
@@ -25,6 +24,7 @@ body {
 }
 
 .rightPane {
+	padding-left:10px;
 	width:100%;
 }
 

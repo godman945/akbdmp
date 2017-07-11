@@ -13,17 +13,14 @@
   	<@tiles.insertAttribute name="menu" />
   </#if>
 </#if>
-<table width="87.5%" border="0" cellpadding="0" cellspacing="0">
-   <tbody>
-   		<tr>
-           <td>
-  				<div class="rightPane">
+	<div class="rightPane">
+  		<div style="padding-top:15px;">
+    		<div id="p" class="easyui-panel" title="<#if title?exists><#assign title = "${title!}">${title!}<#else>你忘記傳title了!</#if>" style="height:200px;padding:10px;">
    					<@tiles.insertAttribute name="body" />
-  				</div>
-  		   </td>
-  		</tr>
-</table>
- </div>
+  			</div>
+  		</div>
+	</div>
+</div>
 <@tiles.insertAttribute name="footer" />
 </body>
 </html>

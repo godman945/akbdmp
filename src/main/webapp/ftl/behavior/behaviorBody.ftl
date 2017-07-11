@@ -1,9 +1,4 @@
 <#ftl encoding='UTF-8'/>
-<div class="panel panel-htop" style="display: block;">
-<div id="demo" data-options="href:'../../easyui/demo/panel/basic.html',border:false,onLoad:onLoad" style="padding: 20px; overflow: auto;  min-height: 350px;" title="" class="panel-body panel-body-noheader panel-body-noborder">
-	
-	<div class="panel panel-htop" style="display: block;"><div class="panel-header" ><div class="panel-title">樣版</div><div class="panel-tool"></div></div><div id="p" class="easyui-panel panel-body" title="" style="padding: 10px;  height:500px;"><!-- 100%-->
-	
 		<div>
 			<!--Date From: <input class="easyui-datebox datebox-f combo-f textbox-f" style="width: 80px; display: none;"><span class="textbox combo datebox" style="width: 78px;"><span class="textbox-addon textbox-addon-right" style="right: 0px; top: 0px;"><a href="javascript:;" class="textbox-icon combo-arrow" icon-index="0" tabindex="-1" style="width: 18px; height: 22px;"></a></span><input id="_easyui_textbox_input2" type="text" class="textbox-text validatebox-text textbox-prompt" autocomplete="off" tabindex="0" placeholder="" style="margin: 0px 18px 0px 0px; padding-top: 0px; padding-bottom: 0px; height: 22px; line-height: 22px; width: 52px;"><input type="hidden" class="textbox-value" name="" value=""></span>-->
 			紀錄日期:<input id="record-date-textbox" type="text" style="width:100px">
@@ -98,11 +93,4 @@
 			</#if>
 		</tbody>
 	</table>
-
-		
-		
-		
-			
-</div>
-</div>
 </div>

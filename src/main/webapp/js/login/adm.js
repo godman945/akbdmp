@@ -1,11 +1,14 @@
 ﻿//一開始就執行
 $(document).ready(function () {
+	document.body.style.overflow = 'hidden';
+	
 	$("input").keydown(function (event) {
 	    if (event.which == 13) {
 	    	loginSubmit();
 	    }
 	});
 	
+	$("#p").css('height',$(window).height() - 200);
 	
 	$("#tt span").on("click", function(){
 		var treeUl = $(this).parent().parent().parent();
