@@ -18,8 +18,10 @@
 	</definition>
 	
 	<definition name="behavior" extends="baseLayout">
-		<put-attribute name="localhead" type="freemarker" value="./ftl/login/loginhead.ftl" />
-		<put-attribute name="body" type="freemarker" value="./ftl/login/indexBody.ftl" />
+		<put-attribute name="localhead" type="freemarker" value="./ftl/behavior/behaviorHead.ftl" />
+		<put-attribute name="body" type="freemarker" value="./ftl/behavior/behaviorBody.ftl" />
 	</definition>
+	
+	
 	
 </tiles-definitions>

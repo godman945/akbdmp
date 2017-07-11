@@ -63,4 +63,8 @@ public abstract class BaseService<T, PK extends Serializable> implements IBaseSe
     public void setDao(IBaseDAO<T, PK> dao) {
         this.dao = dao;
     }
+    
+    public List<T> findByPage(String hql, int page, int pageSize){
+        return dao.findByPage(hql, page, pageSize);
+    }
 }

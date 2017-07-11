@@ -9,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,5 +100,13 @@ public abstract class BaseDAO<T, PK extends Serializable> extends HibernateDaoSu
                 }
             });
         return nextval.intValue();
+    }
+    
+    public List<T> findByPage(String hql, int page, int pageSize) {
+		Query query = getHibernateTemplate().getSessionFactory().getCurrentSession().createQuery(hql);
+		int firstResult = (page - 1) * pageSize;
+		query.setFirstResult(firstResult);
+		query.setMaxResults(pageSize);
+		return query.list();
     }
 }
