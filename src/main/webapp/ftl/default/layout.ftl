@@ -16,7 +16,9 @@
 	<div class="rightPane">
   		<div style="padding-top:15px;">
     		<div id="p" class="easyui-panel" title="<#if title?exists><#assign title = "${title!}">${title!}<#else>你忘記傳title了!</#if>" style="height:200px;padding:10px;">
-   					<@tiles.insertAttribute name="body" />
+				<div>   					
+					<@tiles.insertAttribute name="body" />
+				</div>
   			</div>
   		</div>
 	</div>
