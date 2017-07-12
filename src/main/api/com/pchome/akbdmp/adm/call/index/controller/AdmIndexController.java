@@ -54,12 +54,11 @@ public class AdmIndexController extends BaseController {
 				String[] user = loginInfo.split("_");
 				boolean flag = admUserService.checkUser(user[0], user[1]);
 				if (flag) {
-					modelAndView.addObject("title", "DMP後台登入");
+					modelAndView = new ModelAndView("forward:/adm/menu.html");
 					modelAndView.addObject("login", "false");
 					return modelAndView;
 				}else{
-					
-					modelAndView.setViewName("login");
+					modelAndView.addObject("title", "DMP後台登入");
 					modelAndView.setViewName("login");
 					modelAndView.addObject("login", "false");
 					return modelAndView;
@@ -80,6 +79,7 @@ public class AdmIndexController extends BaseController {
 			@CookieValue(value = "pchome_dmp_adm", required = false, defaultValue = "") String dmpAdmCookie,
 			@RequestParam(defaultValue = "", required = false) String alex) {
 		try {
+			modelAndView.addObject("title", "welcome");
 			modelAndView.addObject("login", "true");
 			modelAndView.setViewName("menu");
 			return modelAndView;

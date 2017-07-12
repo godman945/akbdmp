@@ -55,6 +55,7 @@ function loginOut(){
 	}).done(
 		function() {
 			location.reload();
+			window.location.href = '/AkbDmp/adm/index';
 		}
 	);
 }
