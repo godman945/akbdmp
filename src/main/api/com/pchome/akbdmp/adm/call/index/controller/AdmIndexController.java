@@ -52,7 +52,7 @@ public class AdmIndexController extends BaseController {
 	
 	
 	// @CrossOrigin(origins = {"http://pcbwebstg.pchome.com.tw"})
-	@CrossOrigin(origins = {"http://pcbwebstg.pchome.com.tw"})
+//	@CrossOrigin(origins = {"http://pcbwebstg.pchome.com.tw"})
 	@RequestMapping(value = "/adm/index", method = RequestMethod.GET)
 	public ModelAndView dmpIndex(
 			HttpServletRequest request, 
@@ -145,6 +145,8 @@ public class AdmIndexController extends BaseController {
 //			List<AdmMenu> admMenuList = admMenuService.loadAll();
 //			modelAndView.addObject("admMenuList", admMenuList);
 //			modelAndView.addObject("admCategoryAudienceAnalyzeList", admCategoryAudienceAnalyzeList);
+			
+			modelAndView.addObject("title", "會員點擊行為分析");
 			modelAndView.addObject("login", "true");
 			modelAndView.setViewName("behavior");
 			return modelAndView;
