@@ -38,6 +38,7 @@
 					<tr>
 						<td>
 							<select id="record-unit-select" class="pagination-page-list">
+								<option>100</option>
 								<option>10</option>
 								<option>20</option>
 								<option>30</option>
@@ -47,7 +48,7 @@
 								<option>70</option>
 								<option>80</option>
 								<option>90</option>
-								<option>100</option>
+								
 							</select>
 						</td>
 						<td>

@@ -44,8 +44,8 @@ function errMsg(){
 
 function search(){
 	$("#audiencet-tbody").empty();
-
 	var result = null;
+	
 	$.ajax({
 		url : "/AkbDmp/adm/queryaudienceanalyze",
 		type : 'POST',
@@ -55,9 +55,12 @@ function search(){
 			"source": $("#source-combobox").val(),
 			"recordDate": $("#record-date-textbox").val(),
 			"keyId": $("#key-id-textbox").val(),
+			"page": $('#total-pages-select').find(":selected").text(),
+			"pageSize": $('#record-unit-select').find(":selected").text(),
 		},
 		success : function(obj) {
 			result=obj
+			console.log(result);
 		},
 		error : function(e) {
 			console.log("error");
@@ -88,6 +91,10 @@ function search(){
 					   '<td field="受眾數"><div style="height:auto;" class="datagrid-cell datagrid-cell-c1-itemid">'+keyCount+'</div></td></tr>'
 			});
 			$('#audiencet-tbody').append(data);
+			console.log(result.pageSize)
+			$('#total-count').text(result.pageSize);
+			//共幾頁
+			totalPages();
 		}
 	);
 	return false;
@@ -146,9 +153,23 @@ function recordCount(){
 		}
 	);
 	return false;
+}
+
+
+function totalPages(){
+	var totalPages= Math.ceil(Number($('#total-count').text())/Number($('#record-unit-select').find(":selected").text()));
+	
+	page =0;
+	var optionsAsString = "";
+	for(var i = 1; i <= totalPages; i++) {
+		page=page+1;
+	    optionsAsString += "<option value='" + page.toString() + "'>" + page.toString() + "</option>";
+	}
+	$("#total-pages-select").empty();
+	$("#total-pages-select").append( optionsAsString );
 	
 	
-	
+	return false;
 }
 
 //function queryAudienceanAlyze(){

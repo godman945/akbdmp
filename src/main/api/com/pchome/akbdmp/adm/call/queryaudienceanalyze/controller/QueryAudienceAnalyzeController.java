@@ -41,7 +41,9 @@ public class QueryAudienceAnalyzeController extends BaseController {
 			String userType,
 			String source,
 			String recordDate,
-			String keyId
+			String keyId,
+			String page,
+			String pageSize
 			) {
 		JSONObject result = new JSONObject();
 		try {
@@ -93,9 +95,19 @@ public class QueryAudienceAnalyzeController extends BaseController {
 				hql.append(" and keyId = '"+keyId+"' ");
 			}
 			
+			int pageInt=0;
+			if (StringUtils.isBlank(page)){
+				pageInt=1;
+				
+			}else{
+				pageInt=Integer.parseInt(page);
+			}
 			
-			List<AdmCategoryAudienceAnalyze> list=admCategoryAudienceAnalyzeService.findByPage(hql.toString(), 1, 200);
-			
+			//拿分頁size
+			List<AdmCategoryAudienceAnalyze> list=admCategoryAudienceAnalyzeService.findByPage(hql.toString(), pageInt , Integer.parseInt(pageSize));
+
+			//拿全部的size
+			int listSize=admCategoryAudienceAnalyzeService.rowCount(hql.toString());
 			
 			//來源為all
 			Map<String,AdmCategoryAudienceAnalyze> map = new HashMap<>();
@@ -138,11 +150,13 @@ public class QueryAudienceAnalyzeController extends BaseController {
 				admCategoryAudienceAnalyze.setKeyCount(entry.getValue().getKeyCount());
 				admCategoryAudienceAnalyze.setKeyId(entry.getValue().getKeyId());
 				admCategoryAudienceAnalyze.setKeyName(entry.getValue().getKeyName());
-				if(StringUtils.isBlank(keyType)){
-					admCategoryAudienceAnalyze.setKeyType("All");	
-				}else{
-					admCategoryAudienceAnalyze.setKeyType(entry.getValue().getKeyType());	
-				}
+//				if(StringUtils.isBlank(keyType)){
+//					admCategoryAudienceAnalyze.setKeyType("All");	
+//				}else{
+//					admCategoryAudienceAnalyze.setKeyType(entry.getValue().getKeyType());	
+//				}
+				
+				admCategoryAudienceAnalyze.setKeyType(entry.getValue().getKeyType());	
 				
 				admCategoryAudienceAnalyze.setRecordDate(entry.getValue().getRecordDate());
 				admCategoryAudienceAnalyze.setUserType(StringUtils.isNotBlank(userType) ? userType : "All");
@@ -159,7 +173,7 @@ public class QueryAudienceAnalyzeController extends BaseController {
 			
 			result.put("result", "SUCCESS");
 			result.put("admCategoryAudienceAnalyzeList", list);
-			result.put("pageSize", list.size());
+			result.put("pageSize", listSize);
 			return result.toString();
 	        
 		} catch (Exception e) {
