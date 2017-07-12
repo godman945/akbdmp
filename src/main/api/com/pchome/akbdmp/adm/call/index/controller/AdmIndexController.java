@@ -1,7 +1,6 @@
 package com.pchome.akbdmp.adm.call.index.controller;
 
 import java.net.URLEncoder;
-import java.util.List;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -13,7 +12,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,13 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.view.RedirectView;
 
 import com.pchome.akbdmp.api.call.base.controller.BaseController;
-import com.pchome.akbdmp.data.mysql.pojo.AdmCategoryAudienceAnalyze;
-import com.pchome.akbdmp.data.mysql.pojo.AdmMenu;
-import com.pchome.akbdmp.mysql.db.service.adclass.IAdmCategoryAudienceAnalyzeService;
-import com.pchome.akbdmp.mysql.db.service.user.IAdmMenuService;
 import com.pchome.akbdmp.mysql.db.service.user.IAdmUserService;
 
 import net.minidev.json.JSONObject;
@@ -43,11 +36,6 @@ public class AdmIndexController extends BaseController {
 	@Autowired
 	private IAdmUserService admUserService;
 
-	@Autowired
-	private IAdmMenuService admMenuService;
-
-	@Autowired
-	private IAdmCategoryAudienceAnalyzeService admCategoryAudienceAnalyzeService;
 	
 	
 	
@@ -66,10 +54,12 @@ public class AdmIndexController extends BaseController {
 				String[] user = loginInfo.split("_");
 				boolean flag = admUserService.checkUser(user[0], user[1]);
 				if (flag) {
-					modelAndView = new ModelAndView("forward:/adm/menu.html");
+					modelAndView.addObject("title", "DMP後台登入");
 					modelAndView.addObject("login", "false");
 					return modelAndView;
 				}else{
+					
+					modelAndView.setViewName("login");
 					modelAndView.setViewName("login");
 					modelAndView.addObject("login", "false");
 					return modelAndView;
@@ -78,6 +68,7 @@ public class AdmIndexController extends BaseController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		modelAndView.addObject("title", "DMP後台登入");
 		modelAndView.setViewName("login");
 		modelAndView.addObject("login", "false");
 		return modelAndView;
@@ -107,6 +98,7 @@ public class AdmIndexController extends BaseController {
 			@CookieValue(value = "pchome_dmp_adm", required = false, defaultValue = "") String dmpAdmCookie,
 			@RequestParam(defaultValue = "", required = false) String alex) {
 		try {
+			modelAndView.addObject("title", "新增IP");
 			modelAndView.addObject("login", "true");
 			modelAndView.setViewName("ipAdd");
 			return modelAndView;
@@ -124,6 +116,7 @@ public class AdmIndexController extends BaseController {
 			@CookieValue(value = "pchome_dmp_adm", required = false, defaultValue = "") String dmpAdmCookie,
 			@RequestParam(defaultValue = "", required = false) String alex) {
 		try {
+			modelAndView.addObject("title", "移除IP");
 			modelAndView.addObject("login", "true");
 			modelAndView.setViewName("ipDelete");
 			return modelAndView;

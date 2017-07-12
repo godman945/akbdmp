@@ -1,5 +1,4 @@
  <#ftl encoding='UTF-8'/>
- <h2>DMP後台登入</h2>
     <div  title="" style="width:100%;max-width:400px;margin-left:30%;">
         <div style="margin-bottom:20px">
             <label for="account" class="label-top">帳號:</label>
