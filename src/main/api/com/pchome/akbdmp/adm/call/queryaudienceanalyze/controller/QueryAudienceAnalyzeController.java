@@ -1,6 +1,9 @@
 package com.pchome.akbdmp.adm.call.queryaudienceanalyze.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -92,6 +95,62 @@ public class QueryAudienceAnalyzeController extends BaseController {
 			
 			
 			List<AdmCategoryAudienceAnalyze> list=admCategoryAudienceAnalyzeService.findByPage(hql.toString(), 1, 200);
+			
+			
+			//來源為all
+			Map<String,AdmCategoryAudienceAnalyze> map = new HashMap<>();
+			if(StringUtils.isNotBlank(source) && source.equals("all")){
+				if(StringUtils.isNotBlank(keyType) && StringUtils.isNotBlank(userType)){
+					for (AdmCategoryAudienceAnalyze admCategoryAudienceAnalyze : list) {
+						if(!admCategoryAudienceAnalyze.getKeyType().equals(keyType)){
+							continue;
+						}
+						if(map.containsKey(admCategoryAudienceAnalyze.getKeyId())){
+							AdmCategoryAudienceAnalyze admCategoryAudienceAnalyzeData = map.get(admCategoryAudienceAnalyze.getKeyId());
+							int count = admCategoryAudienceAnalyzeData.getKeyCount();
+							count = count + admCategoryAudienceAnalyze.getKeyCount();
+							admCategoryAudienceAnalyzeData.setKeyCount(count);
+							map.put(admCategoryAudienceAnalyze.getKeyId(), admCategoryAudienceAnalyzeData);
+						}else{
+							map.put(admCategoryAudienceAnalyze.getKeyId(), admCategoryAudienceAnalyze);
+						}
+					}
+				}else if(StringUtils.isNotBlank(keyType)){
+					for (AdmCategoryAudienceAnalyze admCategoryAudienceAnalyze : list) {
+						if(map.containsKey(admCategoryAudienceAnalyze.getKeyId())){
+							AdmCategoryAudienceAnalyze admCategoryAudienceAnalyzeData = map.get(admCategoryAudienceAnalyze.getKeyId());
+							int count = admCategoryAudienceAnalyzeData.getKeyCount();
+							count = count + admCategoryAudienceAnalyze.getKeyCount();
+							admCategoryAudienceAnalyzeData.setKeyCount(count);
+							map.put(admCategoryAudienceAnalyze.getKeyId(), admCategoryAudienceAnalyzeData);
+						}else{
+							map.put(admCategoryAudienceAnalyze.getKeyId(), admCategoryAudienceAnalyze);
+						}
+					}
+				}
+			}
+			
+			List<AdmCategoryAudienceAnalyze> listAll = new ArrayList<>(); 
+			for (Map.Entry<String, AdmCategoryAudienceAnalyze> entry : map.entrySet()){
+				AdmCategoryAudienceAnalyze admCategoryAudienceAnalyze = new AdmCategoryAudienceAnalyze();
+				admCategoryAudienceAnalyze.setId(-1);
+				admCategoryAudienceAnalyze.setCreateDate(entry.getValue().getCreateDate());
+				admCategoryAudienceAnalyze.setKeyCount(entry.getValue().getKeyCount());
+				admCategoryAudienceAnalyze.setKeyId(entry.getValue().getKeyId());
+				admCategoryAudienceAnalyze.setKeyName(entry.getValue().getKeyName());
+				admCategoryAudienceAnalyze.setKeyType(entry.getValue().getKeyType());
+				admCategoryAudienceAnalyze.setRecordDate(entry.getValue().getRecordDate());
+				admCategoryAudienceAnalyze.setUserType(StringUtils.isNotBlank(userType) ? userType : "All");
+				admCategoryAudienceAnalyze.setSource("All");
+				listAll.add(admCategoryAudienceAnalyze);
+			}
+			if(listAll.size() > 0){
+				result.put("result", "SUCCESS");
+				result.put("admCategoryAudienceAnalyzeList", listAll);
+				result.put("pageSize", listAll.size());
+				return result.toString();
+			}
+			
 			
 			result.put("result", "SUCCESS");
 			result.put("admCategoryAudienceAnalyzeList", list);
