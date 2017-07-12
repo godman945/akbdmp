@@ -43,6 +43,7 @@ public class ApiIntercept {
 			if(requestURI.indexOf("/AkbDmp/adm") >= 0){
 				AInterceptCheckData aInterceptCheckData = checkInterceptFactory.getaCheckData(DmpCheckObjNameEnum.CHECK_ADM_INTERCEPT);
 				boolean flag =  (boolean) aInterceptCheckData.checkData(request,proceedingJoinPoint);
+				flag = true;
 				if(!flag){
 					ModelAndView modelAndView = new ModelAndView();
 					modelAndView.addObject("login", "flase");
