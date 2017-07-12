@@ -34,7 +34,71 @@
 					</a>
 				</div>
 			</div>
-		<h1>
+			<div>
+				<div class="datagrid-pager pagination" style="background-color:lightsteelblue">
+					<table cellspacing="0" cellpadding="0" border="0">
+						<tbody>
+							<tr>
+								<td>
+									<select class="pagination-page-list">
+										<option>10</option>
+										<option>20</option>
+										<option>30</option>
+										<option>40</option><option>50</option>
+										</select>
+								</td>
+								<td>
+									<div class="pagination-btn-separator">
+									
+									</div>
+								</td>
+								<td>
+									<a href="javascript:;" class="l-btn l-btn-small l-btn-plain l-btn-disabled l-btn-plain-disabled" group="" id="">
+										<span class="l-btn-left l-btn-icon-left">
+										<span class="l-btn-text l-btn-empty">&nbsp;</span>
+										<span class="l-btn-icon pagination-first">&nbsp;</span>
+										</span>
+									</a>
+								</td>
+								<td>
+									<a href="javascript:;" class="l-btn l-btn-small l-btn-plain l-btn-disabled l-btn-plain-disabled" group="" id="">
+										<span class="l-btn-left l-btn-icon-left"><span class="l-btn-text l-btn-empty">&nbsp;</span>
+										<span class="l-btn-icon pagination-prev">&nbsp;</span></span>
+									</a>
+								</td>
+								<td>
+									<div class="pagination-btn-separator"></div>
+								</td>
+								<td><span style="padding-left:6px;">Page</span>
+								</td>
+								<td><input class="pagination-num" type="text" value="1" size="2">
+								</td>
+								<td>
+									<span style="padding-right:6px;">of 1</span>
+								</td>
+								<td>
+									<div class="pagination-btn-separator"></div>
+								</td>
+								<td>
+									<a onclick="adb();" class="l-btn l-btn-small l-btn-plain l-btn-disabled l-btn-plain-disabled" group="" id="">
+										<span class="l-btn-left l-btn-icon-left"><span class="l-btn-text l-btn-empty">&nbsp;</span>
+										<span class="l-btn-icon pagination-next">&nbsp;</span></span>
+									</a></td><td><a href="javascript:;" class="l-btn l-btn-small l-btn-plain l-btn-disabled l-btn-plain-disabled" group="" id=""><span class="l-btn-left l-btn-icon-left"><span class="l-btn-text l-btn-empty">&nbsp;</span><span class="l-btn-icon pagination-last">&nbsp;</span></span>
+									</a>
+								</td>
+								<td>
+										<div class="pagination-btn-separator"></div>
+								</td>
+								<td><a href="javascript:;" class="l-btn l-btn-small l-btn-plain" group="" id=""><span class="l-btn-left l-btn-icon-left"><span class="l-btn-text l-btn-empty">&nbsp;</span><span class="l-btn-icon pagination-load">&nbsp;</span></span></a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<div class="pagination-info">總共6頁
+					</div>
+					<div style="clear:both;">
+					</div>
+		</div>
 		<table style="border:3px #cccccc solid;width:100%;" cellpadding="10" border='1' >
 			<thead>
 				 <tr>
@@ -98,55 +162,4 @@
 			</#if>
 		</tbody>
 	</table>
-</div>
-<div class="datagrid-pager pagination" style="background-color:lightsteelblue">
-	<table cellspacing="0" cellpadding="0" border="0">
-		<tbody>
-			<tr>
-				<td>
-					<select class="pagination-page-list">
-						<option>10</option>
-						<option>20</option>
-						<option>30</option>
-						<option>40</option><option>50</option>
-						</select>
-				</td>
-				<td>
-					<div class="pagination-btn-separator">
-					
-					</div>
-				</td>
-				<td>
-					<a href="javascript:;" class="l-btn l-btn-small l-btn-plain l-btn-disabled l-btn-plain-disabled" group="" id="">
-						<span class="l-btn-left l-btn-icon-left">
-						<span class="l-btn-text l-btn-empty">&nbsp;</span>
-						<span class="l-btn-icon pagination-first">&nbsp;</span>
-						</span>
-					</a>
-				</td>
-				<td>
-					<a href="javascript:;" class="l-btn l-btn-small l-btn-plain l-btn-disabled l-btn-plain-disabled" group="" id="">
-						<span class="l-btn-left l-btn-icon-left"><span class="l-btn-text l-btn-empty">&nbsp;</span>
-						<span class="l-btn-icon pagination-prev">&nbsp;</span></span>
-					</a>
-				</td>
-				<td>
-					<div class="pagination-btn-separator"></div>
-				</td>
-				<td><span style="padding-left:6px;">Page</span>
-				</td>
-				<td><input class="pagination-num" type="text" value="1" size="2">
-				</td>
-				<td>
-					<span style="padding-right:6px;">of 1</span>
-				</td>
-				<td>
-					<div class="pagination-btn-separator"></div>
-				</td>
-				<td>
-					<a onclick="adb();" class="l-btn l-btn-small l-btn-plain l-btn-disabled l-btn-plain-disabled" group="" id="">
-						<span class="l-btn-left l-btn-icon-left"><span class="l-btn-text l-btn-empty">&nbsp;</span>
-						<span class="l-btn-icon pagination-next">&nbsp;</span></span>
-					</a></td><td><a href="javascript:;" class="l-btn l-btn-small l-btn-plain l-btn-disabled l-btn-plain-disabled" group="" id=""><span class="l-btn-left l-btn-icon-left"><span class="l-btn-text l-btn-empty">&nbsp;</span><span class="l-btn-icon pagination-last">&nbsp;</span></span>
-					</a></td><td><div class="pagination-btn-separator"></div></td><td><a href="javascript:;" class="l-btn l-btn-small l-btn-plain" group="" id=""><span class="l-btn-left l-btn-icon-left"><span class="l-btn-text l-btn-empty">&nbsp;</span><span class="l-btn-icon pagination-load">&nbsp;</span></span></a></td></tr></tbody></table><div class="pagination-info">總共6頁</div><div style="clear:both;">
-		</div>
+
