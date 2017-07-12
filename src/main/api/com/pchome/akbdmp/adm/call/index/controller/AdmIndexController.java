@@ -54,10 +54,12 @@ public class AdmIndexController extends BaseController {
 				String[] user = loginInfo.split("_");
 				boolean flag = admUserService.checkUser(user[0], user[1]);
 				if (flag) {
-					modelAndView = new ModelAndView("forward:/adm/menu.html");
+					modelAndView.addObject("title", "DMP後台登入");
 					modelAndView.addObject("login", "false");
 					return modelAndView;
 				}else{
+					
+					modelAndView.setViewName("login");
 					modelAndView.setViewName("login");
 					modelAndView.addObject("login", "false");
 					return modelAndView;
@@ -66,6 +68,7 @@ public class AdmIndexController extends BaseController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		modelAndView.addObject("title", "DMP後台登入");
 		modelAndView.setViewName("login");
 		modelAndView.addObject("login", "false");
 		return modelAndView;
