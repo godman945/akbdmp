@@ -115,7 +115,7 @@ public class QueryAudienceAnalyzeController extends BaseController {
 							map.put(admCategoryAudienceAnalyze.getKeyId(), admCategoryAudienceAnalyze);
 						}
 					}
-				}else if(StringUtils.isNotBlank(keyType)){
+				}else{
 					for (AdmCategoryAudienceAnalyze admCategoryAudienceAnalyze : list) {
 						if(map.containsKey(admCategoryAudienceAnalyze.getKeyId())){
 							AdmCategoryAudienceAnalyze admCategoryAudienceAnalyzeData = map.get(admCategoryAudienceAnalyze.getKeyId());
@@ -138,7 +138,12 @@ public class QueryAudienceAnalyzeController extends BaseController {
 				admCategoryAudienceAnalyze.setKeyCount(entry.getValue().getKeyCount());
 				admCategoryAudienceAnalyze.setKeyId(entry.getValue().getKeyId());
 				admCategoryAudienceAnalyze.setKeyName(entry.getValue().getKeyName());
-				admCategoryAudienceAnalyze.setKeyType(entry.getValue().getKeyType());
+				if(StringUtils.isBlank(keyType)){
+					admCategoryAudienceAnalyze.setKeyType("All");	
+				}else{
+					admCategoryAudienceAnalyze.setKeyType(entry.getValue().getKeyType());	
+				}
+				
 				admCategoryAudienceAnalyze.setRecordDate(entry.getValue().getRecordDate());
 				admCategoryAudienceAnalyze.setUserType(StringUtils.isNotBlank(userType) ? userType : "All");
 				admCategoryAudienceAnalyze.setSource("All");
