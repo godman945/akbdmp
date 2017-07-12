@@ -72,7 +72,18 @@ public class QueryAudienceAnalyzeController extends BaseController {
 			}
 			
 			if (StringUtils.isNotBlank(recordDate)){
-				hql.append(" and recordDate = '"+recordDate+"' ");
+				String[] str=null;
+				
+				if(recordDate.contains("/")){
+					str =recordDate.split("/");
+				}
+				
+				if(recordDate.contains("-")){
+					str =recordDate.split("-");
+				}
+				
+				String recordDateNew=str[2]+"-"+str[0]+"-"+str[1];
+				hql.append(" and recordDate = '"+recordDateNew+"' ");
 			}
 			
 			if (StringUtils.isNotBlank(keyId)){

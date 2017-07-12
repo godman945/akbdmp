@@ -44,7 +44,7 @@ function errMsg(){
 
 function search(){
 	$("#audiencet-tbody").empty();
-	
+
 	var result = null;
 	$.ajax({
 		url : "/AkbDmp/adm/queryaudienceanalyze",
