@@ -28,4 +28,6 @@ public interface IBaseDAO<T, PK extends Serializable> {
     public void delete(T entity);
     
     public List<T> findByPage(String hql, int page, int pageSize) ;
+    
+    public int rowCount(String hql);
 }

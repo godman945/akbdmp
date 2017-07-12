@@ -7,11 +7,13 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
 import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
@@ -108,5 +110,19 @@ public abstract class BaseDAO<T, PK extends Serializable> extends HibernateDaoSu
 		query.setFirstResult(firstResult);
 		query.setMaxResults(pageSize);
 		return query.list();
+    }
+    
+//    public int rowCount() {
+//		String generatedCountHql = " from AdmCategoryAudienceAnalyze where 1=1 ";
+//		Query countQuery = getHibernateTemplate().getSessionFactory().getCurrentSession().createQuery(generatedCountHql);
+//		int count;
+//		 count=((Long) countQuery.uniqueResult()).intValue();
+//		 System.out.println(count);
+//		 return count;
+//	}
+    
+    public int rowCount(String hql) {
+  		Query query = getHibernateTemplate().getSessionFactory().getCurrentSession().createQuery(hql);
+  		return query.list().size();
     }
 }

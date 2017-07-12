@@ -2,7 +2,7 @@
 			<!--Date From: <input class="easyui-datebox datebox-f combo-f textbox-f" style="width: 80px; display: none;"><span class="textbox combo datebox" style="width: 78px;"><span class="textbox-addon textbox-addon-right" style="right: 0px; top: 0px;"><a href="javascript:;" class="textbox-icon combo-arrow" icon-index="0" tabindex="-1" style="width: 18px; height: 22px;"></a></span><input id="_easyui_textbox_input2" type="text" class="textbox-text validatebox-text textbox-prompt" autocomplete="off" tabindex="0" placeholder="" style="margin: 0px 18px 0px 0px; padding-top: 0px; padding-bottom: 0px; height: 22px; line-height: 22px; width: 52px;"><input type="hidden" class="textbox-value" name="" value=""></span>-->
 			紀錄日期:<input id="record-date-textbox" class="easyui-datebox" style="width:110px">
 			受眾編號:<input id="key-id-textbox" type="text" style="width:100px">
-			受眾類型:
+			受眾型態:
 			<select id="key-type-combobox" class="easyui-combobox" name="dept" style="width:100px;">
 				<option value="">none</option>
 			    <option value="1">1:小分類</option>
@@ -33,10 +33,10 @@
 			<thead>
 				 <tr>
 			      <th>序號</th>
-			      <th>記錄時間</th>
-			      <th>分類序號</th>
-			      <th>分類名稱</th>
-			      <th>分類型態[1:小分類,2:大分類,3:性別,4.年齡區間]</th>
+			      <th>紀錄日期</th>
+			      <th>受眾編號</th>
+			      <th>受眾名稱</th>
+			      <th>受眾型態<br>[1:小分類,2:大分類,3:性別,4.年齡區間]</th>
 			      <th>受眾類型</th>
 			      <th>來源</th>
 			      <th>受眾數</th>
@@ -138,7 +138,7 @@
 					<div class="pagination-btn-separator"></div>
 				</td>
 				<td>
-					<a href="javascript:;" class="l-btn l-btn-small l-btn-plain l-btn-disabled l-btn-plain-disabled" group="" id="">
+					<a onclick="adb();" class="l-btn l-btn-small l-btn-plain l-btn-disabled l-btn-plain-disabled" group="" id="">
 						<span class="l-btn-left l-btn-icon-left"><span class="l-btn-text l-btn-empty">&nbsp;</span>
 						<span class="l-btn-icon pagination-next">&nbsp;</span></span>
 					</a></td><td><a href="javascript:;" class="l-btn l-btn-small l-btn-plain l-btn-disabled l-btn-plain-disabled" group="" id=""><span class="l-btn-left l-btn-icon-left"><span class="l-btn-text l-btn-empty">&nbsp;</span><span class="l-btn-icon pagination-last">&nbsp;</span></span>

@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.SharedSessionContract;
+import org.hibernate.criterion.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,5 +64,9 @@ public abstract class BaseService<T, PK extends Serializable> implements IBaseSe
     
     public List<T> findByPage(String hql, int page, int pageSize){
         return dao.findByPage(hql, page, pageSize);
+    }
+    
+    public int rowCount(String hql) { 
+    	 return dao.rowCount(hql);
     }
 }
