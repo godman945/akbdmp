@@ -125,4 +125,15 @@ public abstract class BaseDAO<T, PK extends Serializable> extends HibernateDaoSu
   		Query query = getHibernateTemplate().getSessionFactory().getCurrentSession().createQuery(hql);
   		return query.list().size();
     }
+    
+    public List<Object> sqlFindByPage(String sql) {
+    	Query query = getHibernateTemplate().getSessionFactory().getCurrentSession().createSQLQuery(sql.toString());
+    	return query.list();
+    }
+    
+    public int sqlRowCount(String sql) {
+    	Query query = getHibernateTemplate().getSessionFactory().getCurrentSession().createSQLQuery(sql.toString());
+    	return query.list().size();
+    }
+    
 }

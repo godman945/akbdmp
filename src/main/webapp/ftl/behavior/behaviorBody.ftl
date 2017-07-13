@@ -16,6 +16,7 @@
 				    <option value="">none</option>
 				    <option value="memid">memid</option>
 				    <option value="uuid">uuid</option>
+				    <option value="all">All</option>
 				</select>
 				
 				來源: 
@@ -38,7 +39,6 @@
 					<tr>
 						<td>
 							<select id="record-unit-select" class="pagination-page-list">
-								<option>100</option>
 								<option>10</option>
 								<option>20</option>
 								<option>30</option>
@@ -48,7 +48,7 @@
 								<option>70</option>
 								<option>80</option>
 								<option>90</option>
-								
+								<option>100</option>
 							</select>
 						</td>
 						<td>
@@ -79,10 +79,11 @@
 						<td>
 							<!--<input class="pagination-num" type="text" value="1" size="2">-->
 							<select id="total-pages-select" class="pagination-page-list" >
+								<option>1</option>
 							</select>
 						</td>
 						<td>
-							<span style="padding-right:6px;">of 0</span>
+							<span style="padding-right:6px;">of<span id = "total-pages-text" style="padding-right:6px;">0</span></span>
 						</td>
 						<td>
 							<div class="pagination-btn-separator"></div>

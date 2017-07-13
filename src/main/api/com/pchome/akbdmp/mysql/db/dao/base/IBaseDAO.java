@@ -30,4 +30,8 @@ public interface IBaseDAO<T, PK extends Serializable> {
     public List<T> findByPage(String hql, int page, int pageSize) ;
     
     public int rowCount(String hql);
+    
+    public List<Object> sqlFindByPage(String sql);
+    
+    public int sqlRowCount(String sql) ;
 }

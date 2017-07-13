@@ -1,9 +1,9 @@
 package com.pchome.akbdmp.adm.call.queryaudienceanalyze.controller;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -46,134 +46,179 @@ public class QueryAudienceAnalyzeController extends BaseController {
 			String pageSize
 			) {
 		JSONObject result = new JSONObject();
+		
 		try {
 			 
-			StringBuffer hql = new StringBuffer(" from AdmCategoryAudienceAnalyze where 1=1 ");
+			//受眾類型和來源都不為all
+			if ( (!StringUtils.equals("all", userType)) && (!StringUtils.equals("all", source))){
 			
-			if (StringUtils.isNotBlank(keyType)){
-				hql.append(" and keyType  = '"+keyType+"' ");
-			}
-			
-			if (StringUtils.isNotBlank(userType)){
-				if (StringUtils.equals("memid", userType)){
-					hql.append(" and userType  = '"+userType+"' ");	
-				}
-				if (StringUtils.equals("uuid", userType)){
-					hql.append(" and userType  = '"+userType+"' ");	
+				
+				StringBuffer hql = new StringBuffer(" from AdmCategoryAudienceAnalyze where 1=1 ");
+				
+				if (StringUtils.isNotBlank(keyType)){
+					hql.append(" and keyType  = '"+keyType+"' ");
 				}
 				
-			}
-			
-			if (StringUtils.isNotBlank(source)){
-				if (StringUtils.equals("24h", source)){
-					hql.append(" and source  = '"+source+"' ");	
-				}
-				if (StringUtils.equals("ruten", source)){
-					hql.append(" and source  = '"+source+"' ");	
-				}
-				if (StringUtils.equals("adclick", source)){
-					hql.append(" and source  = '"+source+"' ");	
-				}
-			}
-			
-			if (StringUtils.isNotBlank(recordDate)){
-				String[] str=null;
-				
-				if(recordDate.contains("/")){
-					str =recordDate.split("/");
-				}
-				
-				if(recordDate.contains("-")){
-					str =recordDate.split("-");
-				}
-				
-				String recordDateNew=str[2]+"-"+str[0]+"-"+str[1];
-				hql.append(" and recordDate = '"+recordDateNew+"' ");
-			}
-			
-			if (StringUtils.isNotBlank(keyId)){
-				hql.append(" and keyId = '"+keyId+"' ");
-			}
-			
-			int pageInt=0;
-			if (StringUtils.isBlank(page)){
-				pageInt=1;
-				
-			}else{
-				pageInt=Integer.parseInt(page);
-			}
-			
-			//拿分頁size
-			List<AdmCategoryAudienceAnalyze> list=admCategoryAudienceAnalyzeService.findByPage(hql.toString(), pageInt , Integer.parseInt(pageSize));
-
-			//拿全部的size
-			int listSize=admCategoryAudienceAnalyzeService.rowCount(hql.toString());
-			
-			//來源為all
-			Map<String,AdmCategoryAudienceAnalyze> map = new HashMap<>();
-			if(StringUtils.isNotBlank(source) && source.equals("all")){
-				if(StringUtils.isNotBlank(keyType) && StringUtils.isNotBlank(userType)){
-					for (AdmCategoryAudienceAnalyze admCategoryAudienceAnalyze : list) {
-						if(!admCategoryAudienceAnalyze.getKeyType().equals(keyType)){
-							continue;
-						}
-						if(map.containsKey(admCategoryAudienceAnalyze.getKeyId())){
-							AdmCategoryAudienceAnalyze admCategoryAudienceAnalyzeData = map.get(admCategoryAudienceAnalyze.getKeyId());
-							int count = admCategoryAudienceAnalyzeData.getKeyCount();
-							count = count + admCategoryAudienceAnalyze.getKeyCount();
-							admCategoryAudienceAnalyzeData.setKeyCount(count);
-							map.put(admCategoryAudienceAnalyze.getKeyId(), admCategoryAudienceAnalyzeData);
-						}else{
-							map.put(admCategoryAudienceAnalyze.getKeyId(), admCategoryAudienceAnalyze);
-						}
+				if (StringUtils.isNotBlank(userType)){
+					if (StringUtils.equals("memid", userType)){
+						hql.append(" and userType  = '"+userType+"' ");	
 					}
+					if (StringUtils.equals("uuid", userType)){
+						hql.append(" and userType  = '"+userType+"' ");	
+					}
+					
+				}
+				
+				if (StringUtils.isNotBlank(source)){
+					if (StringUtils.equals("24h", source)){
+						hql.append(" and source  = '"+source+"' ");	
+					}
+					if (StringUtils.equals("ruten", source)){
+						hql.append(" and source  = '"+source+"' ");	
+					}
+					if (StringUtils.equals("adclick", source)){
+						hql.append(" and source  = '"+source+"' ");	
+					}
+				}
+				
+				if (StringUtils.isNotBlank(recordDate)){
+					String[] str=null;
+					
+					if(recordDate.contains("/")){
+						str =recordDate.split("/");
+					}
+					
+					if(recordDate.contains("-")){
+						str =recordDate.split("-");
+					}
+					
+					String recordDateNew=str[2]+"-"+str[0]+"-"+str[1];
+					hql.append(" and recordDate = '"+recordDateNew+"' ");
+				}
+				
+				if (StringUtils.isNotBlank(keyId)){
+					hql.append(" and keyId = '"+keyId+"' ");
+				}
+				
+				int pageInt=0;
+				if (StringUtils.isBlank(page)){
+					pageInt=1;
+					
 				}else{
-					for (AdmCategoryAudienceAnalyze admCategoryAudienceAnalyze : list) {
-						if(map.containsKey(admCategoryAudienceAnalyze.getKeyId())){
-							AdmCategoryAudienceAnalyze admCategoryAudienceAnalyzeData = map.get(admCategoryAudienceAnalyze.getKeyId());
-							int count = admCategoryAudienceAnalyzeData.getKeyCount();
-							count = count + admCategoryAudienceAnalyze.getKeyCount();
-							admCategoryAudienceAnalyzeData.setKeyCount(count);
-							map.put(admCategoryAudienceAnalyze.getKeyId(), admCategoryAudienceAnalyzeData);
-						}else{
-							map.put(admCategoryAudienceAnalyze.getKeyId(), admCategoryAudienceAnalyze);
-						}
-					}
+					pageInt=Integer.parseInt(page);
 				}
-			}
-			
-			List<AdmCategoryAudienceAnalyze> listAll = new ArrayList<>(); 
-			for (Map.Entry<String, AdmCategoryAudienceAnalyze> entry : map.entrySet()){
-				AdmCategoryAudienceAnalyze admCategoryAudienceAnalyze = new AdmCategoryAudienceAnalyze();
-				admCategoryAudienceAnalyze.setId(-1);
-				admCategoryAudienceAnalyze.setCreateDate(entry.getValue().getCreateDate());
-				admCategoryAudienceAnalyze.setKeyCount(entry.getValue().getKeyCount());
-				admCategoryAudienceAnalyze.setKeyId(entry.getValue().getKeyId());
-				admCategoryAudienceAnalyze.setKeyName(entry.getValue().getKeyName());
-//				if(StringUtils.isBlank(keyType)){
-//					admCategoryAudienceAnalyze.setKeyType("All");	
-//				}else{
-//					admCategoryAudienceAnalyze.setKeyType(entry.getValue().getKeyType());	
-//				}
 				
-				admCategoryAudienceAnalyze.setKeyType(entry.getValue().getKeyType());	
-				
-				admCategoryAudienceAnalyze.setRecordDate(entry.getValue().getRecordDate());
-				admCategoryAudienceAnalyze.setUserType(StringUtils.isNotBlank(userType) ? userType : "All");
-				admCategoryAudienceAnalyze.setSource("All");
-				listAll.add(admCategoryAudienceAnalyze);
-			}
-			if(listAll.size() > 0){
+				//拿分頁size
+				List<AdmCategoryAudienceAnalyze> list=admCategoryAudienceAnalyzeService.findByPage(hql.toString(), pageInt , Integer.parseInt(pageSize));
+	
+				//拿全部的size
+				int listSize=admCategoryAudienceAnalyzeService.rowCount(hql.toString());
+	
 				result.put("result", "SUCCESS");
-				result.put("admCategoryAudienceAnalyzeList", listAll);
-				result.put("pageSize", listAll.size());
-				return result.toString();
+				result.put("admCategoryAudienceAnalyzeList", list);
+				result.put("pageSize", listSize);
 			}
 			
+			//受眾類型或來源為all
+			if ( (StringUtils.equals("all", userType)) || (StringUtils.equals("all", source))){
+				
+				int startRange = (Integer.parseInt(page)-1)*Integer.parseInt(pageSize);
+				int endRange = Integer.parseInt(page)*Integer.parseInt(pageSize);
+				
+				StringBuffer sql = new StringBuffer(" SELECT id, record_date, key_id, key_name, key_type, user_type, source, SUM( key_count ) AS key_count ");
+//				System.out.println("startRange : "+startRange);
+//				System.out.println("endRange : "+endRange);
+				
+				//userType和Source皆為all
+				if ( (StringUtils.equals("all", userType)) && (StringUtils.equals("all", source))){
+					sql.append(" FROM adm_category_audience_analyze ");
+					sql.append(" WHERE 1=1 ");
+					
+					if (StringUtils.isNotBlank(keyId)){
+						sql.append(" and key_id = '"+keyId+"' ");
+					}
+					
+					if (StringUtils.isNotBlank(keyType)){
+						sql.append(" and key_type = '"+keyType+"' ");
+					}
+					sql.append(" GROUP BY record_date, key_id, key_name, key_type ASC ");
+				}
+				
+				//userType不為all 和  Source為all
+				if ( !(StringUtils.equals("all", userType)) && (StringUtils.equals("all", source))){
+					sql.append(" FROM adm_category_audience_analyze ");
+					sql.append(" WHERE 1=1 ");
+					
+					if (StringUtils.isNotBlank(keyId)){
+						sql.append(" and key_id = '"+keyId+"' ");
+					}
+					
+					if (StringUtils.isNotBlank(keyType)){
+						sql.append(" and key_type = '"+keyType+"' ");
+					}
+					
+					if (StringUtils.isNotBlank(userType)){
+						sql.append(" and user_type = '"+userType+"' ");
+					}
+					sql.append(" GROUP BY record_date, key_id, key_name, key_type , user_type ASC ");
+				}
+				
+				//userType為all 和  Source不為all
+				if ( (StringUtils.equals("all", userType)) && (!StringUtils.equals("all", source))){
+					sql.append(" FROM adm_category_audience_analyze ");
+					sql.append(" WHERE 1=1 ");
+					
+					if (StringUtils.isNotBlank(keyId)){
+						sql.append(" and key_id = '"+keyId+"' ");
+					}
+					
+					if (StringUtils.isNotBlank(keyType)){
+						sql.append(" and key_type = '"+keyType+"' ");
+					}
+					
+					if (StringUtils.isNotBlank(source)){
+						sql.append(" and source = '"+source+"' ");
+					}
+				
+					sql.append(" GROUP BY record_date, key_id, key_name, key_type , source ASC ");
+				}
+				
+				StringBuffer sqlByPage = new StringBuffer(sql);
+				sqlByPage.append(" LIMIT ");
+				sqlByPage.append(startRange);
+				sqlByPage.append(" , ");
+				sqlByPage.append(endRange) ;
+				
+				
+				List<Object> listByPage = admCategoryAudienceAnalyzeService.sqlFindByPage(sqlByPage.toString());
+				
+				List<AdmCategoryAudienceAnalyze> audienceAnalyzeList =new ArrayList<>();
+				
+				for (Object obj : listByPage) {
+					Object[] objArray= (Object[])obj;
+					
+					AdmCategoryAudienceAnalyze audienceAnalyzeObj =new AdmCategoryAudienceAnalyze();
+					audienceAnalyzeObj.setId((Integer)objArray[0]);
+					audienceAnalyzeObj.setRecordDate((Date)objArray[1]);
+					audienceAnalyzeObj.setKeyId((String)objArray[2]);
+					audienceAnalyzeObj.setKeyName((String)objArray[3]);
+					audienceAnalyzeObj.setKeyType((String)objArray[4]);
+					audienceAnalyzeObj.setUserType((StringUtils.equals("all", userType))?"All":(String)objArray[5]); 
+					audienceAnalyzeObj.setSource((StringUtils.equals("all", source))?"All":(String)objArray[6]);
+					audienceAnalyzeObj.setKeyCount(((BigDecimal) objArray[7]).intValue());
+
+					audienceAnalyzeList.add(audienceAnalyzeObj);
+					
+				}
+				
+				//拿全部的size
+				int allListSize=admCategoryAudienceAnalyzeService.sqlRowCount(sql.toString());
+				
+				result.put("result", "SUCCESS");
+				result.put("admCategoryAudienceAnalyzeList", audienceAnalyzeList);
+				result.put("pageSize", allListSize);
+			}
 			
-			result.put("result", "SUCCESS");
-			result.put("admCategoryAudienceAnalyzeList", list);
-			result.put("pageSize", listSize);
 			return result.toString();
 	        
 		} catch (Exception e) {
@@ -184,69 +229,69 @@ public class QueryAudienceAnalyzeController extends BaseController {
 		}
 	}
 	
-	@RequestMapping(value = "/adm/queryrecordcount", method = RequestMethod.POST, headers = "Accept=application/json;charset=UTF-8")
-	public String queryRecordCount(
-			HttpServletRequest request,
-			ModelAndView modelAndView,
-			String keyType,
-			String userType,
-			String source,
-			String recordDate,
-			String keyId
-			) {
-		JSONObject result = new JSONObject();
-		try {
-			 
-			StringBuffer hql = new StringBuffer(" from AdmCategoryAudienceAnalyze where 1=1 ");
-			
-			if (StringUtils.isNotBlank(keyType)){
-				hql.append(" and keyType  = '"+keyType+"' ");
-			}
-			
-			if (StringUtils.isNotBlank(userType)){
-				if (StringUtils.equals("memid", userType)){
-					hql.append(" and userType  = '"+userType+"' ");	
-				}
-				if (StringUtils.equals("uuid", userType)){
-					hql.append(" and userType  = '"+userType+"' ");	
-				}
-				
-			}
-			
-			if (StringUtils.isNotBlank(source)){
-				if (StringUtils.equals("24h", source)){
-					hql.append(" and source  = '"+source+"' ");	
-				}
-				if (StringUtils.equals("ruten", source)){
-					hql.append(" and source  = '"+source+"' ");	
-				}
-				if (StringUtils.equals("adclick", source)){
-					hql.append(" and source  = '"+source+"' ");	
-				}
-			}
-			
-			if (StringUtils.isNotBlank(recordDate)){
-				hql.append(" and recordDate = '"+recordDate+"' ");
-			}
-			
-			if (StringUtils.isNotBlank(keyId)){
-				hql.append(" and keyId = '"+keyId+"' ");
-			}
-			
-			
-			int listSize=admCategoryAudienceAnalyzeService.rowCount(hql.toString());
-			
-			result.put("result", "SUCCESS");
-			result.put("pageSize", listSize);
-			return result.toString();
-	        
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.put("result", "FAIL");
-			result.put("msg", "system error");
-			return result.toString();
-		}
-	}
+//	@RequestMapping(value = "/adm/queryrecordcount", method = RequestMethod.POST, headers = "Accept=application/json;charset=UTF-8")
+//	public String queryRecordCount(
+//			HttpServletRequest request,
+//			ModelAndView modelAndView,
+//			String keyType,
+//			String userType,
+//			String source,
+//			String recordDate,
+//			String keyId
+//			) {
+//		JSONObject result = new JSONObject();
+//		try {
+//			 
+//			StringBuffer hql = new StringBuffer(" from AdmCategoryAudienceAnalyze where 1=1 ");
+//			
+//			if (StringUtils.isNotBlank(keyType)){
+//				hql.append(" and keyType  = '"+keyType+"' ");
+//			}
+//			
+//			if (StringUtils.isNotBlank(userType)){
+//				if (StringUtils.equals("memid", userType)){
+//					hql.append(" and userType  = '"+userType+"' ");	
+//				}
+//				if (StringUtils.equals("uuid", userType)){
+//					hql.append(" and userType  = '"+userType+"' ");	
+//				}
+//				
+//			}
+//			
+//			if (StringUtils.isNotBlank(source)){
+//				if (StringUtils.equals("24h", source)){
+//					hql.append(" and source  = '"+source+"' ");	
+//				}
+//				if (StringUtils.equals("ruten", source)){
+//					hql.append(" and source  = '"+source+"' ");	
+//				}
+//				if (StringUtils.equals("adclick", source)){
+//					hql.append(" and source  = '"+source+"' ");	
+//				}
+//			}
+//			
+//			if (StringUtils.isNotBlank(recordDate)){
+//				hql.append(" and recordDate = '"+recordDate+"' ");
+//			}
+//			
+//			if (StringUtils.isNotBlank(keyId)){
+//				hql.append(" and keyId = '"+keyId+"' ");
+//			}
+//			
+//			
+//			int listSize=admCategoryAudienceAnalyzeService.rowCount(hql.toString());
+//			
+//			result.put("result", "SUCCESS");
+//			result.put("pageSize", listSize);
+//			return result.toString();
+//	        
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			result.put("result", "FAIL");
+//			result.put("msg", "system error");
+//			return result.toString();
+//		}
+//	}
 	
 	
 }

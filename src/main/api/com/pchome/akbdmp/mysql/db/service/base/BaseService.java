@@ -67,6 +67,14 @@ public abstract class BaseService<T, PK extends Serializable> implements IBaseSe
     }
     
     public int rowCount(String hql) { 
-    	 return dao.rowCount(hql);
+    	return dao.rowCount(hql);
+    }
+    
+    public List<Object> sqlFindByPage(String sql) {
+    	return dao.sqlFindByPage(sql);
+    }
+    
+    public int sqlRowCount(String sql) {
+    	return dao.sqlRowCount(sql);
     }
 }
