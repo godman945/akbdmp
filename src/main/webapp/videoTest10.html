@@ -4,10 +4,32 @@
 <script src="./js/easyui/jquery.min.js"></script>
 <script>
 $(document).ready(function () {
-	
-	
 	console.clear();
 	console.log("=============================");
+	
+	
+	
+	 if (window.addEventListener) {
+         window.addEventListener('message', ReceiveCallback, false);
+     } else if (window.attachEvent) {
+         window.attachEvent('onmessage', ReceiveCallback);
+     }
+	
+	
+	
+	 function ReceiveCallback(msg) {
+         if (msg.origin == "http://dmpstg.mypchome.com.tw") {
+            console.log($(window).height())
+         }
+     }
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	var height = $(window.parent).height();
 	var width = $(window.parent).width();
@@ -105,6 +127,8 @@ $(document).ready(function () {
 	 <source src="http://vstreamdev.mypchome.com.tw/20170119001/20170119001-0240p-0300k-vp8.webm" ></source> -->
 </video>
 </div>
+
+
 
 </body>
 </html>
