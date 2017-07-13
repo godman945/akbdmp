@@ -1,0 +1,109 @@
+<!DOCTYPE>
+<html>
+<head>
+<script src="./js/easyui/jquery.min.js"></script>
+<script>
+$(document).ready(function () {
+	
+	
+	console.clear();
+	console.log("=============================");
+	
+	var height = $(window.parent).height();
+	var width = $(window.parent).width();
+	var iframeArray = window.parent.document.getElementsByTagName("iframe");
+	
+	
+	for(var i = 0; i< iframeArray.length; i++){
+		var video = $(iframeArray[i]).contents().find("#video-over").children();
+		video[0].pause();
+	}
+	
+	
+	$(window.parent).scroll(function() { 
+		for(var i = 0; i< iframeArray.length; i++){
+			console.log(i)
+			console.log("高度:"+iframeArray[i].getBoundingClientRect().top);
+			console.log("左邊:"+iframeArray[i].getBoundingClientRect().left);
+			console.log("底部:"+iframeArray[i].getBoundingClientRect().bottom);
+					
+			var inVpFull = isElementInViewport($(iframeArray[i]).parent());
+			var inVpPartial = isElementPartiallyInViewport($(iframeArray[i]).parent());
+			var video = $(iframeArray[i]).contents().find("#video-over").children();
+					
+					
+			/*
+			if(!inVpFull){
+				video[0].pause();
+			}else{
+				video[0].play();
+			}
+				*/	
+					
+			/**/
+			if(!inVpPartial){
+				video[0].pause();
+			}else{
+				video[0].play();
+			}
+			
+			console.log("Fully in viewport: " + inVpFull);
+		    console.log("*******");
+		}
+	});
+	 
+	 
+	 function isElementInViewport (element) {
+         //special bonus for those using jQuery
+         if (typeof jQuery !== 'undefined' && element instanceof jQuery) element = element[0];
+         var rect = element.getBoundingClientRect();
+        
+         
+       //  console.log("AA:"+element.getBoundingClientRect().bottom);
+       //  console.log("BB:"+$(window.parent).scrollTop());
+         
+        // console.log(height);
+         //console.log(element.getBoundingClientRect().height - height);
+         if(element.getBoundingClientRect().top < 0 ){
+        	 return false;
+         }else{
+        	 return true;
+         }
+     }
+	 
+	 
+	 function isElementPartiallyInViewport(element)  {
+		 if (typeof jQuery !== 'undefined' && element instanceof jQuery) element = element[0];
+         var rect = element.getBoundingClientRect();
+         if(element.getBoundingClientRect().bottom < 100 || element.getBoundingClientRect().bottom  > height +100){
+        	 return false;
+         }else{
+        	 return true;
+         }
+     }
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+});
+
+
+
+</script>
+</head>
+<body>
+
+<div id="video-over">
+<video class="home-banner" id="video" controls autoplay loop>
+	<source src="http://localhost:8080/AkbDmp/Dovey.mp4" ></source>
+	<!-- <source src="http://vstreamdev.mypchome.com.tw/20170119001/20170119001-0240p-0300k-vp8.webm" ></source> -->
+</video>
+</div>
+
+</body>
+</html>
