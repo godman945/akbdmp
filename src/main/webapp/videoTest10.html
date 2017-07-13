@@ -9,28 +9,12 @@ $(document).ready(function () {
 	
 	
 	
-	 if (window.addEventListener) {
-         window.addEventListener('message', ReceiveCallback, false);
-     } else if (window.attachEvent) {
-         window.attachEvent('onmessage', ReceiveCallback);
-     }
-	
-	
-	
-	 function ReceiveCallback(msg) {
-         if (msg.origin == "http://dmpstg.mypchome.com.tw") {
-            console.log($(window).height())
-         }
-     }
 	
 	
 	
 	
 	
-	
-	
-	
-	
+	/*
 	var height = $(window.parent).height();
 	var width = $(window.parent).width();
 	var iframeArray = window.parent.document.getElementsByTagName("iframe");
@@ -53,7 +37,7 @@ $(document).ready(function () {
 			var inVpPartial = isElementPartiallyInViewport($(iframeArray[i]).parent());
 			var video = $(iframeArray[i]).contents().find("#video-over").children();
 					
-					
+			*/			
 			/*
 			if(!inVpFull){
 				video[0].pause();
@@ -62,13 +46,13 @@ $(document).ready(function () {
 			}
 				*/	
 					
-			/**/
+			/*
 			if(!inVpPartial){
 				video[0].pause();
 			}else{
 				video[0].play();
 			}
-			
+				
 			console.log("Fully in viewport: " + inVpFull);
 		    console.log("*******");
 		}
@@ -103,8 +87,8 @@ $(document).ready(function () {
         	 return true;
          }
      }
-	 
-	 
+	*/
+	
 	 
 	 
 	 
@@ -127,6 +111,7 @@ $(document).ready(function () {
 	 <source src="http://vstreamdev.mypchome.com.tw/20170119001/20170119001-0240p-0300k-vp8.webm" ></source> -->
 </video>
 </div>
+
 
 
 
