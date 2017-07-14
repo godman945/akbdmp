@@ -4,17 +4,10 @@
 <script src="./js/easyui/jquery.min.js"></script>
 <script>
 $(document).ready(function () {
+	
 	console.clear();
 	console.log("=============================");
 	
-	
-	
-	
-	
-	
-	
-	
-	/*
 	var height = $(window.parent).height();
 	var width = $(window.parent).width();
 	var iframeArray = window.parent.document.getElementsByTagName("iframe");
@@ -37,16 +30,16 @@ $(document).ready(function () {
 			var inVpPartial = isElementPartiallyInViewport($(iframeArray[i]).parent());
 			var video = $(iframeArray[i]).contents().find("#video-over").children();
 					
-			*/			
-			/*
+					
+			/*	
 			if(!inVpFull){
 				video[0].pause();
 			}else{
 				video[0].play();
 			}
-				*/	
+				*/
 					
-			/*
+			/**/
 			if(!inVpPartial){
 				video[0].pause();
 			}else{
@@ -63,13 +56,6 @@ $(document).ready(function () {
          //special bonus for those using jQuery
          if (typeof jQuery !== 'undefined' && element instanceof jQuery) element = element[0];
          var rect = element.getBoundingClientRect();
-        
-         
-       //  console.log("AA:"+element.getBoundingClientRect().bottom);
-       //  console.log("BB:"+$(window.parent).scrollTop());
-         
-        // console.log(height);
-         //console.log(element.getBoundingClientRect().height - height);
          if(element.getBoundingClientRect().top < 0 ){
         	 return false;
          }else{
@@ -87,19 +73,7 @@ $(document).ready(function () {
         	 return true;
          }
      }
-	*/
-	
-	 
-	 
-	 
-	 
-	 
-	 
-	 
 });
-
-
-
 </script>
 </head>
 <body>
@@ -107,13 +81,9 @@ $(document).ready(function () {
 <div id="video-over">
 <video class="home-banner" id="video" controls autoplay loop>
 	<source src="http://dmpstg.mypchome.com.tw/AkbDmp/Dovey.mp4" ></source>
-	<!--<source src="http://localhost:8080/AkbDmp/Dovey.mp4" ></source>
-	 <source src="http://vstreamdev.mypchome.com.tw/20170119001/20170119001-0240p-0300k-vp8.webm" ></source> -->
+	<!-- <source src="http://vstreamdev.mypchome.com.tw/20170119001/20170119001-0240p-0300k-vp8.webm" ></source> -->
 </video>
 </div>
-
-
-
 
 </body>
 </html>
