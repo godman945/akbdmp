@@ -1,5 +1,5 @@
 package com.pchome.hadoopdmp.data.mysql.pojo;
-// Generated 2017/7/4 �U�� 05:58:06 by Hibernate Tools 3.4.0.CR1
+// Generated 2017/7/17 �U�� 02:36:01 by Hibernate Tools 3.4.0.CR1
 
 import java.util.Date;
 import javax.persistence.Column;
@@ -19,7 +19,7 @@ import javax.persistence.TemporalType;
 public class AdmCategoryAudienceAnalyze implements java.io.Serializable {
 
 	private Integer id;
-	private Date recordDate;
+	private String recordDate;
 	private String keyId;
 	private String keyName;
 	private String keyType;
@@ -32,7 +32,7 @@ public class AdmCategoryAudienceAnalyze implements java.io.Serializable {
 	public AdmCategoryAudienceAnalyze() {
 	}
 
-	public AdmCategoryAudienceAnalyze(Date recordDate, String keyId, String keyName, String keyType, String userType,
+	public AdmCategoryAudienceAnalyze(String recordDate, String keyId, String keyName, String keyType, String userType,
 			String source, int keyCount, Date createDate, Date updateDate) {
 		this.recordDate = recordDate;
 		this.keyId = keyId;
@@ -57,13 +57,12 @@ public class AdmCategoryAudienceAnalyze implements java.io.Serializable {
 		this.id = id;
 	}
 
-	@Temporal(TemporalType.DATE)
 	@Column(name = "record_date", nullable = false, length = 10)
-	public Date getRecordDate() {
+	public String getRecordDate() {
 		return this.recordDate;
 	}
 
-	public void setRecordDate(Date recordDate) {
+	public void setRecordDate(String recordDate) {
 		this.recordDate = recordDate;
 	}
 
