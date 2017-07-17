@@ -1,32 +1,35 @@
 <!DOCTYPE>
 <html>
 <head>
+
 <script>
-	
-	
-	
-	var iframeArray = window.parent.document.getElementsByTagName("iframe");
-	console.log(iframeArray[0].contentWindow.document);
-	
-	
-	
-	
-	/**
 	console.clear();
-	console.log("=============================");
-	
-	var height = $(window.parent).height();
-	var width = $(window.parent).width();
+	console.log("=============================2");
+	var height = window.parent.innerHeight;
+	var width = window.parent.innerWidth;
 	var iframeArray = window.parent.document.getElementsByTagName("iframe");
+
+//	console.log(iframeArray[1]);
+	//var video =  iframeArray[1].contentWindow.document.getElementById("video-over");
+//	console.log(video);
 	
 	
-	for(var i = 0; i< iframeArray.length; i++){
-		var video = $(iframeArray[i]).contents().find("#video-over").children();
-		video[0].pause();
+	
+	for(var i = 0; i < iframeArray.length; i++){
+		console.log(iframeArray[i]);
+		var video =  iframeArray[i].contentWindow.document.body.children;
+		console.log(video);
+		
+		//var video =  iframeArray[i].contentWindow.document.querySelector(".home-banner");
+		//console.log(video);
+		//if(video == null){
+		//	break;
+		//}
+		
+		//video.pause();
 	}
-	
-	
-	$(window.parent).scroll(function() { 
+	/**/
+	window.onscroll = function() {
 		for(var i = 0; i< iframeArray.length; i++){
 			console.log(i)
 			console.log("高度:"+iframeArray[i].getBoundingClientRect().top);
@@ -38,11 +41,14 @@
 			var video = $(iframeArray[i]).contents().find("#video-over").children();
 					
 					
+			/*	
 			if(!inVpFull){
 				video[0].pause();
 			}else{
 				video[0].play();
 			}
+			*/		
+			
 			if(!inVpPartial){
 				video[0].pause();
 			}else{
@@ -51,33 +57,34 @@
 				
 			console.log("Fully in viewport: " + inVpFull);
 		    console.log("*******");
+		    
 		}
-	});
-	 
-	 
-	 function isElementInViewport (element) {
-         //special bonus for those using jQuery
-         if (typeof jQuery !== 'undefined' && element instanceof jQuery) element = element[0];
-         var rect = element.getBoundingClientRect();
-         if(element.getBoundingClientRect().top < 0 ){
-        	 return false;
-         }else{
-        	 return true;
-         }
-     }
+	}
+	
+	
+	function isElementInViewport (element) {
+        //special bonus for those using jQuery
+        if (typeof jQuery !== 'undefined' && element instanceof jQuery) element = element[0];
+        var rect = element.getBoundingClientRect();
+        if(element.getBoundingClientRect().top < 0 ){
+       	 return false;
+        }else{
+       	 return true;
+        }
+    }
 	 
 	 
 	 function isElementPartiallyInViewport(element)  {
 		 if (typeof jQuery !== 'undefined' && element instanceof jQuery) element = element[0];
-         var rect = element.getBoundingClientRect();
-         if(element.getBoundingClientRect().bottom < 100 || element.getBoundingClientRect().bottom  > height +100){
-        	 return false;
-         }else{
-        	 return true;
-         }
-     }
-	*/
+        var rect = element.getBoundingClientRect();
+        if(element.getBoundingClientRect().bottom < 100 || element.getBoundingClientRect().bottom  > height +100){
+       	 return false;
+        }else{
+       	 return true;
+        }
+    }
 </script>
+	
 </head>
 <body>
 
