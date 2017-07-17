@@ -21,9 +21,9 @@
 	
 		window.parent.addEventListener('scroll', function() {
 			for(var i = 0; i< iframeArray.length; i++){
-				//console.log("高度:"+iframeArray[i].getBoundingClientRect().top);
-				//console.log("左邊:"+iframeArray[i].getBoundingClientRect().left);
-				//console.log("底部:"+iframeArray[i].getBoundingClientRect().bottom);
+				console.log("高度:"+iframeArray[i].getBoundingClientRect().top);
+				console.log("左邊:"+iframeArray[i].getBoundingClientRect().left);
+				console.log("底部:"+iframeArray[i].getBoundingClientRect().bottom);
 				var inVpFull = isElementInViewport(iframeArray[i].parentElement);
 				var inVpPartial = isElementPartiallyInViewport(iframeArray[i].parentElement);
 				var video =  iframeArray[i].contentWindow.document.querySelector(".home-banner");
@@ -42,8 +42,8 @@
 					video.play();
 				}
 					
-				//console.log("Fully in viewport: " + inVpFull);
-			   // console.log("*******");
+				console.log("Fully in viewport: " + inVpFull);
+			    console.log("*******");
 			}
 	    });
 	}, false);
