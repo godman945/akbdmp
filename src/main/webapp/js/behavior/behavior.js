@@ -31,21 +31,21 @@ $(document).ready(function () {
 		currentPage=Number(currentPage)-1;
 		removeSelected();
 		$("#total-pages-select option[value='"+currentPage.toString()+"']").attr("selected",true);
-		alert(currentPage);
+//		alert(currentPage);
 		search();
 	});
 	
 	//下一頁btn
 	$('#next-page-btn').on('click', function(){
-		alert("lastPage");
-		alert(lastPage);
+//		alert("lastPage");
+//		alert(lastPage);
 		if(currentPage >= lastPage){
 			return false;
 		}	
 		currentPage=Number(currentPage)+1;	
 		removeSelected();
 		$("#total-pages-select option[value='"+currentPage.toString()+"']").attr("selected",true);
-		alert(currentPage);
+//		alert(currentPage);
 		search();
 	});
 	
@@ -79,8 +79,8 @@ function removeSelected(){
 };
 
 function search(){
-	alert("currentPage")
-	alert(currentPage)
+//	alert("currentPage")
+//	alert(currentPage)
 	
 	$("#audiencet-tbody").empty();
 	var result = null;
@@ -146,8 +146,13 @@ function search(){
 				$("#total-pages-select").append("<option>1</option>");
 				$("#total-pages-select option[value='"+currentPage+"']").attr("selected","selected");
 				alert("查無資料");
-				alert("currentPage");
-				alert(currentPage);
+				
+				var data = '<tr id="datagrid-row-r1-2-0" datagrid-row-index="0" class="datagrid-row">'+
+				'<td  colspan="8" field="查無資料"><div style="height:auto;" class="datagrid-cell datagrid-cell-c1-itemid">查無資料</div></td></tr>'
+				$('#audiencet-tbody').append(data);
+				$('#total-pages-text').text("0");
+//				alert("currentPage");
+//				alert(currentPage);
 			}
 		}
 	);

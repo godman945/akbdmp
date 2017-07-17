@@ -82,7 +82,7 @@
 							</select>
 						</td>
 						<td>
-							<span style="padding-right:6px;">of<span id = "total-pages-text" style="padding-right:6px;">0</span></span>
+							<span style="padding-right:6px;">of&nbsp;<span id = "total-pages-text" style="padding-right:6px;">0</span></span>
 						</td>
 						<td>
 							<div class="pagination-btn-separator"></div>
