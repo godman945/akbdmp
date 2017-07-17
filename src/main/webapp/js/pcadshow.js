@@ -7,6 +7,9 @@ var pageValue="";
 var pid="";
 var ptype="";
 var seway="";
+
+document.write('<div id="veo" width="300" height="250"><iframe id="f1" src="videoTest10.html" width="300" height="250" allowtransparency="true" frameborder="0" scrolling="no"></iframe></div>');
+
 //var document = document;
 
 
@@ -14,7 +17,6 @@ var seway="";
 //imported.src = 'http://localhost:8080/AkbDmp/js/alex.js';
 //document.head.appendChild(imported);
 
-document.write('<div id="veo" width="300" height="250"><iframe  id="f1" src="videoTest10.html" width="300" height="250" allowtransparency="true" frameborder="0" scrolling="no"></iframe></div>');
 
 
 /*
@@ -194,3 +196,4 @@ if(pad_pchad.length <= 10){
 }
 
 */
+
