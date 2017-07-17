@@ -293,7 +293,7 @@ public class MapReduceMongoJob {
 				admCategoryAudienceAnalyzeService = ctx.getBean(IAdmCategoryAudienceAnalyzeService.class);
 				
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-				String recordDate = sdf.format(new Date());
+				recordDate = sdf.format(new Date());
 				
 			} catch (Exception e) {
 				log.error(">>>>> Reducer setup exception : " + e.getMessage());
