@@ -7,114 +7,15 @@ var pageValue="";
 var pid="";
 var ptype="";
 var seway="";
-console.clear();
-console.log('A01');
-var document = document;
-
-document.write('<div id="veo" width="300" height="250"><iframe id="f1" src="videoTest10.html" width="300" height="250" allowtransparency="true" frameborder="0" scrolling="no"></iframe></div>');
+//var document = document;
 
 
-//var height = $(window.parent).height();
-//var width = $(window.parent).width();
-var iframeArray = document.getElementsByTagName("iframe");
+//var imported = document.createElement('script');
+//imported.src = 'http://localhost:8080/AkbDmp/js/alex.js';
+//document.head.appendChild(imported);
 
+document.write('<div id="veo" width="300" height="250"><iframe  id="f1" src="videoTest10.html" width="300" height="250" allowtransparency="true" frameborder="0" scrolling="no"></iframe></div>');
 
-
-var iframeArray = window.parent.document.getElementsByTagName("iframe");
-console.log(iframeArray[0].contentWindow.document);
-
-
-
-
-
-var iframeArray = window.document.getElementsByTagName("iframe");
-for(var i = 0; i< iframeArray.length; i++){
-	//var video = $(iframeArray[i]).contents().find("#video-over").children();
-	//video[0].pause();
-	var video = iframeArray[i].contentWindow.document;
-	console.log(video);
-}
-
-
-
-
-for(var i = 0; i< iframeArray.length; i++){
-
-	//console.log(iframeArray[i]);
-	//var video = iframeArray[i].contentWindow.window.document;
-	//document.getElementById('video-over');
-	//console.log(video);
-	//video.pause();
-}
-
-
-
-window.onscroll = function() {
-	for(var i = 0; i< iframeArray.length; i++){
-		//console.log(i)
-		//console.log("高度:"+iframeArray[i].getBoundingClientRect().top);
-		//console.log("左邊:"+iframeArray[i].getBoundingClientRect().left);
-		//console.log("底部:"+iframeArray[i].getBoundingClientRect().bottom);
-			
-		//var inVpFull = isElementInViewport($(iframeArray[i]).parent());
-		//var inVpPartial = isElementPartiallyInViewport($(iframeArray[i]).parent());
-		//var video = $(iframeArray[i]).contents().find("#video-over").children();
-				
-				
-		/*	
-		if(!inVpFull){
-			video[0].pause();
-		}else{
-			video[0].play();
-		}
-			*/
-				
-		/*
-		if(!inVpPartial){
-			video[0].pause();
-		}else{
-			video[0].play();
-		}
-		*/	
-		//console.log("Fully in viewport: " + inVpFull);
-	   // console.log("*******");
-	}
-	//var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-	//console.log(scrollTop);
-}
-
-function isElementInViewport (element) {
-    //special bonus for those using jQuery
-    if (typeof jQuery !== 'undefined' && element instanceof jQuery) element = element[0];
-    	var rect = element.getBoundingClientRect();
-    	if(element.getBoundingClientRect().top < 0 ){
-    		return false;
-    }else{
-    	return true;
-    }
-}
-
-
-function isElementPartiallyInViewport(element)  {
-	if (typeof jQuery !== 'undefined' && element instanceof jQuery) element = element[0];
-    	var rect = element.getBoundingClientRect();
-	    if(element.getBoundingClientRect().bottom < 100 || element.getBoundingClientRect().bottom  > height +100){
-	   	 return false;
-	    }else{
-	   	 return true;
-	  }
-}
-
-
-
-
-
-/*
-for(var i = 0; i< iframeArray.length; i++){
-	var video = $(iframeArray[i]).contents().find("#video-over").children();
-	video[0].pause();
-}
-*/
 
 /*
 var res=document.URL;
