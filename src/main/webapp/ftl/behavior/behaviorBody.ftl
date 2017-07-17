@@ -60,14 +60,14 @@
 							<a href="javascript:;" class="l-btn l-btn-small l-btn-plain l-btn-disabled l-btn-plain-disabled" group="" id="">
 								<span class="l-btn-left l-btn-icon-left">
 								<span class="l-btn-text l-btn-empty">&nbsp;</span>
-								<span class="l-btn-icon pagination-first">&nbsp;</span>
+								<span id="first-page-btn" class="l-btn-icon pagination-first">&nbsp;</span>
 								</span>
 							</a>
 						</td>
 						<td>
 							<a href="javascript:;" class="l-btn l-btn-small l-btn-plain l-btn-disabled l-btn-plain-disabled" group="" id="">
 								<span class="l-btn-left l-btn-icon-left"><span class="l-btn-text l-btn-empty">&nbsp;</span>
-								<span class="l-btn-icon pagination-prev">&nbsp;</span></span>
+								<span id="pre-page-btn" class="l-btn-icon pagination-prev">&nbsp;</span></span>
 							</a>
 						</td>
 						<td>
@@ -77,28 +77,28 @@
 							<span style="padding-left:6px;">Page</span>
 						</td>
 						<td>
-							<!--<input class="pagination-num" type="text" value="1" size="2">-->
 							<select id="total-pages-select" class="pagination-page-list" >
 								<option>1</option>
 							</select>
 						</td>
 						<td>
-							<span style="padding-right:6px;">of<span id = "total-pages-text" style="padding-right:6px;">0</span></span>
+							<span style="padding-right:6px;">of&nbsp;<span id = "total-pages-text" style="padding-right:6px;">0</span></span>
 						</td>
 						<td>
 							<div class="pagination-btn-separator"></div>
 						</td>
 						<td>
-							<a onclick="adb();" class="l-btn l-btn-small l-btn-plain l-btn-disabled l-btn-plain-disabled" group="" id="">
+							<a  class="l-btn l-btn-small l-btn-plain l-btn-disabled l-btn-plain-disabled" group="" id="">
 								<span class="l-btn-left l-btn-icon-left"><span class="l-btn-text l-btn-empty">&nbsp;</span>
-								<span class="l-btn-icon pagination-next">&nbsp;</span></span>
-							</a></td><td><a href="javascript:;" class="l-btn l-btn-small l-btn-plain l-btn-disabled l-btn-plain-disabled" group="" id=""><span class="l-btn-left l-btn-icon-left"><span class="l-btn-text l-btn-empty">&nbsp;</span><span class="l-btn-icon pagination-last">&nbsp;</span></span>
-							</a></td><td><div class="pagination-btn-separator"></div></td><td><a href="javascript:;" class="l-btn l-btn-small l-btn-plain" group="" id=""><span class="l-btn-left l-btn-icon-left"><span class="l-btn-text l-btn-empty">&nbsp;</span><span class="l-btn-icon pagination-load">&nbsp;</span></span></a></td></tr></tbody></table><div class="pagination-info">總共<span id="total-count" style="padding-right:6px;">0</span>筆</div>
+								<span id ="next-page-btn" class="l-btn-icon pagination-next">&nbsp;</span></span>
+							</a></td><td><a href="javascript:;" class="l-btn l-btn-small l-btn-plain l-btn-disabled l-btn-plain-disabled" group="" id=""><span class="l-btn-left l-btn-icon-left"><span class="l-btn-text l-btn-empty">&nbsp;</span><span id ="last-page-btn" class="l-btn-icon pagination-last">&nbsp;</span></span>
+							</a></td><td><div class="pagination-btn-separator"></div></td><td><a href="javascript:;" class="l-btn l-btn-small l-btn-plain" group="" id=""><span class="l-btn-left l-btn-icon-left"><span class="l-btn-text l-btn-empty">&nbsp;</span><span id="reload-btn" class="l-btn-icon pagination-load">&nbsp;</span></span></a></td></tr></tbody></table><div class="pagination-info">總共<span id="total-count" style="padding-right:6px;">0</span>筆</div>
 							<div style="clear:both;"></div>
 		</div>
 		<table style="border:3px #cccccc solid;width:100%;" cellpadding="10" border='1' >
 			<thead>
 				 <tr>
+				     <th>流水號</th>
 			      <th>序號</th>
 			      <th>紀錄日期</th>
 			      <th>受眾編號</th>

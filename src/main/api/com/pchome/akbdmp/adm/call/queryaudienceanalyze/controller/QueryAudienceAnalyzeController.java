@@ -48,6 +48,10 @@ public class QueryAudienceAnalyzeController extends BaseController {
 		JSONObject result = new JSONObject();
 		
 		try {
+			
+			if (StringUtils.isBlank(page)){
+				page="1";
+			}
 			 
 			//受眾類型和來源都不為all
 			if ( (!StringUtils.equals("all", userType)) && (!StringUtils.equals("all", source))){
@@ -100,16 +104,8 @@ public class QueryAudienceAnalyzeController extends BaseController {
 					hql.append(" and keyId = '"+keyId+"' ");
 				}
 				
-				int pageInt=0;
-				if (StringUtils.isBlank(page)){
-					pageInt=1;
-					
-				}else{
-					pageInt=Integer.parseInt(page);
-				}
-				
 				//拿分頁size
-				List<AdmCategoryAudienceAnalyze> list=admCategoryAudienceAnalyzeService.findByPage(hql.toString(), pageInt , Integer.parseInt(pageSize));
+				List<AdmCategoryAudienceAnalyze> list=admCategoryAudienceAnalyzeService.findByPage(hql.toString(), Integer.parseInt(page) , Integer.parseInt(pageSize));
 	
 				//拿全部的size
 				int listSize=admCategoryAudienceAnalyzeService.rowCount(hql.toString());
