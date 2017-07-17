@@ -1,10 +1,17 @@
 <!DOCTYPE>
 <html>
 <head>
-<script src="./js/easyui/jquery.min.js"></script>
 <script>
-$(document).ready(function () {
 	
+	
+	
+	var iframeArray = window.parent.document.getElementsByTagName("iframe");
+	console.log(iframeArray[0].contentWindow.document);
+	
+	
+	
+	
+	/**
 	console.clear();
 	console.log("=============================");
 	
@@ -31,15 +38,11 @@ $(document).ready(function () {
 			var video = $(iframeArray[i]).contents().find("#video-over").children();
 					
 					
-			/*	
 			if(!inVpFull){
 				video[0].pause();
 			}else{
 				video[0].play();
 			}
-				*/
-					
-			/**/
 			if(!inVpPartial){
 				video[0].pause();
 			}else{
@@ -73,7 +76,7 @@ $(document).ready(function () {
         	 return true;
          }
      }
-});
+	*/
 </script>
 </head>
 <body>
