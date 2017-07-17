@@ -1,8 +1,5 @@
 
 
-
-
-
 var res=document.URL;
 var docurl = encodeURIComponent(res);
 var keywordValue="";
@@ -10,18 +7,25 @@ var pageValue="";
 var pid="";
 var ptype="";
 var seway="";
-
-console.log('A15');
+console.clear();
+console.log('A01');
 var document = document;
 
 document.write('<div id="veo" width="300" height="250"><iframe id="f1" src="videoTest10.html" width="300" height="250" allowtransparency="true" frameborder="0" scrolling="no"></iframe></div>');
 
 
-
-
 //var height = $(window.parent).height();
 //var width = $(window.parent).width();
 var iframeArray = document.getElementsByTagName("iframe");
+
+
+
+var iframeArray = window.parent.document.getElementsByTagName("iframe");
+console.log(iframeArray[0].contentWindow.document);
+
+
+
+
 
 var iframeArray = window.document.getElementsByTagName("iframe");
 for(var i = 0; i< iframeArray.length; i++){
