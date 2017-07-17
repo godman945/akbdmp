@@ -50,7 +50,7 @@ public class MapReduceMongoJob {
 	
 
 	public static void main(String[] args) throws Exception {
-		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd");
 		Date current = new Date();
 		String date = sdFormat.format(current);
 		
@@ -61,12 +61,9 @@ public class MapReduceMongoJob {
 	}
 	
 	public void drive(String date) throws Exception {
-		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd");
-	    Date today = sdFormat.parse(date);;
-
 	    //hibernate delete mysql today all record 
 		String query = " from AdmCategoryAudienceAnalyze where recordDate = ? ";
-	    Object[] queryParam = {today};//2017-07-05
+	    Object[] queryParam = {date};	//	2017/07/05
 	    List<AdmCategoryAudienceAnalyze> todayRecordList= (List<AdmCategoryAudienceAnalyze>)admCategoryAudienceAnalyzeService.findHql(query, queryParam);
 	    admCategoryAudienceAnalyzeService.deleteAll(todayRecordList);
 	    
@@ -286,12 +283,18 @@ public class MapReduceMongoJob {
 		private static String[] mysqlColumnStr = null;
 
 		private static String[] reduceKeyArray = null;
+		
+		private static String recordDate = null;
 
 		public void setup(Context context) {
 			try {
 				System.setProperty("spring.profiles.active", "stg");
 				ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 				admCategoryAudienceAnalyzeService = ctx.getBean(IAdmCategoryAudienceAnalyzeService.class);
+				
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+				String recordDate = sdf.format(new Date());
+				
 			} catch (Exception e) {
 				log.error(">>>>> Reducer setup exception : " + e.getMessage());
 			}
@@ -378,7 +381,7 @@ public class MapReduceMongoJob {
 		public void insertMysqlAudienceTable(String key, int sum) {
 			mysqlColumnStr = key.toString().split("_");
 			AdmCategoryAudienceAnalyze admCategoryAudienceAnalyze = new AdmCategoryAudienceAnalyze();
-			admCategoryAudienceAnalyze.setRecordDate(new Date());
+			admCategoryAudienceAnalyze.setRecordDate(recordDate);
 			admCategoryAudienceAnalyze.setKeyId(mysqlColumnStr[3]);
 			admCategoryAudienceAnalyze.setKeyName(mysqlColumnStr[4]);
 			admCategoryAudienceAnalyze.setKeyType(mysqlColumnStr[0]);
