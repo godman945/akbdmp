@@ -114,7 +114,7 @@ function search(){
 					console.log(obj);
 					
 					var id = obj.id;
-					var recordDate = '2017-07-07';// obj.recordDate;
+					var recordDate = obj.recordDate;
 					var keyId = obj.keyId;
 					var keyName =  obj.keyName == "null" ? "" : obj.keyName;
 					var keyType =  obj.keyType;

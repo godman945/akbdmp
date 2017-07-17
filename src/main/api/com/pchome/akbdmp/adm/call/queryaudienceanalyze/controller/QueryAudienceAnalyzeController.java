@@ -96,8 +96,8 @@ public class QueryAudienceAnalyzeController extends BaseController {
 						str =recordDate.split("-");
 					}
 					
-					String recordDateNew=str[2]+"-"+str[0]+"-"+str[1];
-					hql.append(" and recordDate = '"+recordDateNew+"' ");
+					String recordDateNew=str[2]+"/"+str[0]+"/"+str[1];
+					hql.append(" and recordDate = '"+recordDateNew.trim()+"' ");
 				}
 				
 				if (StringUtils.isNotBlank(keyId)){
@@ -195,7 +195,7 @@ public class QueryAudienceAnalyzeController extends BaseController {
 					
 					AdmCategoryAudienceAnalyze audienceAnalyzeObj =new AdmCategoryAudienceAnalyze();
 					audienceAnalyzeObj.setId((Integer)objArray[0]);
-					audienceAnalyzeObj.setRecordDate((Date)objArray[1]);
+					audienceAnalyzeObj.setRecordDate((String)objArray[1]);
 					audienceAnalyzeObj.setKeyId((String)objArray[2]);
 					audienceAnalyzeObj.setKeyName((String)objArray[3]);
 					audienceAnalyzeObj.setKeyType((String)objArray[4]);

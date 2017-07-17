@@ -1,5 +1,5 @@
 package com.pchome.hadoopdmp.data.mysql.pojo;
-// Generated 2017/7/17 �U�� 02:36:01 by Hibernate Tools 3.4.0.CR1
+// Generated 2017/7/17 �U�� 03:41:46 by Hibernate Tools 3.4.0.CR1
 
 import java.util.Date;
 import javax.persistence.Column;

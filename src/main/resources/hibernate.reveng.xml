@@ -7,4 +7,6 @@
 	<table-filter match-name="adm_category_audience_analyze"
 		match-catalog="dmp">
 	</table-filter>
+	<table-filter match-name="adm_category" match-catalog="dmp"></table-filter>
+	<table-filter match-name="adm_category_group" match-catalog="dmp"></table-filter>
 </hibernate-reverse-engineering>
