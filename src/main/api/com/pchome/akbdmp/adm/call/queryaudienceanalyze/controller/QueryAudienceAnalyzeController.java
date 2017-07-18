@@ -123,7 +123,7 @@ public class QueryAudienceAnalyzeController extends BaseController {
 				}
 				
 				if (StringUtils.isNotBlank(recordDate)){
-					sql.append(" and recordDate = '"+recordDate.trim()+"' ");
+					sql.append(" and record_date = '"+recordDate.trim()+"' ");
 				}
 				
 				
