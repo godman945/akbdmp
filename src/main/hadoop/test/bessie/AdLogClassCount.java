@@ -28,7 +28,7 @@ import com.pchome.soft.util.DateFormatUtil;
 
 @Component
 public class AdLogClassCount {
-	static Log log = LogFactory.getLog("MongoInsertClassUrl");//MongoInsertClassUrl
+	Log log = LogFactory.getLog("MongoInsertClassUrl");//MongoInsertClassUrl
 
 	@Autowired
 	private MongoOperations mongoOperations;// 正式機
@@ -169,6 +169,7 @@ public class AdLogClassCount {
 	}
 
 	public static void main(String[] args) {
+		Log log = LogFactory.getLog("TransferData");//MongoInsertClassUrl
 		try {
 			System.setProperty("spring.profiles.active", "stg");
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
