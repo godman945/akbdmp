@@ -28,7 +28,7 @@ import com.pchome.soft.util.DateFormatUtil;
 
 @Component
 public class AdLogClassCount {
-	static Log log = LogFactory.getLog("TransferData");//MongoInsertClassUrl
+	static Log log = LogFactory.getLog("MongoInsertClassUrl");//MongoInsertClassUrl
 
 	@Autowired
 	private MongoOperations mongoOperations;// 正式機
@@ -129,7 +129,7 @@ public class AdLogClassCount {
 					classCountLogBean.setRecordDate(recodeDate);
 					classCountLogBean.setRealPersonalInfo(realPersonalInfo);
 	
-					log.info("_id : "+classCountProdMongoBean.get_id());
+					log.info("memid_id : "+classCountProdMongoBean.get_id());
 					saveUserInfo(classCountLogBean);
 				}
 				
@@ -155,7 +155,7 @@ public class AdLogClassCount {
 					classCountLogBean.setRecordDate(recodeDate);
 					classCountLogBean.setRealPersonalInfo(realPersonalInfo);
 	
-					log.info("_id : "+classCountProdMongoBean.get_id());
+					log.info("uuid_id : "+classCountProdMongoBean.get_id());
 					saveUserInfo(classCountLogBean);
 				}
 				
