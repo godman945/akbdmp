@@ -28,7 +28,7 @@ import com.pchome.soft.util.DateFormatUtil;
 
 @Component
 public class AdLogClassCount {
-	Log log = LogFactory.getLog("MongoInsertClassUrl");//MongoInsertClassUrl
+	Log log = LogFactory.getLog("TransferData");//MongoInsertClassUrl
 
 	@Autowired
 	private MongoOperations mongoOperations;// 正式機
