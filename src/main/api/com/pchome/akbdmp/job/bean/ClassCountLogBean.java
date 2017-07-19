@@ -13,6 +13,7 @@ public class ClassCountLogBean {
 	private double w;
 	private String type = "";
 	private String source = "";
+	private String realPersonalInfo = "";
 
 	
 	
@@ -102,6 +103,14 @@ public class ClassCountLogBean {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getRealPersonalInfo() {
+		return realPersonalInfo;
+	}
+
+	public void setRealPersonalInfo(String realPersonalInfo) {
+		this.realPersonalInfo = realPersonalInfo;
 	}
 
 }

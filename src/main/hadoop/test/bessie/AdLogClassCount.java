@@ -1,7 +1,5 @@
 package test.bessie;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -30,133 +28,146 @@ import com.pchome.soft.util.DateFormatUtil;
 
 @Component
 public class AdLogClassCount {
-	Log log = LogFactory.getLog("MongoInsertClassUrl");
+	static Log log = LogFactory.getLog("TransferData");//MongoInsertClassUrl
 
 	@Autowired
-	private MongoOperations mongoOperations;
-	
+	private MongoOperations mongoOperations;// 正式機
+
 	@Autowired
 	private DateFormatUtil dateFormatUtil;
-	
+
 	@Autowired
 	private WriteAkbDmp writeAkbDmp;
-	
-	public static MongoTemplate newDBMongoTemplate;
-	
+
+	public static MongoTemplate newDBMongoTemplate;// 測試機
+
 	public void test() throws Exception {
 		log.info("================START　PROCESS==========================");
-		//新的insert mongo 物件
-		MongoOperations newDBMongoOperations = new MongoTemplate(new SimpleMongoDbFactory(new Mongo("192.168.1.37", 27017), "pcbappdev", new UserCredentials("webuser", "axw2mP1i")));
-		MongoTemplate newDBMongoTemplate = (MongoTemplate)newDBMongoOperations;
+		// 新的insert mongo 物件
+		MongoOperations newDBMongoOperations = new MongoTemplate(new SimpleMongoDbFactory(
+				new Mongo("192.168.1.37", 27017), "pcbappdev", new UserCredentials("webuser", "axw2mP1i")));
+		MongoTemplate newDBMongoTemplate = (MongoTemplate) newDBMongoOperations;
 		newDBMongoTemplate.setWriteConcern(WriteConcern.SAFE);
 		this.newDBMongoTemplate = newDBMongoTemplate;
-		
-		
-		int start = 0;
-		boolean processFlag = false;
-		processFlag = record(start);
-		while(processFlag){
-			log.info(">>>>>>page:"+start);
-			start = start + 1;
-			processFlag = record(start);
-		}
-		log.info("================START　END==========================");
+
+		record();
+
+		log.info("================END==========================");
 	}
 
-	
-	public boolean processDate(String dateStr) throws Exception{
-		Date recodeDate = dateFormatUtil.getDateTemplate().parse(dateStr);
-		Calendar recodeDateCalender = Calendar.getInstance();
-		recodeDateCalender.setTime(recodeDate);
-		
-		Date now = new Date();
-		Calendar nowCalendar = Calendar.getInstance();
-		nowCalendar.setTime(now);
-		
-		long timeLong = nowCalendar.getTimeInMillis() - recodeDateCalender.getTimeInMillis();
-		timeLong = timeLong/(24*60*60*1000);
-		long index = 5;
-		if(timeLong > index){
-//			log.info(">>>>>>>>>"+dateStr+": 離現在"+timeLong+"天前");
-		}
-		return timeLong > index ? false : true;
-	}
+	public void record() throws Exception {// String date
+		// 先查詢總數
+		Query queryCount = new Query(new Criteria().where("record_date").is("2016-08-01"));
+		queryCount.with(new Sort(Sort.Direction.ASC, "_id"));
+		long tatalcount = mongoOperations.count(queryCount, ClassCountProdMongoBean.class);
 
-	public boolean record(int start) throws Exception {
-		String date = "";
-		boolean flag = false;
-//		.where("uuid").is("b2b8d3ba-edd1-4cdc-8e21-378c69eabf3b")
-//		.where("uuid").is("0fd00298-7b01-4600-a63e-065557420279")
-		Query query = new Query(new Criteria());
-		query.with(new Sort(Sort.Direction.DESC, "_id"));
-		query.with(new PageRequest(start, 5000));
-		
-		List<ClassCountProdMongoBean> classCountProdMongoBeanList = mongoOperations.find(query, ClassCountProdMongoBean.class);
-		for (ClassCountProdMongoBean classCountProdMongoBean : classCountProdMongoBeanList) {
-			date = classCountProdMongoBean.getRecord_date();
-			flag = processDate(date);
-			if(!flag){
-				log.info(" STOP　CREATE >>>>>>"+classCountProdMongoBean.get_id());
-				break;
-			}else{
-				
+		log.info("Total Size : " + tatalcount);
+
+		int pageIndex = 0;
+		int bulk = 1000;
+
+		double pageSize = Math.ceil(((double) tatalcount) / bulk);
+
+		while (pageIndex < pageSize) {
+			// .where("uuid").is("b2b8d3ba-edd1-4cdc-8e21-378c69eabf3b")
+			Query query1 = new Query(new Criteria().where("record_date").is("2016-08-01"));
+			query1.with(new Sort(Sort.Direction.ASC, "_id"));
+			query1.with(new PageRequest(pageIndex, bulk));
+
+			List<ClassCountProdMongoBean> classCountProdMongoBeanList = mongoOperations.find(query1,ClassCountProdMongoBean.class);
+
+			log.info("Page Index : " + pageIndex + " --  " + "Page Size : " + classCountProdMongoBeanList.size());
+
+			pageIndex = pageIndex + 1;
+
+			//讀取正式機符合日期的資料
+			for (ClassCountProdMongoBean classCountProdMongoBean : classCountProdMongoBeanList) {
+
 				String uuid = classCountProdMongoBean.getUuid();
 				String memid = classCountProdMongoBean.getMemid();
-				
-				if(StringUtils.isBlank(uuid) || StringUtils.isBlank(memid)){
+
+				if (StringUtils.isBlank(uuid) && StringUtils.isBlank(memid)) {
 					continue;
 				}
-				
+
+				//先找會員個資1，再找uuid個資0
+				String realPersonalInfo="";
 				PersonalInformationProdMongoBean personalInformationProdMongoBean = null;
-				if(StringUtils.isNotBlank(memid)){
+				if (StringUtils.isNotBlank(memid)) {
 					Query userQuery = new Query(new Criteria().where("memid").is(memid));
-					personalInformationProdMongoBean = mongoOperations.findOne(userQuery, PersonalInformationProdMongoBean.class);
-				}else if(StringUtils.isNotBlank(uuid)){
+					userQuery.with(new Sort(Sort.Direction.DESC, "_id"));
+					personalInformationProdMongoBean = mongoOperations.findOne(userQuery,
+							PersonalInformationProdMongoBean.class);
+					realPersonalInfo="1";
+				} else if (StringUtils.isNotBlank(uuid)) {
 					Query userQuery = new Query(new Criteria().where("uuid").is(uuid));
-					personalInformationProdMongoBean = mongoOperations.findOne(userQuery, PersonalInformationProdMongoBean.class);
+					userQuery.with(new Sort(Sort.Direction.DESC, "_id"));
+					personalInformationProdMongoBean = mongoOperations.findOne(userQuery,
+							PersonalInformationProdMongoBean.class);
+					realPersonalInfo="0";
 				}
 				
+				//會員有資料
+				if (StringUtils.isNotBlank(memid)){
+					String user_id =memid;
+					String ad_class = classCountProdMongoBean.getAd_class();
+					String age = personalInformationProdMongoBean != null ? personalInformationProdMongoBean.getAge() : "";
+					String sex = personalInformationProdMongoBean != null ? personalInformationProdMongoBean.getSex() : "";
+					String source = classCountProdMongoBean.getBehavior();
+					String type = "memid";
+					String recodeDate = classCountProdMongoBean.getRecord_date();
+	
+					ClassCountLogBean classCountLogBean = new ClassCountLogBean();
+					classCountLogBean.setAdClass(ad_class);
+					classCountLogBean.setAge(age);
+					classCountLogBean.setSex(sex);
+					classCountLogBean.setUserId(user_id);
+					classCountLogBean.setMemid(memid);
+					classCountLogBean.setUuid("");
+					classCountLogBean.setSource(source);
+					classCountLogBean.setType(type);
+					classCountLogBean.setRecordDate(recodeDate);
+					classCountLogBean.setRealPersonalInfo(realPersonalInfo);
+	
+					log.info("_id : "+classCountProdMongoBean.get_id());
+					saveUserInfo(classCountLogBean);
+				}
 				
-				String user_id = StringUtils.isNotBlank(memid) ? memid : uuid;
-				String ad_class = classCountProdMongoBean.getAd_class();
-				String age = personalInformationProdMongoBean != null ? personalInformationProdMongoBean.getAge() : "";
-				String sex = personalInformationProdMongoBean != null ? personalInformationProdMongoBean.getSex() : "";
-				String source = classCountProdMongoBean.getBehavior();
-				String type = StringUtils.isNotBlank(classCountProdMongoBean.getMemid()) ? "memid" : "uuid";
-				String recodeDate = classCountProdMongoBean.getRecord_date();
-					
-				ClassCountLogBean classCountLogBean = new ClassCountLogBean();
-				classCountLogBean.setAdClass(ad_class);
-				classCountLogBean.setAge(age);
-				classCountLogBean.setSex(sex);
-				classCountLogBean.setUserId(user_id);
-				classCountLogBean.setMemid(memid);
-				classCountLogBean.setUuid(uuid);
-				classCountLogBean.setSource(source);
-				classCountLogBean.setType(type);
-				classCountLogBean.setRecordDate(recodeDate);
+				//uuid有資料
+				if (StringUtils.isNotBlank(uuid)){
+					String user_id =uuid;
+					String ad_class = classCountProdMongoBean.getAd_class();
+					String age = personalInformationProdMongoBean != null ? personalInformationProdMongoBean.getAge() : "";
+					String sex = personalInformationProdMongoBean != null ? personalInformationProdMongoBean.getSex() : "";
+					String source = classCountProdMongoBean.getBehavior();
+					String type = "uuid";
+					String recodeDate = classCountProdMongoBean.getRecord_date();
+	
+					ClassCountLogBean classCountLogBean = new ClassCountLogBean();
+					classCountLogBean.setAdClass(ad_class);
+					classCountLogBean.setAge(age);
+					classCountLogBean.setSex(sex);
+					classCountLogBean.setUserId(user_id);
+					classCountLogBean.setMemid("");
+					classCountLogBean.setUuid(uuid);
+					classCountLogBean.setSource(source);
+					classCountLogBean.setType(type);
+					classCountLogBean.setRecordDate(recodeDate);
+					classCountLogBean.setRealPersonalInfo(realPersonalInfo);
+	
+					log.info("_id : "+classCountProdMongoBean.get_id());
+					saveUserInfo(classCountLogBean);
+				}
 				
-				
-				System.out.println(user_id);
-				saveUserInfo(classCountLogBean);
 			}
+
 		}
-		return flag;
 	}
-	
-	
-	
-	private void saveUserInfo(ClassCountLogBean classCountLogBean) throws Exception{
+
+	private void saveUserInfo(ClassCountLogBean classCountLogBean) throws Exception {
 		writeAkbDmp.process(classCountLogBean);
-		if(StringUtils.isNotBlank(classCountLogBean.getMemid()) && StringUtils.isNotBlank(classCountLogBean.getUuid())){
-			classCountLogBean.setUserId(classCountLogBean.getUuid());
-			classCountLogBean.setType("uuid");
-			writeAkbDmp.process(classCountLogBean);
-		}
 	}
-	
-	
-	
+
 	public static void main(String[] args) {
 		try {
 			System.setProperty("spring.profiles.active", "stg");
@@ -164,6 +175,7 @@ public class AdLogClassCount {
 			AdLogClassCount adLogUrlThread = ctx.getBean(AdLogClassCount.class);
 			adLogUrlThread.test();
 		} catch (Exception e) {
+			log.info("Exception : "+e.getMessage());
 			e.printStackTrace();
 		}
 	}

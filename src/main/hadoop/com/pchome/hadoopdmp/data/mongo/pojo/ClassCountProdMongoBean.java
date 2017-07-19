@@ -5,7 +5,7 @@ import java.util.Date;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "class_count")
+@Document(collection = "class_count")	//正式機
 public class ClassCountProdMongoBean {
 
 	private String _id;

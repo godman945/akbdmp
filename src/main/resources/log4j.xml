@@ -37,6 +37,16 @@
 			<param name="ConversionPattern" value="%d{yyyy/MM/dd HH:mm:ss} [%-5p] [%c@%t]%M(%L) %m%n" />
 		</layout>
 	</appender>
+	
+	<appender name="TransferData" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="/home/webuser/log/dmp/TransferData.log" />
+		<param name="Append" value="true" />
+		<param name="MaxFileSize" value="10MB" />
+		<param name="MaxBackupIndex" value="20" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{yyyy/MM/dd HH:mm:ss} [%-5p] [%c@%t]%M(%L) %m%n" />
+		</layout>
+	</appender>
 
 	<appender name="mapReduceMongoJob" class="org.apache.log4j.RollingFileAppender">
 		<param name="File" value="/home/webuser/log/dmp/MapReduceMongoJob.log" />
@@ -80,6 +90,11 @@
 	<logger name="MongoInsertClassUrl" additivity="true">
 		<level value="info" />
 		<appender-ref ref="MongoInsertUrl" />
+	</logger>
+	
+	<logger name="TransferData" additivity="true">
+		<level value="info" />
+		<appender-ref ref="TransferData" />
 	</logger>
 
 	<!-- mongo mapreduce test -->

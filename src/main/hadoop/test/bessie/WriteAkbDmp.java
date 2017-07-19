@@ -16,10 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Scope;
+import org.springframework.data.authentication.UserCredentials;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.BulkOperations.BulkMode;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
@@ -27,6 +29,8 @@ import org.springframework.stereotype.Component;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.mongodb.BulkWriteOperation;
+import com.mongodb.Mongo;
+import com.mongodb.WriteConcern;
 import com.pchome.akbdmp.job.bean.ClassCountLogBean;
 import com.pchome.hadoopdmp.data.mongo.pojo.ClassCountMongoBean;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
@@ -42,7 +46,7 @@ public class WriteAkbDmp {
 	private DateFormatUtil dateFormatUtil;
 	
 //	@Autowired
-	private MongoOperations mongoOperations;
+	private MongoOperations devTestMongoOperations;
 	
 	@Autowired
 	private RestClientUtil restClientUtil;
@@ -50,52 +54,88 @@ public class WriteAkbDmp {
 	@Autowired
 	private Configuration jsonpathConfiguration;
 	
+	
 	protected static Logger log = Logger.getLogger("writeAkbDmp");
 	
 	@SuppressWarnings("unchecked")
-	public boolean process(ClassCountLogBean classCountLogBean) throws Exception{
-		MongoTemplate mongoTemplate = AdLogClassCount.newDBMongoTemplate;
-		this.mongoOperations = mongoTemplate;
-//		BulkWriteOperation bulkWriteOperation = mongoOperations.getCollection("dd").initializeOrderedBulkOperation();
-//		BulkOperations bulkOperations = mongoOperations.bulkOps(BulkMode.UNORDERED, ClassCountMongoBean.class);
+	public void process(ClassCountLogBean classCountLogBean) throws Exception{
 		
-		boolean processFlag = false;
+		MongoOperations newDBMongoOperations = new MongoTemplate(new SimpleMongoDbFactory(new Mongo("192.168.1.37", 27017), "pcbappdev", new UserCredentials("webuser", "axw2mP1i")));
+		MongoTemplate newDBMongoTemplate = (MongoTemplate)newDBMongoOperations;
+		newDBMongoTemplate.setWriteConcern(WriteConcern.SAFE);
+		this.devTestMongoOperations = newDBMongoTemplate;
+		
+		//撈新結構是否有資料
 		ClassCountMongoBean classCountMongoBean = null;
 		Query query = new Query(Criteria.where("user_id").is(classCountLogBean.getUserId().trim()));
-		classCountMongoBean = mongoOperations.findOne(query, ClassCountMongoBean.class);
+		classCountMongoBean = devTestMongoOperations.findOne(query, ClassCountMongoBean.class);
 		
+		//新結構沒資料
 		if (classCountMongoBean == null) {
+			double pExpv = Math.exp(-1 * 0.05);
+			double w = (1 / (1 + pExpv));
+			
 			Map<String, Object> userInfo = new HashMap<String, Object>();
 			userInfo.put("type", classCountLogBean.getType());
-			if(classCountLogBean.getType().equals("memid")){
-				if(StringUtils.isBlank(classCountLogBean.getSex()) && StringUtils.isBlank(classCountLogBean.getAge())){
-					Map<String,String> sexAgeMap = callMemberApi(classCountLogBean.getUserId());
-					userInfo = processSexWeight(userInfo,sexAgeMap.get("sex"),classCountLogBean.getSex(),classCountLogBean.getSource());
-					userInfo = processAgeWeight(userInfo,sexAgeMap.get("age"),classCountLogBean.getAge(),classCountLogBean.getSource());
-				}else{
-					userInfo = processSexWeight(userInfo,classCountLogBean.getSex(),classCountLogBean.getSex(),classCountLogBean.getSource());
-					userInfo = processAgeWeight(userInfo,classCountLogBean.getAge(),classCountLogBean.getAge(),classCountLogBean.getSource());
-				}
-			}
-			
-			if(classCountLogBean.getType().equals("uuid")){
-				if(StringUtils.isNotBlank(classCountLogBean.getMemid()) && StringUtils.isNotBlank(classCountLogBean.getUuid())){
-					Query queryMemid = new Query(Criteria.where("user_id").is(classCountLogBean.getMemid().trim()));
-					ClassCountMongoBean classCountMongoBeanMemid = mongoOperations.findOne(queryMemid, ClassCountMongoBean.class);
-					userInfo = classCountMongoBeanMemid.getUser_info();
-					userInfo.put("type", "uuid");
-				}else{
-					Map<String,String> sexAgeMap = new HashMap<String,String>();
-					sexAgeMap.put("sex", classCountLogBean.getSex());
-					userInfo = processSexWeight(userInfo,null,classCountLogBean.getSex(),classCountLogBean.getSource());
-					userInfo = processAgeWeight(userInfo,null,classCountLogBean.getAge(),classCountLogBean.getSource());
-				}
+			//為會員 OR 為uuid
+			if((classCountLogBean.getType().equals("memid")) || (classCountLogBean.getType().equals("uuid"))){
+				//sex
+				List<Map<String, Object>> sexInfoDataList = new ArrayList<Map<String, Object>>();
+				Map<String, Object> sexInfoData = new HashMap<String, Object>();
+				List<String> sexSourceList = new ArrayList<>();
 				
+				//age
+				List<Map<String, Object>> ageInfoDataList = new ArrayList<Map<String, Object>>();
+				Map<String, Object> ageInfoData = new HashMap<String, Object>();
+				List<String> ageSourceList = new ArrayList<>();
+				
+				//判斷是否為真實個資
+				if (StringUtils.equals("1", classCountLogBean.getRealPersonalInfo())){
+					//sex
+					userInfo.put("sex", classCountLogBean.getSex());
+					sexInfoData.put("w", -1);
+					sexInfoData.put("sex",classCountLogBean.getSex());
+					sexSourceList.add(classCountLogBean.getSource());
+					sexInfoData.put("source", sexSourceList);
+					sexInfoDataList.add(sexInfoData);
+					userInfo.put("sex_info", sexInfoDataList);
+					
+					//age
+					userInfo.put("age", classCountLogBean.getAge());
+					ageInfoData.put("w", -1);
+					ageInfoData.put("age",classCountLogBean.getAge());
+					ageSourceList.add(classCountLogBean.getSource());
+					ageInfoData.put("source", ageSourceList);
+					ageInfoDataList.add(ageInfoData);
+					userInfo.put("age_info", ageInfoDataList);
+					
+				}else{
+					//sex
+					userInfo.put("sex", classCountLogBean.getSex());
+					sexInfoData.put("w", w);
+					sexInfoData.put("sex",classCountLogBean.getSex());
+					sexSourceList.add(classCountLogBean.getSource());
+					sexInfoData.put("source", sexSourceList);
+					sexInfoDataList.add(sexInfoData);
+					userInfo.put("sex_info", sexInfoDataList);
+					
+					//age
+					userInfo.put("age", classCountLogBean.getAge());
+					ageInfoData.put("w", w);
+					ageInfoData.put("age",classCountLogBean.getAge());
+					ageSourceList.add(classCountLogBean.getSource());
+					ageInfoData.put("source", ageSourceList);
+					ageInfoDataList.add(ageInfoData);
+					userInfo.put("age_info", ageInfoDataList);
+					
+				}
+					
 			}
 			
+			//塞age和sex以外的資料
 			Map<String, Object> categoryInfo = new HashMap<String, Object>();
 			categoryInfo.put("category", classCountLogBean.getAdClass());
-			categoryInfo.put("w", classCountLogBean.getW());
+			categoryInfo.put("w", w);
 			categoryInfo.put("ad_class_million_count", new Integer(0));
 			categoryInfo.put("ad_class_day_count", new Integer(1));
 			categoryInfo.put("update_date", classCountLogBean.getRecordDate());
@@ -110,13 +150,20 @@ public class WriteAkbDmp {
 
 			classCountMongoBean = new ClassCountMongoBean();
 			classCountMongoBean.setUser_id(classCountLogBean.getUserId());
+			classCountMongoBean.setCreate_date(classCountLogBean.getRecordDate());
+			classCountMongoBean.setUpdate_date(classCountLogBean.getRecordDate());
 			classCountMongoBean.setUser_info(userInfo);
 			classCountMongoBean.setCategory_info(categoryInfoList);
-			classCountMongoBean.setCreate_date(dateFormatUtil.getDateTemplate2().format(new Date()));
-		} else {
+			
+			devTestMongoOperations.save(classCountMongoBean);
+			
+		} 
+		else {//mongo有資料
+			
 			Set<String> set = new HashSet<String>();
-			// 加分類
+
 			if (!JsonPath.using(jsonpathConfiguration).parse(classCountMongoBean.getCategory_info()).jsonString().contains(classCountLogBean.getAdClass())) {
+				// 加分類 //log的ad_class不存在在mongo
 				double w = 0;
 				Map<String, Object> newCategoryInfo = new HashMap<String, Object>();
 				newCategoryInfo.put("w", w);
@@ -130,13 +177,24 @@ public class WriteAkbDmp {
 				newCategoryInfo.put("source", sourceList);
 				classCountMongoBean.getCategory_info().add(newCategoryInfo);
 				classCountMongoBean.setUpdate_date(classCountLogBean.getRecordDate());
-			}else if (JsonPath.using(jsonpathConfiguration).parse(classCountMongoBean.getCategory_info()).jsonString().contains(classCountLogBean.getAdClass())) {
+				
+//				Map<String, Object> userInfo = classCountMongoBean.getUser_info();
+//				//記算性別分數
+//				userInfo = processSexWeight(userInfo,null,classCountLogBean.getSex(),classCountLogBean.getSource());
+//				//記算年齡分數
+//				userInfo = processAgeWeight(userInfo,null,classCountLogBean.getAge(),classCountLogBean.getSource());
+				
+				classCountMongoBean = episteMath(classCountMongoBean, classCountLogBean.getAdClass(), classCountLogBean.getRecordDate());
+				devTestMongoOperations.save(classCountMongoBean);
+				
+			}//log的ad_class在mongo已存在
+			else if (JsonPath.using(jsonpathConfiguration).parse(classCountMongoBean.getCategory_info()).jsonString().contains(classCountLogBean.getAdClass())) {
 				// 分類已存在則更新時間,來源,adClass次數
 				for (Map<String, Object> categoryInfo : classCountMongoBean.getCategory_info()) {
 					if (categoryInfo.get("category").equals(classCountLogBean.getAdClass())) {
 						int adClassCount = Integer.parseInt(categoryInfo.get("ad_class_day_count").toString());
 						adClassCount = adClassCount + 1;
-						if(adClassCount == 10000000){
+						if(adClassCount == 1000000){
 							adClassCount = 0;
 							int millionCount =  Integer.parseInt(categoryInfo.get("ad_class_million_count").toString());
 							millionCount = millionCount + 1;
@@ -156,22 +214,18 @@ public class WriteAkbDmp {
 						break;
 					}
 				}
+//				Map<String, Object> userInfo = classCountMongoBean.getUser_info();
+//				//記算性別分數
+//				userInfo = processSexWeight(userInfo,null,classCountLogBean.getSex(),classCountLogBean.getSource());
+//				//記算年齡分數
+//				userInfo = processAgeWeight(userInfo,null,classCountLogBean.getAge(),classCountLogBean.getSource());
+				
+				classCountMongoBean = episteMath(classCountMongoBean, classCountLogBean.getAdClass(), classCountLogBean.getRecordDate());
+				devTestMongoOperations.save(classCountMongoBean);
 			}
 			
-			
-			Map<String, Object> userInfo = classCountMongoBean.getUser_info();
-			//記算性別分數
-			userInfo = processSexWeight(userInfo,null,classCountLogBean.getSex(),classCountLogBean.getSource());
-			//記算年齡分數
-			userInfo = processAgeWeight(userInfo,null,classCountLogBean.getAge(),classCountLogBean.getSource());
-			
 		}
-
-		classCountMongoBean = episteMath(classCountMongoBean, classCountLogBean.getAdClass(), classCountLogBean.getRecordDate());
-		classCountMongoBean.setUpdate_date(dateFormatUtil.getDateTemplate2().format(new Date()));
-		mongoOperations.save(classCountMongoBean);
-		processFlag = true;
-		return processFlag;
+		
 	}
 	
 	/*
@@ -385,6 +439,9 @@ public class WriteAkbDmp {
 				if (betweenDate > 0) {
 					double w = Double.valueOf(categoryInfo.get("w").toString());
 					double nw = w * Math.exp(- 0.1 * (betweenDate * 0.1));
+					if(nw<=0){//牛頓冷卻 到負值  ，直接給0
+						nw=0;
+					}
 					categoryInfo.put("w", nw);
 					categoryInfo.put("update_date", recodeDate);
 				}
@@ -445,11 +502,18 @@ public class WriteAkbDmp {
 		return age;
 	}
 	
-	public static void main(String args[]) throws Exception{
-		System.setProperty("spring.profiles.active", "stg");
-		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-		WriteAkbDmp writeAkbDmp = ctx.getBean(WriteAkbDmp.class);
-		writeAkbDmp.process(null);
-	}
+//	public static void main(String args[]) throws Exception{
+//		System.setProperty("spring.profiles.active", "local");
+//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//		WriteAkbDmp writeAkbDmp = ctx.getBean(WriteAkbDmp.class);
+//		
+//		ClassCountLogBean classCountLogBean = new ClassCountLogBean();
+//		classCountLogBean.setUserId("863a0eb3-e02a-4372-93b5-0c020b2ff38f");
+//		classCountLogBean.setAdClass("0016023020711111");
+//		classCountLogBean.setSource("24h");
+//		classCountLogBean.setRecordDate("2017-07-17");
+//		
+//		writeAkbDmp.process(classCountLogBean);
+//	}
 	
 }
