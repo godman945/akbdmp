@@ -24,14 +24,15 @@ import com.pchome.akbdmp.job.bean.ClassCountLogBean;
 import com.pchome.hadoopdmp.data.mongo.pojo.ClassCountProdMongoBean;
 import com.pchome.hadoopdmp.data.mongo.pojo.PersonalInformationProdMongoBean;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
+import com.pchome.hadoopdmp.spring.config.bean.mongodb.MongodbHadoopConfig;
 import com.pchome.soft.util.DateFormatUtil;
 
 @Component
 public class AdLogClassCount {
 	Log log = LogFactory.getLog("TransferData");//MongoInsertClassUrl
 
-	@Autowired
-	private MongoOperations mongoOperations;// 正式機
+//	@Autowired
+//	private MongoOperations mongoOperations;// 正式機
 
 	@Autowired
 	private DateFormatUtil dateFormatUtil;
@@ -56,10 +57,15 @@ public class AdLogClassCount {
 	}
 
 	public void record() throws Exception {// String date
+		
+		System.setProperty("spring.profiles.active", "stg");
+		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+		MongoOperations oldMongoOperationsQuery = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
+		
 		// 先查詢總數
-		Query queryCount = new Query(new Criteria().where("record_date").is("2016-08-01"));
+		Query queryCount = new Query(new Criteria().where("record_date").is("2016-08-10"));
 		queryCount.with(new Sort(Sort.Direction.ASC, "_id"));
-		long tatalcount = mongoOperations.count(queryCount, ClassCountProdMongoBean.class);
+		long tatalcount = oldMongoOperationsQuery.count(queryCount, ClassCountProdMongoBean.class);
 
 		log.info("Total Size : " + tatalcount);
 
@@ -70,11 +76,11 @@ public class AdLogClassCount {
 
 		while (pageIndex < pageSize) {
 			// .where("uuid").is("b2b8d3ba-edd1-4cdc-8e21-378c69eabf3b")
-			Query query1 = new Query(new Criteria().where("record_date").is("2016-08-01"));
+			Query query1 = new Query(new Criteria().where("record_date").is("2016-08-10"));
 			query1.with(new Sort(Sort.Direction.ASC, "_id"));
 			query1.with(new PageRequest(pageIndex, bulk));
 
-			List<ClassCountProdMongoBean> classCountProdMongoBeanList = mongoOperations.find(query1,ClassCountProdMongoBean.class);
+			List<ClassCountProdMongoBean> classCountProdMongoBeanList = oldMongoOperationsQuery.find(query1,ClassCountProdMongoBean.class);
 
 			log.info("Page Index : " + pageIndex + " --  " + "Page Size : " + classCountProdMongoBeanList.size());
 
@@ -96,13 +102,13 @@ public class AdLogClassCount {
 				if (StringUtils.isNotBlank(memid)) {
 					Query userQuery = new Query(new Criteria().where("memid").is(memid));
 					userQuery.with(new Sort(Sort.Direction.DESC, "_id"));
-					personalInformationProdMongoBean = mongoOperations.findOne(userQuery,
+					personalInformationProdMongoBean = oldMongoOperationsQuery.findOne(userQuery,
 							PersonalInformationProdMongoBean.class);
 					realPersonalInfo="1";
 				} else if (StringUtils.isNotBlank(uuid)) {
 					Query userQuery = new Query(new Criteria().where("uuid").is(uuid));
 					userQuery.with(new Sort(Sort.Direction.DESC, "_id"));
-					personalInformationProdMongoBean = mongoOperations.findOne(userQuery,
+					personalInformationProdMongoBean = oldMongoOperationsQuery.findOne(userQuery,
 							PersonalInformationProdMongoBean.class);
 					realPersonalInfo="0";
 				}
