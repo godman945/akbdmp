@@ -64,7 +64,6 @@ public class AdLogClassCount {
 		
 		// 先查詢總數
 		Query queryCount = new Query(new Criteria().where("record_date").is("2016-08-01"));
-		queryCount.with(new Sort(Sort.Direction.ASC, "_id"));
 		long tatalcount = oldMongoOperationsQuery.count(queryCount, ClassCountProdMongoBean.class);
 
 		log.info("Total Size : " + tatalcount);
@@ -77,29 +76,17 @@ public class AdLogClassCount {
 		while (pageIndex < pageSize) {
 			// .where("uuid").is("b2b8d3ba-edd1-4cdc-8e21-378c69eabf3b")
 			Query query1 = new Query(new Criteria().where("record_date").is("2016-08-01"));
-			query1.with(new Sort(Sort.Direction.ASC, "_id"));
 			query1.with(new PageRequest(pageIndex, bulk));
 
 			List<ClassCountProdMongoBean> classCountProdMongoBeanList = oldMongoOperationsQuery.find(query1,ClassCountProdMongoBean.class);
 
-			log.info("Page Index : " + pageIndex + " --  " + "Page Size : " + classCountProdMongoBeanList.size());
+			log.info(">>>>>>>>>>>>>Page Index : " + pageIndex + " --  " + "Page Size : " + classCountProdMongoBeanList.size()+"        ==============");
 
 			pageIndex = pageIndex + 1;
 
 			//讀取正式機符合日期的資料
 			for (ClassCountProdMongoBean classCountProdMongoBean : classCountProdMongoBeanList) {
 				
-				
-//				if (StringUtils.equals("579f9d22e4b0868f4e6f6924", classCountProdMongoBean.get_id())){
-//					System.out.println(">>>>>>>>>>>>>>>>>> : "+classCountProdMongoBean.get_id());					
-//				}
-//				
-//				if (StringUtils.equals("579f9d22e4b0868f4e6f6925", classCountProdMongoBean.get_id())){
-//					System.out.println(">>>>>>>>>>>>>>>>>> : "+classCountProdMongoBean.get_id());					
-//				}
-				
-				
-
 				String uuid = classCountProdMongoBean.getUuid();
 				String memid = classCountProdMongoBean.getMemid();
 
