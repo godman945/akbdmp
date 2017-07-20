@@ -72,13 +72,6 @@ public class WriteAkbDmp {
 		Query query = new Query(Criteria.where("user_id").is(classCountLogBean.getUserId().trim()));
 		classCountMongoBean = devTestMongoOperations.findOne(query, ClassCountMongoBean.class);
 		
-//		if(classCountMongoBean!=null){
-//			log.info("writeAkbDmp : " +classCountMongoBean.get_id());
-//		}else{
-//			log.info("writeAkbDmp : " +null);
-//		}
-		
-		
 		
 		//新結構沒資料
 		if (classCountMongoBean == null) {
