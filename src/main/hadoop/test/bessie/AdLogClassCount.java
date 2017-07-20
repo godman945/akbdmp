@@ -69,7 +69,7 @@ public class AdLogClassCount {
 		log.info("Total Size : " + tatalcount);
 
 		int pageIndex = 0;
-		int bulk = 100;
+		int bulk = 10000;
 
 		double pageSize = Math.ceil(((double) tatalcount) / bulk);
 
