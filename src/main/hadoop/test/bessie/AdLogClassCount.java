@@ -63,20 +63,20 @@ public class AdLogClassCount {
 		MongoOperations oldMongoOperationsQuery = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
 		
 		// 先查詢總數
-		Query queryCount = new Query(new Criteria().where("record_date").is("2016-08-10"));
+		Query queryCount = new Query(new Criteria().where("record_date").is("2016-08-01"));
 		queryCount.with(new Sort(Sort.Direction.ASC, "_id"));
 		long tatalcount = oldMongoOperationsQuery.count(queryCount, ClassCountProdMongoBean.class);
 
 		log.info("Total Size : " + tatalcount);
 
 		int pageIndex = 0;
-		int bulk = 1000;
+		int bulk = 100;
 
 		double pageSize = Math.ceil(((double) tatalcount) / bulk);
 
 		while (pageIndex < pageSize) {
 			// .where("uuid").is("b2b8d3ba-edd1-4cdc-8e21-378c69eabf3b")
-			Query query1 = new Query(new Criteria().where("record_date").is("2016-08-10"));
+			Query query1 = new Query(new Criteria().where("record_date").is("2016-08-01"));
 			query1.with(new Sort(Sort.Direction.ASC, "_id"));
 			query1.with(new PageRequest(pageIndex, bulk));
 
@@ -88,6 +88,17 @@ public class AdLogClassCount {
 
 			//讀取正式機符合日期的資料
 			for (ClassCountProdMongoBean classCountProdMongoBean : classCountProdMongoBeanList) {
+				
+				
+//				if (StringUtils.equals("579f9d22e4b0868f4e6f6924", classCountProdMongoBean.get_id())){
+//					System.out.println(">>>>>>>>>>>>>>>>>> : "+classCountProdMongoBean.get_id());					
+//				}
+//				
+//				if (StringUtils.equals("579f9d22e4b0868f4e6f6925", classCountProdMongoBean.get_id())){
+//					System.out.println(">>>>>>>>>>>>>>>>>> : "+classCountProdMongoBean.get_id());					
+//				}
+				
+				
 
 				String uuid = classCountProdMongoBean.getUuid();
 				String memid = classCountProdMongoBean.getMemid();

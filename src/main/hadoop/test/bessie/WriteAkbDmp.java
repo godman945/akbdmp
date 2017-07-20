@@ -46,7 +46,7 @@ public class WriteAkbDmp {
 	private DateFormatUtil dateFormatUtil;
 	
 //	@Autowired
-	private MongoOperations devTestMongoOperations;
+	private static MongoOperations devTestMongoOperations;
 	
 	@Autowired
 	private RestClientUtil restClientUtil;
@@ -59,16 +59,26 @@ public class WriteAkbDmp {
 	
 	@SuppressWarnings("unchecked")
 	public void process(ClassCountLogBean classCountLogBean) throws Exception{
+		MongoTemplate mongoTemplate = AdLogClassCount.newDBMongoTemplate;
+		this.devTestMongoOperations = mongoTemplate;
 		
-		MongoOperations newDBMongoOperations = new MongoTemplate(new SimpleMongoDbFactory(new Mongo("192.168.1.37", 27017), "pcbappdev", new UserCredentials("webuser", "axw2mP1i")));
-		MongoTemplate newDBMongoTemplate = (MongoTemplate)newDBMongoOperations;
-		newDBMongoTemplate.setWriteConcern(WriteConcern.SAFE);
-		this.devTestMongoOperations = newDBMongoTemplate;
+//		MongoOperations newDBMongoOperations = new MongoTemplate(new SimpleMongoDbFactory(new Mongo("192.168.1.37", 27017), "pcbappdev", new UserCredentials("webuser", "axw2mP1i")));
+//		MongoTemplate newDBMongoTemplate = (MongoTemplate)newDBMongoOperations;
+//		newDBMongoTemplate.setWriteConcern(WriteConcern.SAFE);
+//		this.devTestMongoOperations = newDBMongoTemplate;
 		
 		//撈新結構是否有資料
 		ClassCountMongoBean classCountMongoBean = null;
 		Query query = new Query(Criteria.where("user_id").is(classCountLogBean.getUserId().trim()));
 		classCountMongoBean = devTestMongoOperations.findOne(query, ClassCountMongoBean.class);
+		
+//		if(classCountMongoBean!=null){
+//			log.info("writeAkbDmp : " +classCountMongoBean.get_id());
+//		}else{
+//			log.info("writeAkbDmp : " +null);
+//		}
+		
+		
 		
 		//新結構沒資料
 		if (classCountMongoBean == null) {
