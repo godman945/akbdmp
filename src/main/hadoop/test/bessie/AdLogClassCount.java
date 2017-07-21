@@ -1,5 +1,6 @@
 package test.bessie;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -54,16 +55,27 @@ public class AdLogClassCount {
 		record();
 
 		log.info("================END==========================");
+		
+		//當日資料轉換成功，寫log至linux中
+//		String[] cmd={" /bin/bash","-c","ls -l > ls.log"};
+//        Runtime.getRuntime().exec(cmd);
+        
+        
+        Process p = Runtime.getRuntime().exec(new String[]{"bash","-c","touch /home/webuser/project/transferData/log/JAVAlinuxOK20170721.log"});
+		
 	}
 
 	public void record() throws Exception {// String date
 		
-		System.setProperty("spring.profiles.active", "stg");
+		System.setProperty("spring.profiles.active", "local");//stg
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 		MongoOperations oldMongoOperationsQuery = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
 		
+		
+		String date="2017-07-19";
+		
 		// 先查詢總數
-		Query queryCount = new Query(new Criteria().where("record_date").is("2017-07-17"));//2016-08-01
+		Query queryCount = new Query(new Criteria().where("record_date").is(date));//2016-08-01
 		long tatalcount = oldMongoOperationsQuery.count(queryCount, ClassCountProdMongoBean.class);
 
 		log.info("Total Size : " + tatalcount);
@@ -75,7 +87,7 @@ public class AdLogClassCount {
 
 		while (pageIndex < pageSize) {
 			// .where("uuid").is("b2b8d3ba-edd1-4cdc-8e21-378c69eabf3b")
-			Query query1 = new Query(new Criteria().where("record_date").is("2017-07-17"));//2017-08-01
+			Query query1 = new Query(new Criteria().where("record_date").is(date));//2017-08-01
 			query1.with(new PageRequest(pageIndex, bulk));
 
 			List<ClassCountProdMongoBean> classCountProdMongoBeanList = oldMongoOperationsQuery.find(query1,ClassCountProdMongoBean.class);
@@ -175,12 +187,18 @@ public class AdLogClassCount {
 	public static void main(String[] args) {
 		Log log = LogFactory.getLog("TransferData");//MongoInsertClassUrl
 		try {
-			System.setProperty("spring.profiles.active", "stg");
+			System.setProperty("spring.profiles.active", "local");//stg
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			AdLogClassCount adLogUrlThread = ctx.getBean(AdLogClassCount.class);
 			adLogUrlThread.test();
 		} catch (Exception e) {
 			log.error("Exception : "+e.getMessage());
+//			try {
+//				Process p = Runtime.getRuntime().exec(new String[]{"bash","-c","touch /home/webuser/project/transferData/log/JAVAlinuxError.log"});
+//			} catch (IOException e1) {
+//				// TODO Auto-generated catch block
+//				e1.printStackTrace();
+//			}
 			e.printStackTrace();
 		}
 	}
