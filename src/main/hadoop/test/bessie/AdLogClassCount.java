@@ -71,6 +71,8 @@ public class AdLogClassCount {
 		//先刪除所有log檔
 		Process deleteLog = Runtime.getRuntime().exec(new String[]{"bash","-c","rm /home/webuser/project/transferData/log/*.log"});
 		
+		Process deleteRun = Runtime.getRuntime().exec(new String[]{"bash","-c","rm /home/webuser/project/transferData/log/*.run"});
+		
 		
 		//取得每個月的最後一天
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
