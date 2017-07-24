@@ -1,6 +1,9 @@
 package test.bessie;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -43,36 +46,59 @@ public class AdLogClassCount {
 
 	public static MongoTemplate newDBMongoTemplate;// 測試機
 
-	public void test() throws Exception {
-		log.info("================START　PROCESS==========================");
+	public void test(String date) throws Exception {
+		log.info("================START　PROCESS========================== "+date+" =========================");
 		// 新的insert mongo 物件
 		MongoOperations newDBMongoOperations = new MongoTemplate(new SimpleMongoDbFactory(
 				new Mongo("192.168.1.37", 27017), "pcbappdev", new UserCredentials("webuser", "axw2mP1i")));
 		MongoTemplate newDBMongoTemplate = (MongoTemplate) newDBMongoOperations;
 		newDBMongoTemplate.setWriteConcern(WriteConcern.SAFE);
 		this.newDBMongoTemplate = newDBMongoTemplate;
+		
 
-		record();
+//		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+//		Date date1 = sdf.parse(date);
+//		Calendar specialDate = Calendar.getInstance();
+//		specialDate.setTime(date1); 
+//		specialDate.add(Calendar.DATE, 1); 
+//		String formatted = sdf.format(specialDate.getTime());
+		Process insertRunLog = Runtime.getRuntime().exec(new String[]{"bash","-c","touch /home/webuser/project/transferData/log/"+date+".run"});
+		
+		record(date);
 
 		log.info("================END==========================");
 		
-		//當日資料轉換成功，寫log至linux中
-//		String[] cmd={" /bin/bash","-c","ls -l > ls.log"};
-//        Runtime.getRuntime().exec(cmd);
-        
-        
-        Process p = Runtime.getRuntime().exec(new String[]{"bash","-c","touch /home/webuser/project/transferData/log/JAVAlinuxOK20170721.log"});
+		//先刪除所有log檔
+		Process deleteLog = Runtime.getRuntime().exec(new String[]{"bash","-c","rm /home/webuser/project/transferData/log/*.log"});
+		
+		
+		//取得每個月的最後一天
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		Date Month = sdf.parse("20160801");
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(Month);
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+        Date lastDayOfMonthDate = calendar.getTime();
+        String lastDayOfMonth = sdf.format(lastDayOfMonthDate);
+		
+        if(StringUtils.equals(lastDayOfMonth.trim(), date.trim())){
+        	Process insertLog = Runtime.getRuntime().exec(new String[]{"bash","-c","touch /home/webuser/project/transferData/log/"+date+".done"});
+        }else{
+        	//當日資料轉換成功，寫log至linux中
+    		Process insertLog = Runtime.getRuntime().exec(new String[]{"bash","-c","touch /home/webuser/project/transferData/log/"+date+".log"});
+        }
 		
 	}
 
-	public void record() throws Exception {// String date
+	public void record(String date) throws Exception { 
 		
 		System.setProperty("spring.profiles.active", "local");//stg
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 		MongoOperations oldMongoOperationsQuery = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
 		
 		
-		String date="2017-07-19";
+//		String date="2017-07-19";
+		date=date.substring(0,4)+"-"+date.substring(4,6)+"-"+date.substring(6,8);
 		
 		// 先查詢總數
 		Query queryCount = new Query(new Criteria().where("record_date").is(date));//2016-08-01
@@ -190,15 +216,14 @@ public class AdLogClassCount {
 			System.setProperty("spring.profiles.active", "local");//stg
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			AdLogClassCount adLogUrlThread = ctx.getBean(AdLogClassCount.class);
-			adLogUrlThread.test();
+			adLogUrlThread.test(args[0]);
 		} catch (Exception e) {
 			log.error("Exception : "+e.getMessage());
-//			try {
-//				Process p = Runtime.getRuntime().exec(new String[]{"bash","-c","touch /home/webuser/project/transferData/log/JAVAlinuxError.log"});
-//			} catch (IOException e1) {
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
+			try {
+				Process p = Runtime.getRuntime().exec(new String[]{"bash","-c","touch /home/webuser/project/transferData/log/"+args[0]+".error"});
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 			e.printStackTrace();
 		}
 	}
