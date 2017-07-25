@@ -151,16 +151,17 @@ public class AdLogClassCount {
 					realPersonalInfo="0";
 				}
 				
+				
+				String ad_class = classCountProdMongoBean.getAd_class();
+				String age = personalInformationProdMongoBean != null ? personalInformationProdMongoBean.getAge() : "";
+				String sex = personalInformationProdMongoBean != null ? personalInformationProdMongoBean.getSex() : "";
+				String source = classCountProdMongoBean.getBehavior().equals("ad_click") ? "adclick" : classCountProdMongoBean.getBehavior() ;
+				String recodeDate = classCountProdMongoBean.getRecord_date();
+				
 				//會員有資料
 				if (StringUtils.isNotBlank(memid)){
 					String user_id =memid;
-					String ad_class = classCountProdMongoBean.getAd_class();
-					String age = personalInformationProdMongoBean != null ? personalInformationProdMongoBean.getAge() : "";
-					String sex = personalInformationProdMongoBean != null ? personalInformationProdMongoBean.getSex() : "";
-					String source = classCountProdMongoBean.getBehavior();
 					String type = "memid";
-					String recodeDate = classCountProdMongoBean.getRecord_date();
-	
 					ClassCountLogBean classCountLogBean = new ClassCountLogBean();
 					classCountLogBean.setAdClass(ad_class);
 					classCountLogBean.setAge(age);
@@ -180,19 +181,13 @@ public class AdLogClassCount {
 				//uuid有資料
 				if (StringUtils.isNotBlank(uuid)){
 					String user_id =uuid;
-					String ad_class = classCountProdMongoBean.getAd_class();
-					String age = personalInformationProdMongoBean != null ? personalInformationProdMongoBean.getAge() : "";
-					String sex = personalInformationProdMongoBean != null ? personalInformationProdMongoBean.getSex() : "";
-					String source = classCountProdMongoBean.getBehavior();
 					String type = "uuid";
-					String recodeDate = classCountProdMongoBean.getRecord_date();
-	
 					ClassCountLogBean classCountLogBean = new ClassCountLogBean();
 					classCountLogBean.setAdClass(ad_class);
 					classCountLogBean.setAge(age);
 					classCountLogBean.setSex(sex);
 					classCountLogBean.setUserId(user_id);
-					classCountLogBean.setMemid("");
+					classCountLogBean.setMemid(memid);
 					classCountLogBean.setUuid(uuid);
 					classCountLogBean.setSource(source);
 					classCountLogBean.setType(type);

@@ -80,6 +80,9 @@ public class WriteAkbDmp {
 			
 			Map<String, Object> userInfo = new HashMap<String, Object>();
 			userInfo.put("type", classCountLogBean.getType());
+			//如果uuid有memid資料，則在user_info加memid資料
+			userInfo.put("memid",classCountLogBean.getType().equals("uuid")? StringUtils.isNotBlank(classCountLogBean.getMemid())? classCountLogBean.getMemid() : "" : "" );
+			
 			//為會員 OR 為uuid
 			if((classCountLogBean.getType().equals("memid")) || (classCountLogBean.getType().equals("uuid"))){
 				//sex
@@ -223,6 +226,7 @@ public class WriteAkbDmp {
 //				//記算年齡分數
 //				userInfo = processAgeWeight(userInfo,null,classCountLogBean.getAge(),classCountLogBean.getSource());
 				
+				classCountMongoBean.setUpdate_date(classCountLogBean.getRecordDate());
 				classCountMongoBean = episteMath(classCountMongoBean, classCountLogBean.getAdClass(), classCountLogBean.getRecordDate());
 				devTestMongoOperations.save(classCountMongoBean);
 			}
