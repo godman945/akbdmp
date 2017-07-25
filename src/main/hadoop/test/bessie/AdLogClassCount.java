@@ -230,8 +230,9 @@ public class AdLogClassCount {
 			AdLogClassCount adLogUrlThread = ctx.getBean(AdLogClassCount.class);
 			adLogUrlThread.test(args[0]);
 		} catch (Exception e) {
-			log.error("Exception : "+e.getMessage());
 			try {
+				log.error("TransferData Exception : "+e.getMessage());
+				
 				  //寫 error to mysql table : dmp_transfer_data_log
 		        DmpTransferDataLog dmpTransferDataLog= new DmpTransferDataLog();
 		        dmpTransferDataLog.setRecordDate("date");
@@ -240,7 +241,7 @@ public class AdLogClassCount {
 		        
 				Process p = Runtime.getRuntime().exec(new String[]{"bash","-c","touch /home/webuser/project/transferData/log/"+args[0]+".error"});
 			} catch (IOException e1) {
-				log.error(e1.getMessage());
+				log.error("TransferData Exception : "+e1.getMessage());
 			}
 		}
 	}
