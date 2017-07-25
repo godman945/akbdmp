@@ -89,8 +89,11 @@ public class AdLogClassCount {
         Date lastDayOfMonthDate = calendar.getTime();
         String lastDayOfMonth = sdf.format(lastDayOfMonthDate);
 		
+        String success="success";
+        
         if(StringUtils.equals(lastDayOfMonth.trim(), date.trim())){
         	Process insertLog = Runtime.getRuntime().exec(new String[]{"bash","-c","touch /home/webuser/project/transferData/log/"+date+".done"});
+        	success="The month is completed!";
         }else{
         	//當日資料轉換成功，寫log至linux中
     		Process insertLog = Runtime.getRuntime().exec(new String[]{"bash","-c","touch /home/webuser/project/transferData/log/"+date+".log"});
@@ -99,7 +102,7 @@ public class AdLogClassCount {
         //寫 success to mysql table : dmp_transfer_data_log
         DmpTransferDataLog dmpTransferDataLog= new DmpTransferDataLog();
         dmpTransferDataLog.setRecordDate(date);
-        dmpTransferDataLog.setStatus("success");
+        dmpTransferDataLog.setStatus(success);
         dmpTransferDataLogService.save(dmpTransferDataLog);
 	}
 
