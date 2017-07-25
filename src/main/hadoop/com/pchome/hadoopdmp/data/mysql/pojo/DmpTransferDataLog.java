@@ -1,5 +1,5 @@
-package com.pchome.hadoopdmp.mysql.db.transferdata.pojo;
-// Generated 2017/7/25 �U�� 03:07:15 by Hibernate Tools 3.4.0.CR1
+package com.pchome.hadoopdmp.data.mysql.pojo;
+// Generated 2017/7/25 �U�� 04:25:56 by Hibernate Tools 3.4.0.CR1
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

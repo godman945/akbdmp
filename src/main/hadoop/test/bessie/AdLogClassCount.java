@@ -1,6 +1,5 @@
 package test.bessie;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,9 +26,9 @@ import com.mongodb.WriteConcern;
 import com.pchome.akbdmp.job.bean.ClassCountLogBean;
 import com.pchome.hadoopdmp.data.mongo.pojo.ClassCountProdMongoBean;
 import com.pchome.hadoopdmp.data.mongo.pojo.PersonalInformationProdMongoBean;
+import com.pchome.hadoopdmp.data.mysql.pojo.DmpTransferDataLog;
 import com.pchome.hadoopdmp.mysql.db.service.transferdata.DmpTransferDataLogService;
 import com.pchome.hadoopdmp.mysql.db.service.transferdata.IDmpTransferDataLogService;
-import com.pchome.hadoopdmp.mysql.db.transferdata.pojo.DmpTransferDataLog;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 import com.pchome.hadoopdmp.spring.config.bean.mongodb.MongodbHadoopConfig;
 import com.pchome.soft.util.DateFormatUtil;
@@ -69,16 +68,16 @@ public class AdLogClassCount {
 //		specialDate.setTime(date1); 
 //		specialDate.add(Calendar.DATE, 1); 
 //		String formatted = sdf.format(specialDate.getTime());
-		Process insertRunLog = Runtime.getRuntime().exec(new String[]{"bash","-c","touch /home/webuser/project/transferData/log/"+date+".run"});
+		
+//		Process insertRunLog = Runtime.getRuntime().exec(new String[]{"bash","-c","touch /home/webuser/project/transferData/log/"+date+".run"});
 		
 		record(date);
 
 		log.info("================END==========================");
 		
 		//先刪除所有log檔
-		Process deleteLog = Runtime.getRuntime().exec(new String[]{"bash","-c","rm /home/webuser/project/transferData/log/*.log"});
-		
-		Process deleteRun = Runtime.getRuntime().exec(new String[]{"bash","-c","rm /home/webuser/project/transferData/log/*.run"});
+//		Process deleteLog = Runtime.getRuntime().exec(new String[]{"bash","-c","rm /home/webuser/project/transferData/log/*.log"});
+//		Process deleteRun = Runtime.getRuntime().exec(new String[]{"bash","-c","rm /home/webuser/project/transferData/log/*.run"});
 		
 		
 		//取得每個月的最後一天
@@ -91,15 +90,15 @@ public class AdLogClassCount {
         String lastDayOfMonth = sdf.format(lastDayOfMonthDate);
 		
         if(StringUtils.equals(lastDayOfMonth.trim(), date.trim())){
-        	Process insertLog = Runtime.getRuntime().exec(new String[]{"bash","-c","touch /home/webuser/project/transferData/log/"+date+".done"});
+//        	Process insertLog = Runtime.getRuntime().exec(new String[]{"bash","-c","touch /home/webuser/project/transferData/log/"+date+".done"});
         }else{
         	//當日資料轉換成功，寫log至linux中
-    		Process insertLog = Runtime.getRuntime().exec(new String[]{"bash","-c","touch /home/webuser/project/transferData/log/"+date+".log"});
+//    		Process insertLog = Runtime.getRuntime().exec(new String[]{"bash","-c","touch /home/webuser/project/transferData/log/"+date+".log"});
         }
         
         //寫 success to mysql table : dmp_transfer_data_log
         DmpTransferDataLog dmpTransferDataLog= new DmpTransferDataLog();
-        dmpTransferDataLog.setRecordDate("date");
+        dmpTransferDataLog.setRecordDate(date);
         dmpTransferDataLog.setStatus("success");
         dmpTransferDataLogService.save(dmpTransferDataLog);
 	}
@@ -228,19 +227,21 @@ public class AdLogClassCount {
 		
 		try {
 			AdLogClassCount adLogUrlThread = ctx.getBean(AdLogClassCount.class);
-			adLogUrlThread.test(args[0]);
+//			adLogUrlThread.test(args[0]);
+			adLogUrlThread.test("20160802");
 		} catch (Exception e) {
 			try {
 				log.error("TransferData Exception : "+e.getMessage());
 				
 				  //寫 error to mysql table : dmp_transfer_data_log
 		        DmpTransferDataLog dmpTransferDataLog= new DmpTransferDataLog();
-		        dmpTransferDataLog.setRecordDate("date");
+		        dmpTransferDataLog.setRecordDate(args[0]);
 		        dmpTransferDataLog.setStatus("error");
 		        dmpTransferDataLogServiceMain.save(dmpTransferDataLog);
 		        
-				Process p = Runtime.getRuntime().exec(new String[]{"bash","-c","touch /home/webuser/project/transferData/log/"+args[0]+".error"});
-			} catch (IOException e1) {
+//		        Process p = Runtime.getRuntime().exec(new String[]{"bash","-c","touch /home/webuser/project/transferData/log/"+"20160802"+".error"});
+//		        Process p = Runtime.getRuntime().exec(new String[]{"bash","-c","touch /home/webuser/project/transferData/log/"+args[0]+".error"});
+			} catch (Exception e1) {
 				log.error("TransferData Exception : "+e1.getMessage());
 			}
 		}
