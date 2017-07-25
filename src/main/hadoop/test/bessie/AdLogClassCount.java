@@ -27,6 +27,9 @@ import com.mongodb.WriteConcern;
 import com.pchome.akbdmp.job.bean.ClassCountLogBean;
 import com.pchome.hadoopdmp.data.mongo.pojo.ClassCountProdMongoBean;
 import com.pchome.hadoopdmp.data.mongo.pojo.PersonalInformationProdMongoBean;
+import com.pchome.hadoopdmp.mysql.db.service.transferdata.DmpTransferDataLogService;
+import com.pchome.hadoopdmp.mysql.db.service.transferdata.IDmpTransferDataLogService;
+import com.pchome.hadoopdmp.mysql.db.transferdata.pojo.DmpTransferDataLog;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 import com.pchome.hadoopdmp.spring.config.bean.mongodb.MongodbHadoopConfig;
 import com.pchome.soft.util.DateFormatUtil;
@@ -43,6 +46,10 @@ public class AdLogClassCount {
 
 	@Autowired
 	private WriteAkbDmp writeAkbDmp;
+	
+	@Autowired
+	private IDmpTransferDataLogService dmpTransferDataLogService;
+	
 
 	public static MongoTemplate newDBMongoTemplate;// 測試機
 
@@ -89,7 +96,12 @@ public class AdLogClassCount {
         	//當日資料轉換成功，寫log至linux中
     		Process insertLog = Runtime.getRuntime().exec(new String[]{"bash","-c","touch /home/webuser/project/transferData/log/"+date+".log"});
         }
-		
+        
+        //寫 success to mysql table : dmp_transfer_data_log
+        DmpTransferDataLog dmpTransferDataLog= new DmpTransferDataLog();
+        dmpTransferDataLog.setRecordDate("date");
+        dmpTransferDataLog.setStatus("success");
+        dmpTransferDataLogService.save(dmpTransferDataLog);
 	}
 
 	public void record(String date) throws Exception { 
@@ -208,20 +220,28 @@ public class AdLogClassCount {
 	}
 
 	public static void main(String[] args) {
-		Log log = LogFactory.getLog("TransferData");//MongoInsertClassUrl
+		Log log = LogFactory.getLog("TransferData");
+		
+		System.setProperty("spring.profiles.active", "local");//stg
+		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+		IDmpTransferDataLogService dmpTransferDataLogServiceMain = ctx.getBean(DmpTransferDataLogService.class);
+		
 		try {
-			System.setProperty("spring.profiles.active", "local");//stg
-			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			AdLogClassCount adLogUrlThread = ctx.getBean(AdLogClassCount.class);
 			adLogUrlThread.test(args[0]);
 		} catch (Exception e) {
 			log.error("Exception : "+e.getMessage());
 			try {
+				  //寫 error to mysql table : dmp_transfer_data_log
+		        DmpTransferDataLog dmpTransferDataLog= new DmpTransferDataLog();
+		        dmpTransferDataLog.setRecordDate("date");
+		        dmpTransferDataLog.setStatus("error");
+		        dmpTransferDataLogServiceMain.save(dmpTransferDataLog);
+		        
 				Process p = Runtime.getRuntime().exec(new String[]{"bash","-c","touch /home/webuser/project/transferData/log/"+args[0]+".error"});
 			} catch (IOException e1) {
-				e1.printStackTrace();
+				log.error(e1.getMessage());
 			}
-			e.printStackTrace();
 		}
 	}
 }
