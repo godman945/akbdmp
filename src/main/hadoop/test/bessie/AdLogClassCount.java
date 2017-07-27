@@ -245,7 +245,7 @@ public class AdLogClassCount {
 		        
 		        Process p = Runtime.getRuntime().exec(new String[]{"bash","-c","touch /home/webuser/project/transferData/log/"+args[0]+".error"});
 			} catch (Exception e1) {
-				log.error("TransferData Exception2 : "+e);
+				log.error("TransferData Exception2 : "+e1);
 			}
 		}
 	}
