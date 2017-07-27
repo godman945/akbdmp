@@ -35,7 +35,7 @@ import com.pchome.soft.util.DateFormatUtil;
 
 @Component
 public class AdLogClassCount {
-	Log log = LogFactory.getLog("TransferData");//MongoInsertClassUrl
+	Log log = LogFactory.getLog("TransferData");
 
 //	@Autowired
 //	private MongoOperations mongoOperations;// 正式機
@@ -51,29 +51,31 @@ public class AdLogClassCount {
 	
 
 	public static MongoTemplate newDBMongoTemplate;// 測試機
+	
+	public static MongoOperations dmpMongoPersonalInfoOperations;// 撈正式機個資table	
 
 	public void test(String date) throws Exception {
-		log.info("================START　PROCESS========================== "+date+" =========================");
-		// 新的insert mongo 物件
+		log.info(date+"-START================START　PROCESS==========================================");
+		
+		// 新的insert mongo 物件  
+		//寫入正式機user_detai
 		MongoOperations newDBMongoOperations = new MongoTemplate(new SimpleMongoDbFactory(
-				new Mongo("192.168.1.37", 27017), "pcbappdev", new UserCredentials("webuser", "axw2mP1i")));
+				new Mongo("192.168.1.134", 27017), "dmp", new UserCredentials("webuser", "MonG0Dmp")));
 		MongoTemplate newDBMongoTemplate = (MongoTemplate) newDBMongoOperations;
 		newDBMongoTemplate.setWriteConcern(WriteConcern.SAFE);
 		this.newDBMongoTemplate = newDBMongoTemplate;
 		
-
-//		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-//		Date date1 = sdf.parse(date);
-//		Calendar specialDate = Calendar.getInstance();
-//		specialDate.setTime(date1); 
-//		specialDate.add(Calendar.DATE, 1); 
-//		String formatted = sdf.format(specialDate.getTime());
+		//撈正式機個資table	
+		MongoOperations dmpMongoPersonalInfo = new MongoTemplate(new SimpleMongoDbFactory(new Mongo("192.168.1.134", 27017), "dmp", new UserCredentials("webuser", "MonG0Dmp")));
+		MongoTemplate dmpMongoPersonalInfoTemplate = (MongoTemplate)dmpMongoPersonalInfo;
+		dmpMongoPersonalInfoTemplate.setWriteConcern(WriteConcern.SAFE);
+		this.dmpMongoPersonalInfoOperations = dmpMongoPersonalInfoTemplate;
 		
 		Process insertRunLog = Runtime.getRuntime().exec(new String[]{"bash","-c","touch /home/webuser/project/transferData/log/"+date+".run"});
 		
 		record(date);
 
-		log.info("================END==========================");
+		log.info(date+"-END================END=====================================================");
 		
 		//先刪除所有log檔
 		Process deleteLog = Runtime.getRuntime().exec(new String[]{"bash","-c","rm /home/webuser/project/transferData/log/*.log"});
@@ -94,6 +96,7 @@ public class AdLogClassCount {
         if(StringUtils.equals(lastDayOfMonth.trim(), date.trim())){
         	Process insertLog = Runtime.getRuntime().exec(new String[]{"bash","-c","touch /home/webuser/project/transferData/log/"+date+".done"});
         	success="The month is completed!";
+        	log.info(lastDayOfMonth+" The month is completed!");
         }else{
         	//當日資料轉換成功，寫log至linux中
     		Process insertLog = Runtime.getRuntime().exec(new String[]{"bash","-c","touch /home/webuser/project/transferData/log/"+date+".log"});
@@ -108,7 +111,7 @@ public class AdLogClassCount {
 
 	public void record(String date) throws Exception { 
 		
-		System.setProperty("spring.profiles.active", "local");//stg
+		System.setProperty("spring.profiles.active", "stg");//stg
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 		MongoOperations oldMongoOperationsQuery = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
 		
@@ -120,7 +123,7 @@ public class AdLogClassCount {
 		Query queryCount = new Query(new Criteria().where("record_date").is(date));//2016-08-01
 		long tatalcount = oldMongoOperationsQuery.count(queryCount, ClassCountProdMongoBean.class);
 
-		log.info("Total Size : " + tatalcount);
+		log.info(date+" Total Size : " + tatalcount);
 
 		int pageIndex = 0;
 		int bulk = 10000;
@@ -128,13 +131,12 @@ public class AdLogClassCount {
 		double pageSize = Math.ceil(((double) tatalcount) / bulk);
 
 		while (pageIndex < pageSize) {
-			// .where("uuid").is("b2b8d3ba-edd1-4cdc-8e21-378c69eabf3b")
 			Query query1 = new Query(new Criteria().where("record_date").is(date));//2017-08-01
 			query1.with(new PageRequest(pageIndex, bulk));
 
 			List<ClassCountProdMongoBean> classCountProdMongoBeanList = oldMongoOperationsQuery.find(query1,ClassCountProdMongoBean.class);
 
-			log.info(">>>>>>>>>>>>>Page Index : " + pageIndex + " --  " + "Page Size : " + classCountProdMongoBeanList.size()+"        ==============");
+			log.info(">>>>>>>>>>>>> Page Index : " + pageIndex + " --  " + "Page Size : " + classCountProdMongoBeanList.size()+"    >>>>>>>>>>>>>");
 
 			pageIndex = pageIndex + 1;
 
@@ -154,13 +156,13 @@ public class AdLogClassCount {
 				if (StringUtils.isNotBlank(memid)) {
 					Query userQuery = new Query(new Criteria().where("memid").is(memid));
 					userQuery.with(new Sort(Sort.Direction.DESC, "_id"));
-					personalInformationProdMongoBean = oldMongoOperationsQuery.findOne(userQuery,
+					personalInformationProdMongoBean = dmpMongoPersonalInfoOperations.findOne(userQuery,
 							PersonalInformationProdMongoBean.class);
 					realPersonalInfo="1";
 				} else if (StringUtils.isNotBlank(uuid)) {
 					Query userQuery = new Query(new Criteria().where("uuid").is(uuid));
 					userQuery.with(new Sort(Sort.Direction.DESC, "_id"));
-					personalInformationProdMongoBean = oldMongoOperationsQuery.findOne(userQuery,
+					personalInformationProdMongoBean = dmpMongoPersonalInfoOperations.findOne(userQuery,
 							PersonalInformationProdMongoBean.class);
 					realPersonalInfo="0";
 				}
@@ -224,7 +226,7 @@ public class AdLogClassCount {
 	public static void main(String[] args) {
 		Log log = LogFactory.getLog("TransferData");
 		
-		System.setProperty("spring.profiles.active", "local");//stg
+		System.setProperty("spring.profiles.active", "stg");//stg
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 		IDmpTransferDataLogService dmpTransferDataLogServiceMain = ctx.getBean(DmpTransferDataLogService.class);
 		
@@ -233,7 +235,7 @@ public class AdLogClassCount {
 			adLogUrlThread.test(args[0]);
 		} catch (Exception e) {
 			try {
-				log.error("TransferData Exception : "+e.getMessage());
+				log.error("TransferData Exception1 : "+e);
 				
 				//寫 error to mysql table : dmp_transfer_data_log
 		        DmpTransferDataLog dmpTransferDataLog= new DmpTransferDataLog();
@@ -243,7 +245,7 @@ public class AdLogClassCount {
 		        
 		        Process p = Runtime.getRuntime().exec(new String[]{"bash","-c","touch /home/webuser/project/transferData/log/"+args[0]+".error"});
 			} catch (Exception e1) {
-				log.error("TransferData Exception : "+e1.getMessage());
+				log.error("TransferData Exception2 : "+e);
 			}
 		}
 	}

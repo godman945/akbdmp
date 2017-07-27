@@ -46,7 +46,7 @@ public class WriteAkbDmp {
 	private DateFormatUtil dateFormatUtil;
 	
 //	@Autowired
-	private static MongoOperations devTestMongoOperations;
+	private static MongoOperations writeUserDetailMongoOperations;
 	
 	@Autowired
 	private RestClientUtil restClientUtil;
@@ -59,18 +59,14 @@ public class WriteAkbDmp {
 	
 	@SuppressWarnings("unchecked")
 	public void process(ClassCountLogBean classCountLogBean) throws Exception{
+		//寫入正式機user_detail
 		MongoTemplate mongoTemplate = AdLogClassCount.newDBMongoTemplate;
-		this.devTestMongoOperations = mongoTemplate;
-		
-//		MongoOperations newDBMongoOperations = new MongoTemplate(new SimpleMongoDbFactory(new Mongo("192.168.1.37", 27017), "pcbappdev", new UserCredentials("webuser", "axw2mP1i")));
-//		MongoTemplate newDBMongoTemplate = (MongoTemplate)newDBMongoOperations;
-//		newDBMongoTemplate.setWriteConcern(WriteConcern.SAFE);
-//		this.devTestMongoOperations = newDBMongoTemplate;
+		this.writeUserDetailMongoOperations = mongoTemplate;
 		
 		//撈新結構是否有資料
 		ClassCountMongoBean classCountMongoBean = null;
 		Query query = new Query(Criteria.where("user_id").is(classCountLogBean.getUserId().trim()));
-		classCountMongoBean = devTestMongoOperations.findOne(query, ClassCountMongoBean.class);
+		classCountMongoBean = writeUserDetailMongoOperations.findOne(query, ClassCountMongoBean.class);
 		
 		
 		//新結構沒資料
@@ -98,42 +94,50 @@ public class WriteAkbDmp {
 				//判斷是否為真實個資
 				if (StringUtils.equals("1", classCountLogBean.getRealPersonalInfo())){
 					//sex
-					userInfo.put("sex", classCountLogBean.getSex());
-					sexInfoData.put("w", -1);
-					sexInfoData.put("sex",classCountLogBean.getSex());
-					sexSourceList.add(classCountLogBean.getSource());
-					sexInfoData.put("source", sexSourceList);
-					sexInfoDataList.add(sexInfoData);
-					userInfo.put("sex_info", sexInfoDataList);
+					if (StringUtils.isNotBlank(classCountLogBean.getSex())){
+						userInfo.put("sex", classCountLogBean.getSex());
+						sexInfoData.put("w", -1);
+						sexInfoData.put("sex",classCountLogBean.getSex());
+						sexSourceList.add(classCountLogBean.getSource());
+						sexInfoData.put("source", sexSourceList);
+						sexInfoDataList.add(sexInfoData);
+						userInfo.put("sex_info", sexInfoDataList);
+					}
 					
 					//age
-					userInfo.put("age", classCountLogBean.getAge());
-					ageInfoData.put("w", -1);
-					ageInfoData.put("age",classCountLogBean.getAge());
-					ageSourceList.add(classCountLogBean.getSource());
-					ageInfoData.put("source", ageSourceList);
-					ageInfoDataList.add(ageInfoData);
-					userInfo.put("age_info", ageInfoDataList);
+					if (StringUtils.isNotBlank(classCountLogBean.getAge())){
+						userInfo.put("age", classCountLogBean.getAge());
+						ageInfoData.put("w", -1);
+						ageInfoData.put("age",classCountLogBean.getAge());
+						ageSourceList.add(classCountLogBean.getSource());
+						ageInfoData.put("source", ageSourceList);
+						ageInfoDataList.add(ageInfoData);
+						userInfo.put("age_info", ageInfoDataList);
+					}
 					
-				}else{
+				}
+				else{
 					//sex
-					userInfo.put("sex", classCountLogBean.getSex());
-					sexInfoData.put("w", w);
-					sexInfoData.put("sex",classCountLogBean.getSex());
-					sexSourceList.add(classCountLogBean.getSource());
-					sexInfoData.put("source", sexSourceList);
-					sexInfoDataList.add(sexInfoData);
-					userInfo.put("sex_info", sexInfoDataList);
+					if (StringUtils.isNotBlank(classCountLogBean.getSex())){
+						userInfo.put("sex", classCountLogBean.getSex());
+						sexInfoData.put("w", w);
+						sexInfoData.put("sex",classCountLogBean.getSex());
+						sexSourceList.add(classCountLogBean.getSource());
+						sexInfoData.put("source", sexSourceList);
+						sexInfoDataList.add(sexInfoData);
+						userInfo.put("sex_info", sexInfoDataList);
+					}
 					
 					//age
-					userInfo.put("age", classCountLogBean.getAge());
-					ageInfoData.put("w", w);
-					ageInfoData.put("age",classCountLogBean.getAge());
-					ageSourceList.add(classCountLogBean.getSource());
-					ageInfoData.put("source", ageSourceList);
-					ageInfoDataList.add(ageInfoData);
-					userInfo.put("age_info", ageInfoDataList);
-					
+					if (StringUtils.isNotBlank(classCountLogBean.getAge())){
+						userInfo.put("age", classCountLogBean.getAge());
+						ageInfoData.put("w", w);
+						ageInfoData.put("age",classCountLogBean.getAge());
+						ageSourceList.add(classCountLogBean.getSource());
+						ageInfoData.put("source", ageSourceList);
+						ageInfoDataList.add(ageInfoData);
+						userInfo.put("age_info", ageInfoDataList);
+					}
 				}
 					
 			}
@@ -161,7 +165,7 @@ public class WriteAkbDmp {
 			classCountMongoBean.setUser_info(userInfo);
 			classCountMongoBean.setCategory_info(categoryInfoList);
 			
-			devTestMongoOperations.save(classCountMongoBean);
+			writeUserDetailMongoOperations.save(classCountMongoBean);
 			
 		} 
 		else {//mongo有資料
@@ -191,7 +195,7 @@ public class WriteAkbDmp {
 //				userInfo = processAgeWeight(userInfo,null,classCountLogBean.getAge(),classCountLogBean.getSource());
 				
 				classCountMongoBean = episteMath(classCountMongoBean, classCountLogBean.getAdClass(), classCountLogBean.getRecordDate());
-				devTestMongoOperations.save(classCountMongoBean);
+				writeUserDetailMongoOperations.save(classCountMongoBean);
 				
 			}//log的ad_class在mongo已存在
 			else if (JsonPath.using(jsonpathConfiguration).parse(classCountMongoBean.getCategory_info()).jsonString().contains(classCountLogBean.getAdClass())) {
@@ -228,7 +232,7 @@ public class WriteAkbDmp {
 				
 				classCountMongoBean.setUpdate_date(classCountLogBean.getRecordDate());
 				classCountMongoBean = episteMath(classCountMongoBean, classCountLogBean.getAdClass(), classCountLogBean.getRecordDate());
-				devTestMongoOperations.save(classCountMongoBean);
+				writeUserDetailMongoOperations.save(classCountMongoBean);
 			}
 			
 		}
@@ -312,6 +316,7 @@ public class WriteAkbDmp {
 			}
 		}
 		
+		//取得sex_info的array，然後比大小，最大的為最外層的sex
 		String sex = "";
 		double w = 0;
 		List<Map<String, Object>> sexInfoDataList = (List<Map<String, Object>>) userInfo.get("sex_info");
