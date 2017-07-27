@@ -55,7 +55,7 @@ public class AdLogClassCount {
 	public static MongoOperations dmpMongoPersonalInfoOperations;// 撈正式機個資table	
 
 	public void test(String date) throws Exception {
-		log.info(date+"-START================START　PROCESS==========================================");
+		log.info("================================="+date+"-START　PROCESS=================================");
 		
 		// 新的insert mongo 物件  
 		//寫入正式機user_detai
@@ -75,7 +75,7 @@ public class AdLogClassCount {
 		
 		record(date);
 
-		log.info(date+"-END================END=====================================================");
+		log.info("================================="+date+"-END=================================");
 		
 		//先刪除所有log檔
 		Process deleteLog = Runtime.getRuntime().exec(new String[]{"bash","-c","rm /home/webuser/project/transferData/log/*.log"});
