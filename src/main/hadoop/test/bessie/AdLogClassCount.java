@@ -159,7 +159,8 @@ public class AdLogClassCount {
 					personalInformationProdMongoBean = dmpMongoPersonalInfoOperations.findOne(userQuery,
 							PersonalInformationProdMongoBean.class);
 					realPersonalInfo="1";
-				} else if (StringUtils.isNotBlank(uuid)) {
+				}
+				if ((personalInformationProdMongoBean==null) && (StringUtils.isNotBlank(uuid))) {
 					Query userQuery = new Query(new Criteria().where("uuid").is(uuid));
 					userQuery.with(new Sort(Sort.Direction.DESC, "_id"));
 					personalInformationProdMongoBean = dmpMongoPersonalInfoOperations.findOne(userQuery,
