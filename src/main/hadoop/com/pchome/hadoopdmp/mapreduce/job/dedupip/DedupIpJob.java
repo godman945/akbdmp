@@ -2,21 +2,11 @@ package com.pchome.hadoopdmp.mapreduce.job.dedupip;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.Future;
-import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -25,11 +15,7 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
 import org.bson.BSONObject;
-import org.codehaus.jettison.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -37,17 +23,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.hadoop.mapreduce.LzoTextInputFormat;
-import com.mongodb.hadoop.MongoInputFormat;
-import com.mongodb.hadoop.util.MongoConfigUtil;
-import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategory;
-import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategoryAudienceAnalyze;
-import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategoryGroup;
-import com.pchome.hadoopdmp.enumerate.CategoryComparisonTableEnum;
-import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogDriver;
-import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper;
-import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogReducer;
-import com.pchome.hadoopdmp.mysql.db.service.category.IAdmCategoryAudienceAnalyzeService;
-import com.pchome.hadoopdmp.mysql.db.service.categorygroup.IAdmCategoryGroupService;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 
 @Component
