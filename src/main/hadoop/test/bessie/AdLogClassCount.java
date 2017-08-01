@@ -129,12 +129,16 @@ public class AdLogClassCount {
 		int bulk = 10000;
 
 		double pageSize = Math.ceil(((double) tatalcount) / bulk);
+		
+		Query query1 = null;
+		Query userQuery =null;
 
 		while (pageIndex < pageSize) {
-			Query query1 = new Query(new Criteria().where("record_date").is(date));//2017-08-01
+			query1 = new Query(new Criteria().where("record_date").is(date));//2017-08-01
 			query1.with(new PageRequest(pageIndex, bulk));
 
-			List<ClassCountProdMongoBean> classCountProdMongoBeanList = oldMongoOperationsQuery.find(query1,ClassCountProdMongoBean.class);
+			List<ClassCountProdMongoBean> classCountProdMongoBeanList = null;
+			classCountProdMongoBeanList = oldMongoOperationsQuery.find(query1,ClassCountProdMongoBean.class);
 
 			log.info(">>>>>>>>>>>>> Page Index : " + pageIndex + " --  " + "Page Size : " + classCountProdMongoBeanList.size()+"    >>>>>>>>>>>>>");
 
@@ -154,14 +158,14 @@ public class AdLogClassCount {
 				String realPersonalInfo="";
 				PersonalInformationProdMongoBean personalInformationProdMongoBean = null;
 				if (StringUtils.isNotBlank(memid)) {
-					Query userQuery = new Query(new Criteria().where("memid").is(memid));
+					userQuery = new Query(new Criteria().where("memid").is(memid));
 					userQuery.with(new Sort(Sort.Direction.DESC, "_id"));
 					personalInformationProdMongoBean = dmpMongoPersonalInfoOperations.findOne(userQuery,
 							PersonalInformationProdMongoBean.class);
 					realPersonalInfo="1";
 				}
 				if ((personalInformationProdMongoBean==null) && (StringUtils.isNotBlank(uuid))) {
-					Query userQuery = new Query(new Criteria().where("uuid").is(uuid));
+					userQuery = new Query(new Criteria().where("uuid").is(uuid));
 					userQuery.with(new Sort(Sort.Direction.DESC, "_id"));
 					personalInformationProdMongoBean = dmpMongoPersonalInfoOperations.findOne(userQuery,
 							PersonalInformationProdMongoBean.class);
