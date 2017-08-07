@@ -39,7 +39,7 @@
 	</appender>
 	
 	<appender name="TransferData" class="org.apache.log4j.RollingFileAppender">
-		<param name="File" value="/home/webuser/log/dmp/TransferData201611.log" />
+		<param name="File" value="/home/webuser/log/dmp/TransferData201612.log" />
 		<param name="Append" value="true" />
 		<param name="MaxFileSize" value="10MB" />
 		<param name="MaxBackupIndex" value="20" />
@@ -49,7 +49,7 @@
 	</appender>
 
 	<appender name="writeAkbDmp" class="org.apache.log4j.RollingFileAppender">
-		<param name="File" value="/home/webuser/log/dmp/TransferData201611.log" />
+		<param name="File" value="/home/webuser/log/dmp/TransferData201612.log" />
 		<param name="Append" value="true" />
 		<param name="MaxFileSize" value="10MB" />
 		<param name="MaxBackupIndex" value="20" />
