@@ -84,7 +84,7 @@ public class AdLogClassCount {
 		
 		//取得每個月的最後一天
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-		Date Month = sdf.parse("20170101");
+		Date Month = sdf.parse("20170201");
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(Month);
         calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -125,8 +125,7 @@ public class AdLogClassCount {
 
 		log.info(date+" Total Size : " + tatalcount);
 
-//		int pageIndex = 0;
-		int pageIndex = 6;//有error
+		int pageIndex = 0;		
 		int bulk = 10000;
 
 		double pageSize = Math.ceil(((double) tatalcount) / bulk);
