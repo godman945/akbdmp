@@ -91,8 +91,6 @@ public class AdLogClassCount {
         Date lastDayOfMonthDate = calendar.getTime();
         String lastDayOfMonth = sdf.format(lastDayOfMonthDate);
         
-        lastDayOfMonth="20170428";//砍掉
-		
         String success="success";
         
         if(StringUtils.equals(lastDayOfMonth.trim(), date.trim())){
@@ -127,7 +125,7 @@ public class AdLogClassCount {
 
 		log.info(date+" Total Size : " + tatalcount);
 
-		int pageIndex = 55;			//砍掉		
+		int pageIndex = 0;			//砍掉		
 		int bulk = 10000;
 
 		double pageSize = Math.ceil(((double) tatalcount) / bulk);
