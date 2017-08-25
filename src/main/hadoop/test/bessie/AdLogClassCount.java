@@ -93,6 +93,10 @@ public class AdLogClassCount {
         
         String success="success";
         
+        
+        lastDayOfMonth="20170429";	//砍掉
+        
+        
         if(StringUtils.equals(lastDayOfMonth.trim(), date.trim())){
         	Process insertLog = Runtime.getRuntime().exec(new String[]{"bash","-c","touch /home/webuser/project/transferData/log/"+date+".done"});
         	success="The month is completed!";
@@ -125,7 +129,7 @@ public class AdLogClassCount {
 
 		log.info(date+" Total Size : " + tatalcount);
 
-		int pageIndex = 0;			//砍掉		
+		int pageIndex = 9;			//砍掉		
 		int bulk = 10000;
 
 		double pageSize = Math.ceil(((double) tatalcount) / bulk);
