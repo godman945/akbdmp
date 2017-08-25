@@ -129,7 +129,7 @@ public class AdLogClassCount {
 
 		log.info(date+" Total Size : " + tatalcount);
 
-		int pageIndex = 9;			//砍掉		
+		int pageIndex = 33;			//砍掉		
 		int bulk = 10000;
 
 		double pageSize = Math.ceil(((double) tatalcount) / bulk);
