@@ -94,7 +94,7 @@ public class AdLogClassCount {
         String success="success";
         
         
-        lastDayOfMonth="20170429";	//砍掉
+//        lastDayOfMonth="20170429";	//砍掉
         
         
         if(StringUtils.equals(lastDayOfMonth.trim(), date.trim())){
@@ -129,7 +129,7 @@ public class AdLogClassCount {
 
 		log.info(date+" Total Size : " + tatalcount);
 
-		int pageIndex = 33;			//砍掉		
+		int pageIndex = 0;			//砍掉		
 		int bulk = 10000;
 
 		double pageSize = Math.ceil(((double) tatalcount) / bulk);
