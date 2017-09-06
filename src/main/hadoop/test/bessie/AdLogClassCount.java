@@ -84,7 +84,7 @@ public class AdLogClassCount {
 		
 		//取得每個月的最後一天
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-		Date Month = sdf.parse("20170601");
+		Date Month = sdf.parse("20170701");
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(Month);
         calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
