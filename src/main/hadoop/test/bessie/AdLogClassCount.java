@@ -94,7 +94,7 @@ public class AdLogClassCount {
         String success="success";
         
         
-        lastDayOfMonth="20170915";	//砍掉
+//        lastDayOfMonth="20170915";	//砍掉
         
         
         if(StringUtils.equals(lastDayOfMonth.trim(), date.trim())){
