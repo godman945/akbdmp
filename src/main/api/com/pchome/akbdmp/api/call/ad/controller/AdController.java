@@ -29,7 +29,7 @@ import redis.clients.jedis.Jedis;
 public class AdController extends BaseController {
 
 	@Autowired
-	private RedisTemplate<String, String> redisTemplate;
+	private RedisTemplate<String, Object> redisTemplate;
 
 	@Value("${spring.profiles.active}")
 	private String active;
@@ -63,7 +63,7 @@ public class AdController extends BaseController {
 			}
 			
 			log.info(redisTemplate.opsForValue().get("adclass_api_"+key));
-			result = redisTemplate.opsForValue().get("adclass_api_"+key);
+			result = (String) redisTemplate.opsForValue().get("adclass_api_"+key);
 			//呼叫kafka
 			if(StringUtils.isBlank(result)){
 				result = "{\"ad_class\":[],\"behavior\":\"\",\"sex\":\"\",\"age\":\"\"}";

@@ -27,7 +27,7 @@ import redis.clients.jedis.Jedis;
 public class LifeCheckController extends BaseController {
 
 	@Autowired
-	RedisTemplate<String, String> redisTemplate;
+	RedisTemplate<String, Object> redisTemplate;
 
 	@Autowired
 	CheckDataFactory checkDataFactory;
@@ -43,26 +43,13 @@ public class LifeCheckController extends BaseController {
 	public Object LifeCheck(HttpServletRequest request) throws Exception {
 		try {
 //			log.info(">>>>>> call LifeCheck");
-			if (active.equals("stg")) {
-				Jedis jedis = new Jedis("redisdev.mypchome.com.tw");
-				jedis.set(DmpLifeCheckEnum.CHECK_KEY.getKey(), DmpLifeCheckEnum.CHECK_KEY.getValue());
-				boolean flag = StringUtils.isNotBlank(jedis.get(DmpLifeCheckEnum.CHECK_KEY.getKey()));
-				jedis.del(DmpLifeCheckEnum.CHECK_KEY.getKey());
-				jedis.close();
-				if (flag) {
-					return "OK";
-				} else {
-					return "ERROR";
-				}
+			redisTemplate.opsForValue().set(DmpLifeCheckEnum.CHECK_KEY.getKey(), DmpLifeCheckEnum.CHECK_KEY.getValue());
+			boolean flag = StringUtils.isNotBlank(redisTemplate.opsForValue().get(DmpLifeCheckEnum.CHECK_KEY.getKey()).toString());
+			redisTemplate.delete(DmpLifeCheckEnum.CHECK_KEY.getKey());
+			if (flag) {
+				return "OK";
 			} else {
-				redisTemplate.opsForValue().set(DmpLifeCheckEnum.CHECK_KEY.getKey(), DmpLifeCheckEnum.CHECK_KEY.getValue());
-				boolean flag = StringUtils.isNotBlank(redisTemplate.opsForValue().get(DmpLifeCheckEnum.CHECK_KEY.getKey()).toString());
-				redisTemplate.delete(DmpLifeCheckEnum.CHECK_KEY.getKey());
-				if (flag) {
-					return "OK";
-				} else {
-					return "ERROR";
-				}
+				return "ERROR";
 			}
 
 		} catch (Exception e) {

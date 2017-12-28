@@ -61,53 +61,33 @@ public class RedisConfig {
 		 return jedisConfig;
 	 }
 
-	public RedisClusterConfiguration getClusterConfiguration() {
-		Map<String, Object> source = new HashMap<String, Object>();
-		source.put("spring.redis.cluster.nodes", redisServer);
-		source.put("spring.redis.cluster.timeout", 10000000);
-		source.put("spring.redis.cluster.max-redirects", 10000000);
-		return new RedisClusterConfiguration(new MapPropertySource("RedisClusterConfiguration", source));
-	}
+	 @Bean
+		public RedisClusterConfiguration getClusterConfiguration() {
+			Map<String, Object> source = new HashMap<String, Object>();
+			source.put("spring.redis.cluster.nodes", "192.168.2.207:6379,192.168.2.204:6379,192.168.2.205:6379,192.168.2.208:6379,192.168.2.209:6379,192.168.2.206:6379");
+			source.put("spring.redis.cluster.timeout", 5000);
+			source.put("spring.redis.cluster.max-redirects", 8);
+			return new RedisClusterConfiguration(new MapPropertySource("RedisClusterConfiguration", source));
+		}
 
-	public JedisConnectionFactory getConnectionFactory() {
-		JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(getClusterConfiguration());
-		jedisConnectionFactory.setPoolConfig(jedisPoolConfig());
-		return jedisConnectionFactory;
-	}
+		@Bean(name = "JedisConnectionFactory")
+		public JedisConnectionFactory getConnectionFactory() {
+			JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(getClusterConfiguration());
+			jedisConnectionFactory.setPoolConfig(jedisPoolConfig());
+			return jedisConnectionFactory;
+		}
 
-	@Bean
-	JedisConnectionFactory jedisConnectionFactory() {
-	    JedisConnectionFactory jedisConFactory = new JedisConnectionFactory();
-	    jedisConFactory.setHostName(redisHost);
-	    jedisConFactory.setPort(redisPort);
-	    jedisConFactory.setTimeout(0);
-	    
-	    JedisPoolConfig jedisConfig = new JedisPoolConfig();
-	    jedisConfig.setMaxIdle(maxIdle);
-	    jedisConfig.setTestOnBorrow(testOnBorrow);
-	    jedisConfig.setMaxWaitMillis(maxWait);
-	    jedisConfig.setMaxTotal(60000);
-	    jedisConfig.setTimeBetweenEvictionRunsMillis(-1);
-	    jedisConfig.setTestWhileIdle(false);
-	    jedisConfig.setEvictionPolicyClassName("org.apache.commons.pool2.impl.DefaultEvictionPolicy");
-	    jedisConFactory.setPoolConfig(jedisConfig);
-	    return jedisConFactory;
-	}
-	
-	@Bean(name = "redisTemplate")
-	public RedisTemplate<String, String> getRedisTemplate() {
-		if(active.equals("prd")){
-			RedisTemplate<String, String> clusterTemplate = new RedisTemplate<String, String>();
+		@Bean
+		public JedisClusterConnection getJedisClusterConnection() {
+			return (JedisClusterConnection) getConnectionFactory().getConnection();
+		}
+
+		@Bean(name = "redisTemplate")
+		public RedisTemplate<String, Object> getRedisTemplate() {
+			RedisTemplate<String, Object> clusterTemplate = new RedisTemplate<String, Object>();
 			clusterTemplate.setConnectionFactory(getConnectionFactory());
 			clusterTemplate.setKeySerializer(new StringRedisSerializer());
 			clusterTemplate.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
 			return clusterTemplate;
-		}else{
-			 RedisTemplate<String, String> template = new RedisTemplate<String, String>();
-			 template.setConnectionFactory(jedisConnectionFactory());
-			 template.setKeySerializer(new StringRedisSerializer());
-			 template.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
-			 return template;
 		}
-	}
 }

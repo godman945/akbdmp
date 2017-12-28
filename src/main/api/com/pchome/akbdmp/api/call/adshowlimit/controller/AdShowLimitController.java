@@ -37,7 +37,7 @@ import redis.clients.jedis.Jedis;
 public class AdShowLimitController extends BaseController {
 
 	@Autowired
-	RedisTemplate<String, String> redisTemplate;
+	RedisTemplate<String, Object> redisTemplate;
 
 	@Autowired
 	CheckDataFactory checkDataFactory;
@@ -51,13 +51,16 @@ public class AdShowLimitController extends BaseController {
 	Log log = LogFactory.getLog(AdShowLimitController.class);
 
 	// @CrossOrigin(origins = {"http://pcbwebstg.pchome.com.tw"})
+	/**
+	 * 1.廣告顯示頻次API
+	 * 2.回傳查詢的頻次數
+	 * */
 	@RequestMapping(value = "/api/getAdShowLimit", method = RequestMethod.POST, headers = "Accept=application/json;charset=UTF-8")
 	@ResponseBody
 	public Object adShowLimit(HttpServletRequest request,
 			@RequestParam(defaultValue = "", required = false) String adKey
 			) throws Exception {
 		try {
-			
 			String [] keyArray = adKey.split(",");
 			JSONObject paramaterJson = new JSONObject();
 			paramaterJson.put(DmpAdShowLimitParamaterEnum.AD_KEY.getKey(), keyArray);
@@ -70,62 +73,41 @@ public class AdShowLimitController extends BaseController {
 			}
 			
 			boolean adKeyFlag = false;
-			if(active.equals("stg")){
-				Jedis jedis = new Jedis("redisdev.mypchome.com.tw");
-				AdShowLimitBean adShowLimitBean = new AdShowLimitBean();
-				for (Object key : keyArray) {
+			AdShowLimitBean adShowLimitBean = new AdShowLimitBean();
+			for (String key : keyArray) {
 					
-					if(key == null || key.equals("")){
-						adKeyFlag = true;
-					}
+				if(key == null || key.equals("")){
+					adKeyFlag = true;
+				}
+					
+				if(active.equals("stg")){
 					String [] adKeyArray = key.toString().split("_");
-					if(adKeyArray.length < 4){
+					if(adKeyArray.length < 6){
 						adKeyFlag = true;
 					}
-					
-					int adLimit = jedis.get(key.toString()) == null ? 0 : Integer.parseInt(jedis.get(key.toString()));
+					int adLimit = (int) ((redisTemplate.opsForValue().get(key) == null) ? 0 : Integer.parseInt(IOUtils.toString(jedisConnectionFactory.getClusterConnection().get(key.toString().getBytes()))));
+					key = key.replace("stg:akb:adfc:","");
 					adShowLimitBean.getAdShowLimitMap().put(key.toString(), adLimit);
 				}
-				jedis.close();
-				
-				if(adKeyFlag){
-					log.error(">>>>>> Fail adkey:"+Arrays.asList(adKey));
-				}
-				
-				ReturnData returnData = new ReturnData();
-				returnData.setCode(DmpApiReturnCodeEnum.API_CODE_S001.getCode());
-				returnData.setResult(adShowLimitBean.getAdShowLimitMap());
-				returnData.setStatus(DmpApiReturnCodeEnum.API_CODE_S001.isStatus());
-				return returnData;
-			}else{
-				
-				AdShowLimitBean adShowLimitBean = new AdShowLimitBean();
-				for (Object key : keyArray) {
-					
-					if(key == null || key.equals("")){
-						adKeyFlag = true;
-					}
+				if(active.equals("prd")){
+//						key = key.replace("prd:akb:adfc:","");
 					String [] adKeyArray = key.toString().split("_");
 					if(adKeyArray.length < 4){
 						adKeyFlag = true;
 					}
-					
 					int adLimit = (int) ((redisTemplate.opsForValue().get(key) == null) ? 0 : Integer.parseInt(IOUtils.toString(jedisConnectionFactory.getClusterConnection().get(key.toString().getBytes()))));
 					adShowLimitBean.getAdShowLimitMap().put(key.toString(), adLimit);
 				}
-				
-				if(adKeyFlag){
-					log.error(">>>>>> Fail adkey:"+Arrays.asList(adKey));
-				}
-				
-				ReturnData returnData = new ReturnData();
-				returnData.setCode(DmpApiReturnCodeEnum.API_CODE_S001.getCode());
-				returnData.setResult(adShowLimitBean.getAdShowLimitMap());
-				returnData.setStatus(DmpApiReturnCodeEnum.API_CODE_S001.isStatus());
-				return returnData;
 			}
-			
-			
+				
+			if(adKeyFlag){
+				log.error(">>>>>> Fail adkey:"+Arrays.asList(adKey));
+			}
+			ReturnData returnData = new ReturnData();
+			returnData.setCode(DmpApiReturnCodeEnum.API_CODE_S001.getCode());
+			returnData.setResult(adShowLimitBean.getAdShowLimitMap());
+			returnData.setStatus(DmpApiReturnCodeEnum.API_CODE_S001.isStatus());
+			return returnData;
 		} catch (Exception e) {
 			log.error(">>>>" + e.getMessage());
 			ReturnData returnData = new ReturnData();
