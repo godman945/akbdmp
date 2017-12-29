@@ -85,8 +85,8 @@ public class AdShowLimitController extends BaseController {
 					if(adKeyArray.length < 6){
 						adKeyFlag = true;
 					}
-					int adLimit = (int) ((redisTemplate.opsForValue().get(key) == null) ? 0 : Integer.parseInt(IOUtils.toString(jedisConnectionFactory.getClusterConnection().get(key.toString().getBytes()))));
-					key = "stg:akb:adfc:" + key;
+					String searchKey = "stg:akb:adfc:" + key;
+					int adLimit = (int) ((redisTemplate.opsForValue().get(searchKey) == null) ? 0 : Integer.parseInt(IOUtils.toString(jedisConnectionFactory.getClusterConnection().get(searchKey.toString().getBytes()))));
 					adShowLimitBean.getAdShowLimitMap().put(key.toString(), adLimit);
 				}
 				if(active.equals("prd")){
