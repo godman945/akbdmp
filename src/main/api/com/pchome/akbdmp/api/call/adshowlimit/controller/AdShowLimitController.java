@@ -79,7 +79,6 @@ public class AdShowLimitController extends BaseController {
 				if(key == null || key.equals("")){
 					adKeyFlag = true;
 				}
-					
 				if(active.equals("stg")){
 					String [] adKeyArray = key.toString().split("_");
 					if(adKeyArray.length < 6){
@@ -90,12 +89,12 @@ public class AdShowLimitController extends BaseController {
 					adShowLimitBean.getAdShowLimitMap().put(key.toString(), adLimit);
 				}
 				if(active.equals("prd")){
-//						key = key.replace("prd:akb:adfc:","");
 					String [] adKeyArray = key.toString().split("_");
-					if(adKeyArray.length < 4){
+					if(adKeyArray.length < 6){
 						adKeyFlag = true;
 					}
-					int adLimit = (int) ((redisTemplate.opsForValue().get(key) == null) ? 0 : Integer.parseInt(IOUtils.toString(jedisConnectionFactory.getClusterConnection().get(key.toString().getBytes()))));
+					String searchKey = "prd:akb:adfc:" + key;
+					int adLimit = (int) ((redisTemplate.opsForValue().get(searchKey) == null) ? 0 : Integer.parseInt(IOUtils.toString(jedisConnectionFactory.getClusterConnection().get(searchKey.toString().getBytes()))));
 					adShowLimitBean.getAdShowLimitMap().put(key.toString(), adLimit);
 				}
 			}
