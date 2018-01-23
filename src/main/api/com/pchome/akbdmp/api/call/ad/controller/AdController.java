@@ -7,6 +7,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pchome.akbdmp.api.call.base.controller.BaseController;
 import com.pchome.akbdmp.api.data.enumeration.DmpApiReturnCodeEnum;
 import com.pchome.akbdmp.api.data.returndata.ReturnData;
+import com.pchome.akbdmp.spring.config.bean.allbeanscan.SpringAllConfig;
 import com.pchome.soft.depot.utils.KafkaUtil;
 
 import redis.clients.jedis.Jedis;
@@ -81,4 +84,34 @@ public class AdController extends BaseController {
 			return getReturnData(returnData);
 		}
 	}
+	
+	
+	
+	@RequestMapping(value = "/api/alex", method = RequestMethod.GET, headers = "Accept=application/json;charset=UTF-8")
+	@ResponseBody
+	public Object alex9(
+			HttpServletRequest request
+			) throws Exception {
+		ReturnData returnData = new ReturnData();
+		try {
+			returnData.setResult("SSSS");
+			kafkaUtil.sendMessage("TEST", "", "FFFF");
+			return getReturnData(returnData);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return getReturnData(returnData);
+	}
+	
+	public void a(){
+		kafkaUtil.sendMessage("TEST", "", "CC");
+	}
+	
+	public static void main(String args[]){
+		System.setProperty("spring.profiles.active", "local");
+		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
+		AdController AdController = (AdController) ctx.getBean(AdController.class);
+		AdController.a();
+	}
+	
 }
