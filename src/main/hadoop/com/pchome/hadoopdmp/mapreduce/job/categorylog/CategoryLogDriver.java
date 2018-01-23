@@ -83,8 +83,7 @@ public class CategoryLogDriver {
 		conf.set("mapred.child.java.opts", "-Xmx3072m");
 		conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx3072m");
 
-		conf.set("job.date", (dateStr.matches("\\d{4}-\\d{2}-\\d{2}") || dateStr.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}"))
-				? dateStr.substring(0, 10) : "");
+		conf.set("job.date", (dateStr.matches("\\d{4}-\\d{2}-\\d{2}") || dateStr.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}")) ? dateStr.substring(0, 10) : "");
 		System.out.println("job.date: " + dateStr.substring(0, 10));
 		log.info("job.date: " + dateStr.substring(0, 10));
 
@@ -115,7 +114,7 @@ public class CategoryLogDriver {
 		job.setNumReduceTasks(1);
 
 		// job.setOutputFormatClass(NullOutputFormat.class);
-		FileOutputFormat.setOutputPath(job, new Path("/home/webuser/dmp/crawlUrls_TEST_1_" + dateStr.substring(0, 10)));
+		FileOutputFormat.setOutputPath(job, new Path("/home/webuser/dmp/alex_" + dateStr.substring(0, 10)));
 
 		if (dateStr.matches("\\d{4}-\\d{2}-\\d{2}")) {
 			// opRange.add(Calendar.DAY_OF_YEAR, -1);
@@ -133,10 +132,10 @@ public class CategoryLogDriver {
 				alllogOpRange.append(dateStr);
 
 			}
-
+			
 			// String
-			 String bessieTempPath="/home/webuser/akb/storedata/alllog/2017-05-01/01";//跑1小時data
-			 FileInputFormat.addInputPaths(job, bessieTempPath);
+			String bessieTempPath="/home/webuser/akb/storedata/alllog/2018-01-21/00";//跑1小時data
+			FileInputFormat.addInputPaths(job, bessieTempPath);
 //			FileInputFormat.addInputPaths(job, alllogOpRange.toString());
 			log.info("file Input Path : " + alllogOpRange);
 
@@ -205,42 +204,6 @@ public class CategoryLogDriver {
 		}
 
 	}
-
-	// private void deleteMongoOldDoc(String dateStr) throws Exception {
-	//// IClassCountDAO dao = ClassCountDAO.getInstance();
-	//// log.info("delete old doc for specific date: " +
-	// dao.deleteByDate(dateStr));
-	//
-	// Properties props = new Properties();
-	// props.put("bootstrap.servers", kafkaMetadataBrokerList);
-	// props.put("acks", kafkaAcks);
-	// props.put("retries", kafkaRetries);
-	// props.put("batch.size", kafkaBatchSize);
-	// props.put("linger.ms",kafkaLingerMs );
-	// props.put("buffer.memory", kafkaBufferMemory);
-	// props.put("serializer.class", kafkaSerializerClass);
-	// props.put("key.serializer", kafkaKeySerializer);
-	// props.put("value.serializer", kafkaValueSerializer);
-	// producer = new KafkaProducer<String, String>(props);
-	//
-	//
-	// JSONObject json = new JSONObject();
-	// json.put("type", "mongo");
-	// json.put("action", "delete");
-	// json.put("db", "dmp");
-	// json.put("collection", "class_count");
-	// json.put("column", "record_date");
-	// json.put("condition", dateStr);
-	// kafkaList.add(json);
-	//
-	// Future<RecordMetadata> deleteMongoOldDoc = producer.send(new
-	// ProducerRecord<String, String>("TEST", "", kafkaList.toString()));
-	// while (!deleteMongoOldDoc.isDone()) {
-	// }
-	//
-	// log.info("CategoryDriver deleteMongoOldDoc send kafka: " +
-	// deleteMongoOldDoc);
-	// }
 
 	public static void printUsage() {
 		System.out.println("Usage(hour): [DATE] [HOUR]");
