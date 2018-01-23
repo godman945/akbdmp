@@ -7,7 +7,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
 @Component
 @Scope("request")
 public class BaseController {
