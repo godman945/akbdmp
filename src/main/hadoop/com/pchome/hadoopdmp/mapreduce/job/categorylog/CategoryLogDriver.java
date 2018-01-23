@@ -117,7 +117,7 @@ public class CategoryLogDriver {
 
 		Date date = new Date();
 		// job.setOutputFormatClass(NullOutputFormat.class);
-		FileOutputFormat.setOutputPath(job, new Path("/home/webuser/dmp/alex/" + sdf.format(date)));
+		FileOutputFormat.setOutputPath(job, new Path("/home/webuser/dmp/alex" + sdf.format(date)));
 
 		if (dateStr.matches("\\d{4}-\\d{2}-\\d{2}")) {
 			// opRange.add(Calendar.DAY_OF_YEAR, -1);
