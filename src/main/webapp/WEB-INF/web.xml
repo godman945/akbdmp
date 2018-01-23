@@ -6,6 +6,6 @@
 	<display-name>Archetype Created Web Application</display-name>
 	<context-param>
 		<param-name>spring.profiles.active</param-name>
-		<param-value>prd</param-value>
+		<param-value>stg</param-value>
 	</context-param>
 </web-app>
