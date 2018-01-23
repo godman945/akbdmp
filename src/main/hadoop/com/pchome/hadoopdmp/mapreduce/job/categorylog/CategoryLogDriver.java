@@ -61,6 +61,8 @@ public class CategoryLogDriver {
 	@Value("${input.path.testingpath}")
 	private String inputPathTestingPath;
 
+	private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+	
 	public void drive(String dateStr) throws Exception {
 
 		String alllog = analyzerPathAlllog;
@@ -113,8 +115,9 @@ public class CategoryLogDriver {
 		job.setOutputValueClass(Text.class);
 		job.setNumReduceTasks(1);
 
+		Date date = new Date();
 		// job.setOutputFormatClass(NullOutputFormat.class);
-		FileOutputFormat.setOutputPath(job, new Path("/home/webuser/dmp/alex_" + dateStr.substring(0, 10)));
+		FileOutputFormat.setOutputPath(job, new Path("/home/webuser/dmp/alex/" + sdf.format(date)));
 
 		if (dateStr.matches("\\d{4}-\\d{2}-\\d{2}")) {
 			// opRange.add(Calendar.DAY_OF_YEAR, -1);
@@ -214,7 +217,6 @@ public class CategoryLogDriver {
 
 	public static void main(String[] args) throws Exception {
 		log.info("====driver start====");
-
 		String date = "";
 		if (args.length == 1) {
 			date = args[0];
