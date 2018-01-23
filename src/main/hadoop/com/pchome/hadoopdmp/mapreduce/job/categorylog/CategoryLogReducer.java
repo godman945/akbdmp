@@ -116,7 +116,7 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 			json.put("source", data[5]);
 			json.put("recordDate", data[6]);
 
-			Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("TEST", "", json.toString()));
+			Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_stg", "", json.toString()));
 			// while (!f.isDone()) {
 			// }
 
