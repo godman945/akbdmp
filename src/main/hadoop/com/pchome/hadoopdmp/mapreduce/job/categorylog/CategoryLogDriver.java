@@ -2,6 +2,7 @@ package com.pchome.hadoopdmp.mapreduce.job.categorylog;
 
 import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
@@ -61,9 +62,16 @@ public class CategoryLogDriver {
 	@Value("${input.path.testingpath}")
 	private String inputPathTestingPath;
 
+	@Value("${adLog.class.path}")
+	private String adLogClassPpath;
+	
+	@Value("${akb.path.alllog}")
+	private String akbPathAllLog;
+	
+	private SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
 	private SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMddHHmmss");
 	
-	public void drive(String dateStr) throws Exception {
+	public void drive(String env,String timeType) throws Exception {
 
 		String alllog = analyzerPathAlllog;
 
@@ -85,10 +93,19 @@ public class CategoryLogDriver {
 		conf.set("mapred.child.java.opts", "-Xmx3072m");
 		conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx3072m");
 
-		conf.set("job.date", (dateStr.matches("\\d{4}-\\d{2}-\\d{2}") || dateStr.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}")) ? dateStr.substring(0, 10) : "");
-		System.out.println("job.date: " + dateStr.substring(0, 10));
-		log.info("job.date: " + dateStr.substring(0, 10));
+		Date date = new Date();
+		conf.set("job.date",sdf1.format(date));
+		System.out.println("job.date: " + sdf1.format(date));
+		log.info("job.date: " + sdf1.format(date));
+		
+//		conf.set("job.date", (dateStr.matches("\\d{4}-\\d{2}-\\d{2}") || dateStr.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}")) ? dateStr.substring(0, 10) : "");
+//		System.out.println("job.date: " + dateStr.substring(0, 10));
+//		log.info("job.date: " + dateStr.substring(0, 10));
 
+		
+		
+		
+		
 		// file system
 		FileSystem fs = FileSystem.get(conf);
 
@@ -115,44 +132,50 @@ public class CategoryLogDriver {
 		job.setOutputValueClass(Text.class);
 		job.setNumReduceTasks(1);
 
-		Date date = new Date();
+		
 		// job.setOutputFormatClass(NullOutputFormat.class);
-		FileOutputFormat.setOutputPath(job, new Path("/home/webuser/dmp/alex/" + sdf2.format(date)));
-
-		if (dateStr.matches("\\d{4}-\\d{2}-\\d{2}")) {
-			// opRange.add(Calendar.DAY_OF_YEAR, -1);
+		FileOutputFormat.setOutputPath(job, new Path(adLogClassPpath + sdf2.format(date)));
+		if (timeType.equals("day")) {
 			StringBuffer alllogOpRange = new StringBuffer();
-
 			boolean testFlag = Boolean.parseBoolean(inputPathTestingFlag);
 			log.info("testFlag=" + testFlag);
-
 			if (testFlag) {
 				// testData:
 				alllogOpRange.append(inputPathTestingPath);
 			} else {
-				// formal Data: /home/webuser/analyzer/storedata/alllog/
 				alllogOpRange.append(analyzerPathAlllog);
-				alllogOpRange.append(dateStr);
-
+				alllogOpRange.append(sdf1.format(date));
 			}
-			
-			// String
-			String bessieTempPath="/home/webuser/akb/storedata/alllog/2018-01-21/00";//跑1小時data
+			String bessieTempPath = analyzerPathAlllog+sdf1.format(date);
 			FileInputFormat.addInputPaths(job, bessieTempPath);
-//			FileInputFormat.addInputPaths(job, alllogOpRange.toString());
 			log.info("file Input Path : " + alllogOpRange);
-
-		} else if (dateStr.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}")) {
-			alllogStr = alllog + dateStr.replaceAll(" ", "/");
-			alllogDir = new Path(alllogStr);
-			if (fs.exists(alllogDir)) {
-				alllogPath = alllogDir;
-				FileInputFormat.addInputPath(job, alllogPath);
-				log.info(alllogDir.toString() + " is exists");
-			} else {
-				log.info(alllogDir.toString() + " is not exists");
-				return;
+		} else if (timeType.equals("hour")) {
+			StringBuffer alllogOpRange = new StringBuffer();
+			alllogOpRange.append(analyzerPathAlllog);
+			alllogOpRange.append(sdf1.format(date));
+//			/home/webuser/akb/storedata/alllog/2017-10-01/00
+			String timePath  = "";
+			Calendar calendar = Calendar.getInstance();  
+			if(calendar.get(Calendar.HOUR_OF_DAY) == 24){
+				calendar.add(Calendar.DAY_OF_MONTH, -1); 
+				timePath = sdf1.format(calendar.getTime())+"/00";
+			}else{
+				timePath = sdf1.format(calendar.getTime()) +"/"+ (calendar.get(Calendar.HOUR_OF_DAY) - 1);
 			}
+			String bessieTempPath = akbPathAllLog+timePath;
+			FileInputFormat.addInputPaths(job, bessieTempPath);
+			log.info("file Input Path : " + alllogOpRange);
+			
+//			alllogStr = alllog + dateStr.replaceAll(" ", "/");
+//			alllogDir = new Path(alllogStr);
+//			if (fs.exists(alllogDir)) {
+//				alllogPath = alllogDir;
+//				FileInputFormat.addInputPath(job, alllogPath);
+//				log.info(alllogDir.toString() + " is exists");
+//			} else {
+//				log.info(alllogDir.toString() + " is not exists");
+//				return;
+//			}
 
 		} else {
 			log.info("date = null");
@@ -218,21 +241,27 @@ public class CategoryLogDriver {
 	public static void main(String[] args) throws Exception {
 		log.info("====driver start====");
 		String date = "";
-		if (args.length == 1) {
-			date = args[0];
-		} else if (args.length == 2) {
-			date = args[0] + " " + args[1];
-		} else if (args.length != 0) {
+		boolean jobFlag = false;
+		if(args.length != 2){
+			jobFlag = true;
+		}else if(!args[0].equals("prd") && !args[0].equals("stg")){
+			jobFlag = true;
+		}else if(!args[1].equals("day") && !args[1].equals("hour")){
+			jobFlag = true;
+		}
+		if(jobFlag){
 			printUsage();
 			return;
 		}
-
-		System.setProperty("spring.profiles.active", "stg");
+		
+		if(args[0].equals("prd")){
+			System.setProperty("spring.profiles.active", "prd");
+		}else{
+			System.setProperty("spring.profiles.active", "stg");
+		}
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 		CategoryLogDriver CategoryDriver = (CategoryLogDriver) ctx.getBean(CategoryLogDriver.class);
-
-		CategoryDriver.drive(date);
-
+		CategoryDriver.drive(args[0],args[1]);
 		log.info("====driver end====");
 	}
 
