@@ -134,8 +134,8 @@ public class CategoryLogDriver {
 
 		
 		// job.setOutputFormatClass(NullOutputFormat.class);
-		FileOutputFormat.setOutputPath(job, new Path(adLogClassPpath + sdf2.format(date)));
 		if (timeType.equals("day")) {
+			FileOutputFormat.setOutputPath(job, new Path(adLogClassPpath + sdf2.format(date)));
 			StringBuffer alllogOpRange = new StringBuffer();
 			boolean testFlag = Boolean.parseBoolean(inputPathTestingFlag);
 			log.info("testFlag=" + testFlag);
@@ -163,6 +163,7 @@ public class CategoryLogDriver {
 				timePath = sdf1.format(calendar.getTime()) +"/"+ (calendar.get(Calendar.HOUR_OF_DAY) - 1);
 			}
 			String bessieTempPath = akbPathAllLog+timePath;
+			FileOutputFormat.setOutputPath(job, new Path(adLogClassPpath +"/"+ timePath));
 			FileInputFormat.addInputPaths(job, bessieTempPath);
 			log.info("file Input Path : " + alllogOpRange);
 			
