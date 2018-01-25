@@ -24,7 +24,7 @@ import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig
 @Component
 public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 
-	Log log = LogFactory.getLog("CategoryLogMapper");
+	Log log = LogFactory.getLog("CategoryLogReducer");
 
 	private final static String SYMBOL = String.valueOf(new char[] { 9, 31 });
 
@@ -57,7 +57,6 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	Producer<String, String> producer = null;
 
-	@SuppressWarnings("resource")
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		try {
