@@ -138,6 +138,9 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	public void cleanup(Context context) {
 		try {
 			log.info("------------ cleanup start ------------");
+			System.setProperty("spring.profiles.active", "stg");
+			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+			this.kdclStatisticsSourceService = ctx.getBean(KdclStatisticsSourceService.class);
 			KdclStatisticsSource kdclStatisticsSource = new KdclStatisticsSource();
 			kdclStatisticsSource.setClassify("A");
 			kdclStatisticsSource.setIdType("alex");
