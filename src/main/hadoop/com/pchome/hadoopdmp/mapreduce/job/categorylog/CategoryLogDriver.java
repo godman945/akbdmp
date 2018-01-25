@@ -160,13 +160,13 @@ public class CategoryLogDriver {
 				calendar.add(Calendar.DAY_OF_MONTH, -1); 
 				timePath = sdf1.format(calendar.getTime())+"/00";
 			}else{
-				if(String.valueOf(calendar.get(Calendar.HOUR_OF_DAY)).length() == 1){
+				if(calendar.get(Calendar.HOUR_OF_DAY) <= 10){
 					timePath = sdf1.format(calendar.getTime()) +"/"+ "0"+(calendar.get(Calendar.HOUR_OF_DAY) - 1);
 				}else{
 					timePath = sdf1.format(calendar.getTime()) +"/"+ (calendar.get(Calendar.HOUR_OF_DAY) - 1);	
 				}
 			}
-			String bessieTempPath = akbPathAllLog+timePath;
+			String bessieTempPath = akbPathAllLog + timePath;
 			FileOutputFormat.setOutputPath(job, new Path(adLogClassPpath +"/"+ timePath));
 			FileInputFormat.addInputPaths(job, bessieTempPath);
 			log.info("file Input Path : " + alllogOpRange);
