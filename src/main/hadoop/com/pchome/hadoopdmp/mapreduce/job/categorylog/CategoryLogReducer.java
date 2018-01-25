@@ -116,8 +116,7 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 
 			
 			
-			log.info("alex >>>>>>>>>>>>>>>>memid"+data[0]);
-			System.out.println("alex >>>>>>>>>>>>>>>>memid" + data[0]);
+//			log.info("alex >>>>>>>>>>>>>>>>memid"+data[0]);
 //			Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_stg", "", json.toString()));
 			// while (!f.isDone()) {
 			// }
@@ -137,20 +136,24 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	public void cleanup(Context context) {
 		try {
 			log.info("------------ cleanup start ------------");
-			System.setProperty("spring.profiles.active", "stg");
-			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-			this.kdclStatisticsSourceService = ctx.getBean(KdclStatisticsSourceService.class);
-			KdclStatisticsSource kdclStatisticsSource = new KdclStatisticsSource();
-			kdclStatisticsSource.setClassify("A");
-			kdclStatisticsSource.setIdType("alex");
-			kdclStatisticsSource.setServiceType("9");
-			kdclStatisticsSource.setBehavior("GGG");
-			kdclStatisticsSource.setCounter(0);
-			kdclStatisticsSource.setRecordDate("2018-01-25");
-			kdclStatisticsSource.setUpdateDate(new Date());
-			kdclStatisticsSource.setCreateDate(new Date());
-			kdclStatisticsSourceService.save(kdclStatisticsSource);
+			log.info(context.getCurrentKey().getLength());
+			log.info(context.getConfiguration().get("memid"));
+			log.info("------------ cleanup end ------------");
 			
+//			log.info("------------ cleanup start ------------");
+//			System.setProperty("spring.profiles.active", "stg");
+//			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//			this.kdclStatisticsSourceService = ctx.getBean(KdclStatisticsSourceService.class);
+//			KdclStatisticsSource kdclStatisticsSource = new KdclStatisticsSource();
+//			kdclStatisticsSource.setClassify("A");
+//			kdclStatisticsSource.setIdType("alex");
+//			kdclStatisticsSource.setServiceType("9");
+//			kdclStatisticsSource.setBehavior("GGG");
+//			kdclStatisticsSource.setCounter(0);
+//			kdclStatisticsSource.setRecordDate("2018-01-25");
+//			kdclStatisticsSource.setUpdateDate(new Date());
+//			kdclStatisticsSource.setCreateDate(new Date());
+//			kdclStatisticsSourceService.save(kdclStatisticsSource);
 			producer.close();
 		} catch (Exception e) {
 			log.error(e.getMessage());
