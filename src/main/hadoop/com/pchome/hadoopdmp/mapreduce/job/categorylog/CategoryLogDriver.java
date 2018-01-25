@@ -165,7 +165,6 @@ public class CategoryLogDriver {
 				}else{
 					timePath = sdf1.format(calendar.getTime()) +"/"+ (calendar.get(Calendar.HOUR_OF_DAY) - 1);	
 				}
-				
 			}
 			String bessieTempPath = akbPathAllLog+timePath;
 			FileOutputFormat.setOutputPath(job, new Path(adLogClassPpath +"/"+ timePath));
