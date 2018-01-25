@@ -106,6 +106,13 @@
 		<level value="info" />
 		<appender-ref ref="AkbDmpJob" />
 	</logger>
+	<logger name="CategoryLogReducer" additivity="true">
+		<level value="info" />
+		<appender-ref ref="AkbDmpJob" />
+	</logger>
+	
+	
+	
 	
 	<logger name="MongoInsertClassUrl" additivity="true">
 		<level value="info" />
