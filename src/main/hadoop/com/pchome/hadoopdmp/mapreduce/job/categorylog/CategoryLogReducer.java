@@ -1,9 +1,9 @@
 package com.pchome.hadoopdmp.mapreduce.job.categorylog;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.Future;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -11,13 +11,14 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
+import com.pchome.hadoopdmp.data.mysql.pojo.KdclStatisticsSource;
+import com.pchome.hadoopdmp.mysql.db.service.kdclSatisticsSource.IKdclStatisticsSourceService;
+import com.pchome.hadoopdmp.mysql.db.service.kdclSatisticsSource.KdclStatisticsSourceService;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 
 @Component
@@ -50,17 +51,19 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	private String kafkaValueSerializer;
 
+	private IKdclStatisticsSourceService kdclStatisticsSourceService;
+	
 	List<JSONObject> kafkaList = new ArrayList<>();
 
 	Producer<String, String> producer = null;
 
-	@Override
+	@SuppressWarnings("resource")
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		try {
 			System.setProperty("spring.profiles.active", "stg");
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-			// this.mongoOperations = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
+			this.kdclStatisticsSourceService = ctx.getBean(KdclStatisticsSourceService.class);
 			this.kafkaMetadataBrokerlist = ctx.getEnvironment().getProperty("kafka.metadata.broker.list");
 			this.kafkaAcks = ctx.getEnvironment().getProperty("kafka.acks");
 			this.kafkaRetries = ctx.getEnvironment().getProperty("kafka.retries");
@@ -138,23 +141,16 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 			
 			log.info("------------ cleanup start ------------");
 			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
+			KdclStatisticsSource kdclStatisticsSource = new KdclStatisticsSource();
+			kdclStatisticsSource.setClassify("A");
+			kdclStatisticsSource.setIdType(context.getConfiguration().get("memid"));
+			kdclStatisticsSource.setServiceType("9");
+			kdclStatisticsSource.setBehavior("GGG");
+			kdclStatisticsSource.setCounter(0);
+			kdclStatisticsSource.setRecordDate("2018-01-25");
+			kdclStatisticsSource.setUpdateDate(new Date());
+			kdclStatisticsSource.setCreateDate(new Date());
+			kdclStatisticsSourceService.save(kdclStatisticsSource);
 			
 			
 			producer.close();
@@ -162,6 +158,4 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 			log.error(e.getMessage());
 		}
 	}
-
-
 }

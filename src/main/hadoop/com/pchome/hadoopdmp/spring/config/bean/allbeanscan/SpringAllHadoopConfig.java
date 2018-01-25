@@ -21,6 +21,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 	+"com.pchome.hadoopdmp.thread,"
 	+"com.pchome.hadoopdmp.mysql.db,"
 	+"com.pchome.soft.util,"
+	+"com.pchome.hadoopdmp.spring.config.bean,"
 	+"test.bessie,"
 	
 )
