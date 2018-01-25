@@ -222,7 +222,7 @@ public class CategoryLogDriver {
 		String[] filePaths = {
 				hdfsPath + "/home/webuser/dmp/crawlBreadCrumb/data/pfp_ad_category_new.csv",
 				hdfsPath + "/home/webuser/dmp/readingdata/ClsfyGndAgeCrspTable.txt",
-				"/home/webuser/dmp/alex/log4j.xml"
+				hdfsPath + "/home/webuser/dmp/alex/log4j.xml"
 		};
 		for (String filePath : filePaths) {
 			DistributedCache.addCacheFile(new URI(filePath), job.getConfiguration());
