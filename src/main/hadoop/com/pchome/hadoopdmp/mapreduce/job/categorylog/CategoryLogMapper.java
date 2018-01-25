@@ -1,12 +1,10 @@
 package com.pchome.hadoopdmp.mapreduce.job.categorylog;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,16 +17,11 @@ import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
-import com.pchome.akbdmp.api.data.enumeration.ClassCountMongoDBEnum;
-import com.pchome.hadoopdmp.data.mongo.pojo.ClassUrlMongoBean;
 import com.pchome.hadoopdmp.enumerate.CategoryLogEnum;
 import com.pchome.hadoopdmp.mapreduce.job.factory.ACategoryLogData;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryLogBean;
@@ -59,11 +52,8 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			System.setProperty("spring.profiles.active", "stg");
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			this.mongoOperations = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
-			
 			record_date = context.getConfiguration().get("job.date");
-			
 			Configuration conf = context.getConfiguration();
-
 			//load 分類個資表(ClsfyGndAgeCrspTable.txt)
 			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
 			Path clsfyTable = Paths.get(path[1].toString());
@@ -91,8 +81,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				String[] tmpStr = line.split(";");
 				int lvl = Integer.parseInt(tmpStr[5].replaceAll("\"", "").trim());
 				if (lvl <= maxCateLvl) {
-					categoryList.get(lvl - 1).put(tmpStr[3].replaceAll("\"", "").trim(),
-							tmpStr[4].replaceAll("\"", "").replaceAll("@", "").trim());
+					categoryList.get(lvl - 1).put(tmpStr[3].replaceAll("\"", "").trim(),tmpStr[4].replaceAll("\"", "").replaceAll("@", "").trim());
 				}
 
 			}

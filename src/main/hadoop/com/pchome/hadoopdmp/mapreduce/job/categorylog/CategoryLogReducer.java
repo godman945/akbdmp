@@ -25,8 +25,6 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	Log log = LogFactory.getLog("CategoryLogReducer");
 
-	// private MongoOperations mongoOperations;
-
 	private final static String SYMBOL = String.valueOf(new char[] { 9, 31 });
 
 	private Text keyOut = new Text();
@@ -62,9 +60,7 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 		try {
 			System.setProperty("spring.profiles.active", "stg");
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-
 			// this.mongoOperations = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
-
 			this.kafkaMetadataBrokerlist = ctx.getEnvironment().getProperty("kafka.metadata.broker.list");
 			this.kafkaAcks = ctx.getEnvironment().getProperty("kafka.acks");
 			this.kafkaRetries = ctx.getEnvironment().getProperty("kafka.retries");
@@ -116,7 +112,12 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 			json.put("source", data[5]);
 			json.put("recordDate", data[6]);
 
-			Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_stg", "", json.toString()));
+			
+			
+			log.info("alex >>>>>>>>>>>>>>>>memid"+data[0]);
+			
+			
+//			Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_stg", "", json.toString()));
 			// while (!f.isDone()) {
 			// }
 
@@ -131,23 +132,35 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	}
 
-	@Override
 	public void cleanup(Context context) {
 		try {
+			
+			log.info("------------ cleanup start ------------");
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 			producer.close();
-
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
 	}
 
-	// public static void main(String[] args) throws Exception {
-	// System.setProperty("spring.profiles.active", "stg");
-	// ApplicationContext ctx = new
-	// AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-	// CategoryLogReducer categoryLogReducer =
-	// ctx.getBean(CategoryLogReducer.class);
-	// categoryLogReducer.reduce(null, null, null);
-	// }
 
 }

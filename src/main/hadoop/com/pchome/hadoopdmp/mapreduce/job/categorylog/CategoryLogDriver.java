@@ -167,8 +167,11 @@ public class CategoryLogDriver {
 				}
 			}
 			String bessieTempPath = akbPathAllLog + timePath;
-			FileOutputFormat.setOutputPath(job, new Path(adLogClassPpath +"/"+ timePath));
-			FileInputFormat.addInputPaths(job, bessieTempPath);
+//			FileOutputFormat.setOutputPath(job, new Path(adLogClassPpath +"/"+ timePath));
+//			FileInputFormat.addInputPaths(job, bessieTempPath);
+			
+			FileOutputFormat.setOutputPath(job, new Path("/home/webuser/alex/"+sdf2.format(date)));
+			FileInputFormat.addInputPaths(job, "/home/webuser/akb/storedata/alllog/2018-01-25/00");
 			log.info("file Input Path : " + alllogOpRange);
 			
 //			alllogStr = alllog + dateStr.replaceAll(" ", "/");
