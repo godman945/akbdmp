@@ -127,6 +127,7 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 			context.write(keyOut, valueOut);
 
 		} catch (Exception e) {
+			log.info("reduce error"+e.getMessage());
 			log.error(key, e);
 		}
 
