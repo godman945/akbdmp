@@ -179,11 +179,11 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				return;
 			}
 			
-			log.info("raw_data [memid] : " + values[1]);
-			log.info("raw_data [uuid] : " + values[2]);
-			log.info("raw_data [url] : " + values[4]);
-			log.info("raw_data [ck,pv] : " + values[13]);
-			log.info("raw_data [ad_class] : " + values[15]);
+//			log.info("raw_data [memid] : " + values[1]);
+//			log.info("raw_data [uuid] : " + values[2]);
+//			log.info("raw_data [url] : " + values[4]);
+//			log.info("raw_data [ck,pv] : " + values[13]);
+//			log.info("raw_data [ad_class] : " + values[15]);
 
 			CategoryLogBean categoryLogBean = new CategoryLogBean();
 			CategoryLogBean categoryLogBeanResult = null;
