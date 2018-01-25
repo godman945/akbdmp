@@ -125,7 +125,9 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 
 			keyOut.set(key);
 			context.write(keyOut, valueOut);
-
+			
+			
+			context.write(new Text(data[7]), new Text("1"));
 		} catch (Exception e) {
 			log.info("reduce error"+e.getMessage());
 			log.error(key, e);
@@ -136,7 +138,7 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	public void cleanup(Context context) {
 		try {
 			log.info("------------ cleanup start ------------");
-			log.info(context.getCurrentKey().getLength());
+			log.info(context.getCurrentKey());
 			log.info(context.getConfiguration().get("memid"));
 			log.info("------------ cleanup end ------------");
 			
@@ -175,10 +177,6 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 		kdclStatisticsSource.setUpdateDate(new Date());
 		kdclStatisticsSource.setCreateDate(new Date());
 		kdclStatisticsSourceService.save(kdclStatisticsSource);
-		
-		
-		
-		
 	}
 
 
