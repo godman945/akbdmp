@@ -24,7 +24,7 @@ import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig
 @Component
 public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 
-	Log log = LogFactory.getLog("CategoryLogReducer");
+	Log log = LogFactory.getLog("CategoryLogMapper");
 
 	private final static String SYMBOL = String.valueOf(new char[] { 9, 31 });
 
@@ -118,8 +118,7 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 			
 			
 			log.info("alex >>>>>>>>>>>>>>>>memid"+data[0]);
-			
-			
+			System.out.println("alex >>>>>>>>>>>>>>>>memid" + data[0]);
 //			Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_stg", "", json.toString()));
 			// while (!f.isDone()) {
 			// }
@@ -138,12 +137,10 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	public void cleanup(Context context) {
 		try {
-			
 			log.info("------------ cleanup start ------------");
-			
 			KdclStatisticsSource kdclStatisticsSource = new KdclStatisticsSource();
 			kdclStatisticsSource.setClassify("A");
-			kdclStatisticsSource.setIdType(context.getConfiguration().get("memid"));
+			kdclStatisticsSource.setIdType("alex");
 			kdclStatisticsSource.setServiceType("9");
 			kdclStatisticsSource.setBehavior("GGG");
 			kdclStatisticsSource.setCounter(0);
@@ -152,10 +149,32 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 			kdclStatisticsSource.setCreateDate(new Date());
 			kdclStatisticsSourceService.save(kdclStatisticsSource);
 			
-			
 			producer.close();
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
 	}
+
+	public static void main(String[] args) {
+		System.setProperty("spring.profiles.active", "local");
+		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+		KdclStatisticsSourceService kdclStatisticsSourceService = (KdclStatisticsSourceService) ctx.getBean(KdclStatisticsSourceService.class);
+		
+		KdclStatisticsSource kdclStatisticsSource = new KdclStatisticsSource();
+		kdclStatisticsSource.setClassify("A");
+		kdclStatisticsSource.setIdType("alex");
+		kdclStatisticsSource.setServiceType("9");
+		kdclStatisticsSource.setBehavior("GGG");
+		kdclStatisticsSource.setCounter(0);
+		kdclStatisticsSource.setRecordDate("2018-01-25");
+		kdclStatisticsSource.setUpdateDate(new Date());
+		kdclStatisticsSource.setCreateDate(new Date());
+		kdclStatisticsSourceService.save(kdclStatisticsSource);
+		
+		
+		
+		
+	}
+
+
 }
