@@ -42,6 +42,7 @@ public class Ad24HLog extends ACategoryLogData {
 		String uuid = values[2];
 		String sourceUrl = values[4];
 		String adClass = "";
+		String behaviorClassify = "N";
 		
 		if ((StringUtils.isBlank(memid) || memid.equals("null")) && (StringUtils.isBlank(uuid) || uuid.equals("null"))) {
 			return null;
@@ -71,12 +72,14 @@ public class Ad24HLog extends ACategoryLogData {
 					classUrlMongoBean.setAd_class(adClass);
 					classUrlMongoBean.setUpdate_date(date);
 					mongoOperations.save(classUrlMongoBean);
+					behaviorClassify = "Y";
 				}
 			}
 			
 			//取得ad_class
 			if(classUrlMongoBean.getStatus().equals("1")){
 				adClass = classUrlMongoBean.getAd_class();
+				behaviorClassify = "Y";
 			}
 		}
 		
@@ -104,6 +107,7 @@ public class Ad24HLog extends ACategoryLogData {
 			categoryLogBean.setUuid(values[2]);
 			categoryLogBean.setSource("24h");
 			categoryLogBean.setType("memid");
+			categoryLogBean.setBehaviorClassify(behaviorClassify);
 			return categoryLogBean;
 		}else if(StringUtils.isNotBlank(uuid) && (!uuid.equals("null"))){
 			APersonalInfo aPersonalInfo = PersonalInfoFactory.getAPersonalInfoFactory(PersonalInfoEnum.UUID);
@@ -118,6 +122,7 @@ public class Ad24HLog extends ACategoryLogData {
 			categoryLogBean.setSex(StringUtils.isNotBlank(userInfo.get("sex").toString()) ? userInfo.get("sex").toString(): "null");
 			categoryLogBean.setAge(StringUtils.isNotBlank(userInfo.get("age").toString()) ? userInfo.get("age").toString(): "null");
 			categoryLogBean.setType("uuid");
+			categoryLogBean.setBehaviorClassify(behaviorClassify);
 			return categoryLogBean;
 		}
 		return null;
