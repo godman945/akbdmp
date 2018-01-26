@@ -1,17 +1,22 @@
 package com.pchome.hadoopdmp.mysql.db.service.kdclSatisticsSource;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pchome.hadoopdmp.data.mysql.pojo.KdclStatisticsSource;
+import com.pchome.hadoopdmp.mysql.db.dao.kdclSatisticsSource.IKdclStatisticsSourceDao;
 import com.pchome.hadoopdmp.mysql.db.service.base.BaseService;
 
 @Service
 public class KdclStatisticsSourceService extends BaseService<KdclStatisticsSource, Integer> implements IKdclStatisticsSourceService{
 
+	@Autowired
+	IKdclStatisticsSourceDao kdclStatisticsSourceDao;
+	
 	@Override
 	public void deleteByBehaviorAndRecordDate(String behavior, String recordDate) throws Exception {
-		
+		kdclStatisticsSourceDao.deleteByBehaviorAndRecordDate(behavior,recordDate);
 	}
 
 	@Override

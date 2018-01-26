@@ -11,8 +11,9 @@ public class KdclStatisticsSourceDao extends BaseDAO<KdclStatisticsSource, Integ
 
 	@Override
 	public void deleteByBehaviorAndRecordDate(String behavior, String recordDate) throws Exception {
-		// TODO Auto-generated method stub
-		
+		String hql = "delete from KdclStatisticsSource where recordDate = '" + recordDate + "' and id_type ='"+behavior+"'";
+		super.getSessionFactory().getCurrentSession().createQuery(hql.toString()).executeUpdate();
+//		session.flush();
 	}
 
 	@Override
