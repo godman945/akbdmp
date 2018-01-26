@@ -16,6 +16,7 @@ public class AdClickLog extends ACategoryLogData {
 		String memid = values[1];
 		String uuid = values[2];
 		String adClass = values[15];
+		String behaviorClassify = "Y";
 		
 		if ((StringUtils.isBlank(memid) || memid.equals("null")) && (StringUtils.isBlank(uuid) || uuid.equals("null")) && adClass.matches("\\d{16}")) {
 			return null;
@@ -28,6 +29,7 @@ public class AdClickLog extends ACategoryLogData {
 			categoryLogBean.setUuid(values[2]);
 			categoryLogBean.setSource("adclick");
 			categoryLogBean.setType("memid");
+			categoryLogBean.setBehaviorClassify(behaviorClassify);
 			return categoryLogBean;
 		}else if((StringUtils.isNotBlank(uuid)) && (!uuid.equals("null"))){
 			APersonalInfo aPersonalInfo = PersonalInfoFactory.getAPersonalInfoFactory(PersonalInfoEnum.UUID);
@@ -42,6 +44,7 @@ public class AdClickLog extends ACategoryLogData {
 			categoryLogBean.setSex(StringUtils.isNotBlank(userInfo.get("sex").toString()) ? userInfo.get("sex").toString(): "null");
 			categoryLogBean.setAge(StringUtils.isNotBlank(userInfo.get("age").toString()) ? userInfo.get("age").toString(): "null");
 			categoryLogBean.setType("uuid");
+			categoryLogBean.setBehaviorClassify(behaviorClassify);
 			return categoryLogBean;
 		}
 		

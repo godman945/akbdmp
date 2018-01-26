@@ -130,9 +130,10 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 			
 			
 			
-			if(key.toString().indexOf("RUTEN_") >=0 ){
+			if(key.toString().indexOf("uuid_24h_Y") >=0 ){
 				sum = sum + 1;
 				log.info("TEST KEY >>>>>>>>>>>>>>>>>>>>"+key);
+				log.info("TEST KEY >>>>>>>>>>>>>>>>>>>>"+sum);
 			}
 			
 			
