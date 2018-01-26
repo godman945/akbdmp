@@ -1,6 +1,8 @@
 package com.pchome.hadoopdmp.mapreduce.job.categorylog;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -8,18 +10,17 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.jasper.tagplugins.jstl.core.ForEach;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
-import com.pchome.akbdmp.api.data.enumeration.ClassCountMongoDBEnum;
 import com.pchome.hadoopdmp.data.mongo.pojo.UserDetailMongoBean;
+import com.pchome.hadoopdmp.data.mysql.pojo.KdclStatisticsSource;
+import com.pchome.hadoopdmp.enumerate.EnumKdclStatisticsSource;
 import com.pchome.hadoopdmp.mongo.db.service.userdetail.UserDetailService;
 import com.pchome.hadoopdmp.mysql.db.service.kdclSatisticsSource.IKdclStatisticsSourceService;
 import com.pchome.hadoopdmp.mysql.db.service.kdclSatisticsSource.KdclStatisticsSourceService;
@@ -30,8 +31,19 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	Log log = LogFactory.getLog("CategoryLogReducer");
 
+	SimpleDateFormat sdf = null;
 	private final static String SYMBOL = String.valueOf(new char[] { 9, 31 });
-	private int sum = 0;
+	private int uuid24ClassifyIsY = 0;
+	private int uuid24ClassifyIsN = 0;
+	private int memid24ClassifyIsY = 0;
+	private int memid24ClassifyIsN = 0;
+	private int uuidRutenClassifyIsY = 0;
+	private int uuidRutenClassifyIsN = 0;
+	private int memidRutenClassifyIsY = 0;
+	private int memidRutenClassifyIsN = 0;
+	private int memidAdclickClassifyIsY = 0;
+	private int uuidAdclickClassifyIsY = 0;
+	
 	private Text keyOut = new Text();
 	private Text valueOut = new Text();
 	public static String record_date;
@@ -63,6 +75,7 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		try {
+			this.sdf = new SimpleDateFormat("yyyy-MM-dd");
 			System.setProperty("spring.profiles.active", "stg");
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			this.kdclStatisticsSourceService = ctx.getBean(KdclStatisticsSourceService.class);
@@ -75,7 +88,7 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 			this.kafkaSerializerClass = ctx.getEnvironment().getProperty("kafka.serializer.class");
 			this.kafkaKeySerializer = ctx.getEnvironment().getProperty("kafka.key.serializer");
 			this.kafkaValueSerializer = ctx.getEnvironment().getProperty("kafka.value.serializer");
-
+			
 			Properties props = new Properties();
 			props.put("bootstrap.servers", kafkaMetadataBrokerlist);
 			props.put("acks", kafkaAcks);
@@ -117,7 +130,6 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 			json.put("source", data[5]);
 			json.put("recordDate", data[6]);
 
-//			log.info("alex >>>>>>>>>>>>>>>>memid"+data[0]);
 //			Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_stg", "", json.toString()));
 			// while (!f.isDone()) {
 			// }
@@ -126,17 +138,39 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 			keyOut.set(key);
 			context.write(keyOut, valueOut);
 			
-			
+//			log.info("TEST KEY >>>>>>>>>>>>>>>>>>>>"+data[9]);
+//			log.info("TEST KEY >>>>>>>>>>>>>>>>>>>>"+uuid24ClassifyIsY);
 			
 			if(key.toString().indexOf("uuid_24h_Y") >=0 ){
-				log.info("TEST KEY >>>>>>>>>>>>>>>>>>>>"+data[9]);
-				sum = sum + 1;
-				log.info("TEST KEY >>>>>>>>>>>>>>>>>>>>"+sum);
+				uuid24ClassifyIsY = uuid24ClassifyIsY + 1;
 			}
-			
-			
-			
-			
+			if(key.toString().indexOf("uuid_24h_N") >=0 ){
+				uuid24ClassifyIsN = uuid24ClassifyIsN + 1;
+			}
+			if(key.toString().indexOf("memid_24h_Y") >=0 ){
+				memid24ClassifyIsY = memid24ClassifyIsY + 1;
+			}
+			if(key.toString().indexOf("memid_24h_N") >=0 ){
+				memid24ClassifyIsN = memid24ClassifyIsN + 1;
+			}
+			if(key.toString().indexOf("uuid_ruten_Y") >=0 ){
+				uuidRutenClassifyIsY = uuidRutenClassifyIsY + 1;
+			}
+			if(key.toString().indexOf("uuid_ruten_N") >=0 ){
+				uuidRutenClassifyIsN = uuidRutenClassifyIsN + 1;
+			}
+			if(key.toString().indexOf("memid_ruten_Y") >=0 ){
+				memidRutenClassifyIsY = memidRutenClassifyIsY + 1;
+			}
+			if(key.toString().indexOf("memid_ruten_N") >=0 ){
+				memidRutenClassifyIsN = memidRutenClassifyIsN + 1;
+			}
+			if(key.toString().indexOf("memid_adclick_Y") >=0 ){
+				memidAdclickClassifyIsY = memidAdclickClassifyIsY + 1;
+			}
+			if(key.toString().indexOf("uuid_adclick_Y") >=0 ){
+				uuidAdclickClassifyIsY = uuidAdclickClassifyIsY + 1;
+			}
 			context.write(new Text(data[7]), new Text("1"));
 		} catch (Exception e) {
 			log.info("reduce error"+e.getMessage());
@@ -148,30 +182,71 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	public void cleanup(Context context) {
 		try {
 			log.info("------------ cleanup start ------------");
-			log.info("------------ uuid_24h_Y ------------" +sum);
+			System.setProperty("spring.profiles.active", "stg");
+			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+			this.kdclStatisticsSourceService = ctx.getBean(KdclStatisticsSourceService.class);
+			Date date = new Date();
+			
+			for (EnumKdclStatisticsSource enumKdclStatisticsSource : EnumKdclStatisticsSource.values()) {
+				if(enumKdclStatisticsSource.getKey().equals("MEMID_24_Y")){
+					savekdclStatisticsSource("memid","kdcl","24h","Y",memid24ClassifyIsY,date,kdclStatisticsSourceService);
+				}
+				if(enumKdclStatisticsSource.getKey().equals("MEMID_24_N")){
+					savekdclStatisticsSource("memid","kdcl","24h","N",memid24ClassifyIsN,date,kdclStatisticsSourceService);
+				}
+				if(enumKdclStatisticsSource.getKey().equals("UUID_24_Y")){
+					savekdclStatisticsSource("uuid","kdcl","24h","Y",uuid24ClassifyIsY,date,kdclStatisticsSourceService);
+				}
+				if(enumKdclStatisticsSource.getKey().equals("UUID_24_N")){
+					savekdclStatisticsSource("uuid","kdcl","24h","N",uuid24ClassifyIsN,date,kdclStatisticsSourceService);
+				}
+				if(enumKdclStatisticsSource.getKey().equals("MEMID_RUTEN_Y")){
+					savekdclStatisticsSource("memid","kdcl","ruten","Y",memidRutenClassifyIsY,date,kdclStatisticsSourceService);
+				}
+				if(enumKdclStatisticsSource.getKey().equals("MEMID_RUTEN_N")){
+					savekdclStatisticsSource("memid","kdcl","ruten","N",memidRutenClassifyIsN,date,kdclStatisticsSourceService);
+				}
+				if(enumKdclStatisticsSource.getKey().equals("UUID_RUTEN_Y")){
+					savekdclStatisticsSource("uuid","kdcl","ruten","Y",uuidRutenClassifyIsY,date,kdclStatisticsSourceService);
+				}
+				if(enumKdclStatisticsSource.getKey().equals("UUID_RUTEN_N")){
+					savekdclStatisticsSource("uuid","kdcl","ruten","N",uuidRutenClassifyIsN,date,kdclStatisticsSourceService);
+				}
+				if(enumKdclStatisticsSource.getKey().equals("UUID_ADCLICK_Y")){
+					savekdclStatisticsSource("uuid","kdcl","ad_click","Y",uuidAdclickClassifyIsY,date,kdclStatisticsSourceService);
+				}
+				if(enumKdclStatisticsSource.getKey().equals("MEMID_ADCLICK_Y")){
+					savekdclStatisticsSource("memid","kdcl","ad_click","Y",memidAdclickClassifyIsY,date,kdclStatisticsSourceService);
+				}
+			}
 			
 			log.info("------------ cleanup end ------------");
 			
-//			log.info("------------ cleanup start ------------");
-//			System.setProperty("spring.profiles.active", "stg");
-//			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-//			this.kdclStatisticsSourceService = ctx.getBean(KdclStatisticsSourceService.class);
-//			KdclStatisticsSource kdclStatisticsSource = new KdclStatisticsSource();
-//			kdclStatisticsSource.setClassify("A");
-//			kdclStatisticsSource.setIdType("alex");
-//			kdclStatisticsSource.setServiceType("9");
-//			kdclStatisticsSource.setBehavior("GGG");
-//			kdclStatisticsSource.setCounter(0);
-//			kdclStatisticsSource.setRecordDate("2018-01-25");
-//			kdclStatisticsSource.setUpdateDate(new Date());
-//			kdclStatisticsSource.setCreateDate(new Date());
-//			kdclStatisticsSourceService.save(kdclStatisticsSource);
+
 			producer.close();
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
 	}
 
+	
+	
+	public void savekdclStatisticsSource(String idType,String serviceType,String behavior,String classify ,int count,Date date,IKdclStatisticsSourceService kdclStatisticsSourceService){
+		KdclStatisticsSource kdclStatisticsSource = new KdclStatisticsSource();
+		kdclStatisticsSource.setClassify(idType);
+		kdclStatisticsSource.setIdType(serviceType);
+		kdclStatisticsSource.setServiceType(behavior);
+		kdclStatisticsSource.setBehavior(classify);
+		kdclStatisticsSource.setCounter(count);
+		kdclStatisticsSource.setRecordDate(this.sdf.format(date));
+		kdclStatisticsSource.setUpdateDate(date);
+		kdclStatisticsSource.setCreateDate(date);
+		kdclStatisticsSourceService.save(kdclStatisticsSource);
+	}
+	
+	
+	
+	
 	public static void main(String[] args) throws Exception {
 		System.setProperty("spring.profiles.active", "local");
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
