@@ -231,12 +231,13 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	
 	
-	public void savekdclStatisticsSource(String idType,String serviceType,String behavior,String classify ,int count,Date date,IKdclStatisticsSourceService kdclStatisticsSourceService){
+	public void savekdclStatisticsSource(String idType,String serviceType,String behavior,String classify ,int count,Date date,IKdclStatisticsSourceService kdclStatisticsSourceService) throws Exception{
 		KdclStatisticsSource kdclStatisticsSource = new KdclStatisticsSource();
 		kdclStatisticsSource.setClassify(idType);
 		kdclStatisticsSource.setIdType(serviceType);
-		kdclStatisticsSource.setServiceType(behavior);
-		kdclStatisticsSource.setBehavior(classify);
+		kdclStatisticsSource.setServiceType(serviceType);
+		kdclStatisticsSource.setClassify(classify);
+		kdclStatisticsSource.setBehavior(behavior);
 		kdclStatisticsSource.setCounter(count);
 		kdclStatisticsSource.setRecordDate(this.sdf.format(date));
 		kdclStatisticsSource.setUpdateDate(date);
