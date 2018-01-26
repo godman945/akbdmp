@@ -14,6 +14,7 @@ public class CategoryLogBean {
 	private String recodeDate;
 	private String source;
 	private String type;
+	private String behaviorClassify;
 	private Map<String, combinedValue> clsfyCraspMap ;
 	private ArrayList<Map<String, String>> list; 
 	
@@ -98,6 +99,12 @@ public class CategoryLogBean {
 		this.source = source;
 	}
 
-	
+	public String getBehaviorClassify() {
+		return behaviorClassify;
+	}
+
+	public void setBehaviorClassify(String behaviorClassify) {
+		this.behaviorClassify = behaviorClassify;
+	}
 
 }

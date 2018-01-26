@@ -1,7 +1,6 @@
 package com.pchome.hadoopdmp.mapreduce.job.categorylog;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -14,9 +13,14 @@ import org.apache.kafka.clients.producer.Producer;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
-import com.pchome.hadoopdmp.data.mysql.pojo.KdclStatisticsSource;
+import com.pchome.akbdmp.api.data.enumeration.ClassCountMongoDBEnum;
+import com.pchome.hadoopdmp.data.mongo.pojo.UserDetailMongoBean;
+import com.pchome.hadoopdmp.mongo.db.service.userdetail.UserDetailService;
 import com.pchome.hadoopdmp.mysql.db.service.kdclSatisticsSource.IKdclStatisticsSourceService;
 import com.pchome.hadoopdmp.mysql.db.service.kdclSatisticsSource.KdclStatisticsSourceService;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
@@ -27,10 +31,9 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	Log log = LogFactory.getLog("CategoryLogReducer");
 
 	private final static String SYMBOL = String.valueOf(new char[] { 9, 31 });
-
+	private int sum = 0;
 	private Text keyOut = new Text();
 	private Text valueOut = new Text();
-
 	public static String record_date;
 
 	private String kafkaMetadataBrokerlist;
@@ -122,9 +125,17 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 			// }
 
 			log.info(">>>>>>reduce write key:" + key);
-
 			keyOut.set(key);
 			context.write(keyOut, valueOut);
+			
+			
+			
+			if(key.toString().indexOf("RUTEN_") >=0 ){
+				sum = sum + 1;
+				log.info("TEST KEY >>>>>>>>>>>>>>>>>>>>"+key);
+			}
+			
+			
 			
 			
 			context.write(new Text(data[7]), new Text("1"));
@@ -162,21 +173,24 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 		}
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		System.setProperty("spring.profiles.active", "local");
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-		KdclStatisticsSourceService kdclStatisticsSourceService = (KdclStatisticsSourceService) ctx.getBean(KdclStatisticsSourceService.class);
+		UserDetailService userDetailService = (UserDetailService) ctx.getBean(UserDetailService.class);
+		UserDetailMongoBean userDetailMongoBean = userDetailService.findUserId("df540a46-841a-4924-bdb3-0185ff4abfcd");
+		System.out.println(userDetailMongoBean.getCategory_info().get(0).get("category"));
 		
-		KdclStatisticsSource kdclStatisticsSource = new KdclStatisticsSource();
-		kdclStatisticsSource.setClassify("A");
-		kdclStatisticsSource.setIdType("alex");
-		kdclStatisticsSource.setServiceType("9");
-		kdclStatisticsSource.setBehavior("GGG");
-		kdclStatisticsSource.setCounter(0);
-		kdclStatisticsSource.setRecordDate("2018-01-25");
-		kdclStatisticsSource.setUpdateDate(new Date());
-		kdclStatisticsSource.setCreateDate(new Date());
-		kdclStatisticsSourceService.save(kdclStatisticsSource);
+		
+//		KdclStatisticsSource kdclStatisticsSource = new KdclStatisticsSource();
+//		kdclStatisticsSource.setClassify("A");
+//		kdclStatisticsSource.setIdType("alex");
+//		kdclStatisticsSource.setServiceType("9");
+//		kdclStatisticsSource.setBehavior("GGG");
+//		kdclStatisticsSource.setCounter(0);
+//		kdclStatisticsSource.setRecordDate("2018-01-25");
+//		kdclStatisticsSource.setUpdateDate(new Date());
+//		kdclStatisticsSource.setCreateDate(new Date());
+//		kdclStatisticsSourceService.save(kdclStatisticsSource);
 	}
 
 

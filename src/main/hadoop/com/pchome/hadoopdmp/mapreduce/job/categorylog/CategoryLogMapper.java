@@ -218,6 +218,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			keyOut.set(result);
 			context.write(keyOut, valueOut);
 			
+			context.write(new Text(categoryLogBean.getSource().toUpperCase()+"_"+categoryLogBeanResult.getBehaviorClassify()+"_"+categoryLogBeanResult.getUuid()+"_"+categoryLogBeanResult.getType()), new Text("1"));
 		} catch (Exception e) {
 			log.error(">>>>>> " + e.getMessage());
 		}

@@ -17,7 +17,9 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import com.pchome.akbdmp.api.data.enumeration.ClassCountMongoDBEnum;
 import com.pchome.hadoopdmp.data.mongo.pojo.ClassUrlMongoBean;
+import com.pchome.hadoopdmp.data.mongo.pojo.UserDetailMongoBean;
 import com.pchome.hadoopdmp.enumerate.PersonalInfoEnum;
 import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper;
 
@@ -30,7 +32,7 @@ public class AdRutenLog extends ACategoryLogData {
 		String uuid = values[2];
 		String sourceUrl = values[4];
 		String adClass = "";
-		
+		String behaviorClassify = "N";
 		
 		if ((StringUtils.isBlank(memid) || memid.equals("null")) && (StringUtils.isBlank(uuid) || uuid.equals("null"))) {
 			return null;
@@ -60,14 +62,15 @@ public class AdRutenLog extends ACategoryLogData {
 					classUrlMongoBean.setStatus("1");
 					classUrlMongoBean.setUpdate_date(date);
 					mongoOperations.save(classUrlMongoBean);
+					behaviorClassify = "Y";
 				}
 			}
 			
 			//有ad_class
 			if(classUrlMongoBean.getStatus().equals("1")){
 				adClass = classUrlMongoBean.getAd_class();
+				behaviorClassify = "Y";
 			}
-			
 		}else {
 			adClass = crawlerGetAdclass(sourceUrl);
 			Date date = new Date();
@@ -93,6 +96,7 @@ public class AdRutenLog extends ACategoryLogData {
 			categoryLogBean.setUuid(values[2]);
 			categoryLogBean.setSource("ruten");
 			categoryLogBean.setType("memid");
+			categoryLogBean.setBehaviorClassify(behaviorClassify);
 			return categoryLogBean;
 		}else if(StringUtils.isNotBlank(uuid) && (!uuid.equals("null"))){
 			APersonalInfo aPersonalInfo = PersonalInfoFactory.getAPersonalInfoFactory(PersonalInfoEnum.UUID);
@@ -107,6 +111,7 @@ public class AdRutenLog extends ACategoryLogData {
 			categoryLogBean.setSex(StringUtils.isNotBlank(userInfo.get("sex").toString()) ? userInfo.get("sex").toString(): "null");
 			categoryLogBean.setAge(StringUtils.isNotBlank(userInfo.get("age").toString()) ? userInfo.get("age").toString(): "null");
 			categoryLogBean.setType("uuid");
+			categoryLogBean.setBehaviorClassify(behaviorClassify);
 			return categoryLogBean;
 		}
 
