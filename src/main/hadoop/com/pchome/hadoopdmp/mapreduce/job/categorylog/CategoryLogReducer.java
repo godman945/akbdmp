@@ -117,22 +117,20 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 			json.put("source", data[5]);
 			json.put("recordDate", data[6]);
 
-			
-			
 //			log.info("alex >>>>>>>>>>>>>>>>memid"+data[0]);
 //			Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_stg", "", json.toString()));
 			// while (!f.isDone()) {
 			// }
 
-			log.info(">>>>>>reduce write key:" + key);
+//			log.info(">>>>>>reduce write key:" + key);
 			keyOut.set(key);
 			context.write(keyOut, valueOut);
 			
 			
 			
 			if(key.toString().indexOf("uuid_24h_Y") >=0 ){
+				log.info("TEST KEY >>>>>>>>>>>>>>>>>>>>"+data[9]);
 				sum = sum + 1;
-				log.info("TEST KEY >>>>>>>>>>>>>>>>>>>>"+key);
 				log.info("TEST KEY >>>>>>>>>>>>>>>>>>>>"+sum);
 			}
 			
@@ -150,8 +148,8 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	public void cleanup(Context context) {
 		try {
 			log.info("------------ cleanup start ------------");
-			log.info(context.getCurrentKey());
-			log.info(context.getConfiguration().get("memid"));
+			log.info("------------ uuid_24h_Y ------------" +sum);
+			
 			log.info("------------ cleanup end ------------");
 			
 //			log.info("------------ cleanup start ------------");
