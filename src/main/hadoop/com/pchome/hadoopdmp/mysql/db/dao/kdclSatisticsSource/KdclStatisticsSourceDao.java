@@ -1,6 +1,8 @@
 package com.pchome.hadoopdmp.mysql.db.dao.kdclSatisticsSource;
 
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import com.pchome.hadoopdmp.data.mysql.pojo.KdclStatisticsSource;
@@ -11,11 +13,24 @@ public class KdclStatisticsSourceDao extends BaseDAO<KdclStatisticsSource, Integ
 
 	@Override
 	public void deleteByBehaviorAndRecordDate(String behavior, String recordDate) throws Exception {
-		String hql = "delete from KdclStatisticsSource where recordDate = '" + recordDate + "' and id_type ='"+behavior+"'";
+		String hql = "delete from KdclStatisticsSource where recordDate = '" + recordDate + "' and behavior ='"+behavior+"'";
+		
+		System.out.println(hql);
+		
 		super.getSessionFactory().getCurrentSession().createQuery(hql.toString()).executeUpdate();
 //		session.flush();
 	}
 
+	public KdclStatisticsSource findKdclStatisticsSourceByBehaviorAndRecordDate(String behavior, String recordDate,String idType,String classify) throws Exception {
+		String hql = " from KdclStatisticsSource where   idType ='"+idType+"'  and and  classify ='"+classify+"' and  recordDate = '" + recordDate + "' and behavior ='"+behavior+"'";
+		List<KdclStatisticsSource> kdclStatisticsSourceList = super.getSessionFactory().getCurrentSession().createQuery(hql.toString()).list();
+		if(kdclStatisticsSourceList.size() > 0){
+			return kdclStatisticsSourceList.get(0);
+		}
+		return  null;
+	}
+	
+	
 	@Override
 	public void delete(String id_type, String service_type, String behavior, String classify, String recordDate)
 			throws Exception {

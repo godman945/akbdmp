@@ -2,6 +2,7 @@ package com.pchome.hadoopdmp.mapreduce.job.categorylog;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -15,15 +16,10 @@ import org.apache.kafka.clients.producer.Producer;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
-import com.pchome.akbdmp.api.data.enumeration.ClassCountMongoDBEnum;
-import com.pchome.hadoopdmp.data.mongo.pojo.UserDetailMongoBean;
 import com.pchome.hadoopdmp.data.mysql.pojo.KdclStatisticsSource;
 import com.pchome.hadoopdmp.enumerate.EnumKdclStatisticsSource;
-import com.pchome.hadoopdmp.mongo.db.service.userdetail.UserDetailService;
 import com.pchome.hadoopdmp.mysql.db.service.kdclSatisticsSource.IKdclStatisticsSourceService;
 import com.pchome.hadoopdmp.mysql.db.service.kdclSatisticsSource.KdclStatisticsSourceService;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
@@ -121,7 +117,7 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 		// 6 : RecodeDate
 		// 7 : Type(memid or uuid)
 		try {
-			log.info(">>>>>> reduce start : " + key);
+//			log.info(">>>>>> reduce start : " + key);
 
 			String data[] = key.toString().split(SYMBOL);
 
@@ -197,46 +193,141 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			this.kdclStatisticsSourceService = ctx.getBean(KdclStatisticsSourceService.class);
 			Date date = new Date();
-			String recodeDate = this.sdf.format(date);
-			kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("ad_click", recodeDate);
-			kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("24h", recodeDate);
-			kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("ruten", recodeDate);
+			
+			
+			
+//			kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("ad_click", recodeDate);
+//			kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("24h", recodeDate);
+//			kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("ruten", recodeDate);
+//			kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("personal_info", recodeDate);
+			String recodeDate = "";
+			Calendar calendar = Calendar.getInstance();  
+			if(calendar.get(Calendar.HOUR_OF_DAY) == 24){
+				calendar.add(Calendar.DAY_OF_MONTH, -1);
+				recodeDate = this.sdf.format(calendar.getTime());
+			}else{
+				recodeDate = this.sdf.format(calendar.getTime());
+			}
 			
 			for (EnumKdclStatisticsSource enumKdclStatisticsSource : EnumKdclStatisticsSource.values()) {
 				if(enumKdclStatisticsSource.getKey().equals("MEMID_24_Y")){
+					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("24h",recodeDate,"memid","Y");
+					if(kdclStatisticsSource != null){
+						log.info("memid24ClassifyIsY:"+memid24ClassifyIsY);
+						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
+						log.info("----------------------------");
+						memid24ClassifyIsY = memid24ClassifyIsY + kdclStatisticsSource.getCounter();
+					}
 					savekdclStatisticsSource("memid","kdcl","24h","Y",memid24ClassifyIsY,recodeDate,date,kdclStatisticsSourceService);
 				}
 				if(enumKdclStatisticsSource.getKey().equals("MEMID_24_N")){
+					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("24h",recodeDate,"memid","N");
+					if(kdclStatisticsSource != null){
+						log.info("memid24ClassifyIsN:"+memid24ClassifyIsY);
+						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
+						log.info("----------------------------");
+						memid24ClassifyIsN = memid24ClassifyIsN + kdclStatisticsSource.getCounter();
+					}
 					savekdclStatisticsSource("memid","kdcl","24h","N",memid24ClassifyIsN,recodeDate,date,kdclStatisticsSourceService);
 				}
 				if(enumKdclStatisticsSource.getKey().equals("UUID_24_Y")){
+					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("24h",recodeDate,"uuid","Y");
+					if(kdclStatisticsSource != null){
+						log.info("uuid24ClassifyIsY:"+uuid24ClassifyIsY);
+						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
+						log.info("----------------------------");
+						uuid24ClassifyIsY = uuid24ClassifyIsY + kdclStatisticsSource.getCounter();
+					}
 					savekdclStatisticsSource("uuid","kdcl","24h","Y",uuid24ClassifyIsY,recodeDate,date,kdclStatisticsSourceService);
 				}
 				if(enumKdclStatisticsSource.getKey().equals("UUID_24_N")){
+					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("24h",recodeDate,"uuid","N");
+					if(kdclStatisticsSource != null){
+						log.info("uuid24ClassifyIsN:"+uuid24ClassifyIsN);
+						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
+						log.info("----------------------------");
+						uuid24ClassifyIsN = uuid24ClassifyIsN + kdclStatisticsSource.getCounter();
+					}
 					savekdclStatisticsSource("uuid","kdcl","24h","N",uuid24ClassifyIsN,recodeDate,date,kdclStatisticsSourceService);
 				}
 				if(enumKdclStatisticsSource.getKey().equals("MEMID_RUTEN_Y")){
+					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("ruten",recodeDate,"memid","Y");
+					if(kdclStatisticsSource != null){
+						log.info("memidRutenClassifyIsY:"+memidRutenClassifyIsY);
+						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
+						log.info("----------------------------");
+						memidRutenClassifyIsY = memidRutenClassifyIsY + kdclStatisticsSource.getCounter();
+					}
 					savekdclStatisticsSource("memid","kdcl","ruten","Y",memidRutenClassifyIsY,recodeDate,date,kdclStatisticsSourceService);
 				}
 				if(enumKdclStatisticsSource.getKey().equals("MEMID_RUTEN_N")){
+					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("ruten",recodeDate,"memid","N");
+					if(kdclStatisticsSource != null){
+						log.info("memidRutenClassifyIsN:"+memidRutenClassifyIsN);
+						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
+						log.info("----------------------------");
+						memidRutenClassifyIsN = memidRutenClassifyIsN + kdclStatisticsSource.getCounter();
+					}
 					savekdclStatisticsSource("memid","kdcl","ruten","N",memidRutenClassifyIsN,recodeDate,date,kdclStatisticsSourceService);
 				}
 				if(enumKdclStatisticsSource.getKey().equals("UUID_RUTEN_Y")){
+					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("ruten",recodeDate,"uuid","Y");
+					if(kdclStatisticsSource != null){
+						log.info("uuidRutenClassifyIsY:"+uuidRutenClassifyIsY);
+						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
+						log.info("----------------------------");
+						uuidRutenClassifyIsY = uuidRutenClassifyIsY + kdclStatisticsSource.getCounter();
+					}
 					savekdclStatisticsSource("uuid","kdcl","ruten","Y",uuidRutenClassifyIsY,recodeDate,date,kdclStatisticsSourceService);
 				}
 				if(enumKdclStatisticsSource.getKey().equals("UUID_RUTEN_N")){
+					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("ruten",recodeDate,"uuid","N");
+					if(kdclStatisticsSource != null){
+						log.info("uuidRutenClassifyIsN:"+uuidRutenClassifyIsN);
+						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
+						log.info("----------------------------");
+						uuidRutenClassifyIsN = uuidRutenClassifyIsN + kdclStatisticsSource.getCounter();
+					}
 					savekdclStatisticsSource("uuid","kdcl","ruten","N",uuidRutenClassifyIsN,recodeDate,date,kdclStatisticsSourceService);
 				}
 				if(enumKdclStatisticsSource.getKey().equals("UUID_ADCLICK_Y")){
+					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("ad_click",recodeDate,"uuid","Y");
+					if(kdclStatisticsSource != null){
+						log.info("uuidAdclickClassifyIsY:"+uuidAdclickClassifyIsY);
+						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
+						log.info("----------------------------");
+						uuidAdclickClassifyIsY = uuidAdclickClassifyIsY + kdclStatisticsSource.getCounter();
+					}
 					savekdclStatisticsSource("uuid","kdcl","ad_click","Y",uuidAdclickClassifyIsY,recodeDate,date,kdclStatisticsSourceService);
 				}
 				if(enumKdclStatisticsSource.getKey().equals("MEMID_ADCLICK_Y")){
+					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("ad_click",recodeDate,"memid","Y");
+					if(kdclStatisticsSource != null){
+						log.info("memidAdclickClassifyIsY:"+memidAdclickClassifyIsY);
+						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
+						log.info("----------------------------");
+						memidAdclickClassifyIsY = memidAdclickClassifyIsY + kdclStatisticsSource.getCounter();
+					}
 					savekdclStatisticsSource("memid","kdcl","ad_click","Y",memidAdclickClassifyIsY,recodeDate,date,kdclStatisticsSourceService);
 				}
 				if(enumKdclStatisticsSource.getKey().equals("user_info_Classify_Y")){
+					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("personal_info",recodeDate,"memid","Y");
+					if(kdclStatisticsSource != null){
+						log.info("userInfoClassifyIsY:"+userInfoClassifyIsY);
+						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
+						log.info("----------------------------");
+						userInfoClassifyIsY = userInfoClassifyIsY + kdclStatisticsSource.getCounter();
+					}
 					savekdclStatisticsSource("memid","member","personal_info","Y",userInfoClassifyIsY,recodeDate,date,kdclStatisticsSourceService);
 				}
 				if(enumKdclStatisticsSource.getKey().equals("user_info_Classify_N")){
+					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("personal_info",recodeDate,"memid","N");
+					if(kdclStatisticsSource != null){
+						log.info("userInfoClassifyIsN:"+userInfoClassifyIsN);
+						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
+						log.info("----------------------------");
+						userInfoClassifyIsN = userInfoClassifyIsN + kdclStatisticsSource.getCounter();
+					}
 					savekdclStatisticsSource("memid","member","personal_info","N",userInfoClassifyIsN,recodeDate,date,kdclStatisticsSourceService);
 				}
 				
@@ -269,17 +360,42 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	public static void main(String[] args) throws Exception {
 		System.setProperty("spring.profiles.active", "local");
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-//		IKdclStatisticsSourceService kdclStatisticsSourceService = (KdclStatisticsSourceService) ctx.getBean(KdclStatisticsSourceService.class);
-//		kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("24", "2018-01-26");
+		IKdclStatisticsSourceService kdclStatisticsSourceService = (KdclStatisticsSourceService) ctx.getBean(KdclStatisticsSourceService.class);
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		
 		
+//		int a = 0;
+//		Calendar calendar = Calendar.getInstance();  
+//		if(calendar.get(Calendar.HOUR_OF_DAY) == 16){
+//			calendar.add(Calendar.DAY_OF_MONTH, -1); 
+//			System.out.println(sdf.format(calendar.getTime()));;
+//		}
+//		KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("7", sdf.format(calendar.getTime()));
+//		a = a + kdclStatisticsSource.getCounter();
+//		
+//		System.out.println(a);
+//		
+//		kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("7", sdf.format(calendar.getTime()));
+//		
+//		
+//		a = a + 10;
+//		
 		
 		
-		UserDetailService userDetailService = (UserDetailService) ctx.getBean(UserDetailService.class);
-		UserDetailMongoBean userDetailMongoBean = userDetailService.findUserId("zxc910615");
+//		String recodeDate = sdf.format(date);
+//		System.out.println(recodeDate);
+//		kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("ad_click", recodeDate);
+//		kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("24h", recodeDate);
+//		kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("ruten", recodeDate);
+//		kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("personal_info", recodeDate);
 		
-		System.out.println(userDetailMongoBean.get_id());
-		System.out.println((String)userDetailMongoBean.getUser_info().get("sex"));
+		
+//		UserDetailService userDetailService = (UserDetailService) ctx.getBean(UserDetailService.class);
+//		UserDetailMongoBean userDetailMongoBean = userDetailService.findUserId("zxc910615");
+//		
+//		System.out.println(userDetailMongoBean.get_id());
+//		System.out.println((String)userDetailMongoBean.getUser_info().get("sex"));
 		
 		
 		

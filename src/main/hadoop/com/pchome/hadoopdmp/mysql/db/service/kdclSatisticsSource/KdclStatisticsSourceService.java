@@ -34,5 +34,10 @@ public class KdclStatisticsSourceService extends BaseService<KdclStatisticsSourc
 		return null;
 	}
 
+	@Override
+	public KdclStatisticsSource findKdclStatisticsSourceByBehaviorAndRecordDate(String behavior, String recordDate,String idType,String classify) throws Exception {
+		return kdclStatisticsSourceDao.findKdclStatisticsSourceByBehaviorAndRecordDate(behavior,recordDate,idType,classify);
+	}
+
 	
 }
