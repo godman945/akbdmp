@@ -6,13 +6,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
-
+import java.util.concurrent.Future;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -130,7 +132,7 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 			json.put("source", data[5]);
 			json.put("recordDate", data[6]);
 
-//			Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_stg", "", json.toString()));
+			Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_stg", "", json.toString()));
 			// while (!f.isDone()) {
 			// }
 
@@ -193,9 +195,6 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			this.kdclStatisticsSourceService = ctx.getBean(KdclStatisticsSourceService.class);
 			Date date = new Date();
-			
-			
-			
 //			kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("ad_click", recodeDate);
 //			kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("24h", recodeDate);
 //			kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("ruten", recodeDate);
