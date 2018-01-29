@@ -22,7 +22,7 @@ public class KdclStatisticsSourceDao extends BaseDAO<KdclStatisticsSource, Integ
 	}
 
 	public KdclStatisticsSource findKdclStatisticsSourceByBehaviorAndRecordDate(String behavior, String recordDate,String idType,String classify) throws Exception {
-		String hql = " from KdclStatisticsSource where   idType ='"+idType+"'  and and  classify ='"+classify+"' and  recordDate = '" + recordDate + "' and behavior ='"+behavior+"'";
+		String hql = " from KdclStatisticsSource where   idType ='"+idType+"'   and  classify ='"+classify+"' and  recordDate = '" + recordDate + "' and behavior ='"+behavior+"'";
 		List<KdclStatisticsSource> kdclStatisticsSourceList = super.getSessionFactory().getCurrentSession().createQuery(hql.toString()).list();
 		if(kdclStatisticsSourceList.size() > 0){
 			return kdclStatisticsSourceList.get(0);
