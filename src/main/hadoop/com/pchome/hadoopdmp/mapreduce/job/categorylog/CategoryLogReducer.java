@@ -217,8 +217,11 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
 						log.info("----------------------------");
 						memid24ClassifyIsY = memid24ClassifyIsY + kdclStatisticsSource.getCounter();
+						kdclStatisticsSource.setCounter(memid24ClassifyIsY);
+						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
+					}else{
+						savekdclStatisticsSource("memid","kdcl","24h","Y",memid24ClassifyIsY,recodeDate,date,kdclStatisticsSourceService);	
 					}
-					savekdclStatisticsSource("memid","kdcl","24h","Y",memid24ClassifyIsY,recodeDate,date,kdclStatisticsSourceService);
 				}
 				if(enumKdclStatisticsSource.getKey().equals("MEMID_24_N")){
 					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("24h",recodeDate,"memid","N");
@@ -227,8 +230,12 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
 						log.info("----------------------------");
 						memid24ClassifyIsN = memid24ClassifyIsN + kdclStatisticsSource.getCounter();
+						kdclStatisticsSource.setCounter(memid24ClassifyIsN);
+						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
+					}else{
+						savekdclStatisticsSource("memid","kdcl","24h","N",memid24ClassifyIsN,recodeDate,date,kdclStatisticsSourceService);	
 					}
-					savekdclStatisticsSource("memid","kdcl","24h","N",memid24ClassifyIsN,recodeDate,date,kdclStatisticsSourceService);
+					
 				}
 				if(enumKdclStatisticsSource.getKey().equals("UUID_24_Y")){
 					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("24h",recodeDate,"uuid","Y");
@@ -237,8 +244,11 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
 						log.info("----------------------------");
 						uuid24ClassifyIsY = uuid24ClassifyIsY + kdclStatisticsSource.getCounter();
+						kdclStatisticsSource.setCounter(uuid24ClassifyIsY);
+						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
+					}else{
+						savekdclStatisticsSource("uuid","kdcl","24h","Y",uuid24ClassifyIsY,recodeDate,date,kdclStatisticsSourceService);	
 					}
-					savekdclStatisticsSource("uuid","kdcl","24h","Y",uuid24ClassifyIsY,recodeDate,date,kdclStatisticsSourceService);
 				}
 				if(enumKdclStatisticsSource.getKey().equals("UUID_24_N")){
 					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("24h",recodeDate,"uuid","N");
@@ -247,8 +257,11 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
 						log.info("----------------------------");
 						uuid24ClassifyIsN = uuid24ClassifyIsN + kdclStatisticsSource.getCounter();
+						kdclStatisticsSource.setCounter(uuid24ClassifyIsN);
+						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
+					}else{
+						savekdclStatisticsSource("uuid","kdcl","24h","N",uuid24ClassifyIsN,recodeDate,date,kdclStatisticsSourceService);	
 					}
-					savekdclStatisticsSource("uuid","kdcl","24h","N",uuid24ClassifyIsN,recodeDate,date,kdclStatisticsSourceService);
 				}
 				if(enumKdclStatisticsSource.getKey().equals("MEMID_RUTEN_Y")){
 					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("ruten",recodeDate,"memid","Y");
@@ -257,8 +270,11 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
 						log.info("----------------------------");
 						memidRutenClassifyIsY = memidRutenClassifyIsY + kdclStatisticsSource.getCounter();
+						kdclStatisticsSource.setCounter(memidRutenClassifyIsY);
+						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
+					}else{
+						savekdclStatisticsSource("memid","kdcl","ruten","Y",memidRutenClassifyIsY,recodeDate,date,kdclStatisticsSourceService);	
 					}
-					savekdclStatisticsSource("memid","kdcl","ruten","Y",memidRutenClassifyIsY,recodeDate,date,kdclStatisticsSourceService);
 				}
 				if(enumKdclStatisticsSource.getKey().equals("MEMID_RUTEN_N")){
 					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("ruten",recodeDate,"memid","N");
@@ -267,8 +283,12 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
 						log.info("----------------------------");
 						memidRutenClassifyIsN = memidRutenClassifyIsN + kdclStatisticsSource.getCounter();
+						kdclStatisticsSource.setCounter(memidRutenClassifyIsN);
+						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
+					}else{
+						savekdclStatisticsSource("memid","kdcl","ruten","N",memidRutenClassifyIsN,recodeDate,date,kdclStatisticsSourceService);	
 					}
-					savekdclStatisticsSource("memid","kdcl","ruten","N",memidRutenClassifyIsN,recodeDate,date,kdclStatisticsSourceService);
+					
 				}
 				if(enumKdclStatisticsSource.getKey().equals("UUID_RUTEN_Y")){
 					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("ruten",recodeDate,"uuid","Y");
@@ -277,8 +297,11 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
 						log.info("----------------------------");
 						uuidRutenClassifyIsY = uuidRutenClassifyIsY + kdclStatisticsSource.getCounter();
+						kdclStatisticsSource.setCounter(uuidRutenClassifyIsY);
+						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
+					}else{
+						savekdclStatisticsSource("uuid","kdcl","ruten","Y",uuidRutenClassifyIsY,recodeDate,date,kdclStatisticsSourceService);	
 					}
-					savekdclStatisticsSource("uuid","kdcl","ruten","Y",uuidRutenClassifyIsY,recodeDate,date,kdclStatisticsSourceService);
 				}
 				if(enumKdclStatisticsSource.getKey().equals("UUID_RUTEN_N")){
 					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("ruten",recodeDate,"uuid","N");
@@ -287,8 +310,11 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
 						log.info("----------------------------");
 						uuidRutenClassifyIsN = uuidRutenClassifyIsN + kdclStatisticsSource.getCounter();
+						kdclStatisticsSource.setCounter(uuidRutenClassifyIsN);
+						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
+					}else{
+						savekdclStatisticsSource("uuid","kdcl","ruten","N",uuidRutenClassifyIsN,recodeDate,date,kdclStatisticsSourceService);	
 					}
-					savekdclStatisticsSource("uuid","kdcl","ruten","N",uuidRutenClassifyIsN,recodeDate,date,kdclStatisticsSourceService);
 				}
 				if(enumKdclStatisticsSource.getKey().equals("UUID_ADCLICK_Y")){
 					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("ad_click",recodeDate,"uuid","Y");
@@ -297,8 +323,12 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
 						log.info("----------------------------");
 						uuidAdclickClassifyIsY = uuidAdclickClassifyIsY + kdclStatisticsSource.getCounter();
+						kdclStatisticsSource.setCounter(uuidAdclickClassifyIsY);
+						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
+					}else{
+						savekdclStatisticsSource("uuid","kdcl","ad_click","Y",uuidAdclickClassifyIsY,recodeDate,date,kdclStatisticsSourceService);	
 					}
-					savekdclStatisticsSource("uuid","kdcl","ad_click","Y",uuidAdclickClassifyIsY,recodeDate,date,kdclStatisticsSourceService);
+					
 				}
 				if(enumKdclStatisticsSource.getKey().equals("MEMID_ADCLICK_Y")){
 					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("ad_click",recodeDate,"memid","Y");
@@ -307,8 +337,11 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
 						log.info("----------------------------");
 						memidAdclickClassifyIsY = memidAdclickClassifyIsY + kdclStatisticsSource.getCounter();
+						kdclStatisticsSource.setCounter(memidAdclickClassifyIsY);
+						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
+					}else{
+						savekdclStatisticsSource("memid","kdcl","ad_click","Y",memidAdclickClassifyIsY,recodeDate,date,kdclStatisticsSourceService);	
 					}
-					savekdclStatisticsSource("memid","kdcl","ad_click","Y",memidAdclickClassifyIsY,recodeDate,date,kdclStatisticsSourceService);
 				}
 				if(enumKdclStatisticsSource.getKey().equals("user_info_Classify_Y")){
 					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("personal_info",recodeDate,"memid","Y");
@@ -317,8 +350,11 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
 						log.info("----------------------------");
 						userInfoClassifyIsY = userInfoClassifyIsY + kdclStatisticsSource.getCounter();
+						kdclStatisticsSource.setCounter(userInfoClassifyIsY);
+						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
+					}else{
+						savekdclStatisticsSource("memid","member","personal_info","Y",userInfoClassifyIsY,recodeDate,date,kdclStatisticsSourceService);	
 					}
-					savekdclStatisticsSource("memid","member","personal_info","Y",userInfoClassifyIsY,recodeDate,date,kdclStatisticsSourceService);
 				}
 				if(enumKdclStatisticsSource.getKey().equals("user_info_Classify_N")){
 					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("personal_info",recodeDate,"memid","N");
@@ -327,8 +363,11 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
 						log.info("----------------------------");
 						userInfoClassifyIsN = userInfoClassifyIsN + kdclStatisticsSource.getCounter();
+						kdclStatisticsSource.setCounter(userInfoClassifyIsN);
+						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
+					}else{
+						savekdclStatisticsSource("memid","member","personal_info","N",userInfoClassifyIsN,recodeDate,date,kdclStatisticsSourceService);	
 					}
-					savekdclStatisticsSource("memid","member","personal_info","N",userInfoClassifyIsN,recodeDate,date,kdclStatisticsSourceService);
 				}
 				
 			}
