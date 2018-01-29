@@ -11,7 +11,9 @@ public enum EnumKdclStatisticsSource {
 	UUID_RUTEN_Y("UUID_RUTEN_Y"),
 	UUID_RUTEN_N("UUID_RUTEN_N"),
 	UUID_ADCLICK_Y("UUID_ADCLICK_Y"),
-	MEMID_ADCLICK_Y("MEMID_ADCLICK_Y");
+	MEMID_ADCLICK_Y("MEMID_ADCLICK_Y"),
+	USERINFO_CLASSIFY_Y("user_info_Classify_Y"),
+	USERINFO_CLASSIFY_N("user_info_Classify_N");
 	
 	private final String key;
 

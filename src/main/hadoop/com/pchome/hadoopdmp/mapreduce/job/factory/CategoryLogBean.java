@@ -15,10 +15,10 @@ public class CategoryLogBean {
 	private String source;
 	private String type;
 	private String behaviorClassify;
-	private Map<String, combinedValue> clsfyCraspMap ;
-	private ArrayList<Map<String, String>> list; 
-	
-	
+	private String personalInfoClassify;
+	private Map<String, combinedValue> clsfyCraspMap;
+	private ArrayList<Map<String, String>> list;
+
 	public String getType() {
 		return type;
 	}
@@ -105,6 +105,14 @@ public class CategoryLogBean {
 
 	public void setBehaviorClassify(String behaviorClassify) {
 		this.behaviorClassify = behaviorClassify;
+	}
+
+	public String getPersonalInfoClassify() {
+		return personalInfoClassify;
+	}
+
+	public void setPersonalInfoClassify(String personalInfoClassify) {
+		this.personalInfoClassify = personalInfoClassify;
 	}
 
 }

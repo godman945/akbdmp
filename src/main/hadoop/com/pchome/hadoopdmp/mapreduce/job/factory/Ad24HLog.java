@@ -26,8 +26,10 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import com.pchome.akbdmp.api.data.enumeration.ClassCountMongoDBEnum;
 import com.pchome.hadoopdmp.data.mongo.pojo.ClassCountMongoBean;
 import com.pchome.hadoopdmp.data.mongo.pojo.ClassUrlMongoBean;
+import com.pchome.hadoopdmp.data.mongo.pojo.UserDetailMongoBean;
 import com.pchome.hadoopdmp.enumerate.EnumBreadCrumbDirectlyMatch;
 import com.pchome.hadoopdmp.enumerate.PersonalInfoEnum;
 import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper;
@@ -102,6 +104,19 @@ public class Ad24HLog extends ACategoryLogData {
 		
 		//取個資
 		if(StringUtils.isNotBlank(memid) && (!memid.equals("null"))){
+			Query queryUserInfo = new Query(Criteria.where(ClassCountMongoDBEnum.USER_ID.getKey()).is(uuid));
+			UserDetailMongoBean userDetailMongoBean =  mongoOperations.findOne(queryUserInfo, UserDetailMongoBean.class);
+			String sex = "";
+			String age = "";
+			if(userDetailMongoBean != null){
+				sex = (String)userDetailMongoBean.getUser_info().get("sex");
+				age = (String)userDetailMongoBean.getUser_info().get("age");
+				categoryLogBean.setPersonalInfoClassify("Y");
+			}else{
+				categoryLogBean.setPersonalInfoClassify("N");
+			}
+			categoryLogBean.setSex(StringUtils.isNotBlank(sex) ? sex : "null");
+			categoryLogBean.setAge(StringUtils.isNotBlank(age) ? age : "null");
 			categoryLogBean.setAdClass(adClass);
 			categoryLogBean.setMemid(values[1]);
 			categoryLogBean.setUuid(values[2]);
@@ -110,17 +125,28 @@ public class Ad24HLog extends ACategoryLogData {
 			categoryLogBean.setBehaviorClassify(behaviorClassify);
 			return categoryLogBean;
 		}else if(StringUtils.isNotBlank(uuid) && (!uuid.equals("null"))){
-			APersonalInfo aPersonalInfo = PersonalInfoFactory.getAPersonalInfoFactory(PersonalInfoEnum.UUID);
-			Map<String, Object> uuidMap = aPersonalInfo.getMap();
-			uuidMap.put("adClass", adClass); 
-			uuidMap.put("ClsfyCraspMap", CategoryLogMapper.clsfyCraspMap);
-			Map<String, Object> userInfo = (Map<String, Object>) aPersonalInfo.personalData(uuidMap);
+//			APersonalInfo aPersonalInfo = PersonalInfoFactory.getAPersonalInfoFactory(PersonalInfoEnum.UUID);
+//			Map<String, Object> uuidMap = aPersonalInfo.getMap();
+//			uuidMap.put("adClass", adClass); 
+//			uuidMap.put("ClsfyCraspMap", CategoryLogMapper.clsfyCraspMap);
+//			Map<String, Object> userInfo = (Map<String, Object>) aPersonalInfo.personalData(uuidMap);
+			Query queryUserInfo = new Query(Criteria.where(ClassCountMongoDBEnum.USER_ID.getKey()).is(uuid));
+			UserDetailMongoBean userDetailMongoBean =  mongoOperations.findOne(queryUserInfo, UserDetailMongoBean.class);
+			String sex = "";
+			String age = "";
+			if(userDetailMongoBean != null){
+				sex = (String)userDetailMongoBean.getUser_info().get("sex");
+				age = (String)userDetailMongoBean.getUser_info().get("age");
+				categoryLogBean.setPersonalInfoClassify("Y");
+			}else{
+				categoryLogBean.setPersonalInfoClassify("N");
+			}
+			categoryLogBean.setSex(StringUtils.isNotBlank(sex) ? sex : "null");
+			categoryLogBean.setAge(StringUtils.isNotBlank(age) ? age : "null");
 			categoryLogBean.setAdClass(adClass);
 			categoryLogBean.setMemid(values[1]);
 			categoryLogBean.setUuid(values[2]);
 			categoryLogBean.setSource("24h");
-			categoryLogBean.setSex(StringUtils.isNotBlank(userInfo.get("sex").toString()) ? userInfo.get("sex").toString(): "null");
-			categoryLogBean.setAge(StringUtils.isNotBlank(userInfo.get("age").toString()) ? userInfo.get("age").toString(): "null");
 			categoryLogBean.setType("uuid");
 			categoryLogBean.setBehaviorClassify(behaviorClassify);
 			return categoryLogBean;

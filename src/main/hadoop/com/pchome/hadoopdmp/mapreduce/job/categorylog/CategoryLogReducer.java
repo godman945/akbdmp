@@ -15,10 +15,15 @@ import org.apache.kafka.clients.producer.Producer;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
+import com.pchome.akbdmp.api.data.enumeration.ClassCountMongoDBEnum;
+import com.pchome.hadoopdmp.data.mongo.pojo.UserDetailMongoBean;
 import com.pchome.hadoopdmp.data.mysql.pojo.KdclStatisticsSource;
 import com.pchome.hadoopdmp.enumerate.EnumKdclStatisticsSource;
+import com.pchome.hadoopdmp.mongo.db.service.userdetail.UserDetailService;
 import com.pchome.hadoopdmp.mysql.db.service.kdclSatisticsSource.IKdclStatisticsSourceService;
 import com.pchome.hadoopdmp.mysql.db.service.kdclSatisticsSource.KdclStatisticsSourceService;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
@@ -40,6 +45,8 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	private int memidRutenClassifyIsN = 0;
 	private int memidAdclickClassifyIsY = 0;
 	private int uuidAdclickClassifyIsY = 0;
+	private int userInfoClassifyIsY = 0;
+	private int userInfoClassifyIsN = 0;
 	
 	private Text keyOut = new Text();
 	private Text valueOut = new Text();
@@ -168,6 +175,13 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 			if(key.toString().indexOf("uuid_adclick_Y") >=0 ){
 				uuidAdclickClassifyIsY = uuidAdclickClassifyIsY + 1;
 			}
+			if(key.toString().indexOf("user_info_Classify_Y") >=0 ){
+				userInfoClassifyIsY = userInfoClassifyIsY + 1;
+			}
+			if(key.toString().indexOf("user_info_Classify_N") >=0 ){
+				userInfoClassifyIsN = userInfoClassifyIsN + 1;
+			}
+			
 			context.write(new Text(data[7]), new Text("1"));
 		} catch (Exception e) {
 			log.info("reduce error"+e.getMessage());
@@ -219,6 +233,13 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 				if(enumKdclStatisticsSource.getKey().equals("MEMID_ADCLICK_Y")){
 					savekdclStatisticsSource("memid","kdcl","ad_click","Y",memidAdclickClassifyIsY,recodeDate,date,kdclStatisticsSourceService);
 				}
+				if(enumKdclStatisticsSource.getKey().equals("user_info_Classify_Y")){
+					savekdclStatisticsSource("memid","member","personal_info","Y",userInfoClassifyIsY,recodeDate,date,kdclStatisticsSourceService);
+				}
+				if(enumKdclStatisticsSource.getKey().equals("user_info_Classify_N")){
+					savekdclStatisticsSource("memid","member","personal_info","N",userInfoClassifyIsN,recodeDate,date,kdclStatisticsSourceService);
+				}
+				
 			}
 			log.info("------------ cleanup end ------------");
 			producer.close();
@@ -248,14 +269,32 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	public static void main(String[] args) throws Exception {
 		System.setProperty("spring.profiles.active", "local");
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-		IKdclStatisticsSourceService kdclStatisticsSourceService = (KdclStatisticsSourceService) ctx.getBean(KdclStatisticsSourceService.class);
-		kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("24", "2018-01-26");
+//		IKdclStatisticsSourceService kdclStatisticsSourceService = (KdclStatisticsSourceService) ctx.getBean(KdclStatisticsSourceService.class);
+//		kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("24", "2018-01-26");
 		
 		
 		
 		
-//		UserDetailService userDetailService = (UserDetailService) ctx.getBean(UserDetailService.class);
-//		UserDetailMongoBean userDetailMongoBean = userDetailService.findUserId("df540a46-841a-4924-bdb3-0185ff4abfcd");
+		UserDetailService userDetailService = (UserDetailService) ctx.getBean(UserDetailService.class);
+		UserDetailMongoBean userDetailMongoBean = userDetailService.findUserId("zxc910615");
+		
+		System.out.println(userDetailMongoBean.get_id());
+		System.out.println((String)userDetailMongoBean.getUser_info().get("sex"));
+		
+		
+		
+		
+		
+		
+		
+//		Query query = new Query(Criteria.where(ClassCountMongoDBEnum.USER_ID.getKey()).is(uuid));
+//		UserDetailMongoBean userDetailMongoBean =  mongoOperations.findOne(query, UserDetailMongoBean.class);
+//		userDetailMongoBean.getUser_info().get("sex")
+//		userDetailMongoBean.getUser_info().get("age")
+		
+		
+		
+		
 //		System.out.println(userDetailMongoBean.getCategory_info().get(0).get("category"));
 		
 		
