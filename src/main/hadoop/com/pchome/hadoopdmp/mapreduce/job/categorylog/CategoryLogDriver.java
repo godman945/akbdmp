@@ -93,10 +93,26 @@ public class CategoryLogDriver {
 		conf.set("mapred.child.java.opts", "-Xmx3072m");
 		conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx3072m");
 		
-		conf.set("mapred.min.split.size","8"); 
-		conf.set("mapred.tasktracker.map.tasks.maximum", "8");
+		
+		
+		conf.set("mapreduce.map.memory.mb","64");
+		conf.set("mapred.map.memory.mb","64");
+		
+		conf.set("mapreduce.min.split.size","8");
+		conf.set("mapred.min.split.size","8");
+		
 		conf.set("mapreduce.tasktracker.map.tasks.maximum", "8");
+		conf.set("mapred.tasktracker.map.tasks.maximum", "8");
+		
+		
+		conf.set("mapreduce.tasktracker.map.tasks.maximum", "8");
+		conf.set("mapred.tasktracker.map.tasks.maximum", "8");
+		
+		
 		conf.set("mapreduce.jobtracker.jobhistory.task.numberprogresssplits", "16");
+		conf.set("mapred.jobtracker.jobhistory.task.numberprogresssplits", "16");
+		
+		
 		
 		
 		Date date = new Date();
@@ -139,6 +155,8 @@ public class CategoryLogDriver {
 		job.setNumReduceTasks(1);
 		
 		
+		
+		
 		// job.setOutputFormatClass(NullOutputFormat.class);
 		if (timeType.equals("day")) {
 			FileOutputFormat.setOutputPath(job, new Path(adLogClassPpath + sdf2.format(date)));
@@ -178,7 +196,8 @@ public class CategoryLogDriver {
 			
 //			FileOutputFormat.setOutputPath(job, new Path("/home/webuser/alex/"+sdf2.format(date)));
 //			FileInputFormat.addInputPaths(job, "/home/webuser/akb/storedata/alllog/2018-01-25/00");
-			log.info("file Input Path : " + alllogOpRange);
+			log.info("file Input Path : " + adLogClassPpath +"/"+ timePath);
+			log.info("file Output Path : " + bessieTempPath);
 			
 //			alllogStr = alllog + dateStr.replaceAll(" ", "/");
 //			alllogDir = new Path(alllogStr);
