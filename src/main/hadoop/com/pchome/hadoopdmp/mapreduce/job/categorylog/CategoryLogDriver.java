@@ -93,7 +93,7 @@ public class CategoryLogDriver {
 		conf.set("mapred.child.java.opts", "-Xmx3072m");
 		conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx3072m");
 
-//		conf.set("mapreduce.map.memory.mb", "1024");
+		conf.set("mapreduce.map.memory.mb", "1024");
 		
 		Date date = new Date();
 		conf.set("job.date",sdf1.format(date));
@@ -250,36 +250,36 @@ public class CategoryLogDriver {
 	}
 
 	public static void main(String[] args) throws Exception {
-		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
-		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMddHHmmss");
-		String timePath  = "";
-		Calendar calendar = Calendar.getInstance();  
-		timePath = sdf1.format(calendar.getTime()) +"/"+ (calendar.get(Calendar.HOUR_OF_DAY) - 1);	
-		System.out.println("/home/webuser/analyzer/storedata/alllog/"+timePath);
-//		log.info("====driver start====");
-//		String date = "";
-//		boolean jobFlag = false;
-//		if(args.length != 2){
-//			jobFlag = true;
-//		}else if(!args[0].equals("prd") && !args[0].equals("stg")){
-//			jobFlag = true;
-//		}else if(!args[1].equals("day") && !args[1].equals("hour")){
-//			jobFlag = true;
-//		}
-//		if(jobFlag){
-//			printUsage();
-//			return;
-//		}
-//		
-//		if(args[0].equals("prd")){
-//			System.setProperty("spring.profiles.active", "prd");
-//		}else{
-//			System.setProperty("spring.profiles.active", "stg");
-//		}
-//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-//		CategoryLogDriver CategoryDriver = (CategoryLogDriver) ctx.getBean(CategoryLogDriver.class);
-//		CategoryDriver.drive(args[0],args[1]);
-//		log.info("====driver end====");
+//		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+//		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMddHHmmss");
+//		String timePath  = "";
+//		Calendar calendar = Calendar.getInstance();  
+//		timePath = sdf1.format(calendar.getTime()) +"/"+ (calendar.get(Calendar.HOUR_OF_DAY) - 1);	
+//		System.out.println("/home/webuser/analyzer/storedata/alllog/"+timePath);
+		log.info("====driver start====");
+		String date = "";
+		boolean jobFlag = false;
+		if(args.length != 2){
+			jobFlag = true;
+		}else if(!args[0].equals("prd") && !args[0].equals("stg")){
+			jobFlag = true;
+		}else if(!args[1].equals("day") && !args[1].equals("hour")){
+			jobFlag = true;
+		}
+		if(jobFlag){
+			printUsage();
+			return;
+		}
+		
+		if(args[0].equals("prd")){
+			System.setProperty("spring.profiles.active", "prd");
+		}else{
+			System.setProperty("spring.profiles.active", "stg");
+		}
+		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+		CategoryLogDriver CategoryDriver = (CategoryLogDriver) ctx.getBean(CategoryLogDriver.class);
+		CategoryDriver.drive(args[0],args[1]);
+		log.info("====driver end====");
 	}
 
 }
