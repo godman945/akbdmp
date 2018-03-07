@@ -90,29 +90,29 @@ public class CategoryLogDriver {
 		conf.set("mapreduce.map.speculative", mapredExecution);
 		conf.set("mapreduce.reduce.speculative", mapredReduceExecution);
 		conf.set("mapreduce.task.timeout", mapredTimeout);
-		conf.set("mapred.child.java.opts", "-Xmx3072m");
-		conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx3072m");
+		conf.set("mapred.child.java.opts", "-Xmx4072m");
+		conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx4072m");
 		
 		
 		
-		conf.set("mapreduce.map.memory.mb","64");
-		conf.set("mapred.map.memory.mb","64");
-		
-		conf.set("mapreduce.min.split.size","134217728 ");
-		conf.set("mapred.min.split.size","134217728 ");
-		
-		conf.set("mapreduce.tasktracker.map.tasks.maximum", "8");
-		conf.set("mapred.tasktracker.map.tasks.maximum", "8");
-		
-		
-		conf.set("mapreduce.input.fileinputformat.split.minsize", "2048");
-		conf.set("mapred.input.fileinputformat.split.minsize", "2048");
-		
-		conf.set("mapreduce.jobtracker.jobhistory.task.numberprogresssplits", "16");
-		conf.set("mapred.jobtracker.jobhistory.task.numberprogresssplits", "16");
-		
-		conf.set("mapred.map.tasks", "8");
-		conf.set("mapreduce.map.tasks", "8");
+//		conf.set("mapreduce.map.memory.mb","64");
+//		conf.set("mapred.map.memory.mb","64");
+//		
+//		conf.set("mapreduce.min.split.size","134217728 ");
+//		conf.set("mapred.min.split.size","134217728 ");
+//		
+//		conf.set("mapreduce.tasktracker.map.tasks.maximum", "8");
+//		conf.set("mapred.tasktracker.map.tasks.maximum", "8");
+//		
+//		
+//		conf.set("mapreduce.input.fileinputformat.split.minsize", "2048");
+//		conf.set("mapred.input.fileinputformat.split.minsize", "2048");
+//		
+//		conf.set("mapreduce.jobtracker.jobhistory.task.numberprogresssplits", "16");
+//		conf.set("mapred.jobtracker.jobhistory.task.numberprogresssplits", "16");
+//		
+//		conf.set("mapred.map.tasks", "8");
+//		conf.set("mapreduce.map.tasks", "8");
 		
 		
 		Date date = new Date();
