@@ -93,7 +93,7 @@ public class CategoryLogDriver {
 		conf.set("mapred.child.java.opts", "-Xmx3072m");
 		conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx3072m");
 
-		conf.set("mapred.map.tasks", "10");
+		conf.set("mapreduce.job.maps", "8");
 		
 		
 		Date date = new Date();
