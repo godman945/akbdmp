@@ -105,7 +105,8 @@ public class CategoryLogDriver {
 		conf.set("mapred.tasktracker.map.tasks.maximum", "8");
 		
 		
-		
+		conf.set("mapreduce.input.fileinputformat.split.minsize", "2048");
+		conf.set("mapred.input.fileinputformat.split.minsize", "2048");
 		
 		conf.set("mapreduce.jobtracker.jobhistory.task.numberprogresssplits", "16");
 		conf.set("mapred.jobtracker.jobhistory.task.numberprogresssplits", "16");
