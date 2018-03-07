@@ -98,8 +98,8 @@ public class CategoryLogDriver {
 		conf.set("mapreduce.map.memory.mb","64");
 		conf.set("mapred.map.memory.mb","64");
 		
-		conf.set("mapreduce.min.split.size","8");
-		conf.set("mapred.min.split.size","8");
+		conf.set("mapreduce.min.split.size","64");
+		conf.set("mapred.min.split.size","64");
 		
 		conf.set("mapreduce.tasktracker.map.tasks.maximum", "8");
 		conf.set("mapred.tasktracker.map.tasks.maximum", "8");
@@ -112,7 +112,8 @@ public class CategoryLogDriver {
 		conf.set("mapreduce.jobtracker.jobhistory.task.numberprogresssplits", "16");
 		conf.set("mapred.jobtracker.jobhistory.task.numberprogresssplits", "16");
 		
-		
+		conf.set("mapred.map.tasks", "8");
+		conf.set("mapreduce.map.tasks", "8");
 		
 		
 		Date date = new Date();
