@@ -92,10 +92,6 @@ public class CategoryLogDriver {
 		conf.set("mapreduce.task.timeout", mapredTimeout);
 		conf.set("mapred.child.java.opts", "-Xmx3072m");
 		conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx3072m");
-
-		conf.set("mapreduce.job.maps", "8");
-		
-		
 		Date date = new Date();
 		conf.set("job.date",sdf1.format(date));
 		System.out.println("job.date: " + sdf1.format(date));
@@ -133,8 +129,7 @@ public class CategoryLogDriver {
 		job.setInputFormatClass(LzoTextInputFormat.class);
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
-		job.setNumReduceTasks(1);
-		
+		job.setNumReduceTasks(10);
 		
 		
 		// job.setOutputFormatClass(NullOutputFormat.class);
