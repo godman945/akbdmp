@@ -155,8 +155,7 @@ public class CategoryLogDriver {
 		job.setOutputValueClass(Text.class);
 		job.setNumReduceTasks(1);
 		
-		
-		
+		job.setMapSpeculativeExecution(false);
 		
 		// job.setOutputFormatClass(NullOutputFormat.class);
 		if (timeType.equals("day")) {
