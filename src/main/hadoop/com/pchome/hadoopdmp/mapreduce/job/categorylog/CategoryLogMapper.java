@@ -46,6 +46,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private MongoOperations mongoOperations;
 
 	@Override
+	@SuppressWarnings("resource")
 	public void setup(Context context) {
 		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>>>>>>>>>>>>>");
 		try {
