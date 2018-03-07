@@ -93,6 +93,8 @@ public class CategoryLogDriver {
 		conf.set("mapred.child.java.opts", "-Xmx3072m");
 		conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx3072m");
 		
+		conf.set("mapred.min.split.size","8"); 
+		conf.set("mapred.tasktracker.map.tasks.maximum", "8");
 		conf.set("mapreduce.tasktracker.map.tasks.maximum", "8");
 		conf.set("mapreduce.jobtracker.jobhistory.task.numberprogresssplits", "16");
 		
@@ -135,7 +137,6 @@ public class CategoryLogDriver {
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
 		job.setNumReduceTasks(1);
-		
 		
 		
 		// job.setOutputFormatClass(NullOutputFormat.class);
