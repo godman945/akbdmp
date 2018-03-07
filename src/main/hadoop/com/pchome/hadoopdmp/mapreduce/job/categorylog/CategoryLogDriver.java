@@ -94,6 +94,8 @@ public class CategoryLogDriver {
 		conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx3072m");
 		
 		conf.set("mapreduce.tasktracker.map.tasks.maximum", "8");
+		conf.set("mapreduce.jobtracker.jobhistory.task.numberprogresssplits", "16");
+		
 		
 		Date date = new Date();
 		conf.set("job.date",sdf1.format(date));
@@ -133,6 +135,7 @@ public class CategoryLogDriver {
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
 		job.setNumReduceTasks(1);
+		
 		
 		
 		// job.setOutputFormatClass(NullOutputFormat.class);
