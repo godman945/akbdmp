@@ -98,8 +98,8 @@ public class CategoryLogDriver {
 		conf.set("mapreduce.map.memory.mb","64");
 		conf.set("mapred.map.memory.mb","64");
 		
-		conf.set("mapreduce.min.split.size","2048");
-		conf.set("mapred.min.split.size","2048");
+		conf.set("mapreduce.min.split.size","134217728 ");
+		conf.set("mapred.min.split.size","134217728 ");
 		
 		conf.set("mapreduce.tasktracker.map.tasks.maximum", "8");
 		conf.set("mapred.tasktracker.map.tasks.maximum", "8");
