@@ -177,7 +177,6 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		// values[13] //ck,pv
 		// values[15] //ad_class
 		try {
-			log.info(">>>>>> mongoOperations:" + (mongoOperations == null));
 			String[] values = value.toString().split(SYMBOL);
 			if (values.length < LOG_LENGTH) {
 				log.info("values.length < " + LOG_LENGTH);
@@ -201,7 +200,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				
 				adClick_process = adClick_process + 1;
 				time3 = System.currentTimeMillis();
-				log.info("ad_click cost：" + (time3-time2)/1000 + "second");
+				log.info("ad_click cost：" + (time3-time2)/1000 + " second");
 				
 			}else
 			
@@ -214,7 +213,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				
 				ruten_process = ruten_process + 1;
 				time3 = System.currentTimeMillis();
-				log.info("ruten cost：" + (time3-time2)/1000 + "second");
+				log.info("ruten cost：" + (time3-time2)/1000 + " second");
 			}else
 
 			// 24h
@@ -226,7 +225,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				
 				tweenFour_process = tweenFour_process + 1;
 				time3 = System.currentTimeMillis();
-				log.info("24h cost：" + (time3-time2)/1000 + "second");
+				log.info("24h cost：" + (time3-time2)/1000 + " second");
 			}else{
 				return;
 			}
@@ -247,7 +246,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			time2 =  System.currentTimeMillis();
 			
 			
-			log.info("total cost：" + (time2-time1)/1000 + "second" + "process >>:"+" [adClick process size:"+adClick_process+"],[24h process size:"+tweenFour_process+"],[ruten process size:"+ruten_process+"]");
+			log.info("total cost：" + (time2-time1)/1000 + " second " + "process >>:"+" [adClick process size:"+adClick_process+"],[24h process size:"+tweenFour_process+"],[ruten process size:"+ruten_process+"]");
 			
 		} catch (Exception e) {
 			log.error(">>>>>> " + e.getMessage());
