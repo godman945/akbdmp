@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
-
+import org.apache.hadoop.mapred.JobConf;
 import com.hadoop.mapreduce.LzoTextInputFormat;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 
@@ -81,6 +81,9 @@ public class CategoryLogDriver {
 			return;
 		}
 
+		JobConf jobConf = new JobConf();
+		jobConf.setNumMapTasks(10);
+		
 		// hdfs
 		Configuration conf = new Configuration();
 		conf.set("hadoop.job.ugi", jobUgi);
@@ -154,7 +157,7 @@ public class CategoryLogDriver {
 		// job
 		log.info("----job start----");
 
-		Job job = new Job(conf, "dmp_Category_Log " + sdf.format(new Date()));
+		Job job = new Job(jobConf, "dmp_Category_Log " + sdf.format(new Date()));
 		job.setJarByClass(CategoryLogDriver.class);
 		job.setMapperClass(CategoryLogMapper.class);
 		job.setMapOutputKeyClass(Text.class);
