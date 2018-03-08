@@ -201,7 +201,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				
 				adClick_process = adClick_process + 1;
 				time3 = System.currentTimeMillis();
-				log.info("ad_click 花了：" + (time3-time2)/1000 + "秒");
+				log.info("ad_click cost：" + (time3-time2)/1000 + "second");
 				
 			}else
 			
@@ -214,7 +214,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				
 				ruten_process = ruten_process + 1;
 				time3 = System.currentTimeMillis();
-				log.info("ruten 花了：" + (time3-time2)/1000 + "秒");
+				log.info("ruten cost：" + (time3-time2)/1000 + "second");
 			}else
 
 			// 24h
@@ -226,7 +226,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				
 				tweenFour_process = tweenFour_process + 1;
 				time3 = System.currentTimeMillis();
-				log.info("24h 花了：" + (time3-time2)/1000 + "秒");
+				log.info("24h cost：" + (time3-time2)/1000 + "second");
 			}else{
 				return;
 			}
@@ -247,7 +247,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			time2 =  System.currentTimeMillis();
 			
 			
-			log.info("花了：" + (time2-time1)/1000 + "秒" + "處理狀況:"+" [adClick處理"+adClick_process+" 筆],[24h處理"+tweenFour_process+" 筆],[ruten處理"+ruten_process+" 筆]");
+			log.info("total cost：" + (time2-time1)/1000 + "second" + "process >>:"+" [adClick process size:"+adClick_process+"],[24h process size:"+tweenFour_process+"],[ruten process size:"+ruten_process+"]");
 			
 		} catch (Exception e) {
 			log.error(">>>>>> " + e.getMessage());

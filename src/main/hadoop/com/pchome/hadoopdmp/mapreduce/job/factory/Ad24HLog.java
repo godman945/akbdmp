@@ -66,7 +66,6 @@ public class Ad24HLog extends ACategoryLogData {
 			//爬蟲
 			if(classUrlMongoBean.getStatus().equals("0")){
 				adClass = crawlerGetAdclass(sourceUrl);
-				Log.info("classUrlMongoBean.getStatus().equals(0) >>>>>24h adClass:"+adClass);
 				if(adClass.matches("\\d{16}")){
 					Date date = new Date();
 					classUrlMongoBean.setStatus("1");
