@@ -189,6 +189,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			CategoryLogBean categoryLogBean = new CategoryLogBean();
 			CategoryLogBean categoryLogBeanResult = null;
 			log.info(">>>>>> values[13]:" + (values[13]));
+			log.info(">>>>>> values[14]:" + (values[14]));
 			// ad_click
 			if (values[13].equals("ck") && StringUtils.isNotBlank(values[4]) && StringUtils.isNotBlank(values[15])) {
 				log.info(">>>>>> ad_click start");
