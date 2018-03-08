@@ -157,7 +157,6 @@ public class CategoryLogDriver {
 		job.setOutputValueClass(Text.class);
 		job.setNumReduceTasks(1);
 		
-		job.getConfiguration().set("mapred.max.split.size", "64mb");
 		job.setMapSpeculativeExecution(false);
 		
 		// job.setOutputFormatClass(NullOutputFormat.class);
