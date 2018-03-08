@@ -88,6 +88,9 @@ public class CategoryLogDriver {
 		jobConf.set("mapred.child.java.opts", "-Xmx4072m");
 		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx4072m");
 		
+		jobConf.set("mapred.compress.map.output", "true");
+		
+		
 		
 		// hdfs
 		Configuration conf = new Configuration();
