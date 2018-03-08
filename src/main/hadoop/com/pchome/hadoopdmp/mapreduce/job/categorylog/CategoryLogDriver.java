@@ -98,11 +98,11 @@ public class CategoryLogDriver {
 //		conf.set("mapreduce.map.memory.mb","64");
 //		conf.set("mapred.map.memory.mb","64");
 //		
-		conf.set("mapred.max.split.size","64mb ");
-		conf.set("mapred.min.split.size","64mb ");
+		conf.set("mapred.max.split.size","64mb");
+		conf.set("mapred.min.split.size","64mb");
 		
-		conf.set("mapreduce.min.split.size","64mb ");
-		conf.set("mapreduce.max.split.size","64mb ");
+		conf.set("mapreduce.min.split.size","64mb");
+		conf.set("mapreduce.max.split.size","64mb");
 //		
 //		conf.set("mapreduce.tasktracker.map.tasks.maximum", "8");
 //		conf.set("mapred.tasktracker.map.tasks.maximum", "8");
