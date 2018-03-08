@@ -32,11 +32,9 @@ import com.pchome.hadoopdmp.data.mongo.pojo.ClassCountMongoBean;
 import com.pchome.hadoopdmp.data.mongo.pojo.ClassUrlMongoBean;
 import com.pchome.hadoopdmp.data.mongo.pojo.UserDetailMongoBean;
 import com.pchome.hadoopdmp.enumerate.EnumBreadCrumbDirectlyMatch;
-import com.pchome.hadoopdmp.enumerate.PersonalInfoEnum;
 import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper;
 
 
-@SuppressWarnings({ "unchecked", "deprecation" ,"static-access","resource"})
 public class Ad24HLog extends ACategoryLogData {
 
 	public Object processCategory(String[] values, CategoryLogBean categoryLogBean,MongoOperations mongoOperations) throws Exception {
@@ -46,9 +44,6 @@ public class Ad24HLog extends ACategoryLogData {
 		String sourceUrl = values[4];
 		String adClass = "";
 		String behaviorClassify = "N";
-		
-		
-		
 		
 		if ((StringUtils.isBlank(memid) || memid.equals("null")) && (StringUtils.isBlank(uuid) || uuid.equals("null"))) {
 			return null;
@@ -63,7 +58,7 @@ public class Ad24HLog extends ACategoryLogData {
 		if (!m.find()) {
 			return null;
 		}
-		
+		Log.info("Query(Criteria.where(url) >>>>>24h adClass:"+adClass);
 		ClassUrlMongoBean classUrlMongoBean = null;
 		Query query = new Query(Criteria.where("url").is(sourceUrl.trim()));
 		classUrlMongoBean = mongoOperations.findOne(query, ClassUrlMongoBean.class);
@@ -72,6 +67,7 @@ public class Ad24HLog extends ACategoryLogData {
 			//爬蟲
 			if(classUrlMongoBean.getStatus().equals("0")){
 				adClass = crawlerGetAdclass(sourceUrl);
+				Log.info("classUrlMongoBean.getStatus().equals(0) >>>>>24h adClass:"+adClass);
 				if(adClass.matches("\\d{16}")){
 					Date date = new Date();
 					classUrlMongoBean.setStatus("1");
@@ -91,7 +87,7 @@ public class Ad24HLog extends ACategoryLogData {
 		
 		if (classUrlMongoBean == null){
 			adClass = crawlerGetAdclass(sourceUrl);
-			Log.info(">>>>>24h adClass:"+adClass);
+			Log.info("classUrlMongoBean == null >>>>>24h adClass:"+adClass);
 			Date date = new Date();
 			ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
 			classUrlMongoBeanCreate.setAd_class(adClass.matches("\\d{16}") ?  adClass : "");
