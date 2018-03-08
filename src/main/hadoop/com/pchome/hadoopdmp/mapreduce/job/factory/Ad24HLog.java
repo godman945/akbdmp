@@ -22,6 +22,7 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
+import org.mortbay.log.Log;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -45,6 +46,9 @@ public class Ad24HLog extends ACategoryLogData {
 		String sourceUrl = values[4];
 		String adClass = "";
 		String behaviorClassify = "N";
+		
+		
+		
 		
 		if ((StringUtils.isBlank(memid) || memid.equals("null")) && (StringUtils.isBlank(uuid) || uuid.equals("null"))) {
 			return null;
@@ -87,6 +91,7 @@ public class Ad24HLog extends ACategoryLogData {
 		
 		if (classUrlMongoBean == null){
 			adClass = crawlerGetAdclass(sourceUrl);
+			Log.info(">>>>>24h adClass:"+adClass);
 			Date date = new Date();
 			ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
 			classUrlMongoBeanCreate.setAd_class(adClass.matches("\\d{16}") ?  adClass : "");
