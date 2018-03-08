@@ -42,12 +42,16 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public static String record_date;
 	public static ArrayList<Map<String, String>> categoryList = new ArrayList<Map<String, String>>();//分類表	
 	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();	 //分類個資表
-
 	private MongoOperations mongoOperations;
 
+	private int adClick_process = 0;
+	private int tweenFour_process = 0;
+	private int ruten_process = 0;
+	private long time1, time2,time3;
 	@Override
 	public void setup(Context context) {
 		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>>>>>>>>>>>>>");
+		time1 = System.currentTimeMillis();
 		try {
 			System.setProperty("spring.profiles.active", "stg");
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
@@ -188,32 +192,41 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 
 			CategoryLogBean categoryLogBean = new CategoryLogBean();
 			CategoryLogBean categoryLogBeanResult = null;
-			log.info(">>>>>> values[13]:" + (values[13]));
-			log.info(">>>>>> values[14]:" + (values[14]));
-			log.info(">>>>>> values[4]:" + (values[4]));
-			log.info(">>>>>> values[15]:" + (values[15]));
 			// ad_click
 			if (values[13].equals("ck") && StringUtils.isNotBlank(values[4]) && StringUtils.isNotBlank(values[15])) {
-				log.info(">>>>>> ad_click start");
+				time2 = System.currentTimeMillis();
+				
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
 				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean, mongoOperations);
-				log.info(">>>>>> ad_click end");
+				
+				adClick_process = adClick_process + 1;
+				time3 = System.currentTimeMillis();
+				log.info("ad_click 花了：" + (time3-time2)/1000 + "秒");
+				
 			}else
 			
 			// 露天
 			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].contains("ruten")) {
-				log.info(">>>>>> ruten start");
+				time2 = System.currentTimeMillis();
+				
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
 				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean, mongoOperations);
-				log.info(">>>>>> ruten end");
+				
+				ruten_process = ruten_process + 1;
+				time3 = System.currentTimeMillis();
+				log.info("ruten 花了：" + (time3-time2)/1000 + "秒");
 			}else
 
 			// 24h
 			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].contains("24h")) {
-				log.info(">>>>>> 24h start");
+				time2 = System.currentTimeMillis();
+				
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
 				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean, mongoOperations);
-				log.info(">>>>>> 24h end");
+				
+				tweenFour_process = tweenFour_process + 1;
+				time3 = System.currentTimeMillis();
+				log.info("24h 花了：" + (time3-time2)/1000 + "秒");
 			}else{
 				return;
 			}
@@ -226,9 +239,15 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			// 0:Memid + 1:Uuid + 2:AdClass + 3:Age + 4:Sex + 5:Source + 6:RecodeDate + 7:Type + 8:Classify
 			String memid = StringUtils.isBlank(categoryLogBeanResult.getMemid()) ? "null" : categoryLogBeanResult.getMemid();
 			String result = memid + SYMBOL + categoryLogBeanResult.getUuid() + SYMBOL + categoryLogBeanResult.getAdClass() + SYMBOL + categoryLogBeanResult.getAge() + SYMBOL + categoryLogBeanResult.getSex() + SYMBOL + categoryLogBeanResult.getSource()+ SYMBOL +categoryLogBeanResult.getRecodeDate() + SYMBOL + categoryLogBeanResult.getType() + SYMBOL + values[4] + SYMBOL + categoryLogBeanResult.getType()+"_"+categoryLogBeanResult.getSource()+"_"+categoryLogBeanResult.getBehaviorClassify() + SYMBOL + "user_info_Classify_"+categoryLogBeanResult.getPersonalInfoClassify();
-			log.info(">>>>>> Mapper write key:" + result);
+//			log.info(">>>>>> Mapper write key:" + result);
 			keyOut.set(result);
 			context.write(keyOut, valueOut);
+			
+			
+			time2 =  System.currentTimeMillis();
+			
+			
+			log.info("花了：" + (time2-time1)/1000 + "秒" + "處理狀況:"+" [adClick處理"+adClick_process+" 筆],[24h處理"+tweenFour_process+" 筆],[ruten處理"+ruten_process+" 筆]");
 			
 		} catch (Exception e) {
 			log.error(">>>>>> " + e.getMessage());
