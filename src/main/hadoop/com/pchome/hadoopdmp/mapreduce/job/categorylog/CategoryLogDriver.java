@@ -103,7 +103,15 @@ public class CategoryLogDriver {
 		
 		conf.set("mapreduce.min.split.size","128388608");
 		conf.set("mapreduce.max.split.size","128388608");
-//		
+		
+		
+		conf.set("dfs.namenode.fs-limits.min-block-size","1048576");
+		conf.set("dfs.namenode.fs-limits.max-blocks-per-file","1048576");
+		
+		
+		
+		
+		
 //		conf.set("mapreduce.tasktracker.map.tasks.maximum", "8");
 //		conf.set("mapred.tasktracker.map.tasks.maximum", "8");
 //		
