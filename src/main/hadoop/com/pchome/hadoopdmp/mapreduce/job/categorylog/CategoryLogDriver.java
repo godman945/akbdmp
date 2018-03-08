@@ -85,8 +85,8 @@ public class CategoryLogDriver {
 		jobConf.setNumMapTasks(8);
 		jobConf.set("mapred.max.split.size","20388608");
 		jobConf.set("mapred.min.split.size","20388608");
-		jobConf.set("mapred.child.java.opts", "-Xmx4072m");
-		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx4072m");
+		jobConf.set("mapred.child.java.opts", "-Xmx5120m");
+		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx5120m");
 		
 		jobConf.set("mapred.compress.map.output", "true");
 		

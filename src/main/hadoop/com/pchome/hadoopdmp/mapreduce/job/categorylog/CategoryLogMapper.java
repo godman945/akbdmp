@@ -173,6 +173,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		// values[13] //ck,pv
 		// values[15] //ad_class
 		try {
+			log.info(">>>>>> mongoOperations:" + (mongoOperations == null));
 			String[] values = value.toString().split(SYMBOL);
 			if (values.length < LOG_LENGTH) {
 				log.info("values.length < " + LOG_LENGTH);
@@ -190,20 +191,26 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 
 			// ad_click
 			if (values[13].equals("ck") && StringUtils.isNotBlank(values[4]) && StringUtils.isNotBlank(values[15])) {
+				log.info(">>>>>> ad_click start");
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
 				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean, mongoOperations);
+				log.info(">>>>>> ad_click end");
 			}
 			
 			// 露天
 			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].contains("ruten")) {
+				log.info(">>>>>> ruten start");
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
 				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean, mongoOperations);
+				log.info(">>>>>> ruten end");
 			}
 
 			// 24h
 			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].contains("24h")) {
+				log.info(">>>>>> 24h start");
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
 				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean, mongoOperations);
+				log.info(">>>>>> 24h end");
 			}
 
 			if (categoryLogBeanResult == null) {
