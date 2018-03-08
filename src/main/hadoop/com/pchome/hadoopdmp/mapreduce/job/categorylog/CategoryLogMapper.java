@@ -198,7 +198,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
 				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean, mongoOperations);
 				log.info(">>>>>> ad_click end");
-			}
+			}else
 			
 			// 露天
 			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].contains("ruten")) {
@@ -206,7 +206,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
 				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean, mongoOperations);
 				log.info(">>>>>> ruten end");
-			}
+			}else
 
 			// 24h
 			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].contains("24h")) {
@@ -214,6 +214,8 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
 				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean, mongoOperations);
 				log.info(">>>>>> 24h end");
+			}else{
+				return;
 			}
 
 			if (categoryLogBeanResult == null) {
