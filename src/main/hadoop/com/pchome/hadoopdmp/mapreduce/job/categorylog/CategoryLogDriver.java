@@ -82,12 +82,12 @@ public class CategoryLogDriver {
 		}
 
 		JobConf jobConf = new JobConf();
-		jobConf.setNumMapTasks(10);
-		jobConf.set("mapred.max.split.size","128388608");
-		jobConf.set("mapred.min.split.size","128388608");
+		jobConf.setNumMapTasks(8);
+		jobConf.set("mapred.max.split.size","8388608");
+		jobConf.set("mapred.min.split.size","8388608");
 		
-		jobConf.set("mapreduce.min.split.size","128388608");
-		jobConf.set("mapreduce.max.split.size","128388608");
+		jobConf.set("mapreduce.min.split.size","8388608");
+		jobConf.set("mapreduce.max.split.size","8388608");
 		
 		
 		// hdfs
