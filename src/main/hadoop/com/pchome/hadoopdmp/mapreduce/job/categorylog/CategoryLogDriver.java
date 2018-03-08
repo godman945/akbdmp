@@ -104,10 +104,9 @@ public class CategoryLogDriver {
 		conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx4072m");
 		
 		
-		
 //		conf.set("mapreduce.map.memory.mb","64");
 //		conf.set("mapred.map.memory.mb","64");
-//		
+		
 		conf.set("mapred.max.split.size","128388608");
 		conf.set("mapred.min.split.size","128388608");
 		
@@ -210,15 +209,20 @@ public class CategoryLogDriver {
 					timePath = sdf1.format(calendar.getTime()) +"/"+ (calendar.get(Calendar.HOUR_OF_DAY) - 1);	
 				}
 			}
-			String bessieTempPath = "/home/webuser/dmp/adLogClassStg/" + timePath;
-			String adLogClassPpath = "/home/webuser/akb/storedata/alllog/"+timePath;
+//			String bessieTempPath = "/home/webuser/dmp/adLogClassStg/" + timePath;
+//			String adLogClassPpath = "/home/webuser/akb/storedata/alllog/"+timePath;
+			
+			
+			String bessieTempPath = "/home/webuser/dmp/adLogClassStg/2018-03-08/10";
+			String adLogClassPpath = "/home/webuser/akb/storedata/alllog/2018-03-08/10";
+			
 			FileOutputFormat.setOutputPath(job, new Path(bessieTempPath));
 			FileInputFormat.addInputPaths(job, adLogClassPpath);
 			
 //			FileOutputFormat.setOutputPath(job, new Path("/home/webuser/alex/"+sdf2.format(date)));
 //			FileInputFormat.addInputPaths(job, "/home/webuser/akb/storedata/alllog/2018-01-25/00");
-			log.info("file Input Path : " + "/home/webuser/akb/storedata/alllog/"+ timePath);
-			log.info("file Output Path : " + bessieTempPath);
+//			log.info("file Input Path : " + "/home/webuser/akb/storedata/alllog/"+ timePath);
+//			log.info("file Output Path : " + bessieTempPath);
 			
 //			alllogStr = alllog + dateStr.replaceAll(" ", "/");
 //			alllogDir = new Path(alllogStr);

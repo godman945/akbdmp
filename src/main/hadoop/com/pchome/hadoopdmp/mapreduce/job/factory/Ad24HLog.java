@@ -58,7 +58,6 @@ public class Ad24HLog extends ACategoryLogData {
 		if (!m.find()) {
 			return null;
 		}
-		Log.info("Query(Criteria.where(url) >>>>>24h adClass:"+adClass);
 		ClassUrlMongoBean classUrlMongoBean = null;
 		Query query = new Query(Criteria.where("url").is(sourceUrl.trim()));
 		classUrlMongoBean = mongoOperations.findOne(query, ClassUrlMongoBean.class);
@@ -87,7 +86,6 @@ public class Ad24HLog extends ACategoryLogData {
 		
 		if (classUrlMongoBean == null){
 			adClass = crawlerGetAdclass(sourceUrl);
-			Log.info("classUrlMongoBean == null >>>>>24h adClass:"+adClass);
 			Date date = new Date();
 			ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
 			classUrlMongoBeanCreate.setAd_class(adClass.matches("\\d{16}") ?  adClass : "");
