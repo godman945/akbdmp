@@ -214,19 +214,19 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				ruten_process = ruten_process + 1;
 				time3 = System.currentTimeMillis();
 			}
-//				else
+				else
 //
 //			// 24h
-//			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].contains("24h")) {
-//				time2 = System.currentTimeMillis();
-//				
-//				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
-//				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean, mongoOperations);
-//				
-//				tweenFour_process = tweenFour_process + 1;
-//				time3 = System.currentTimeMillis();
-//				log.info("24h cost：" + (time3-time2)/1000 + " second");
-//			}
+			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].contains("24h")) {
+				time2 = System.currentTimeMillis();
+				
+				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
+				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean, mongoOperations);
+				
+				tweenFour_process = tweenFour_process + 1;
+				time3 = System.currentTimeMillis();
+				log.info("24h cost：" + (time3-time2)/1000 + " second");
+			}
 			else{
 				return;
 			}

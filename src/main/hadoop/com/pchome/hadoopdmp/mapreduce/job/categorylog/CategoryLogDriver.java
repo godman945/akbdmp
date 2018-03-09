@@ -213,8 +213,14 @@ public class CategoryLogDriver {
 //			String adLogClassPpath = "/home/webuser/akb/storedata/alllog/"+timePath;
 			
 			
-			String bessieTempPath = "/home/webuser/dmp/adLogClassStg/2018-03-08/10";
-			String adLogClassPpath = "/home/webuser/akb/storedata/alllog/2018-03-08/10";
+//			String bessieTempPath = "/home/webuser/dmp/adLogClassStg/2018-03-08/10";
+//			String adLogClassPpath = "/home/webuser/akb/storedata/alllog/2018-03-08/10";
+			
+			
+			//輸入
+			String adLogClassPpath = "/home/webuser/analyzer/storedata/alllog/2018-03-08";
+			//輸出
+			String bessieTempPath = "/home/webuser/dmp/adLogClassStg/2018-03-08/day";
 			
 			FileOutputFormat.setOutputPath(job, new Path(bessieTempPath));
 			FileInputFormat.addInputPaths(job, adLogClassPpath);

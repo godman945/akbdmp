@@ -132,7 +132,8 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 			json.put("source", data[5]);
 			json.put("recordDate", data[6]);
 
-			Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_stg", "", json.toString()));
+			//發送給kafka
+//			Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_stg", "", json.toString()));
 			// while (!f.isDone()) {
 			// }
 
@@ -380,16 +381,16 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	
 	
 	public void savekdclStatisticsSource(String idType,String serviceType,String behavior,String classify ,int count,String recodeDate,Date date,IKdclStatisticsSourceService kdclStatisticsSourceService) throws Exception{
-		KdclStatisticsSource kdclStatisticsSource = new KdclStatisticsSource();
-		kdclStatisticsSource.setIdType(idType);
-		kdclStatisticsSource.setServiceType(serviceType);
-		kdclStatisticsSource.setClassify(classify);
-		kdclStatisticsSource.setBehavior(behavior);
-		kdclStatisticsSource.setCounter(count);
-		kdclStatisticsSource.setRecordDate(recodeDate);
-		kdclStatisticsSource.setUpdateDate(date);
-		kdclStatisticsSource.setCreateDate(date);
-		kdclStatisticsSourceService.save(kdclStatisticsSource);
+//		KdclStatisticsSource kdclStatisticsSource = new KdclStatisticsSource();
+//		kdclStatisticsSource.setIdType(idType);
+//		kdclStatisticsSource.setServiceType(serviceType);
+//		kdclStatisticsSource.setClassify(classify);
+//		kdclStatisticsSource.setBehavior(behavior);
+//		kdclStatisticsSource.setCounter(count);
+//		kdclStatisticsSource.setRecordDate(recodeDate);
+//		kdclStatisticsSource.setUpdateDate(date);
+//		kdclStatisticsSource.setCreateDate(date);
+//		kdclStatisticsSourceService.save(kdclStatisticsSource);
 	}
 	
 	
