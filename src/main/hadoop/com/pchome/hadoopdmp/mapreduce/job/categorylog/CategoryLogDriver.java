@@ -222,6 +222,12 @@ public class CategoryLogDriver {
 			//輸出
 			String bessieTempPath = "/home/webuser/dmp/adLogClassStg/2018-03-08/day";
 			
+			
+			
+//			FileOutputFormat.setOutputPath(job, new Path(adLogClassPpath +"/"+ timePath));
+//			FileInputFormat.addInputPaths(job, bessieTempPath);
+			
+			
 			FileOutputFormat.setOutputPath(job, new Path(bessieTempPath));
 			FileInputFormat.addInputPaths(job, adLogClassPpath);
 			

@@ -161,7 +161,7 @@ public class Ad24HLog extends ACategoryLogData {
 	
 	
 	public static NameValuePair requestGetAPI42(String uri) throws Exception {
-
+		Log.info(">>>>>>24h call http:"+uri);
 		HttpParams httpparameters = new BasicHttpParams();
 		HttpConnectionParams.setConnectionTimeout(httpparameters, 3000);
 		HttpConnectionParams.setSoTimeout(httpparameters, 5000);
