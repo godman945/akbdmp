@@ -109,6 +109,7 @@ public class Ad24HLog extends ACategoryLogData {
 			String sex = "";
 			String age = "";
 			if(userDetailMongoBean != null){
+				Log.info(">>>>>24h userDetailMongoBean != null:"+userDetailMongoBean.getUser_id());
 				sex = (String)userDetailMongoBean.getUser_info().get("sex");
 				age = (String)userDetailMongoBean.getUser_info().get("age");
 				categoryLogBean.setPersonalInfoClassify("Y");
