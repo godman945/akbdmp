@@ -65,6 +65,7 @@ public class Ad24HLog extends ACategoryLogData {
 		if(classUrlMongoBean != null){
 			//爬蟲
 			if(classUrlMongoBean.getStatus().equals("0")){
+				Log.info(">>>>>>classUrlMongoBean.getStatus().equals(0):"+sourceUrl);
 				adClass = crawlerGetAdclass(sourceUrl);
 				if(adClass.matches("\\d{16}")){
 					Date date = new Date();
@@ -110,6 +111,8 @@ public class Ad24HLog extends ACategoryLogData {
 			String age = "";
 			if(userDetailMongoBean != null){
 				Log.info(">>>>>24h userDetailMongoBean != null:"+userDetailMongoBean.getUser_id());
+				Log.info(">>>>>24h getCreate_date:"+userDetailMongoBean.getCreate_date());
+				
 				sex = (String)userDetailMongoBean.getUser_info().get("sex");
 				age = (String)userDetailMongoBean.getUser_info().get("age");
 				categoryLogBean.setPersonalInfoClassify("Y");
