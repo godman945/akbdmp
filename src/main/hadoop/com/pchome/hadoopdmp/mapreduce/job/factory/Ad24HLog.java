@@ -102,6 +102,8 @@ public class Ad24HLog extends ACategoryLogData {
 		
 		//取個資
 		if(StringUtils.isNotBlank(memid) && (!memid.equals("null"))){
+			Log.info(">>>>>24h memid:"+memid);
+			
 			Query queryUserInfo = new Query(Criteria.where(ClassCountMongoDBEnum.USER_ID.getKey()).is(uuid));
 			UserDetailMongoBean userDetailMongoBean =  mongoOperations.findOne(queryUserInfo, UserDetailMongoBean.class);
 			String sex = "";
@@ -130,6 +132,7 @@ public class Ad24HLog extends ACategoryLogData {
 //			Map<String, Object> userInfo = (Map<String, Object>) aPersonalInfo.personalData(uuidMap);
 			Query queryUserInfo = new Query(Criteria.where(ClassCountMongoDBEnum.USER_ID.getKey()).is(uuid));
 			UserDetailMongoBean userDetailMongoBean =  mongoOperations.findOne(queryUserInfo, UserDetailMongoBean.class);
+			
 			String sex = "";
 			String age = "";
 			if(userDetailMongoBean != null){
