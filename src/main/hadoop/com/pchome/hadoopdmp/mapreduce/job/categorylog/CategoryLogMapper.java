@@ -50,10 +50,11 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private long time1, time2,time3;
 	@Override
 	public void setup(Context context) {
-		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>>>>>>>>>>>>>");
+		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>>>>>>>>>>>>>"+System.getProperty("spring.profiles.active"));
 		time1 = System.currentTimeMillis();
 		try {
-			System.setProperty("spring.profiles.active", "stg");
+			
+			System.setProperty("spring.profiles.active", "prd");
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			this.mongoOperations = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
 			record_date = context.getConfiguration().get("job.date");
