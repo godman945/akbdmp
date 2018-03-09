@@ -193,39 +193,24 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			CategoryLogBean categoryLogBeanResult = null;
 			// ad_click
 			if (values[13].equals("ck") && StringUtils.isNotBlank(values[4]) && StringUtils.isNotBlank(values[15])) {
-				time2 = System.currentTimeMillis();
-				
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
 				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean, mongoOperations);
-				
 				adClick_process = adClick_process + 1;
-				time3 = System.currentTimeMillis();
-				log.info("ad_click cost:" + (time3-time2)/1000 + " second");
 				
 			}
 			else
 //			
 			// 露天
 			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].contains("ruten")) {
-				
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
 				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean, mongoOperations);
-				
-				ruten_process = ruten_process + 1;
-				time3 = System.currentTimeMillis();
 			}
 				else
 //
 //			// 24h
 			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].contains("24h")) {
-				time2 = System.currentTimeMillis();
-				
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
 				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean, mongoOperations);
-				
-				tweenFour_process = tweenFour_process + 1;
-				time3 = System.currentTimeMillis();
-				log.info("24h cost：" + (time3-time2)/1000 + " second");
 			}
 			else{
 				return;
@@ -242,12 +227,6 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			log.info(">>>>>> Mapper write key:" + result);
 			keyOut.set(result);
 			context.write(keyOut, valueOut);
-			
-			
-			time2 =  System.currentTimeMillis();
-			
-			
-			log.info("total cost：" + (time2-time1)/1000 + " second " + "process >>:"+" [adClick process size:"+adClick_process+"],[24h process size:"+tweenFour_process+"],[ruten process size:"+ruten_process+"]");
 			
 		} catch (Exception e) {
 			log.error(">>>>>> " + e.getMessage());

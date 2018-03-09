@@ -228,8 +228,8 @@ public class CategoryLogDriver {
 //			FileInputFormat.addInputPaths(job, bessieTempPath);
 			
 			
-			FileOutputFormat.setOutputPath(job, new Path(bessieTempPath));
-			FileInputFormat.addInputPaths(job, adLogClassPpath);
+//			FileOutputFormat.setOutputPath(job, new Path(bessieTempPath));
+//			FileInputFormat.addInputPaths(job, adLogClassPpath);
 			
 //			FileOutputFormat.setOutputPath(job, new Path("/home/webuser/alex/"+sdf2.format(date)));
 //			FileInputFormat.addInputPaths(job, "/home/webuser/akb/storedata/alllog/2018-01-25/00");
