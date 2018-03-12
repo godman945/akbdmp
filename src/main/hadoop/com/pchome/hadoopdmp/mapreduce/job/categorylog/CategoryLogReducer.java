@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Future;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.io.Text;
@@ -78,7 +80,11 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		try {
 			this.sdf = new SimpleDateFormat("yyyy-MM-dd");
-			System.setProperty("spring.profiles.active", "stg");
+			if(StringUtils.isNotBlank(context.getConfiguration().get("spring.profiles.active"))){
+				System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
+			}else{
+				System.setProperty("spring.profiles.active", "stg");
+			}
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			this.kdclStatisticsSourceService = ctx.getBean(KdclStatisticsSourceService.class);
 			this.kafkaMetadataBrokerlist = ctx.getEnvironment().getProperty("kafka.metadata.broker.list");
