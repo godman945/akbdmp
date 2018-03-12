@@ -15,6 +15,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 	+"com.pchome.hadoop.category.job,"
 	+"com.pchome.hadoopdmp.dao.sql,"
 	+"com.pchome.hadoopdmp.mapreduce.job.categorylog,"
+	+"com.pchome.hadoopdmp.mapreduce.job.personallog,"
 	+"com.pchome.hadoopdmp.mapreduce.job.dedupip,"	
 	+"com.pchome.hadoopdmp.spring.config.bean,"
 	+"com.pchome.hadoopdmp.mongo,"
