@@ -195,14 +195,14 @@ public class CategoryLogDriver {
 //			/home/webuser/akb/storedata/alllog/2017-10-01/00
 			String timePath  = "";
 			Calendar calendar = Calendar.getInstance();  
-			if(calendar.get(Calendar.HOUR_OF_DAY) == 24){
-				calendar.add(Calendar.DAY_OF_MONTH, -1); 
-				timePath = sdf1.format(calendar.getTime())+"/00";
-			}else{
-				if(calendar.get(Calendar.HOUR_OF_DAY) < 10){
+			if(calendar.get(Calendar.HOUR_OF_DAY) == 0){
+			calendar.add(Calendar.DAY_OF_MONTH, -1); 
+			timePath = sdf1.format(calendar.getTime())+"/23";
+			}else {
+				if(String.valueOf(calendar.get(Calendar.HOUR_OF_DAY) - 1).length() < 2){
 					timePath = sdf1.format(calendar.getTime()) +"/"+ "0"+(calendar.get(Calendar.HOUR_OF_DAY) - 1);
 				}else{
-					timePath = sdf1.format(calendar.getTime()) +"/"+ (calendar.get(Calendar.HOUR_OF_DAY) - 1);	
+					timePath = sdf1.format(calendar.getTime()) +"/"+ (calendar.get(Calendar.HOUR_OF_DAY) - 1);
 				}
 			}
 //			String bessieTempPath = "/home/webuser/dmp/adLogClassStg/" + timePath;
@@ -254,7 +254,7 @@ public class CategoryLogDriver {
 			return;
 		}
 
-		log.info("alllogPath=" + alllogPath);
+//		log.info("alllogPath=" + alllogPath);
 
 		//load jar path
 		String[] jarPaths = {
@@ -314,9 +314,18 @@ public class CategoryLogDriver {
 //		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
 //		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMddHHmmss");
 //		String timePath  = "";
-//		Calendar calendar = Calendar.getInstance();  
-//		timePath = sdf1.format(calendar.getTime()) +"/"+ (calendar.get(Calendar.HOUR_OF_DAY) - 1);	
-//		System.out.println("/home/webuser/analyzer/storedata/alllog/"+timePath);
+//		Calendar calendar = Calendar.getInstance();
+//		System.out.println(calendar.get(Calendar.HOUR_OF_DAY));
+//		if(calendar.get(Calendar.HOUR_OF_DAY) == 0){
+//			calendar.add(Calendar.DAY_OF_MONTH, -1); 
+//			timePath = sdf1.format(calendar.getTime())+"/23";
+//		}else {
+//			if(String.valueOf(calendar.get(Calendar.HOUR_OF_DAY) - 1).length() < 2){
+//				timePath = sdf1.format(calendar.getTime()) +"/"+ "0"+(calendar.get(Calendar.HOUR_OF_DAY) - 1);
+//			}else{
+//				timePath = sdf1.format(calendar.getTime()) +"/"+ (calendar.get(Calendar.HOUR_OF_DAY) - 1);
+//			}
+//		}
 //		System.out.println(timePath);
 		
 		log.info("====driver start====");
