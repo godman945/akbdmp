@@ -6,8 +6,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -50,10 +53,20 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private long time1, time2,time3;
 	@Override
 	public void setup(Context context) {
-		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>>>>>>>>>>>>>"+System.getProperty("spring.profiles.active"));
+		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
+		Iterator<Entry<String, String>> litr =  context.getConfiguration().iterator();
+		while(litr.hasNext()) {
+			Entry<String, String> a = litr.next();
+			log.info(">>>>>>key:"+a.getKey());
+			log.info(">>>>>>value:"+a.getValue());
+		}
+		
+		
+		
+		
+		
 		time1 = System.currentTimeMillis();
 		try {
-			
 			System.setProperty("spring.profiles.active", "prd");
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			this.mongoOperations = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
