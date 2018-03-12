@@ -144,6 +144,7 @@ public class CategoryLogDriver {
 		
 		
 		// file system
+		conf.set("spring.profiles.active", env);
 		FileSystem fs = FileSystem.get(conf);
 
 		// date format
