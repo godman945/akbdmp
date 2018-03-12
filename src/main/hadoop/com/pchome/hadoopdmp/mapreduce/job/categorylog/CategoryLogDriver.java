@@ -88,7 +88,7 @@ public class CategoryLogDriver {
 		jobConf.set("mapred.child.java.opts", "-Xmx2g");
 		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 		jobConf.set("mapred.compress.map.output", "true");
-		
+		jobConf.set("spring.profiles.active", env);
 		
 		
 		// hdfs
@@ -117,10 +117,6 @@ public class CategoryLogDriver {
 		conf.set("dfs.namenode.fs-limits.min-block-size","1048576");
 		conf.set("dfs.namenode.fs-limits.max-blocks-per-file","1048576");
 		
-		
-		
-		
-		
 //		conf.set("mapreduce.tasktracker.map.tasks.maximum", "8");
 //		conf.set("mapred.tasktracker.map.tasks.maximum", "8");
 //		
@@ -137,7 +133,6 @@ public class CategoryLogDriver {
 		
 		Date date = new Date();
 		conf.set("job.date",sdf1.format(date));
-		System.out.println("job.date: " + sdf1.format(date));
 		log.info("job.date: " + sdf1.format(date));
 		
 //		conf.set("job.date", (dateStr.matches("\\d{4}-\\d{2}-\\d{2}") || dateStr.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}")) ? dateStr.substring(0, 10) : "");
@@ -217,15 +212,21 @@ public class CategoryLogDriver {
 //			String adLogClassPpath = "/home/webuser/akb/storedata/alllog/2018-03-08/10";
 			
 			
-			//輸入
-			String adLogClassPpath = "/home/webuser/analyzer/storedata/alllog/2018-03-08";
-			//輸出
-			String bessieTempPath = "/home/webuser/dmp/adLogClassStg/2018-03-08/day";
-			
+//			//輸入
+//			String adLogClassPpath = "/home/webuser/analyzer/storedata/alllog/2018-03-08";
+//			//輸出
+//			String bessieTempPath = "/home/webuser/dmp/adLogClassStg/2018-03-08/day";
 			
 			
 //			FileOutputFormat.setOutputPath(job, new Path(adLogClassPpath +"/"+ timePath));
 //			FileInputFormat.addInputPaths(job, bessieTempPath);
+			
+			//輸入
+			String adLogClassPpath = "/home/webuser/akb/storedata/alllog/"+timePath;
+			//輸出
+			String bessieTempPath = "/home/webuser/dmp/adLogClassStg/"+timePath;
+			log.info(">>>>>>INPUT PATH:"+adLogClassPpath);
+			log.info(">>>>>>OUTPUT PATH:"+bessieTempPath);
 			
 			
 			FileOutputFormat.setOutputPath(job, new Path(bessieTempPath));
@@ -315,30 +316,33 @@ public class CategoryLogDriver {
 //		Calendar calendar = Calendar.getInstance();  
 //		timePath = sdf1.format(calendar.getTime()) +"/"+ (calendar.get(Calendar.HOUR_OF_DAY) - 1);	
 //		System.out.println("/home/webuser/analyzer/storedata/alllog/"+timePath);
-		log.info("====driver start====");
-		String date = "";
-		boolean jobFlag = false;
-		if(args.length != 2){
-			jobFlag = true;
-		}else if(!args[0].equals("prd") && !args[0].equals("stg")){
-			jobFlag = true;
-		}else if(!args[1].equals("day") && !args[1].equals("hour")){
-			jobFlag = true;
-		}
-		if(jobFlag){
-			printUsage();
-			return;
-		}
+//		System.out.println(timePath);
 		
-		if(args[0].equals("prd")){
-			System.setProperty("spring.profiles.active", "prd");
-		}else{
-			System.setProperty("spring.profiles.active", "stg");
-		}
-		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-		CategoryLogDriver CategoryDriver = (CategoryLogDriver) ctx.getBean(CategoryLogDriver.class);
-		CategoryDriver.drive(args[0],args[1]);
-		log.info("====driver end====");
+		
+//		log.info("====driver start====");
+//		String date = "";
+//		boolean jobFlag = false;
+//		if(args.length != 2){
+//			jobFlag = true;
+//		}else if(!args[0].equals("prd") && !args[0].equals("stg")){
+//			jobFlag = true;
+//		}else if(!args[1].equals("day") && !args[1].equals("hour")){
+//			jobFlag = true;
+//		}
+//		if(jobFlag){
+//			printUsage();
+//			return;
+//		}
+//		
+//		if(args[0].equals("prd")){
+//			System.setProperty("spring.profiles.active", "prd");
+//		}else{
+//			System.setProperty("spring.profiles.active", "stg");
+//		}
+//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//		CategoryLogDriver CategoryDriver = (CategoryLogDriver) ctx.getBean(CategoryLogDriver.class);
+//		CategoryDriver.drive(args[0],args[1]);
+//		log.info("====driver end====");
 	}
 
 }
