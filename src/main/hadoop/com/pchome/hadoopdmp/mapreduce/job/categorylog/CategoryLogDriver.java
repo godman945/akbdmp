@@ -318,31 +318,30 @@ public class CategoryLogDriver {
 //		System.out.println("/home/webuser/analyzer/storedata/alllog/"+timePath);
 //		System.out.println(timePath);
 		
+		log.info("====driver start====");
+		String date = "";
+		boolean jobFlag = false;
+		if(args.length != 2){
+			jobFlag = true;
+		}else if(!args[0].equals("prd") && !args[0].equals("stg")){
+			jobFlag = true;
+		}else if(!args[1].equals("day") && !args[1].equals("hour")){
+			jobFlag = true;
+		}
+		if(jobFlag){
+			printUsage();
+			return;
+		}
 		
-//		log.info("====driver start====");
-//		String date = "";
-//		boolean jobFlag = false;
-//		if(args.length != 2){
-//			jobFlag = true;
-//		}else if(!args[0].equals("prd") && !args[0].equals("stg")){
-//			jobFlag = true;
-//		}else if(!args[1].equals("day") && !args[1].equals("hour")){
-//			jobFlag = true;
-//		}
-//		if(jobFlag){
-//			printUsage();
-//			return;
-//		}
-//		
-//		if(args[0].equals("prd")){
-//			System.setProperty("spring.profiles.active", "prd");
-//		}else{
-//			System.setProperty("spring.profiles.active", "stg");
-//		}
-//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-//		CategoryLogDriver CategoryDriver = (CategoryLogDriver) ctx.getBean(CategoryLogDriver.class);
-//		CategoryDriver.drive(args[0],args[1]);
-//		log.info("====driver end====");
+		if(args[0].equals("prd")){
+			System.setProperty("spring.profiles.active", "prd");
+		}else{
+			System.setProperty("spring.profiles.active", "stg");
+		}
+		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+		CategoryLogDriver CategoryDriver = (CategoryLogDriver) ctx.getBean(CategoryLogDriver.class);
+		CategoryDriver.drive(args[0],args[1]);
+		log.info("====driver end====");
 	}
 
 }
