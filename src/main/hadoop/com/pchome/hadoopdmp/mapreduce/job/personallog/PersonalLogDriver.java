@@ -80,8 +80,8 @@ public class PersonalLogDriver {
 		
 		JobConf jobConf = new JobConf();
 		jobConf.setNumMapTasks(8);
-		jobConf.set("mapred.max.split.size","100388608");
-		jobConf.set("mapred.min.split.size","100388608");
+		jobConf.set("mapred.max.split.size","200388608");
+		jobConf.set("mapred.min.split.size","200388608");
 		jobConf.set("mapred.child.java.opts", "-Xmx2g");
 		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 		jobConf.set("mapred.compress.map.output", "true");
@@ -151,7 +151,7 @@ public class PersonalLogDriver {
 			}
 			
 			//輸入
-			String inputPpath = "/home/webuser/akb/storedata/alllog/2018-03-12";//+sdf1.format(date);
+			String inputPpath = "/home/webuser/analyzer/storedata/alllog/2018-03-12";//+sdf1.format(date);
 			//輸出
 			String outputPath = "/home/webuser/dmp/adLogClassStg/personallog/2018-03-12";//+sdf1.format(date);
 			log.info(">>>>>>INPUT PATH:"+inputPpath);
