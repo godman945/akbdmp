@@ -69,10 +69,14 @@ public class PersonalLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	private IKdclStatisticsSourceService kdclStatisticsSourceService;
 	
-	List<JSONObject> kafkaList = new ArrayList<>();
+	private List<JSONObject> kafkaList = new ArrayList<>();
 
-	Producer<String, String> producer = null;
+	private Producer<String, String> producer = null;
 
+	private Date date = new Date();
+	
+	private SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+	
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		try {
@@ -194,19 +198,20 @@ public class PersonalLogReducer extends Reducer<Text, Text, Text, Text> {
 			System.setProperty("spring.profiles.active", "stg");
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			this.kdclStatisticsSourceService = ctx.getBean(KdclStatisticsSourceService.class);
-			Date date = new Date();
-//			kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("ad_click", recodeDate);
-//			kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("24h", recodeDate);
-//			kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("ruten", recodeDate);
-//			kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("personal_info", recodeDate);
+			
 			String recodeDate = "";
-			Calendar calendar = Calendar.getInstance();  
-			if(calendar.get(Calendar.HOUR_OF_DAY) == 24){
-				calendar.add(Calendar.DAY_OF_MONTH, -1);
-				recodeDate = this.sdf.format(calendar.getTime());
+			Calendar calendar = Calendar.getInstance();
+			if(calendar.get(Calendar.HOUR_OF_DAY) == 0){
+				calendar.add(Calendar.DAY_OF_MONTH, -1); 
+				recodeDate = sdf1.format(calendar.getTime());
 			}else{
-				recodeDate = this.sdf.format(calendar.getTime());
+				recodeDate = sdf1.format(calendar.getTime());
 			}
+			
+			kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("ad_click", recodeDate);
+			kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("24h", recodeDate);
+			kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("ruten", recodeDate);
+			kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("personal_info", recodeDate);
 			
 			for (EnumKdclStatisticsSource enumKdclStatisticsSource : EnumKdclStatisticsSource.values()) {
 				if(enumKdclStatisticsSource.getKey().equals("MEMID_24_Y")){
