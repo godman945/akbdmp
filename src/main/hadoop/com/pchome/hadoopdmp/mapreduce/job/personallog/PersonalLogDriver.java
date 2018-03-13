@@ -27,7 +27,7 @@ import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig
 @Component
 public class PersonalLogDriver {
 
-	private static Log log = LogFactory.getLog("CategoryLogDriver");
+	private static Log log = LogFactory.getLog("PersonalLogDriver");
 
 	@Value("${hpd11.fs.default.name}")
 	private String hdfsPath;

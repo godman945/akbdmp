@@ -31,7 +31,7 @@ import com.pchome.hadoopdmp.spring.config.bean.mongodb.MongodbHadoopConfig;
 
 @Component
 public class PersonalLogMapper extends Mapper<LongWritable, Text, Text, Text> {
-	Log log = LogFactory.getLog("CategoryLogMapper");
+	Log log = LogFactory.getLog("PersonalLogMapper");
 	
 	private static int LOG_LENGTH = 30;
 	private static String SYMBOL = String.valueOf(new char[] { 9, 31 });

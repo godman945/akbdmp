@@ -28,7 +28,7 @@ import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig
 @Component
 public class PersonalLogReducer extends Reducer<Text, Text, Text, Text> {
 
-	Log log = LogFactory.getLog("CategoryLogReducer");
+	Log log = LogFactory.getLog("PersonalLogReducer");
 
 	SimpleDateFormat sdf = null;
 	private final static String SYMBOL = String.valueOf(new char[] { 9, 31 });
