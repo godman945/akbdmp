@@ -201,6 +201,7 @@ public class PersonalLogReducer extends Reducer<Text, Text, Text, Text> {
 			
 			String recodeDate = "";
 			Calendar calendar = Calendar.getInstance();
+			calendar.add(Calendar.DAY_OF_MONTH, -1); 
 			if(calendar.get(Calendar.HOUR_OF_DAY) == 0){
 				calendar.add(Calendar.DAY_OF_MONTH, -1); 
 				recodeDate = sdf1.format(calendar.getTime());
