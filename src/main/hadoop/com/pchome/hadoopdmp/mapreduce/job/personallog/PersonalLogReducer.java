@@ -6,7 +6,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.Future;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -15,8 +14,6 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -383,25 +380,16 @@ public class PersonalLogReducer extends Reducer<Text, Text, Text, Text> {
 	
 	
 	public void savekdclStatisticsSource(String idType,String serviceType,String behavior,String classify ,int count,String recodeDate,Date date,IKdclStatisticsSourceService kdclStatisticsSourceService) throws Exception{
-		log.info(">>>>>>idType:"+idType);
-		log.info(">>>>>>serviceType:"+serviceType);
-		log.info(">>>>>>behavior:"+behavior);
-		log.info(">>>>>>classify:"+classify);
-		log.info(">>>>>>count:"+count);
-		log.info(">>>>>>recodeDate:"+recodeDate);
-		
-		
-		
-//		KdclStatisticsSource kdclStatisticsSource = new KdclStatisticsSource();
-//		kdclStatisticsSource.setIdType(idType);
-//		kdclStatisticsSource.setServiceType(serviceType);
-//		kdclStatisticsSource.setClassify(classify);
-//		kdclStatisticsSource.setBehavior(behavior);
-//		kdclStatisticsSource.setCounter(count);
-//		kdclStatisticsSource.setRecordDate(recodeDate);
-//		kdclStatisticsSource.setUpdateDate(date);
-//		kdclStatisticsSource.setCreateDate(date);
-//		kdclStatisticsSourceService.save(kdclStatisticsSource);
+		KdclStatisticsSource kdclStatisticsSource = new KdclStatisticsSource();
+		kdclStatisticsSource.setIdType(idType);
+		kdclStatisticsSource.setServiceType(serviceType);
+		kdclStatisticsSource.setClassify(classify);
+		kdclStatisticsSource.setBehavior(behavior);
+		kdclStatisticsSource.setCounter(count);
+		kdclStatisticsSource.setRecordDate(recodeDate);
+		kdclStatisticsSource.setUpdateDate(date);
+		kdclStatisticsSource.setCreateDate(date);
+		kdclStatisticsSourceService.save(kdclStatisticsSource);
 	}
 	
 	
