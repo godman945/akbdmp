@@ -72,6 +72,8 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	private IKdclStatisticsSourceService kdclStatisticsSourceService;
 	
+	private String environment;
+	
 	List<JSONObject> kafkaList = new ArrayList<>();
 
 	Producer<String, String> producer = null;
@@ -82,8 +84,10 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 			this.sdf = new SimpleDateFormat("yyyy-MM-dd");
 			if(StringUtils.isNotBlank(context.getConfiguration().get("spring.profiles.active"))){
 				System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
+				this.environment = "prd";
 			}else{
 				System.setProperty("spring.profiles.active", "stg");
+				this.environment = "stg";
 			}
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			this.kdclStatisticsSourceService = ctx.getBean(KdclStatisticsSourceService.class);
@@ -139,10 +143,17 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 			json.put("recordDate", data[6]);
 
 			//發送給kafka
-//			Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_stg", "", json.toString()));
-			// while (!f.isDone()) {
-			// }
-
+			if(this.environment.equals("prd")){
+//				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_prd", "", json.toString()));
+//				 while (!f.isDone()) {
+//				 }
+//			}else{
+//				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_stg", "", json.toString()));
+//				 while (!f.isDone()) {
+//				 }
+			}
+//			
+//
 //			log.info(">>>>>>reduce write key:" + key);
 			keyOut.set(key);
 			context.write(keyOut, valueOut);
@@ -196,192 +207,238 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	}
 
 	public void cleanup(Context context) {
-		try {
-			log.info("------------ cleanup start ------------");
-			System.setProperty("spring.profiles.active", "stg");
-			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-			this.kdclStatisticsSourceService = ctx.getBean(KdclStatisticsSourceService.class);
-			Date date = new Date();
-//			kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("ad_click", recodeDate);
-//			kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("24h", recodeDate);
-//			kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("ruten", recodeDate);
-//			kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("personal_info", recodeDate);
-			String recodeDate = "";
-			Calendar calendar = Calendar.getInstance();  
-			if(calendar.get(Calendar.HOUR_OF_DAY) == 24){
-				calendar.add(Calendar.DAY_OF_MONTH, -1);
-				recodeDate = this.sdf.format(calendar.getTime());
-			}else{
-				recodeDate = this.sdf.format(calendar.getTime());
+		if(this.environment.equals("prd")){
+			log.info(">>>>>>cleanup:prd");
+		}else{
+			log.info(">>>>>>cleanup:stg");
+		}
+		
+		for (EnumKdclStatisticsSource enumKdclStatisticsSource : EnumKdclStatisticsSource.values()) {
+			if(enumKdclStatisticsSource.getKey().equals("MEMID_24_Y")){
+				log.info("memid24ClassifyIsY:"+memid24ClassifyIsY);
+			}
+			if(enumKdclStatisticsSource.getKey().equals("MEMID_24_N")){
+				log.info("memid24ClassifyIsN:"+memid24ClassifyIsN);
+			}
+			if(enumKdclStatisticsSource.getKey().equals("UUID_24_N")){
+				log.info("uuid24ClassifyIsN:"+uuid24ClassifyIsN);
+			}
+			if(enumKdclStatisticsSource.getKey().equals("UUID_24_Y")){
+				log.info("uuid24ClassifyIsN:"+uuid24ClassifyIsY);
 			}
 			
-			for (EnumKdclStatisticsSource enumKdclStatisticsSource : EnumKdclStatisticsSource.values()) {
-				if(enumKdclStatisticsSource.getKey().equals("MEMID_24_Y")){
-					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("24h",recodeDate,"memid","Y");
-					if(kdclStatisticsSource != null){
-//						log.info("memid24ClassifyIsY:"+memid24ClassifyIsY);
-//						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
-//						log.info("----------------------------");
-						memid24ClassifyIsY = memid24ClassifyIsY + kdclStatisticsSource.getCounter();
-						kdclStatisticsSource.setCounter(memid24ClassifyIsY);
-						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
-					}else{
-						savekdclStatisticsSource("memid","kdcl","24h","Y",memid24ClassifyIsY,recodeDate,date,kdclStatisticsSourceService);	
-					}
-				}
-				if(enumKdclStatisticsSource.getKey().equals("MEMID_24_N")){
-					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("24h",recodeDate,"memid","N");
-					if(kdclStatisticsSource != null){
-//						log.info("memid24ClassifyIsN:"+memid24ClassifyIsY);
-//						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
-//						log.info("----------------------------");
-						memid24ClassifyIsN = memid24ClassifyIsN + kdclStatisticsSource.getCounter();
-						kdclStatisticsSource.setCounter(memid24ClassifyIsN);
-						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
-					}else{
-						savekdclStatisticsSource("memid","kdcl","24h","N",memid24ClassifyIsN,recodeDate,date,kdclStatisticsSourceService);	
-					}
-					
-				}
-				if(enumKdclStatisticsSource.getKey().equals("UUID_24_Y")){
-					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("24h",recodeDate,"uuid","Y");
-					if(kdclStatisticsSource != null){
-//						log.info("uuid24ClassifyIsY:"+uuid24ClassifyIsY);
-//						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
-//						log.info("----------------------------");
-						uuid24ClassifyIsY = uuid24ClassifyIsY + kdclStatisticsSource.getCounter();
-						kdclStatisticsSource.setCounter(uuid24ClassifyIsY);
-						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
-					}else{
-						savekdclStatisticsSource("uuid","kdcl","24h","Y",uuid24ClassifyIsY,recodeDate,date,kdclStatisticsSourceService);	
-					}
-				}
-				if(enumKdclStatisticsSource.getKey().equals("UUID_24_N")){
-					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("24h",recodeDate,"uuid","N");
-					if(kdclStatisticsSource != null){
-//						log.info("uuid24ClassifyIsN:"+uuid24ClassifyIsN);
-//						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
-//						log.info("----------------------------");
-						uuid24ClassifyIsN = uuid24ClassifyIsN + kdclStatisticsSource.getCounter();
-						kdclStatisticsSource.setCounter(uuid24ClassifyIsN);
-						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
-					}else{
-						savekdclStatisticsSource("uuid","kdcl","24h","N",uuid24ClassifyIsN,recodeDate,date,kdclStatisticsSourceService);	
-					}
-				}
-				if(enumKdclStatisticsSource.getKey().equals("MEMID_RUTEN_Y")){
-					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("ruten",recodeDate,"memid","Y");
-					if(kdclStatisticsSource != null){
-//						log.info("memidRutenClassifyIsY:"+memidRutenClassifyIsY);
-//						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
-//						log.info("----------------------------");
-						memidRutenClassifyIsY = memidRutenClassifyIsY + kdclStatisticsSource.getCounter();
-						kdclStatisticsSource.setCounter(memidRutenClassifyIsY);
-						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
-					}else{
-						savekdclStatisticsSource("memid","kdcl","ruten","Y",memidRutenClassifyIsY,recodeDate,date,kdclStatisticsSourceService);	
-					}
-				}
-				if(enumKdclStatisticsSource.getKey().equals("MEMID_RUTEN_N")){
-					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("ruten",recodeDate,"memid","N");
-					if(kdclStatisticsSource != null){
-//						log.info("memidRutenClassifyIsN:"+memidRutenClassifyIsN);
-//						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
-//						log.info("----------------------------");
-						memidRutenClassifyIsN = memidRutenClassifyIsN + kdclStatisticsSource.getCounter();
-						kdclStatisticsSource.setCounter(memidRutenClassifyIsN);
-						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
-					}else{
-						savekdclStatisticsSource("memid","kdcl","ruten","N",memidRutenClassifyIsN,recodeDate,date,kdclStatisticsSourceService);	
-					}
-					
-				}
-				if(enumKdclStatisticsSource.getKey().equals("UUID_RUTEN_Y")){
-					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("ruten",recodeDate,"uuid","Y");
-					if(kdclStatisticsSource != null){
-//						log.info("uuidRutenClassifyIsY:"+uuidRutenClassifyIsY);
-//						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
-//						log.info("----------------------------");
-						uuidRutenClassifyIsY = uuidRutenClassifyIsY + kdclStatisticsSource.getCounter();
-						kdclStatisticsSource.setCounter(uuidRutenClassifyIsY);
-						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
-					}else{
-						savekdclStatisticsSource("uuid","kdcl","ruten","Y",uuidRutenClassifyIsY,recodeDate,date,kdclStatisticsSourceService);	
-					}
-				}
-				if(enumKdclStatisticsSource.getKey().equals("UUID_RUTEN_N")){
-					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("ruten",recodeDate,"uuid","N");
-					if(kdclStatisticsSource != null){
-						log.info("uuidRutenClassifyIsN:"+uuidRutenClassifyIsN);
-						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
-						log.info("----------------------------");
-						uuidRutenClassifyIsN = uuidRutenClassifyIsN + kdclStatisticsSource.getCounter();
-						kdclStatisticsSource.setCounter(uuidRutenClassifyIsN);
-						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
-					}else{
-						savekdclStatisticsSource("uuid","kdcl","ruten","N",uuidRutenClassifyIsN,recodeDate,date,kdclStatisticsSourceService);	
-					}
-				}
-				if(enumKdclStatisticsSource.getKey().equals("UUID_ADCLICK_Y")){
-					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("ad_click",recodeDate,"uuid","Y");
-					if(kdclStatisticsSource != null){
-//						log.info("uuidAdclickClassifyIsY:"+uuidAdclickClassifyIsY);
-//						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
-//						log.info("----------------------------");
-						uuidAdclickClassifyIsY = uuidAdclickClassifyIsY + kdclStatisticsSource.getCounter();
-						kdclStatisticsSource.setCounter(uuidAdclickClassifyIsY);
-						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
-					}else{
-						savekdclStatisticsSource("uuid","kdcl","ad_click","Y",uuidAdclickClassifyIsY,recodeDate,date,kdclStatisticsSourceService);	
-					}
-					
-				}
-				if(enumKdclStatisticsSource.getKey().equals("MEMID_ADCLICK_Y")){
-					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("ad_click",recodeDate,"memid","Y");
-					if(kdclStatisticsSource != null){
-//						log.info("memidAdclickClassifyIsY:"+memidAdclickClassifyIsY);
-//						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
-//						log.info("----------------------------");
-						memidAdclickClassifyIsY = memidAdclickClassifyIsY + kdclStatisticsSource.getCounter();
-						kdclStatisticsSource.setCounter(memidAdclickClassifyIsY);
-						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
-					}else{
-						savekdclStatisticsSource("memid","kdcl","ad_click","Y",memidAdclickClassifyIsY,recodeDate,date,kdclStatisticsSourceService);	
-					}
-				}
-				if(enumKdclStatisticsSource.getKey().equals("user_info_Classify_Y")){
-					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("personal_info",recodeDate,"memid","Y");
-					if(kdclStatisticsSource != null){
-//						log.info("userInfoClassifyIsY:"+userInfoClassifyIsY);
-//						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
-//						log.info("----------------------------");
-						userInfoClassifyIsY = userInfoClassifyIsY + kdclStatisticsSource.getCounter();
-						kdclStatisticsSource.setCounter(userInfoClassifyIsY);
-						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
-					}else{
-						savekdclStatisticsSource("memid","member","personal_info","Y",userInfoClassifyIsY,recodeDate,date,kdclStatisticsSourceService);	
-					}
-				}
-				if(enumKdclStatisticsSource.getKey().equals("user_info_Classify_N")){
-					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("personal_info",recodeDate,"memid","N");
-					if(kdclStatisticsSource != null){
-//						log.info("userInfoClassifyIsN:"+userInfoClassifyIsN);
-//						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
-//						log.info("----------------------------");
-						userInfoClassifyIsN = userInfoClassifyIsN + kdclStatisticsSource.getCounter();
-						kdclStatisticsSource.setCounter(userInfoClassifyIsN);
-						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
-					}else{
-						savekdclStatisticsSource("memid","member","personal_info","N",userInfoClassifyIsN,recodeDate,date,kdclStatisticsSourceService);	
-					}
-				}
-				
+			if(enumKdclStatisticsSource.getKey().equals("MEMID_RUTEN_Y")){
+				log.info("memidRutenClassifyIsY:"+memidRutenClassifyIsY);
 			}
-			log.info("------------ cleanup end ------------");
-			producer.close();
-		} catch (Exception e) {
-			log.error(e.getMessage());
+			if(enumKdclStatisticsSource.getKey().equals("MEMID_RUTEN_N")){
+				log.info("memidRutenClassifyIsN:"+memidRutenClassifyIsN);
+			}
+			if(enumKdclStatisticsSource.getKey().equals("UUID_RUTEN_Y")){
+				log.info("uuidRutenClassifyIsY:"+uuidRutenClassifyIsY);
+			}
+			if(enumKdclStatisticsSource.getKey().equals("UUID_RUTEN_N")){
+				log.info("uuidRutenClassifyIsN:"+uuidRutenClassifyIsN);
+			}
+			if(enumKdclStatisticsSource.getKey().equals("MEMID_ADCLICK_Y")){
+				log.info("uuidAdclickClassifyIsY:"+memidAdclickClassifyIsY);
+			}
+			if(enumKdclStatisticsSource.getKey().equals("UUID_ADCLICK_Y")){
+				log.info("uuidAdclickClassifyIsY:"+uuidAdclickClassifyIsY);
+			}
 		}
+		
+		
+		
+		
+		
+		
+		
+//		try {
+//			log.info("------------ cleanup start ------------");
+//			System.setProperty("spring.profiles.active", "stg");
+//			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//			this.kdclStatisticsSourceService = ctx.getBean(KdclStatisticsSourceService.class);
+//			Date date = new Date();
+////			kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("ad_click", recodeDate);
+////			kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("24h", recodeDate);
+////			kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("ruten", recodeDate);
+////			kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("personal_info", recodeDate);
+//			String recodeDate = "";
+//			Calendar calendar = Calendar.getInstance();  
+//			if(calendar.get(Calendar.HOUR_OF_DAY) == 24){
+//				calendar.add(Calendar.DAY_OF_MONTH, -1);
+//				recodeDate = this.sdf.format(calendar.getTime());
+//			}else{
+//				recodeDate = this.sdf.format(calendar.getTime());
+//			}
+//			
+//			for (EnumKdclStatisticsSource enumKdclStatisticsSource : EnumKdclStatisticsSource.values()) {
+//				if(enumKdclStatisticsSource.getKey().equals("MEMID_24_Y")){
+//					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("24h",recodeDate,"memid","Y");
+//					if(kdclStatisticsSource != null){
+////						log.info("memid24ClassifyIsY:"+memid24ClassifyIsY);
+////						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
+////						log.info("----------------------------");
+//						memid24ClassifyIsY = memid24ClassifyIsY + kdclStatisticsSource.getCounter();
+//						kdclStatisticsSource.setCounter(memid24ClassifyIsY);
+//						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
+//					}else{
+//						savekdclStatisticsSource("memid","kdcl","24h","Y",memid24ClassifyIsY,recodeDate,date,kdclStatisticsSourceService);	
+//					}
+//				}
+//				if(enumKdclStatisticsSource.getKey().equals("MEMID_24_N")){
+//					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("24h",recodeDate,"memid","N");
+//					if(kdclStatisticsSource != null){
+////						log.info("memid24ClassifyIsN:"+memid24ClassifyIsY);
+////						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
+////						log.info("----------------------------");
+//						memid24ClassifyIsN = memid24ClassifyIsN + kdclStatisticsSource.getCounter();
+//						kdclStatisticsSource.setCounter(memid24ClassifyIsN);
+//						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
+//					}else{
+//						savekdclStatisticsSource("memid","kdcl","24h","N",memid24ClassifyIsN,recodeDate,date,kdclStatisticsSourceService);	
+//					}
+//					
+//				}
+//				if(enumKdclStatisticsSource.getKey().equals("UUID_24_Y")){
+//					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("24h",recodeDate,"uuid","Y");
+//					if(kdclStatisticsSource != null){
+////						log.info("uuid24ClassifyIsY:"+uuid24ClassifyIsY);
+////						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
+////						log.info("----------------------------");
+//						uuid24ClassifyIsY = uuid24ClassifyIsY + kdclStatisticsSource.getCounter();
+//						kdclStatisticsSource.setCounter(uuid24ClassifyIsY);
+//						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
+//					}else{
+//						savekdclStatisticsSource("uuid","kdcl","24h","Y",uuid24ClassifyIsY,recodeDate,date,kdclStatisticsSourceService);	
+//					}
+//				}
+//				if(enumKdclStatisticsSource.getKey().equals("UUID_24_N")){
+//					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("24h",recodeDate,"uuid","N");
+//					if(kdclStatisticsSource != null){
+////						log.info("uuid24ClassifyIsN:"+uuid24ClassifyIsN);
+////						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
+////						log.info("----------------------------");
+//						uuid24ClassifyIsN = uuid24ClassifyIsN + kdclStatisticsSource.getCounter();
+//						kdclStatisticsSource.setCounter(uuid24ClassifyIsN);
+//						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
+//					}else{
+//						savekdclStatisticsSource("uuid","kdcl","24h","N",uuid24ClassifyIsN,recodeDate,date,kdclStatisticsSourceService);	
+//					}
+//				}
+//				if(enumKdclStatisticsSource.getKey().equals("MEMID_RUTEN_Y")){
+//					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("ruten",recodeDate,"memid","Y");
+//					if(kdclStatisticsSource != null){
+////						log.info("memidRutenClassifyIsY:"+memidRutenClassifyIsY);
+////						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
+////						log.info("----------------------------");
+//						memidRutenClassifyIsY = memidRutenClassifyIsY + kdclStatisticsSource.getCounter();
+//						kdclStatisticsSource.setCounter(memidRutenClassifyIsY);
+//						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
+//					}else{
+//						savekdclStatisticsSource("memid","kdcl","ruten","Y",memidRutenClassifyIsY,recodeDate,date,kdclStatisticsSourceService);	
+//					}
+//				}
+//				if(enumKdclStatisticsSource.getKey().equals("MEMID_RUTEN_N")){
+//					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("ruten",recodeDate,"memid","N");
+//					if(kdclStatisticsSource != null){
+////						log.info("memidRutenClassifyIsN:"+memidRutenClassifyIsN);
+////						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
+////						log.info("----------------------------");
+//						memidRutenClassifyIsN = memidRutenClassifyIsN + kdclStatisticsSource.getCounter();
+//						kdclStatisticsSource.setCounter(memidRutenClassifyIsN);
+//						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
+//					}else{
+//						savekdclStatisticsSource("memid","kdcl","ruten","N",memidRutenClassifyIsN,recodeDate,date,kdclStatisticsSourceService);	
+//					}
+//					
+//				}
+//				if(enumKdclStatisticsSource.getKey().equals("UUID_RUTEN_Y")){
+//					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("ruten",recodeDate,"uuid","Y");
+//					if(kdclStatisticsSource != null){
+////						log.info("uuidRutenClassifyIsY:"+uuidRutenClassifyIsY);
+////						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
+////						log.info("----------------------------");
+//						uuidRutenClassifyIsY = uuidRutenClassifyIsY + kdclStatisticsSource.getCounter();
+//						kdclStatisticsSource.setCounter(uuidRutenClassifyIsY);
+//						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
+//					}else{
+//						savekdclStatisticsSource("uuid","kdcl","ruten","Y",uuidRutenClassifyIsY,recodeDate,date,kdclStatisticsSourceService);	
+//					}
+//				}
+//				if(enumKdclStatisticsSource.getKey().equals("UUID_RUTEN_N")){
+//					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("ruten",recodeDate,"uuid","N");
+//					if(kdclStatisticsSource != null){
+//						log.info("uuidRutenClassifyIsN:"+uuidRutenClassifyIsN);
+//						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
+//						log.info("----------------------------");
+//						uuidRutenClassifyIsN = uuidRutenClassifyIsN + kdclStatisticsSource.getCounter();
+//						kdclStatisticsSource.setCounter(uuidRutenClassifyIsN);
+//						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
+//					}else{
+//						savekdclStatisticsSource("uuid","kdcl","ruten","N",uuidRutenClassifyIsN,recodeDate,date,kdclStatisticsSourceService);	
+//					}
+//				}
+//				if(enumKdclStatisticsSource.getKey().equals("UUID_ADCLICK_Y")){
+//					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("ad_click",recodeDate,"uuid","Y");
+//					if(kdclStatisticsSource != null){
+////						log.info("uuidAdclickClassifyIsY:"+uuidAdclickClassifyIsY);
+////						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
+////						log.info("----------------------------");
+//						uuidAdclickClassifyIsY = uuidAdclickClassifyIsY + kdclStatisticsSource.getCounter();
+//						kdclStatisticsSource.setCounter(uuidAdclickClassifyIsY);
+//						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
+//					}else{
+//						savekdclStatisticsSource("uuid","kdcl","ad_click","Y",uuidAdclickClassifyIsY,recodeDate,date,kdclStatisticsSourceService);	
+//					}
+//					
+//				}
+//				if(enumKdclStatisticsSource.getKey().equals("MEMID_ADCLICK_Y")){
+//					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("ad_click",recodeDate,"memid","Y");
+//					if(kdclStatisticsSource != null){
+////						log.info("memidAdclickClassifyIsY:"+memidAdclickClassifyIsY);
+////						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
+////						log.info("----------------------------");
+//						memidAdclickClassifyIsY = memidAdclickClassifyIsY + kdclStatisticsSource.getCounter();
+//						kdclStatisticsSource.setCounter(memidAdclickClassifyIsY);
+//						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
+//					}else{
+//						savekdclStatisticsSource("memid","kdcl","ad_click","Y",memidAdclickClassifyIsY,recodeDate,date,kdclStatisticsSourceService);	
+//					}
+//				}
+//				if(enumKdclStatisticsSource.getKey().equals("user_info_Classify_Y")){
+//					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("personal_info",recodeDate,"memid","Y");
+//					if(kdclStatisticsSource != null){
+////						log.info("userInfoClassifyIsY:"+userInfoClassifyIsY);
+////						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
+////						log.info("----------------------------");
+//						userInfoClassifyIsY = userInfoClassifyIsY + kdclStatisticsSource.getCounter();
+//						kdclStatisticsSource.setCounter(userInfoClassifyIsY);
+//						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
+//					}else{
+//						savekdclStatisticsSource("memid","member","personal_info","Y",userInfoClassifyIsY,recodeDate,date,kdclStatisticsSourceService);	
+//					}
+//				}
+//				if(enumKdclStatisticsSource.getKey().equals("user_info_Classify_N")){
+//					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("personal_info",recodeDate,"memid","N");
+//					if(kdclStatisticsSource != null){
+////						log.info("userInfoClassifyIsN:"+userInfoClassifyIsN);
+////						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
+////						log.info("----------------------------");
+//						userInfoClassifyIsN = userInfoClassifyIsN + kdclStatisticsSource.getCounter();
+//						kdclStatisticsSource.setCounter(userInfoClassifyIsN);
+//						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
+//					}else{
+//						savekdclStatisticsSource("memid","member","personal_info","N",userInfoClassifyIsN,recodeDate,date,kdclStatisticsSourceService);	
+//					}
+//				}
+//				
+//			}
+//			log.info("------------ cleanup end ------------");
+//			producer.close();
+//		} catch (Exception e) {
+//			log.error(e.getMessage());
+//		}
 	}
 
 	
