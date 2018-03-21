@@ -73,10 +73,9 @@ public class PersonalLogDriver {
 	private SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMddHHmmss");
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
-	public void drive(String env,String timeType) throws Exception {
+	public void drive(String env) throws Exception {
 		log.info(">>>>>> PersonalLog Job Date: " + sdf1.format(date));
 		log.info(">>>>>> env: " + env);
-		log.info(">>>>>> timeType: " + timeType);
 		
 		JobConf jobConf = new JobConf();
 		jobConf.setNumMapTasks(8);
@@ -100,9 +99,13 @@ public class PersonalLogDriver {
 		
 		FileSystem fs = FileSystem.get(jobConf);
 		
-		//hdfs存在則刪除
-		deleteExistedDir(fs, new Path("/home/webuser/dmp/adLogClassStg/personallog/2018-03-12"), true);
 		
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DATE,-1);
+		 
+		//hdfs存在則刪除
+		deleteExistedDir(fs, new Path("/home/webuser/dmp/adLogClassPrd/personallog/2018-03-12"), true);
+										
 		// job
 		log.info("----job start----");
 		Job job = new Job(jobConf, "dmp_personal_log " + sdf.format(date));
@@ -115,54 +118,21 @@ public class PersonalLogDriver {
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
 		job.setNumReduceTasks(1);
-//		job.setMapSpeculativeExecution(false);
 		
-		// job.setOutputFormatClass(NullOutputFormat.class);
-		if (timeType.equals("day")) {
-			FileOutputFormat.setOutputPath(job, new Path(adLogClassPpath + sdf2.format(date)));
-			StringBuffer alllogOpRange = new StringBuffer();
-			boolean testFlag = Boolean.parseBoolean(inputPathTestingFlag);
-			log.info("testFlag=" + testFlag);
-			if (testFlag) {
-				// testData:
-				alllogOpRange.append(inputPathTestingPath);
-			} else {
-				alllogOpRange.append(analyzerPathAlllog);
-				alllogOpRange.append(sdf1.format(date));
-			}
-			String bessieTempPath = analyzerPathAlllog+sdf1.format(date);
-			FileInputFormat.addInputPaths(job, bessieTempPath);
-			log.info("file Input Path : " + alllogOpRange);
-		} else if (timeType.equals("hour")) {
-			StringBuffer alllogOpRange = new StringBuffer();
-			alllogOpRange.append(analyzerPathAlllog);
-			alllogOpRange.append(sdf1.format(date));
-			String timePath  = "";
-			Calendar calendar = Calendar.getInstance();  
-			if(calendar.get(Calendar.HOUR_OF_DAY) == 24){
-				calendar.add(Calendar.DAY_OF_MONTH, -1); 
-				timePath = sdf1.format(calendar.getTime())+"/00";
-			}else{
-				if(calendar.get(Calendar.HOUR_OF_DAY) < 10){
-					timePath = sdf1.format(calendar.getTime()) +"/"+ "0"+(calendar.get(Calendar.HOUR_OF_DAY) - 1);
-				}else{
-					timePath = sdf1.format(calendar.getTime()) +"/"+ (calendar.get(Calendar.HOUR_OF_DAY) - 1);	
-				}
-			}
+		StringBuffer alllogOpRange = new StringBuffer();
+		alllogOpRange.append(analyzerPathAlllog);
+		alllogOpRange.append(sdf1.format(date));
 			
-			//輸入
-			String inputPpath = "/home/webuser/analyzer/storedata/alllog/2018-03-12";//+sdf1.format(date);
-			//輸出
-			String outputPath = "/home/webuser/dmp/adLogClassStg/personallog/2018-03-12";//+sdf1.format(date);
-			log.info(">>>>>>INPUT PATH:"+inputPpath);
-			log.info(">>>>>>OUTPUT PATH:"+outputPath);
+		//輸入
+		String inputPpath = "/home/webuser/analyzer/storedata/"+sdf1.format(calendar.getTime());
+		//輸出
+		String outputPath = "/home/webuser/dmp/adLogClassPrd/personallog/"+sdf1.format(calendar.getTime());
 			
-			FileInputFormat.addInputPaths(job, inputPpath);
-			FileOutputFormat.setOutputPath(job, new Path(outputPath));
-		} else {
-			log.info("date = null");
-			return;
-		}
+		log.info(">>>>>>INPUT PATH:"+inputPpath);
+		log.info(">>>>>>OUTPUT PATH:"+outputPath);
+			
+		FileInputFormat.addInputPaths(job, inputPpath);
+		FileOutputFormat.setOutputPath(job, new Path(outputPath));
 
 		String[] jarPaths = {
 				"/home/webuser/dmp/webapps/analyzer/lib/commons-lang-2.6.jar",
@@ -232,11 +202,9 @@ public class PersonalLogDriver {
 		log.info("====driver start====");
 		String date = "";
 		boolean jobFlag = false;
-		if(args.length != 2){
+		if(args.length != 1){
 			jobFlag = true;
 		}else if(!args[0].equals("prd") && !args[0].equals("stg")){
-			jobFlag = true;
-		}else if(!args[1].equals("day") && !args[1].equals("hour")){
 			jobFlag = true;
 		}
 		if(jobFlag){
@@ -250,8 +218,8 @@ public class PersonalLogDriver {
 			System.setProperty("spring.profiles.active", "stg");
 		}
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-		PersonalLogDriver CategoryDriver = (PersonalLogDriver) ctx.getBean(PersonalLogDriver.class);
-		CategoryDriver.drive(args[0],args[1]);
+		PersonalLogDriver personalLogDriver = (PersonalLogDriver) ctx.getBean(PersonalLogDriver.class);
+		personalLogDriver.drive(args[0]);
 		log.info("====driver end====");
 	}
 

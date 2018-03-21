@@ -77,14 +77,18 @@ public class PersonalLogReducer extends Reducer<Text, Text, Text, Text> {
 	
 	private SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
 	
+	private String environment;
+	
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		try {
 			this.sdf = new SimpleDateFormat("yyyy-MM-dd");
 			if(StringUtils.isNotBlank(context.getConfiguration().get("spring.profiles.active"))){
 				System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
+				this.environment = "prd";
 			}else{
 				System.setProperty("spring.profiles.active", "stg");
+				this.environment = "stg";
 			}
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			this.kdclStatisticsSourceService = ctx.getBean(KdclStatisticsSourceService.class);
@@ -127,7 +131,6 @@ public class PersonalLogReducer extends Reducer<Text, Text, Text, Text> {
 		// 7 : Type(memid or uuid)
 		try {
 //			log.info(">>>>>> reduce start : " + key);
-
 			String data[] = key.toString().split(SYMBOL);
 
 			JSONObject json = new JSONObject();
@@ -138,11 +141,6 @@ public class PersonalLogReducer extends Reducer<Text, Text, Text, Text> {
 			json.put("sex", data[4]);
 			json.put("source", data[5]);
 			json.put("recordDate", data[6]);
-
-			//發送給kafka
-//			Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_stg", "", json.toString()));
-			// while (!f.isDone()) {
-			// }
 
 			keyOut.set(key);
 			context.write(keyOut, valueOut);
@@ -195,7 +193,11 @@ public class PersonalLogReducer extends Reducer<Text, Text, Text, Text> {
 	public void cleanup(Context context) {
 		try {
 			log.info("------------ cleanup start ------------");
-			System.setProperty("spring.profiles.active", "stg");
+			if(this.environment.equals("prd")){
+				System.setProperty("spring.profiles.active", "prd");
+			}else{
+				System.setProperty("spring.profiles.active", "stg");
+			}
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			this.kdclStatisticsSourceService = ctx.getBean(KdclStatisticsSourceService.class);
 			
@@ -311,9 +313,9 @@ public class PersonalLogReducer extends Reducer<Text, Text, Text, Text> {
 				if(enumKdclStatisticsSource.getKey().equals("UUID_RUTEN_N")){
 					KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("ruten",recodeDate,"uuid","N");
 					if(kdclStatisticsSource != null){
-						log.info("uuidRutenClassifyIsN:"+uuidRutenClassifyIsN);
-						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
-						log.info("----------------------------");
+//						log.info("uuidRutenClassifyIsN:"+uuidRutenClassifyIsN);
+//						log.info("kdclStatisticsSource.getCounter():"+kdclStatisticsSource.getCounter());
+//						log.info("----------------------------");
 						uuidRutenClassifyIsN = uuidRutenClassifyIsN + kdclStatisticsSource.getCounter();
 						kdclStatisticsSource.setCounter(uuidRutenClassifyIsN);
 						kdclStatisticsSourceService.saveOrUpdate(kdclStatisticsSource);
@@ -382,8 +384,6 @@ public class PersonalLogReducer extends Reducer<Text, Text, Text, Text> {
 			log.error(e.getMessage());
 		}
 	}
-
-	
 	
 	public void savekdclStatisticsSource(String idType,String serviceType,String behavior,String classify ,int count,String recodeDate,Date date,IKdclStatisticsSourceService kdclStatisticsSourceService) throws Exception{
 		KdclStatisticsSource kdclStatisticsSource = new KdclStatisticsSource();
@@ -397,78 +397,5 @@ public class PersonalLogReducer extends Reducer<Text, Text, Text, Text> {
 		kdclStatisticsSource.setCreateDate(date);
 		kdclStatisticsSourceService.save(kdclStatisticsSource);
 	}
-	
-	
-	
-	
-	public static void main(String[] args) throws Exception {
-		System.setProperty("spring.profiles.active", "local");
-		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-		IKdclStatisticsSourceService kdclStatisticsSourceService = (KdclStatisticsSourceService) ctx.getBean(KdclStatisticsSourceService.class);
-		Date date = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		
-		
-//		int a = 0;
-//		Calendar calendar = Calendar.getInstance();  
-//		if(calendar.get(Calendar.HOUR_OF_DAY) == 16){
-//			calendar.add(Calendar.DAY_OF_MONTH, -1); 
-//			System.out.println(sdf.format(calendar.getTime()));;
-//		}
-//		KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("7", sdf.format(calendar.getTime()));
-//		a = a + kdclStatisticsSource.getCounter();
-//		
-//		System.out.println(a);
-//		
-//		kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("7", sdf.format(calendar.getTime()));
-//		
-//		
-//		a = a + 10;
-//		
-		
-		
-//		String recodeDate = sdf.format(date);
-//		System.out.println(recodeDate);
-//		kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("ad_click", recodeDate);
-//		kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("24h", recodeDate);
-//		kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("ruten", recodeDate);
-//		kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("personal_info", recodeDate);
-		
-		
-//		UserDetailService userDetailService = (UserDetailService) ctx.getBean(UserDetailService.class);
-//		UserDetailMongoBean userDetailMongoBean = userDetailService.findUserId("zxc910615");
-//		
-//		System.out.println(userDetailMongoBean.get_id());
-//		System.out.println((String)userDetailMongoBean.getUser_info().get("sex"));
-		
-		
-		
-		
-		
-		
-		
-//		Query query = new Query(Criteria.where(ClassCountMongoDBEnum.USER_ID.getKey()).is(uuid));
-//		UserDetailMongoBean userDetailMongoBean =  mongoOperations.findOne(query, UserDetailMongoBean.class);
-//		userDetailMongoBean.getUser_info().get("sex")
-//		userDetailMongoBean.getUser_info().get("age")
-		
-		
-		
-		
-//		System.out.println(userDetailMongoBean.getCategory_info().get(0).get("category"));
-		
-		
-//		KdclStatisticsSource kdclStatisticsSource = new KdclStatisticsSource();
-//		kdclStatisticsSource.setClassify("A");
-//		kdclStatisticsSource.setIdType("alex");
-//		kdclStatisticsSource.setServiceType("9");
-//		kdclStatisticsSource.setBehavior("GGG");
-//		kdclStatisticsSource.setCounter(0);
-//		kdclStatisticsSource.setRecordDate("2018-01-25");
-//		kdclStatisticsSource.setUpdateDate(new Date());
-//		kdclStatisticsSource.setCreateDate(new Date());
-//		kdclStatisticsSourceService.save(kdclStatisticsSource);
-	}
-
 
 }

@@ -2,7 +2,6 @@ package com.pchome.hadoopdmp.mapreduce.job.categorylog;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -22,8 +21,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.pchome.hadoopdmp.data.mysql.pojo.KdclStatisticsSource;
-import com.pchome.hadoopdmp.enumerate.EnumKdclStatisticsSource;
 import com.pchome.hadoopdmp.mysql.db.service.kdclSatisticsSource.IKdclStatisticsSourceService;
 import com.pchome.hadoopdmp.mysql.db.service.kdclSatisticsSource.KdclStatisticsSourceService;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
@@ -144,10 +141,10 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 
 			//發送給kafka
 			if(this.environment.equals("prd")){
-//				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_prd", "", json.toString()));
-//				 while (!f.isDone()) {
-//				 }
-//			}else{
+				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_stg", "", json.toString()));
+				 while (!f.isDone()) {
+				 }
+			}else{
 //				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_stg", "", json.toString()));
 //				 while (!f.isDone()) {
 //				 }
@@ -155,50 +152,50 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 //			
 //
 //			log.info(">>>>>>reduce write key:" + key);
-			keyOut.set(key);
-			context.write(keyOut, valueOut);
+//			keyOut.set(key);
+//			context.write(keyOut, valueOut);
 			
 //			log.info("TEST KEY >>>>>>>>>>>>>>>>>>>>"+data[9]);
 //			log.info("TEST KEY >>>>>>>>>>>>>>>>>>>>"+uuid24ClassifyIsY);
 			
-			if(key.toString().indexOf("uuid_24h_Y") >=0 ){
-				uuid24ClassifyIsY = uuid24ClassifyIsY + 1;
-			}
-			if(key.toString().indexOf("uuid_24h_N") >=0 ){
-				uuid24ClassifyIsN = uuid24ClassifyIsN + 1;
-			}
-			if(key.toString().indexOf("memid_24h_Y") >=0 ){
-				memid24ClassifyIsY = memid24ClassifyIsY + 1;
-			}
-			if(key.toString().indexOf("memid_24h_N") >=0 ){
-				memid24ClassifyIsN = memid24ClassifyIsN + 1;
-			}
-			if(key.toString().indexOf("uuid_ruten_Y") >=0 ){
-				uuidRutenClassifyIsY = uuidRutenClassifyIsY + 1;
-			}
-			if(key.toString().indexOf("uuid_ruten_N") >=0 ){
-				uuidRutenClassifyIsN = uuidRutenClassifyIsN + 1;
-			}
-			if(key.toString().indexOf("memid_ruten_Y") >=0 ){
-				memidRutenClassifyIsY = memidRutenClassifyIsY + 1;
-			}
-			if(key.toString().indexOf("memid_ruten_N") >=0 ){
-				memidRutenClassifyIsN = memidRutenClassifyIsN + 1;
-			}
-			if(key.toString().indexOf("memid_adclick_Y") >=0 ){
-				memidAdclickClassifyIsY = memidAdclickClassifyIsY + 1;
-			}
-			if(key.toString().indexOf("uuid_adclick_Y") >=0 ){
-				uuidAdclickClassifyIsY = uuidAdclickClassifyIsY + 1;
-			}
-			if(key.toString().indexOf("user_info_Classify_Y") >=0 ){
-				userInfoClassifyIsY = userInfoClassifyIsY + 1;
-			}
-			if(key.toString().indexOf("user_info_Classify_N") >=0 ){
-				userInfoClassifyIsN = userInfoClassifyIsN + 1;
-			}
-			
-			context.write(new Text(data[7]), new Text("1"));
+//			if(key.toString().indexOf("uuid_24h_Y") >=0 ){
+//				uuid24ClassifyIsY = uuid24ClassifyIsY + 1;
+//			}
+//			if(key.toString().indexOf("uuid_24h_N") >=0 ){
+//				uuid24ClassifyIsN = uuid24ClassifyIsN + 1;
+//			}
+//			if(key.toString().indexOf("memid_24h_Y") >=0 ){
+//				memid24ClassifyIsY = memid24ClassifyIsY + 1;
+//			}
+//			if(key.toString().indexOf("memid_24h_N") >=0 ){
+//				memid24ClassifyIsN = memid24ClassifyIsN + 1;
+//			}
+//			if(key.toString().indexOf("uuid_ruten_Y") >=0 ){
+//				uuidRutenClassifyIsY = uuidRutenClassifyIsY + 1;
+//			}
+//			if(key.toString().indexOf("uuid_ruten_N") >=0 ){
+//				uuidRutenClassifyIsN = uuidRutenClassifyIsN + 1;
+//			}
+//			if(key.toString().indexOf("memid_ruten_Y") >=0 ){
+//				memidRutenClassifyIsY = memidRutenClassifyIsY + 1;
+//			}
+//			if(key.toString().indexOf("memid_ruten_N") >=0 ){
+//				memidRutenClassifyIsN = memidRutenClassifyIsN + 1;
+//			}
+//			if(key.toString().indexOf("memid_adclick_Y") >=0 ){
+//				memidAdclickClassifyIsY = memidAdclickClassifyIsY + 1;
+//			}
+//			if(key.toString().indexOf("uuid_adclick_Y") >=0 ){
+//				uuidAdclickClassifyIsY = uuidAdclickClassifyIsY + 1;
+//			}
+//			if(key.toString().indexOf("user_info_Classify_Y") >=0 ){
+//				userInfoClassifyIsY = userInfoClassifyIsY + 1;
+//			}
+//			if(key.toString().indexOf("user_info_Classify_N") >=0 ){
+//				userInfoClassifyIsN = userInfoClassifyIsN + 1;
+//			}
+//			
+//			context.write(new Text(data[7]), new Text("1"));
 		} catch (Exception e) {
 			log.info("reduce error"+e.getMessage());
 			log.error(key, e);
@@ -207,51 +204,45 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	}
 
 	public void cleanup(Context context) {
-		if(this.environment.equals("prd")){
-			log.info(">>>>>>cleanup:prd");
-		}else{
-			log.info(">>>>>>cleanup:stg");
-		}
-		
-		for (EnumKdclStatisticsSource enumKdclStatisticsSource : EnumKdclStatisticsSource.values()) {
-			if(enumKdclStatisticsSource.getKey().equals("MEMID_24_Y")){
-				log.info("memid24ClassifyIsY:"+memid24ClassifyIsY);
-			}
-			if(enumKdclStatisticsSource.getKey().equals("MEMID_24_N")){
-				log.info("memid24ClassifyIsN:"+memid24ClassifyIsN);
-			}
-			if(enumKdclStatisticsSource.getKey().equals("UUID_24_N")){
-				log.info("uuid24ClassifyIsN:"+uuid24ClassifyIsN);
-			}
-			if(enumKdclStatisticsSource.getKey().equals("UUID_24_Y")){
-				log.info("uuid24ClassifyIsN:"+uuid24ClassifyIsY);
-			}
-			
-			if(enumKdclStatisticsSource.getKey().equals("MEMID_RUTEN_Y")){
-				log.info("memidRutenClassifyIsY:"+memidRutenClassifyIsY);
-			}
-			if(enumKdclStatisticsSource.getKey().equals("MEMID_RUTEN_N")){
-				log.info("memidRutenClassifyIsN:"+memidRutenClassifyIsN);
-			}
-			if(enumKdclStatisticsSource.getKey().equals("UUID_RUTEN_Y")){
-				log.info("uuidRutenClassifyIsY:"+uuidRutenClassifyIsY);
-			}
-			if(enumKdclStatisticsSource.getKey().equals("UUID_RUTEN_N")){
-				log.info("uuidRutenClassifyIsN:"+uuidRutenClassifyIsN);
-			}
-			if(enumKdclStatisticsSource.getKey().equals("MEMID_ADCLICK_Y")){
-				log.info("uuidAdclickClassifyIsY:"+memidAdclickClassifyIsY);
-			}
-			if(enumKdclStatisticsSource.getKey().equals("UUID_ADCLICK_Y")){
-				log.info("uuidAdclickClassifyIsY:"+uuidAdclickClassifyIsY);
-			}
-		}
-		
-		
-		
-		
-		
-		
+//		if(this.environment.equals("prd")){
+//			log.info(">>>>>>cleanup:prd");
+//		}else{
+//			log.info(">>>>>>cleanup:stg");
+//		}
+//		
+//		for (EnumKdclStatisticsSource enumKdclStatisticsSource : EnumKdclStatisticsSource.values()) {
+//			if(enumKdclStatisticsSource.getKey().equals("MEMID_24_Y")){
+//				log.info("memid24ClassifyIsY:"+memid24ClassifyIsY);
+//			}
+//			if(enumKdclStatisticsSource.getKey().equals("MEMID_24_N")){
+//				log.info("memid24ClassifyIsN:"+memid24ClassifyIsN);
+//			}
+//			if(enumKdclStatisticsSource.getKey().equals("UUID_24_N")){
+//				log.info("uuid24ClassifyIsN:"+uuid24ClassifyIsN);
+//			}
+//			if(enumKdclStatisticsSource.getKey().equals("UUID_24_Y")){
+//				log.info("uuid24ClassifyIsN:"+uuid24ClassifyIsY);
+//			}
+//			
+//			if(enumKdclStatisticsSource.getKey().equals("MEMID_RUTEN_Y")){
+//				log.info("memidRutenClassifyIsY:"+memidRutenClassifyIsY);
+//			}
+//			if(enumKdclStatisticsSource.getKey().equals("MEMID_RUTEN_N")){
+//				log.info("memidRutenClassifyIsN:"+memidRutenClassifyIsN);
+//			}
+//			if(enumKdclStatisticsSource.getKey().equals("UUID_RUTEN_Y")){
+//				log.info("uuidRutenClassifyIsY:"+uuidRutenClassifyIsY);
+//			}
+//			if(enumKdclStatisticsSource.getKey().equals("UUID_RUTEN_N")){
+//				log.info("uuidRutenClassifyIsN:"+uuidRutenClassifyIsN);
+//			}
+//			if(enumKdclStatisticsSource.getKey().equals("MEMID_ADCLICK_Y")){
+//				log.info("memidAdclickClassifyIsY:"+memidAdclickClassifyIsY);
+//			}
+//			if(enumKdclStatisticsSource.getKey().equals("UUID_ADCLICK_Y")){
+//				log.info("uuidAdclickClassifyIsY:"+uuidAdclickClassifyIsY);
+//			}
+//		}
 		
 //		try {
 //			log.info("------------ cleanup start ------------");

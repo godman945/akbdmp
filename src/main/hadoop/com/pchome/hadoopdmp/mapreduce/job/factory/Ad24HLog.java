@@ -65,7 +65,6 @@ public class Ad24HLog extends ACategoryLogData {
 		if(classUrlMongoBean != null){
 			//爬蟲
 			if(classUrlMongoBean.getStatus().equals("0")){
-				Log.info(">>>>>>classUrlMongoBean.getStatus().equals(0):"+sourceUrl);
 				adClass = crawlerGetAdclass(sourceUrl);
 				if(adClass.matches("\\d{16}")){
 					Date date = new Date();
@@ -103,16 +102,12 @@ public class Ad24HLog extends ACategoryLogData {
 		
 		//取個資
 		if(StringUtils.isNotBlank(memid) && (!memid.equals("null"))){
-			Log.info(">>>>>24h memid:"+memid);
-			
+//			Log.info(">>>>>24h memid:"+memid);
 			Query queryUserInfo = new Query(Criteria.where(ClassCountMongoDBEnum.USER_ID.getKey()).is(uuid));
 			UserDetailMongoBean userDetailMongoBean =  mongoOperations.findOne(queryUserInfo, UserDetailMongoBean.class);
 			String sex = "";
 			String age = "";
 			if(userDetailMongoBean != null){
-				Log.info(">>>>>24h userDetailMongoBean != null:"+userDetailMongoBean.getUser_id());
-				Log.info(">>>>>24h getCreate_date:"+userDetailMongoBean.getCreate_date());
-				
 				sex = (String)userDetailMongoBean.getUser_info().get("sex");
 				age = (String)userDetailMongoBean.getUser_info().get("age");
 				categoryLogBean.setPersonalInfoClassify("Y");
@@ -129,11 +124,6 @@ public class Ad24HLog extends ACategoryLogData {
 			categoryLogBean.setBehaviorClassify(behaviorClassify);
 			return categoryLogBean;
 		}else if(StringUtils.isNotBlank(uuid) && (!uuid.equals("null"))){
-//			APersonalInfo aPersonalInfo = PersonalInfoFactory.getAPersonalInfoFactory(PersonalInfoEnum.UUID);
-//			Map<String, Object> uuidMap = aPersonalInfo.getMap();
-//			uuidMap.put("adClass", adClass); 
-//			uuidMap.put("ClsfyCraspMap", CategoryLogMapper.clsfyCraspMap);
-//			Map<String, Object> userInfo = (Map<String, Object>) aPersonalInfo.personalData(uuidMap);
 			Query queryUserInfo = new Query(Criteria.where(ClassCountMongoDBEnum.USER_ID.getKey()).is(uuid));
 			UserDetailMongoBean userDetailMongoBean =  mongoOperations.findOne(queryUserInfo, UserDetailMongoBean.class);
 			
