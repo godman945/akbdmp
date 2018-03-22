@@ -100,10 +100,8 @@ public class PersonalLogDriver {
 		jobConf.set("job.date",sdf1.format(calendar.getTime()));
 		
 		FileSystem fs = FileSystem.get(jobConf);
-		calendar.add(Calendar.DATE,-1);
-		 
 		//hdfs存在則刪除
-		deleteExistedDir(fs, new Path("/home/webuser/dmp/adLogClassPrd/personallog/"+sdf1.format(calendar.getTime())), true);
+		deleteExistedDir(fs, new Path("/home/webuser/dmp/adLogClassPrd/personallog/alllog/"+sdf1.format(calendar.getTime())), true);
 										
 		// job
 		log.info("----job start----");
