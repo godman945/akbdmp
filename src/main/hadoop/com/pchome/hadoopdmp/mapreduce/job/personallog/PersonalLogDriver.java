@@ -102,7 +102,7 @@ public class PersonalLogDriver {
 		FileSystem fs = FileSystem.get(jobConf);
 		//hdfs存在則刪除
 		deleteExistedDir(fs, new Path("/home/webuser/dmp/adLogClassPrd/personallog/alllog/"+sdf1.format(calendar.getTime())), true);
-										
+						
 		// job
 		log.info("----job start----");
 		Job job = new Job(jobConf, "dmp_personal_log " + sdf.format(date));
@@ -121,7 +121,7 @@ public class PersonalLogDriver {
 		alllogOpRange.append(sdf1.format(date));
 			
 		//輸入
-		String inputPpath = "/home/webuser/analyzer/storedata/"+sdf1.format(calendar.getTime());
+		String inputPpath = "/home/webuser/analyzer/storedata/alllog/"+sdf1.format(calendar.getTime());
 		//輸出
 		String outputPath = "/home/webuser/dmp/adLogClassPrd/personallog/"+sdf1.format(calendar.getTime());
 			
