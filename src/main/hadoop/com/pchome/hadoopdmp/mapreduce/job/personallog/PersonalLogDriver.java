@@ -101,7 +101,7 @@ public class PersonalLogDriver {
 		
 		FileSystem fs = FileSystem.get(jobConf);
 		//hdfs存在則刪除
-		deleteExistedDir(fs, new Path("/home/webuser/dmp/adLogClassPrd/personallog/alllog/"+sdf1.format(calendar.getTime())), true);
+		deleteExistedDir(fs, new Path("/home/webuser/dmp/adLogClassPrd/personallog/"+sdf1.format(calendar.getTime())), true);
 						
 		// job
 		log.info("----job start----");
