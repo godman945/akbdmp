@@ -109,6 +109,9 @@ public class CategoryLogDriver {
 			calendar.add(Calendar.DAY_OF_MONTH, -1);
 			conf.set("job.date",sdf1.format(calendar.getTime()));
 			jobConf.set("job.date",sdf1.format(calendar.getTime()));
+		}else{
+			conf.set("job.date",sdf1.format(calendar.getTime()));
+			jobConf.set("job.date",sdf1.format(calendar.getTime()));
 		}
 		Date date = new Date();
 		
@@ -120,7 +123,7 @@ public class CategoryLogDriver {
 		// job
 		log.info("----job start----");
 
-		Job job = new Job(jobConf, "dmp_Category_Log " + sdf.format(new Date()));
+		Job job = new Job(jobConf, "dmp_category_log " + sdf.format(date));
 		job.setJarByClass(CategoryLogDriver.class);
 		job.setMapperClass(CategoryLogMapper.class);
 		job.setMapOutputKeyClass(Text.class);
@@ -130,7 +133,6 @@ public class CategoryLogDriver {
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
 		job.setNumReduceTasks(1);
-		
 		job.setMapSpeculativeExecution(false);
 		
 		// job.setOutputFormatClass(NullOutputFormat.class);
@@ -155,15 +157,15 @@ public class CategoryLogDriver {
 			alllogOpRange.append(sdf1.format(date));
 //			/home/webuser/akb/storedata/alllog/2017-10-01/00
 			String timePath  = "";
-			calendar = Calendar.getInstance();
-			if(calendar.get(Calendar.HOUR_OF_DAY) == 0){
-			calendar.add(Calendar.DAY_OF_MONTH, -1); 
-			timePath = sdf1.format(calendar.getTime())+"/23";
+			Calendar calendar2 = Calendar.getInstance();
+			if(calendar2.get(calendar2.HOUR_OF_DAY) == 0){
+			calendar2.add(calendar2.DAY_OF_MONTH, -1); 
+			timePath = sdf1.format(calendar2.getTime())+"/23";
 			}else {
-				if(String.valueOf(calendar.get(Calendar.HOUR_OF_DAY) - 1).length() < 2){
-					timePath = sdf1.format(calendar.getTime()) +"/"+ "0"+(calendar.get(Calendar.HOUR_OF_DAY) - 1);
+				if(String.valueOf(calendar2.get(calendar2.HOUR_OF_DAY) - 1).length() < 2){
+					timePath = sdf1.format(calendar2.getTime()) +"/"+ "0"+(calendar.get(calendar2.HOUR_OF_DAY) - 1);
 				}else{
-					timePath = sdf1.format(calendar.getTime()) +"/"+ (calendar.get(Calendar.HOUR_OF_DAY) - 1);
+					timePath = sdf1.format(calendar2.getTime()) +"/"+ (calendar.get(calendar2.HOUR_OF_DAY) - 1);
 				}
 			}
 //			//輸入
@@ -173,7 +175,7 @@ public class CategoryLogDriver {
 			//輸入
 			String adLogClassPpath = "/home/webuser/akb/storedata/alllog/"+timePath;
 			//輸出
-			String bessieTempPath = "/home/webuser/dmp/adLogClassPrd/time/"+timePath;
+			String bessieTempPath = "/home/webuser/dmp/adLogClassPrd/categorylog/"+timePath;
 			log.info(">>>>>>INPUT PATH:"+adLogClassPpath);
 			log.info(">>>>>>OUTPUT PATH:"+bessieTempPath);
 			
