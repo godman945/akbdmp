@@ -133,14 +133,14 @@ public class PersonalLogReducer extends Reducer<Text, Text, Text, Text> {
 //			log.info(">>>>>> reduce start : " + key);
 			String data[] = key.toString().split(SYMBOL);
 
-			JSONObject json = new JSONObject();
-			json.put("memid", data[0]);
-			json.put("uuid", data[1]);
-			json.put("adClass", data[2]);
-			json.put("age", data[3]);
-			json.put("sex", data[4]);
-			json.put("source", data[5]);
-			json.put("recordDate", data[6]);
+//			JSONObject json = new JSONObject();
+//			json.put("memid", data[0]);
+//			json.put("uuid", data[1]);
+//			json.put("adClass", data[2]);
+//			json.put("age", data[3]);
+//			json.put("sex", data[4]);
+//			json.put("source", data[5]);
+//			json.put("recordDate", data[6]);
 
 			keyOut.set(key);
 			context.write(keyOut, valueOut);
