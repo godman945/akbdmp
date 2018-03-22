@@ -70,13 +70,15 @@ public class PersonalLogDriver {
 	
 	private Date date = new Date();
 	private SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
-	private SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMddHHmmss");
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	public void drive(String env) throws Exception {
 		log.info(">>>>>> PersonalLog Job Date: " + sdf1.format(date));
 		log.info(">>>>>> env: " + env);
-		
+	
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DAY_OF_MONTH, -1);
+
 		JobConf jobConf = new JobConf();
 		jobConf.setNumMapTasks(8);
 		jobConf.set("mapred.max.split.size","200388608");
@@ -95,16 +97,13 @@ public class PersonalLogDriver {
 		jobConf.set("mapred.child.java.opts", "-Xmx4072m");
 		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx4072m");
 		jobConf.set("spring.profiles.active", env);
-		jobConf.set("job.date",sdf1.format(date));
+		jobConf.set("job.date",sdf1.format(calendar.getTime()));
 		
 		FileSystem fs = FileSystem.get(jobConf);
-		
-		
-		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.DATE,-1);
 		 
 		//hdfs存在則刪除
-		deleteExistedDir(fs, new Path("/home/webuser/dmp/adLogClassPrd/personallog/2018-03-12"), true);
+		deleteExistedDir(fs, new Path("/home/webuser/dmp/adLogClassPrd/personallog/"+sdf1.format(calendar.getTime())), true);
 										
 		// job
 		log.info("----job start----");

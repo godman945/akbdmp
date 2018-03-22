@@ -145,9 +145,9 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 				 while (!f.isDone()) {
 				 }
 			}else{
-//				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_stg", "", json.toString()));
-//				 while (!f.isDone()) {
-//				 }
+				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_stg", "", json.toString()));
+				 while (!f.isDone()) {
+				 }
 			}
 //			
 //

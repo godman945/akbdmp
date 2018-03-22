@@ -50,11 +50,6 @@ public class AdClickLog extends ACategoryLogData {
 			
 			return categoryLogBean;
 		}else if((StringUtils.isNotBlank(uuid)) && (!uuid.equals("null"))){
-//			APersonalInfo aPersonalInfo = PersonalInfoFactory.getAPersonalInfoFactory(PersonalInfoEnum.UUID);
-//			Map<String, Object> uuidMap = aPersonalInfo.getMap();
-//			uuidMap.put("adClass", adClass); 
-//			uuidMap.put("ClsfyCraspMap", CategoryLogMapper.clsfyCraspMap);
-//			Map<String, Object> userInfo = (Map<String, Object>) aPersonalInfo.personalData(uuidMap);
 			Query queryUserInfo = new Query(Criteria.where(ClassCountMongoDBEnum.USER_ID.getKey()).is(uuid));
 			UserDetailMongoBean userDetailMongoBean =  mongoOperations.findOne(queryUserInfo, UserDetailMongoBean.class);
 			String sex = "";

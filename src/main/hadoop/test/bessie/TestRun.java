@@ -602,9 +602,10 @@ public class TestRun {
 	
 	public static void main(String[] args) {
 		try {
-			System.setProperty("spring.profiles.active", "stg");
-			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-			TestRun TestRun = (TestRun) ctx.getBean(TestRun.class);
+			System.out.println("SSSSSSSSSSSSS");
+//			System.setProperty("spring.profiles.active", "stg");
+//			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//			TestRun TestRun = (TestRun) ctx.getBean(TestRun.class);
 			// TestRun.hibernateDbTest();
 			// TestRun.listTest();
 			// TestRun.hibernateDbTest2();
@@ -630,7 +631,7 @@ public class TestRun {
 //			TestRun.mongoNE();
 //			TestRun.dmpTransferDataLog();
 //			TestRun.userDetail();
-			TestRun.verifyTransferData();
+//			TestRun.verifyTransferData();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
