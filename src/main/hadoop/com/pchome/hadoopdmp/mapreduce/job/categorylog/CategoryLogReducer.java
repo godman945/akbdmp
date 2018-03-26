@@ -140,15 +140,15 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 			json.put("recordDate", data[6]);
 
 			//發送給kafka
-//			if(this.environment.equals("prd")){
-//				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_prd", "", json.toString()));
-//				 while (!f.isDone()) {
-//				 }
-//			}else{
+			if(this.environment.equals("prd")){
+				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_prd", "", json.toString()));
+				 while (!f.isDone()) {
+				 }
+			}else{
 				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_stg", "", json.toString()));
 				 while (!f.isDone()) {
 				 }
-//			}
+			}
 //			
 //
 //			log.info(">>>>>>reduce write key:" + key);
