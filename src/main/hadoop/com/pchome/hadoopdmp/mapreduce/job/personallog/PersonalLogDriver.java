@@ -175,7 +175,7 @@ public class PersonalLogDriver {
 	}
 
 	
-	 public static boolean deleteExistedDir(FileSystem fs, Path path, boolean recursive) throws IOException {
+	public static boolean deleteExistedDir(FileSystem fs, Path path, boolean recursive) throws IOException {
 	        try {
 	            // check path exists
 	            if (fs.exists(path)) {
@@ -186,7 +186,7 @@ public class PersonalLogDriver {
 	            log.error("Delete " + path + " error: ", e);
 	        }
 	        return false;
-	    }
+	}
 	
 	public static void printUsage() {
 		System.out.println("Usage(hour): [DATE] [HOUR]");

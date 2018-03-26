@@ -1,5 +1,6 @@
 package com.pchome.hadoopdmp.mapreduce.job.categorylog;
 
+import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -148,6 +149,7 @@ public class CategoryLogDriver {
 				alllogOpRange.append(analyzerPathAlllog);
 				alllogOpRange.append(sdf1.format(date));
 			}
+			
 			String bessieTempPath = analyzerPathAlllog+sdf1.format(date);
 			FileInputFormat.addInputPaths(job, bessieTempPath);
 			log.info("file Input Path : " + alllogOpRange);
@@ -159,8 +161,8 @@ public class CategoryLogDriver {
 			String timePath  = "";
 			Calendar calendar2 = Calendar.getInstance();
 			if(calendar2.get(calendar2.HOUR_OF_DAY) == 0){
-			calendar2.add(calendar2.DAY_OF_MONTH, -1); 
-			timePath = sdf1.format(calendar2.getTime())+"/23";
+				calendar2.add(calendar2.DAY_OF_MONTH, -1); 
+				timePath = sdf1.format(calendar2.getTime())+"/23";
 			}else {
 				if(String.valueOf(calendar2.get(calendar2.HOUR_OF_DAY) - 1).length() < 2){
 					timePath = sdf1.format(calendar2.getTime()) +"/"+ "0"+(calendar.get(calendar2.HOUR_OF_DAY) - 1);
@@ -176,6 +178,10 @@ public class CategoryLogDriver {
 			String adLogClassPpath = "/home/webuser/akb/storedata/alllog/"+timePath;
 			//輸出
 			String bessieTempPath = "/home/webuser/dmp/adLogClassPrd/categorylog/"+timePath;
+			
+			//hdfs存在則刪除
+			deleteExistedDir(fs, new Path(bessieTempPath), true);
+			
 			log.info(">>>>>>INPUT PATH:"+adLogClassPpath);
 			log.info(">>>>>>OUTPUT PATH:"+bessieTempPath);
 			
@@ -241,6 +247,21 @@ public class CategoryLogDriver {
 		System.out.println();
 		System.out.println("[DATE] format: yyyy-MM-dd");
 	}
+	
+	public static boolean deleteExistedDir(FileSystem fs, Path path, boolean recursive) throws IOException {
+        try {
+            // check path exists
+            if (fs.exists(path)) {
+                return fs.delete(path, recursive);
+            }
+            return true;
+        } catch (Exception e) {
+            log.error("Delete " + path + " error: ", e);
+        }
+        return false;
+	}
+	
+	
 
 	public static void main(String[] args) throws Exception {
 //		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");

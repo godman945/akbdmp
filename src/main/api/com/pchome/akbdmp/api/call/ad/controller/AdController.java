@@ -2,6 +2,7 @@ package com.pchome.akbdmp.api.call.ad.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -66,6 +67,7 @@ public class AdController extends BaseController {
 			}
 			
 			log.info(redisTemplate.opsForValue().get("adclass_api_"+key));
+			
 			result = (String) redisTemplate.opsForValue().get("adclass_api_"+key);
 			//呼叫kafka
 			if(StringUtils.isBlank(result)){
