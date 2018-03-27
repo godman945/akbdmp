@@ -76,7 +76,7 @@ public class AdController extends BaseController {
 			if(StringUtils.isBlank(result)){
 				log.info(">>>>>>key:"+key);
 				result = "{\"ad_class\":[],\"behavior\":\"\",\"sex\":\"\",\"age\":\"\"}";
-				kafkaUtil.sendMessage(topicName, "", key);
+//				kafkaUtil.sendMessage(topicName, "", key);
 			}
 			
 			return result;
