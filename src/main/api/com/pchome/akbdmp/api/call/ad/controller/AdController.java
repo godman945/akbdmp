@@ -66,7 +66,10 @@ public class AdController extends BaseController {
 				key = uuid;
 			}
 			
-			log.info(redisTemplate.opsForValue().get("adclass_api_"+key));
+//			log.info(redisTemplate.opsForValue().get("adclass_api_"+key));
+			log.info(">>>>>>key:"+key);
+			
+			
 			
 			result = (String) redisTemplate.opsForValue().get("adclass_api_"+key);
 			//呼叫kafka
