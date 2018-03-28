@@ -79,13 +79,13 @@ public class AdController extends BaseController {
 				key = uuid;
 			}
 			if(sendKafkaMap.containsKey(key)){
-//				log.info(">>>>>> has exist map key:"+key);
+				log.info(">>>>>> has exist map key:"+key);
 				result = (String) redisTemplate.opsForValue().get("adclass_api_"+key);
 				if(StringUtils.isBlank(result)){
 					result = "{\"ad_class\":[],\"behavior\":\"\",\"sex\":\"\",\"age\":\"\"}";
 				}
 			}else{
-//				log.info(">>>>>> no exist map key:"+key);
+				log.info(">>>>>> no exist map key:"+key);
 				sendKafkaMap.put(key, key);
 				result = (String) redisTemplate.opsForValue().get("adclass_api_"+key);
 				if(StringUtils.isBlank(result)){
