@@ -71,7 +71,6 @@ public class AdController extends BaseController {
 			) throws Exception {
 		try {
 			
-			
 			String key  = "";
 			String result = "";
 			if(StringUtils.isNotBlank(memid)){
@@ -79,61 +78,21 @@ public class AdController extends BaseController {
 			}else if(StringUtils.isNotBlank(uuid)){
 				key = uuid;
 			}
-			
-//			log.info(redisTemplate.opsForValue().get("adclass_api_"+key));
-			
-//			AdclassApiThreadProcess adclassApiThreadProcess = new AdclassApiThreadProcess(key,sendKafkaMap);
-//			ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(500);
-//			Future<String> adclassApiThreadProcessResult = executor.submit(adclassApiThreadProcess);
-//			boolean flag = true;
-//			while (flag) {
-//				String a = adclassApiThreadProcessResult.get();
-//				System.out.println(a);
-//				if(StringUtils.isNotBlank(a)){
-//					flag = false;
-//					executor.shutdown();
-//				}
-//			}
-			
-			//判斷
-			long apiSendCount = (long) sendKafkaMap.get("apiSendCount");
-			apiSendCount = apiSendCount + 1 ;
-			sendKafkaMap.put("apiSendCount", apiSendCount);
 			if(sendKafkaMap.containsKey(key)){
-				long repeatCount = (long) sendKafkaMap.get("repeatCount");
-				repeatCount = repeatCount + 1;
-				sendKafkaMap.put("repeatCount", repeatCount);
-				
-				log.info(">>>>>> has exist map key:"+key);
+//				log.info(">>>>>> has exist map key:"+key);
 				result = (String) redisTemplate.opsForValue().get("adclass_api_"+key);
 				if(StringUtils.isBlank(result)){
 					result = "{\"ad_class\":[],\"behavior\":\"\",\"sex\":\"\",\"age\":\"\"}";
 				}
 			}else{
+//				log.info(">>>>>> no exist map key:"+key);
 				sendKafkaMap.put(key, key);
-				long kafkaCount = (long) sendKafkaMap.get("kafkaCount");
-				long count = (long) sendKafkaMap.get("count");
-				count = count + 1;
-				kafkaCount = kafkaCount + 1;
-				sendKafkaMap.put("kafkaCount", kafkaCount);
-				sendKafkaMap.put("count", count);
-				
-				log.info(">>>>>> no exist map key:"+key);
 				result = (String) redisTemplate.opsForValue().get("adclass_api_"+key);
 				if(StringUtils.isBlank(result)){
 					result = "{\"ad_class\":[],\"behavior\":\"\",\"sex\":\"\",\"age\":\"\"}";
 					kafkaUtil.sendMessage(topicName, "", key);
 				}
 			}
-			
-//			result = (String) redisTemplate.opsForValue().get("adclass_api_"+key);
-			//呼叫kafka
-//			if(StringUtils.isBlank(result)){
-////				log.info(">>>>>>key:"+key);
-//				result = "{\"ad_class\":[],\"behavior\":\"\",\"sex\":\"\",\"age\":\"\"}";
-////				kafkaUtil.sendMessage(topicName, "", key);
-//			}
-			
 			return result;
 		} catch (Exception e) {
 			log.error(">>>>" + e.getMessage());

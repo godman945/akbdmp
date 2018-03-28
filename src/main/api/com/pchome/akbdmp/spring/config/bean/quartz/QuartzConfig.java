@@ -18,10 +18,10 @@ public class QuartzConfig implements SchedulingConfigurer {
 
 	final static Logger log = Logger.getLogger(QuartzConfig.class);
 
-	@Bean
-	public JobTest bean() {
-		return new JobTest();
-	}
+//	@Bean
+//	public JobTest bean() {
+//		return new JobTest();
+//	}
 
 	@Override
 	public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
