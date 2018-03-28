@@ -18,7 +18,7 @@ public class JobTest {
     public void execute() {
 		try{
 			log.info("****************** call kafka job start ******************");
-			log.info(">>>>>>Map size:"+(sendKafkaMap.size() - 3));
+			log.info(">>>>>>Map size:"+(sendKafkaMap.size() - 4));
 			log.info(">>>>>>api call total times:"+sendKafkaMap.get("apiSendCount"));
 			log.info(">>>>>>api key repeat total times:"+sendKafkaMap.get("repeatCount"));
 			log.info(">>>>>>call kafka 10 sec total times:"+sendKafkaMap.get("kafkaCount"));
