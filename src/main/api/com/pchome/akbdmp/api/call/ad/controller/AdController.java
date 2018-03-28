@@ -1,8 +1,13 @@
 package com.pchome.akbdmp.api.call.ad.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
+
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -11,9 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Scope;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,8 +28,6 @@ import com.pchome.akbdmp.api.data.enumeration.DmpApiReturnCodeEnum;
 import com.pchome.akbdmp.api.data.returndata.ReturnData;
 import com.pchome.akbdmp.spring.config.bean.allbeanscan.SpringAllConfig;
 import com.pchome.soft.depot.utils.KafkaUtil;
-
-import redis.clients.jedis.Jedis;
 
 @RestController
 @Scope("request")
@@ -44,6 +45,8 @@ public class AdController extends BaseController {
 	@Autowired
 	private KafkaUtil kafkaUtil;
 	
+	@Autowired
+ 	private HashMap<String,String> sendKafkaMap;
 	
 	Log log = LogFactory.getLog(AdController.class);
 
@@ -69,7 +72,18 @@ public class AdController extends BaseController {
 //			log.info(redisTemplate.opsForValue().get("adclass_api_"+key));
 			
 			
-			
+			AdclassApiThreadProcess adclassApiThreadProcess = new AdclassApiThreadProcess(key,sendKafkaMap);
+			ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(500);
+			Future<String> adclassApiThreadProcessResult = executor.submit(adclassApiThreadProcess);
+			boolean flag = true;
+			while (flag) {
+				String a = adclassApiThreadProcessResult.get();
+				System.out.println(a);
+				if(StringUtils.isNotBlank(a)){
+					flag = false;
+					executor.shutdown();
+				}
+			}
 			
 			result = (String) redisTemplate.opsForValue().get("adclass_api_"+key);
 			//呼叫kafka
