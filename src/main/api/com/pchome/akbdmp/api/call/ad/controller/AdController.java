@@ -104,7 +104,7 @@ public class AdController extends BaseController {
 				repeatCount = repeatCount + 1;
 				sendKafkaMap.put("repeatCount", repeatCount);
 				
-				log.info(">>>>>>key:"+key);
+				log.info(">>>>>> has exist map key:"+key);
 				result = (String) redisTemplate.opsForValue().get("adclass_api_"+key);
 				if(StringUtils.isBlank(result)){
 					result = "{\"ad_class\":[],\"behavior\":\"\",\"sex\":\"\",\"age\":\"\"}";
@@ -118,7 +118,7 @@ public class AdController extends BaseController {
 				sendKafkaMap.put("kafkaCount", kafkaCount);
 				sendKafkaMap.put("count", count);
 				
-				log.info(">>>>>>key:"+key);
+				log.info(">>>>>> no exist map key:"+key);
 				result = (String) redisTemplate.opsForValue().get("adclass_api_"+key);
 				if(StringUtils.isBlank(result)){
 					result = "{\"ad_class\":[],\"behavior\":\"\",\"sex\":\"\",\"age\":\"\"}";
