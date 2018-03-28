@@ -1,5 +1,4 @@
 package com.pchome.akbdmp.api.call.ad.controller;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -26,7 +25,7 @@ public class AdclassApiThreadProcess implements Callable<String> {
 
 	Log log = LogFactory.getLog(AdclassApiThreadProcess.class);
 	
-	private Map<String,String> map = null;
+	private Map<String,Object> map = null;
 	
 //	private ThreadServiceBean threadServiceBean;
 //	private JSONObject conditionJson;
@@ -37,15 +36,26 @@ public class AdclassApiThreadProcess implements Callable<String> {
 //		this.conditionJson = conditionJson;
 //		this.enumAdThreadType = enumAdThreadType;
 	String key = "";
-	public AdclassApiThreadProcess(String key,Map<String,String> map) {
+	public AdclassApiThreadProcess(String key,Map<String,Object> map) {
 		this.key = key;
 		this.map = map;
 	}
 
 	public synchronized String call() throws Exception {
-		long time = System.currentTimeMillis();
+//		long time = System.currentTimeMillis();
 //		log.info(">>>>>>>>>>>>>>>map size:"+map.size());
-		map.put(String.valueOf(time), String.valueOf(time));
+		if(map.containsKey(key)){
+			long repeatCount = (long) map.get("repeatCount");
+			repeatCount = repeatCount + 1;
+			map.put("repeatCount", repeatCount);
+		}else{
+			map.put("key", key);
+			long kafkaCount = (long) map.get("kafkaCount");
+			kafkaCount = kafkaCount + 1;
+			map.put("kafkaCount", kafkaCount);
+		}
+		
+//		map.put(String.valueOf(time), String.valueOf(time));
 		
 		
 		

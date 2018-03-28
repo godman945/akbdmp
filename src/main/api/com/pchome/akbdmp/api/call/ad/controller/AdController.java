@@ -46,7 +46,19 @@ public class AdController extends BaseController {
 	private KafkaUtil kafkaUtil;
 	
 	@Autowired
- 	private HashMap<String,String> sendKafkaMap;
+ 	private HashMap<String,Object> sendKafkaMap;
+	
+//	@Autowired
+// 	private long sendKafkaMap;
+//	
+//	
+//	@Autowired
+// 	private long apiSendCount;
+//	
+//	@Autowired
+// 	private long repeatCount;
+	
+	
 	
 	Log log = LogFactory.getLog(AdController.class);
 
@@ -71,7 +83,9 @@ public class AdController extends BaseController {
 			
 //			log.info(redisTemplate.opsForValue().get("adclass_api_"+key));
 			
-			
+			long apiSendCount = (long) sendKafkaMap.get("apiSendCount");
+			apiSendCount = apiSendCount + 1 ;
+			sendKafkaMap.put("apiSendCount", apiSendCount);
 			AdclassApiThreadProcess adclassApiThreadProcess = new AdclassApiThreadProcess(key,sendKafkaMap);
 			ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(500);
 			Future<String> adclassApiThreadProcessResult = executor.submit(adclassApiThreadProcess);

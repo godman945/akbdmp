@@ -10,21 +10,23 @@ public class JobTest {
 	Logger log = Logger.getLogger(JobTest.class);
  	
 	@Autowired
- 	private HashMap<String,String> sendKafkaMap;
+ 	private HashMap<String,Object> sendKafkaMap;
  	
  	
 	//@Scheduled(cron="1 * * * * *")
-	@Scheduled(fixedDelay = 15000)
+	@Scheduled(fixedDelay = 10000)
     public void execute() {
 		try{
 			log.info("****************** call kafka job start ******************");
 			
-			log.info(">>>>>>>>>>>>>>>sendKafkaMap size:"+sendKafkaMap.size());
+			log.info(">>>>>>>>>>>>>>>Map size:"+(sendKafkaMap.size() - 3));
 			
 			
-			
-			
-			
+			log.info(">>>>>>>>>>>>>>>api call total times:"+sendKafkaMap.get("apiSendCount"));
+			log.info(">>>>>>>>>>>>>>>api key repeat total times:"+sendKafkaMap.get("repeatCount"));
+			log.info(">>>>>>>>>>>>>>>call kafka total times:"+sendKafkaMap.get("kafkaCount"));
+			long kafkaCount = 0;
+			sendKafkaMap.put("kafkaCount", kafkaCount);
 //			List<PfpAdVideoSource> pfpAdVideoSourceList = pfpAdVideoSourceService.findNeedDownloadVideo();
 //			
 //			log.info("pfpAdVideoSourceList:"+pfpAdVideoSourceList.size());

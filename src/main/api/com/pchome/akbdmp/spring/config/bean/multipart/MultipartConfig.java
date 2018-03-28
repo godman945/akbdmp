@@ -40,8 +40,17 @@ public class MultipartConfig extends WebMvcConfigurerAdapter{
     }
     
     @Bean(name= "sendKafkaMap")
-    public HashMap<String,String> sendKafkaMap(){
-    	return new HashMap<String,String>();
+    public HashMap<String,Object> sendKafkaMap(){
+    	
+    	HashMap<String,Object> map = new HashMap<String,Object>();
+    	long kafkaCount = 0;
+    	long apiSendCount = 0;
+    	long repeatCount = 0;
+    	
+    	map.put("kafkaCount", kafkaCount);
+    	map.put("apiSendCount", apiSendCount);
+    	map.put("repeatCount", repeatCount);
+    	return map;
     }
     
     
