@@ -1,7 +1,6 @@
 package com.pchome.akbdmp.api.call.ad.controller;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -83,26 +82,57 @@ public class AdController extends BaseController {
 			
 //			log.info(redisTemplate.opsForValue().get("adclass_api_"+key));
 			
-			AdclassApiThreadProcess adclassApiThreadProcess = new AdclassApiThreadProcess(key,sendKafkaMap);
-			ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(500);
-			Future<String> adclassApiThreadProcessResult = executor.submit(adclassApiThreadProcess);
-			boolean flag = true;
-			while (flag) {
-				String a = adclassApiThreadProcessResult.get();
-				System.out.println(a);
-				if(StringUtils.isNotBlank(a)){
-					flag = false;
-					executor.shutdown();
+//			AdclassApiThreadProcess adclassApiThreadProcess = new AdclassApiThreadProcess(key,sendKafkaMap);
+//			ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(500);
+//			Future<String> adclassApiThreadProcessResult = executor.submit(adclassApiThreadProcess);
+//			boolean flag = true;
+//			while (flag) {
+//				String a = adclassApiThreadProcessResult.get();
+//				System.out.println(a);
+//				if(StringUtils.isNotBlank(a)){
+//					flag = false;
+//					executor.shutdown();
+//				}
+//			}
+			
+			//判斷
+			long apiSendCount = (long) sendKafkaMap.get("apiSendCount");
+			apiSendCount = apiSendCount + 1 ;
+			sendKafkaMap.put("apiSendCount", apiSendCount);
+			if(sendKafkaMap.containsKey(key)){
+				long repeatCount = (long) sendKafkaMap.get("repeatCount");
+				repeatCount = repeatCount + 1;
+				sendKafkaMap.put("repeatCount", repeatCount);
+				
+				log.info(">>>>>>key:"+key);
+				result = (String) redisTemplate.opsForValue().get("adclass_api_"+key);
+				if(StringUtils.isBlank(result)){
+					result = "{\"ad_class\":[],\"behavior\":\"\",\"sex\":\"\",\"age\":\"\"}";
+				}
+			}else{
+				sendKafkaMap.put(key, key);
+				long kafkaCount = (long) sendKafkaMap.get("kafkaCount");
+				long count = (long) sendKafkaMap.get("count");
+				count = count + 1;
+				kafkaCount = kafkaCount + 1;
+				sendKafkaMap.put("kafkaCount", kafkaCount);
+				sendKafkaMap.put("count", count);
+				
+				log.info(">>>>>>key:"+key);
+				result = (String) redisTemplate.opsForValue().get("adclass_api_"+key);
+				if(StringUtils.isBlank(result)){
+					result = "{\"ad_class\":[],\"behavior\":\"\",\"sex\":\"\",\"age\":\"\"}";
+					kafkaUtil.sendMessage(topicName, "", key);
 				}
 			}
 			
-			result = (String) redisTemplate.opsForValue().get("adclass_api_"+key);
+//			result = (String) redisTemplate.opsForValue().get("adclass_api_"+key);
 			//呼叫kafka
-			if(StringUtils.isBlank(result)){
-//				log.info(">>>>>>key:"+key);
-				result = "{\"ad_class\":[],\"behavior\":\"\",\"sex\":\"\",\"age\":\"\"}";
-//				kafkaUtil.sendMessage(topicName, "", key);
-			}
+//			if(StringUtils.isBlank(result)){
+////				log.info(">>>>>>key:"+key);
+//				result = "{\"ad_class\":[],\"behavior\":\"\",\"sex\":\"\",\"age\":\"\"}";
+////				kafkaUtil.sendMessage(topicName, "", key);
+//			}
 			
 			return result;
 		} catch (Exception e) {
@@ -139,10 +169,11 @@ public class AdController extends BaseController {
 	}
 	
 	public static void main(String args[]){
-		System.setProperty("spring.profiles.active", "local");
+		System.setProperty("spring.profiles.active", "prd");
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
-		AdController AdController = (AdController) ctx.getBean(AdController.class);
-		AdController.a();
+		RedisTemplate redisTemplate = (RedisTemplate) ctx.getBean(RedisTemplate.class);
+		System.out.println(redisTemplate.opsForValue().get("adclass_api_nico19732001"));
+//		redisTemplate.delete("adclass_api_nico19732001");
 	}
 	
 }
