@@ -51,8 +51,11 @@ public class AdclassApiThreadProcess implements Callable<String> {
 		}else{
 			map.put(key, key);
 			long kafkaCount = (long) map.get("kafkaCount");
+			long count = (long) map.get("count");
+			count = count + 1;
 			kafkaCount = kafkaCount + 1;
 			map.put("kafkaCount", kafkaCount);
+			map.put("count", count);
 		}
 		
 //		map.put(String.valueOf(time), String.valueOf(time));

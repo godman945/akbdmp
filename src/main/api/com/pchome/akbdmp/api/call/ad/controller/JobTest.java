@@ -18,11 +18,11 @@ public class JobTest {
     public void execute() {
 		try{
 			log.info("****************** call kafka job start ******************");
-			
 			log.info(">>>>>>Map size:"+(sendKafkaMap.size() - 3));
 			log.info(">>>>>>api call total times:"+sendKafkaMap.get("apiSendCount"));
 			log.info(">>>>>>api key repeat total times:"+sendKafkaMap.get("repeatCount"));
-			log.info(">>>>>>call kafka total times:"+sendKafkaMap.get("kafkaCount"));
+			log.info(">>>>>>call kafka 10 sec total times:"+sendKafkaMap.get("kafkaCount"));
+			log.info(">>>>>>call kafka total times:"+sendKafkaMap.get("count"));
 			long kafkaCount = 0;
 			sendKafkaMap.put("kafkaCount", kafkaCount);
 //			List<PfpAdVideoSource> pfpAdVideoSourceList = pfpAdVideoSourceService.findNeedDownloadVideo();

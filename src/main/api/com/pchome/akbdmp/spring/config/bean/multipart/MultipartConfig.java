@@ -46,10 +46,12 @@ public class MultipartConfig extends WebMvcConfigurerAdapter{
     	long kafkaCount = 0;
     	long apiSendCount = 0;
     	long repeatCount = 0;
+    	long count = 0;
     	
     	map.put("kafkaCount", kafkaCount);
     	map.put("apiSendCount", apiSendCount);
     	map.put("repeatCount", repeatCount);
+    	map.put("count", count);
     	return map;
     }
     
