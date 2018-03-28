@@ -44,6 +44,11 @@ public class AdclassApiThreadProcess implements Callable<String> {
 	public synchronized String call() throws Exception {
 //		long time = System.currentTimeMillis();
 //		log.info(">>>>>>>>>>>>>>>map size:"+map.size());
+		
+		long apiSendCount = (long) map.get("apiSendCount");
+		apiSendCount = apiSendCount + 1 ;
+		map.put("apiSendCount", apiSendCount);
+		
 		if(map.containsKey(key)){
 			long repeatCount = (long) map.get("repeatCount");
 			repeatCount = repeatCount + 1;

@@ -83,9 +83,6 @@ public class AdController extends BaseController {
 			
 //			log.info(redisTemplate.opsForValue().get("adclass_api_"+key));
 			
-			long apiSendCount = (long) sendKafkaMap.get("apiSendCount");
-			apiSendCount = apiSendCount + 1 ;
-			sendKafkaMap.put("apiSendCount", apiSendCount);
 			AdclassApiThreadProcess adclassApiThreadProcess = new AdclassApiThreadProcess(key,sendKafkaMap);
 			ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(500);
 			Future<String> adclassApiThreadProcessResult = executor.submit(adclassApiThreadProcess);
