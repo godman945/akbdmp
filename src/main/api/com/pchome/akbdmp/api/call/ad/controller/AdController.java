@@ -78,21 +78,21 @@ public class AdController extends BaseController {
 			}else if(StringUtils.isNotBlank(uuid)){
 				key = uuid;
 			}
-			if(sendKafkaMap.containsKey(key)){
-//				log.info(">>>>>> has exist map key:"+key);
-				result = (String) redisTemplate.opsForValue().get("adclass_api_"+key);
-				if(StringUtils.isBlank(result)){
+//			if(sendKafkaMap.containsKey(key)){
+////				log.info(">>>>>> has exist map key:"+key);
+//				result = (String) redisTemplate.opsForValue().get("adclass_api_"+key);
+//				if(StringUtils.isBlank(result)){
+//					result = "{\"ad_class\":[],\"behavior\":\"\",\"sex\":\"\",\"age\":\"\"}";
+//				}
+//			}else{
+////				log.info(">>>>>> no exist map key:"+key);
+//				sendKafkaMap.put(key, key);
+//				result = (String) redisTemplate.opsForValue().get("adclass_api_"+key);
+//				if(StringUtils.isBlank(result)){
 					result = "{\"ad_class\":[],\"behavior\":\"\",\"sex\":\"\",\"age\":\"\"}";
-				}
-			}else{
-//				log.info(">>>>>> no exist map key:"+key);
-				sendKafkaMap.put(key, key);
-				result = (String) redisTemplate.opsForValue().get("adclass_api_"+key);
-				if(StringUtils.isBlank(result)){
-					result = "{\"ad_class\":[],\"behavior\":\"\",\"sex\":\"\",\"age\":\"\"}";
-					kafkaUtil.sendMessage(topicName, "", key);
-				}
-			}
+//					kafkaUtil.sendMessage(topicName, "", key);
+//				}
+//			}
 			return result;
 		} catch (Exception e) {
 			log.error(">>>>" + e.getMessage());
