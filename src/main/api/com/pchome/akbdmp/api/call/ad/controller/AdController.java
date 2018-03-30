@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -85,9 +87,6 @@ public class AdController extends BaseController {
 				key = uuid;
 			}
 			
-			
-			
-			
 			String mapKey = redisCallmapKey+key;
 			String fcKey = redisCallfcKey+key;
 			String classKey = redisClassKey+key;
@@ -107,6 +106,10 @@ public class AdController extends BaseController {
 				}
 				
 				if(redisTemplate.opsForValue().get(fcKey) == null || (Integer)redisTemplate.opsForValue().get(fcKey) > redisFrequency){
+					JSONObject json = new JSONObject(redisDmpClassValue); 
+					json.put("ad_class", new JSONArray());
+					json.put("behavior", "");
+					result = json.toString();
 					return result;
 				}
 				
