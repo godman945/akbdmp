@@ -1,9 +1,6 @@
 package com.pchome.akbdmp.api.call.ad.controller;
 
-import java.util.HashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -39,28 +36,32 @@ public class AdController extends BaseController {
 	private String active;
 	
 	@Value("${dmp.api.topic}")
-	private String topicName;
+	private String dmpApiTopic;
 	
 	@Autowired
 	private KafkaUtil kafkaUtil;
 	
-	@Autowired
- 	private HashMap<String,Object> sendKafkaMap;
+	@Value("${redis.call.map}")
+	private String redisCallmapKey;
 	
-//	@Autowired
-// 	private long sendKafkaMap;
-//	
-//	
-//	@Autowired
-// 	private long apiSendCount;
-//	
-//	@Autowired
-// 	private long repeatCount;
+	@Value("${redis.callfc}")
+	private String redisCallfcKey;
 	
+	@Value("${redis.class}")
+	private String redisClassKey;
 	
+	@Value("${redis.frequency}")
+	private long redisFrequency;
 	
+	/**
+	 * 1.REDIS PRD MAP:prd:dmp:callmap:[uuid | pcid]
+	 * 2.REDIS STG MAP:stg:dmp:callmap:[uuid | pcid]
+	 * 3.REDIS PRD 分類頻次:prd:dmp:callfc:[uuid | pcid]
+	 * 4.REDIS STG 分類頻次 :stg:dmp:callfc:[uuid | pcid]
+	 * 5.REDIS STG 分類:prd:dmp:class:[uuid | pcid]
+	 * 6.REDIS PRD 分類:stg:dmp:class:[uuid | pcid]
+	 * */
 	Log log = LogFactory.getLog(AdController.class);
-
 	// @CrossOrigin(origins = {"http://pcbwebstg.pchome.com.tw"})
 	@RequestMapping(value = "/api/adclassApi", method = RequestMethod.GET, headers = "Accept=application/json;charset=UTF-8")
 	@ResponseBody
@@ -72,27 +73,43 @@ public class AdController extends BaseController {
 		try {
 			
 			String key  = "";
-			String result = "";
+			String result = "{\"ad_class\":[],\"behavior\":\"\",\"sex\":\"\",\"age\":\"\"}";
+			if(StringUtils.isBlank(memid) && StringUtils.isBlank(uuid)){
+				result = "{\"ad_class\":[],\"behavior\":\"\",\"sex\":\"\",\"age\":\"\"}";
+				return result;
+			}
+			
 			if(StringUtils.isNotBlank(memid)){
 				key = memid;
 			}else if(StringUtils.isNotBlank(uuid)){
 				key = uuid;
 			}
-//			if(sendKafkaMap.containsKey(key)){
-////				log.info(">>>>>> has exist map key:"+key);
-//				result = (String) redisTemplate.opsForValue().get("adclass_api_"+key);
-//				if(StringUtils.isBlank(result)){
-//					result = "{\"ad_class\":[],\"behavior\":\"\",\"sex\":\"\",\"age\":\"\"}";
-//				}
-//			}else{
-////				log.info(">>>>>> no exist map key:"+key);
-//				sendKafkaMap.put(key, key);
-//				result = (String) redisTemplate.opsForValue().get("adclass_api_"+key);
-//				if(StringUtils.isBlank(result)){
-					result = "{\"ad_class\":[],\"behavior\":\"\",\"sex\":\"\",\"age\":\"\"}";
-//					kafkaUtil.sendMessage(topicName, "", key);
-//				}
-//			}
+			
+			String mapKey = redisCallmapKey+key;
+			String fcKey = redisCallfcKey+key;
+			String classKey = redisClassKey+key;
+			
+			//map不存在key則呼叫kafka建立redis key反之只取redis key
+			redisTemplate.opsForValue().get(mapKey);
+			if(redisTemplate.opsForValue().get(mapKey) == null){
+				kafkaUtil.sendMessage(dmpApiTopic, "", key);
+				return result;
+			}
+			
+			if(redisTemplate.opsForValue().get(mapKey) != null){
+				String redisDmpClassValue = (String) redisTemplate.opsForValue().get(classKey);
+				if(StringUtils.isBlank(redisDmpClassValue)){
+					return result;
+				}
+				
+				
+				if(redisTemplate.opsForValue().get(fcKey) == null || (Integer)redisTemplate.opsForValue().get(fcKey) > redisFrequency){
+					return result;
+				}
+				
+				result = redisDmpClassValue;
+				redisTemplate.opsForValue().increment(fcKey, 1);
+			}
 			return result;
 		} catch (Exception e) {
 			log.error(">>>>" + e.getMessage());
@@ -131,7 +148,18 @@ public class AdController extends BaseController {
 		System.setProperty("spring.profiles.active", "prd");
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
 		RedisTemplate redisTemplate = (RedisTemplate) ctx.getBean(RedisTemplate.class);
-		System.out.println(redisTemplate.opsForValue().get("adclass_api_nico19732001"));
+		
+		
+		redisTemplate.delete("stg:dmp:class:zzz1929");
+		redisTemplate.delete("stg:dmp:class:zzz1929");
+		redisTemplate.delete("stg:dmp:class:zzz1929");
+		
+		
+		
+		
+		
+		
+		
 //		redisTemplate.delete("adclass_api_nico19732001");
 	}
 	
