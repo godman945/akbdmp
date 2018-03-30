@@ -93,6 +93,7 @@ public class AdController extends BaseController {
 			redisTemplate.opsForValue().get(mapKey);
 			if(redisTemplate.opsForValue().get(mapKey) == null){
 				kafkaUtil.sendMessage(dmpApiTopic, "", key);
+				redisTemplate.opsForValue().set(redisCallmapKey, key, 1,TimeUnit.DAYS);
 				return result;
 			}
 			
@@ -101,7 +102,6 @@ public class AdController extends BaseController {
 				if(StringUtils.isBlank(redisDmpClassValue)){
 					return result;
 				}
-				
 				
 				if(redisTemplate.opsForValue().get(fcKey) == null || (Integer)redisTemplate.opsForValue().get(fcKey) > redisFrequency){
 					return result;
