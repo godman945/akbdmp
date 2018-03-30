@@ -85,6 +85,9 @@ public class AdController extends BaseController {
 				key = uuid;
 			}
 			
+			
+			
+			
 			String mapKey = redisCallmapKey+key;
 			String fcKey = redisCallfcKey+key;
 			String classKey = redisClassKey+key;
@@ -93,7 +96,7 @@ public class AdController extends BaseController {
 			redisTemplate.opsForValue().get(mapKey);
 			if(redisTemplate.opsForValue().get(mapKey) == null){
 				kafkaUtil.sendMessage(dmpApiTopic, "", key);
-				redisTemplate.opsForValue().set(redisCallmapKey, key, 1,TimeUnit.DAYS);
+				redisTemplate.opsForValue().set(redisCallmapKey+key, key, 1,TimeUnit.DAYS);
 				return result;
 			}
 			
