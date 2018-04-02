@@ -22,6 +22,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.stereotype.Component;
 
 import com.hadoop.mapreduce.LzoTextInputFormat;
+import com.pchome.hadoopdmp.mysql.db.service.kdclSatisticsSource.KdclStatisticsSourceService;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 
 @Component
@@ -197,26 +198,39 @@ public class PersonalLogDriver {
 
 	public static void main(String[] args) throws Exception {
 		log.info("====driver start====");
-		String date = "";
-		boolean jobFlag = false;
-		if(args.length != 1){
-			jobFlag = true;
-		}else if(!args[0].equals("prd") && !args[0].equals("stg")){
-			jobFlag = true;
-		}
-		if(jobFlag){
-			printUsage();
-			return;
-		}
+//		String date = "";
+//		boolean jobFlag = false;
+//		if(args.length != 1){
+//			jobFlag = true;
+//		}else if(!args[0].equals("prd") && !args[0].equals("stg")){
+//			jobFlag = true;
+//		}
+//		if(jobFlag){
+//			printUsage();
+//			return;
+//		}
+//		
+//		if(args[0].equals("prd")){
+//			System.setProperty("spring.profiles.active", "prd");
+//		}else{
+//			System.setProperty("spring.profiles.active", "stg");
+//		}
+//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//		PersonalLogDriver personalLogDriver = (PersonalLogDriver) ctx.getBean(PersonalLogDriver.class);
+//		personalLogDriver.drive(args[0]);
 		
-		if(args[0].equals("prd")){
-			System.setProperty("spring.profiles.active", "prd");
-		}else{
-			System.setProperty("spring.profiles.active", "stg");
-		}
+		
+		
+		System.setProperty("spring.profiles.active", "prd");
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-		PersonalLogDriver personalLogDriver = (PersonalLogDriver) ctx.getBean(PersonalLogDriver.class);
-		personalLogDriver.drive(args[0]);
+		KdclStatisticsSourceService kdclStatisticsSourceService = (KdclStatisticsSourceService) ctx.getBean(KdclStatisticsSourceService.class);
+		log.info(kdclStatisticsSourceService.loadAll().size());
+		
+		
+		
+		
+		
+		
 		log.info("====driver end====");
 	}
 
