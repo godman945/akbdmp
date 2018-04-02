@@ -1,5 +1,7 @@
 package com.pchome.hadoopdmp.mapreduce.job.personallog;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -8,7 +10,7 @@ import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig
 
 public class AlexTest {
 
-	
+	private static Log log = LogFactory.getLog("AlexTest");
 	
 	
 	
@@ -17,7 +19,7 @@ public class AlexTest {
 		System.setProperty("spring.profiles.active", "prd");
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 		KdclStatisticsSourceService kdclStatisticsSourceService = (KdclStatisticsSourceService) ctx.getBean(KdclStatisticsSourceService.class);
-		System.out.println(kdclStatisticsSourceService.loadAll().size());
+		log.info(kdclStatisticsSourceService.loadAll().size());
 		
 	}
 
