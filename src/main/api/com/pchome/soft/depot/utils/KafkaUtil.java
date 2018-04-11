@@ -28,15 +28,10 @@ public class KafkaUtil {
 			Future<RecordMetadata> f = kafkaProducer.send(new ProducerRecord<String, String>(topicname, partitionKey, mesg));
 				while (!f.isDone()) {
 			}
-
 			RecordMetadata recordMetadata = f.get();
-
-			log.info("Topic" + recordMetadata.topic() + recordMetadata.offset() + recordMetadata.partition());
-
+//			log.info("Topic" + recordMetadata.topic() + recordMetadata.offset() + recordMetadata.partition());
 		} catch (Exception e) {
-
 			log.error(">>>>" + e.getMessage());
-
 		}
 
 	}

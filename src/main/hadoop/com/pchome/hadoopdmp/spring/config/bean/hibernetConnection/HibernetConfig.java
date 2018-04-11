@@ -4,6 +4,8 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +22,8 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 @EnableTransactionManagement
 public class HibernetConfig {
 
+	private static Log log = LogFactory.getLog("HibernetConfig");
+	
 	@Value("${jdbc.driverClass}")
 	private String driverClass;
 	
@@ -57,7 +61,12 @@ public class HibernetConfig {
 	public DataSource restDataSource() {
 		ComboPooledDataSource dataSource = new ComboPooledDataSource();
 		try {
-
+			log.info(">>>>>>driverClass:"+driverClass);
+			log.info(">>>>>>dbUrl:"+dbUrl);
+			log.info(">>>>>>userName:"+userName);
+			log.info(">>>>>>userPassword:"+userPassword);
+			
+			
 			dataSource.setDriverClass(driverClass);
 			dataSource.setJdbcUrl(dbUrl);
 			dataSource.setUser(userName);

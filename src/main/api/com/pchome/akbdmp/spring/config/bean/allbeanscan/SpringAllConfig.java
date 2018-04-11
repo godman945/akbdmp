@@ -16,7 +16,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 @Configuration
 @EnableTransactionManagement
 @ComponentScan(basePackages =  
-	"com.pchome.akbdmp.spring.config.bean,"
+	" com.pchome.akbdmp.spring.config.bean,"
 	+ "com.pchome.akbdmp.api.call.*.controller,"
 	+ "com.pchome.akbdmp.adm.call.*.controller,"
 	+ "com.pchome.soft.depot.utils,"
@@ -28,6 +28,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 	+ "com.pchome.akbdmp.mysql.db,"
 	+ "com.pchome.dmp.mapreduce.crawlbreadcrumb,"
 	+ "alex.test,"
+	+ "com.pchome.akbdmp.spring.config.bean.quartz"
 // + "com.pchome.soft.depot.utils,"
 // + "com.pchome.akbdmp.api.data,"
 // + "com.pchome.akbdmp.api.call.*.controller,"

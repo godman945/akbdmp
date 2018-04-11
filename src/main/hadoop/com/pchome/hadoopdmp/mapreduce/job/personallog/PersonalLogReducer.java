@@ -193,13 +193,11 @@ public class PersonalLogReducer extends Reducer<Text, Text, Text, Text> {
 	public void cleanup(Context context) {
 		try {
 			log.info("------------ cleanup start ------------");
-//			if(this.environment.equals("prd")){
-//				System.setProperty("spring.profiles.active", "prd");
-//			}else{
-//				System.setProperty("spring.profiles.active", "stg");
-//			}
-			
-			System.setProperty("spring.profiles.active", "prd");
+			if(this.environment.equals("prd")){
+				System.setProperty("spring.profiles.active", "prd");
+			}else{
+				System.setProperty("spring.profiles.active", "stg");
+			}
 			
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			this.kdclStatisticsSourceService = ctx.getBean(KdclStatisticsSourceService.class);

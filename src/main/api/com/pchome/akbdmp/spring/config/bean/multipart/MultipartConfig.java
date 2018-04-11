@@ -1,5 +1,8 @@
 package com.pchome.akbdmp.spring.config.bean.multipart;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
@@ -35,4 +38,12 @@ public class MultipartConfig extends WebMvcConfigurerAdapter{
     	configuration = configuration.addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL);
     	return configuration;
     }
+    
+    @Bean(name= "sendKafkaMap")
+    public HashMap<String,Object> sendKafkaMap(){
+    	HashMap<String,Object> map = new HashMap<String,Object>();
+    	return map;
+    }
+    
+    
 }
