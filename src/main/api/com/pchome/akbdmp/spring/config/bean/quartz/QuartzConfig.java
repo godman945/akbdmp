@@ -18,10 +18,10 @@ public class QuartzConfig implements SchedulingConfigurer {
 
 	final static Logger log = Logger.getLogger(QuartzConfig.class);
 
-	@Bean
-	public AdClassSendKafkaMapJob bean() {
-		return new AdClassSendKafkaMapJob();
-	}
+//	@Bean
+//	public AdClassSendKafkaMapJob bean() {
+//		return new AdClassSendKafkaMapJob();
+//	}
 
 	@Override
 	public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
