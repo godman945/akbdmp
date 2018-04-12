@@ -50,28 +50,28 @@ public class TEST {
 		while (mongoThreadProcess1ResultFlag || mongoThreadProcess2ResultFlag || mongoThreadProcess3ResultFlag || mongoThreadProcess4ResultFlag) {
 			if (mongoThreadProcess1Result.isDone() && mongoThreadProcess1ResultFlag) {
 				int result = mongoThreadProcess1Result.get();
-				log.info("執行緒1完成 --->需要刪除筆數:"+result);
+				log.info("thread-1 total finish --->need delete count:"+result);
 				totalDelete = totalDelete + result;
 				mongoThreadProcess1ResultFlag = false;
 			}
 			
 			if (mongoThreadProcess2Result.isDone() && mongoThreadProcess2ResultFlag) {
 				int result = mongoThreadProcess2Result.get();
-				log.info("執行緒2完成 --->需要刪除筆數:"+result);
+				log.info("thread-2 total finish --->need delete count:"+result);
 				totalDelete = totalDelete + result;
 				mongoThreadProcess2ResultFlag = false;
 			}
 			
 			if (mongoThreadProcess3Result.isDone() && mongoThreadProcess3ResultFlag) {
 				int result = mongoThreadProcess3Result.get();
-				log.info("執行緒3完成 --->需要刪除筆數:"+result);
+				log.info("thread-3 total finish --->need delete count:"+result);
 				totalDelete = totalDelete + result;
 				mongoThreadProcess3ResultFlag = false;
 			}
 			
 			if (mongoThreadProcess4Result.isDone() && mongoThreadProcess4ResultFlag) {
 				int result = mongoThreadProcess4Result.get();
-				log.info("執行緒4完成 --->需要刪除筆數:"+result);
+				log.info("thread-4 total finish --->need delete count:"+result);
 				totalDelete = totalDelete + result;
 				mongoThreadProcess4ResultFlag = false;
 			}
