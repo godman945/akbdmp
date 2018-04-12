@@ -429,7 +429,7 @@
 		</dependency>
 		
 		
-		<!--  -->
+		<!-- 
 		<dependency> 
  			<groupId>jdk.tools</groupId>
  			<artifactId>jdk.tools</artifactId> 
@@ -437,7 +437,7 @@
  			<scope>system</scope> 
 			<systemPath>D:\java\lib\tools.jar</systemPath> 
  		</dependency> 
- 		
+ 		 -->
  		
 	</dependencies>
 </project>
