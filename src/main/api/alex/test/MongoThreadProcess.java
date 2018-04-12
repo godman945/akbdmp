@@ -86,7 +86,7 @@ public class MongoThreadProcess implements Callable<Integer> {
 			
 			log.info("**********" +Thread.currentThread().getName()+":need delete count:"+count);
 			time2 = System.currentTimeMillis();
-			log.info(Thread.currentThread().getName()+":cost：" + (time2-time1)/1000 + "sec");
+			log.info(Thread.currentThread().getName()+" >>>>>>>> cost " + (time2-time1)/1000 + " sec");
 			if(page > endPage){
 				flag = false;
 			}
