@@ -184,6 +184,7 @@ public class MongoDbDriver {
 				"/home/webuser/dmp/webapps/analyzer/lib/httpclient-4.2.3.jar",
 				"/home/webuser/dmp/webapps/analyzer/lib/httpmime-4.2.3.jar",
 				"/home/webuser/dmp/webapps/analyzer/lib/mysql-connector-java-5.1.12-bin.jar",
+				"/home/webuser/dmp/webapps/analyzer/lib/mongo-hadoop-core-2.0.2.jar",
 
 				// add kafka jar
 				"/home/webuser/dmp/webapps/analyzer/lib/kafka-clients-0.9.0.0.jar",
