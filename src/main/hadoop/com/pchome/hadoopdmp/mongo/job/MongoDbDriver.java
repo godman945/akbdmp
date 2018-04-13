@@ -67,7 +67,8 @@ public class MongoDbDriver {
 	private String akbPathAllLog;
 	
 	public void drive() throws Exception {
-		 Configuration conf = new Configuration();
+//		 Configuration conf = new Configuration();
+		 JobConf conf = new JobConf();
 		 Job job = new Job(conf, "alex_mongo_db_log");
 		 MongoConfigUtil.setInputURI(conf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
 		 MongoConfigUtil.setCreateInputSplits(conf, false);
