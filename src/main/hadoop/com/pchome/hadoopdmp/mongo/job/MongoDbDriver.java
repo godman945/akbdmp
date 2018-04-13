@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -69,86 +70,106 @@ public class MongoDbDriver {
 	private SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMddHHmmss");
 	
 	public void drive() throws Exception {
+		 Configuration conf = new Configuration();
+		 Job job = Job.getInstance(conf, "alex_mongo_db_log");
+		 MongoConfigUtil.setInputURI(conf, "mongodb://141.8.230.20:27017/dmp.user_detail");
+		 job.setJarByClass(MongoDbDriver.class);
+		 job.setNumReduceTasks(0);
+		 job.setMapperClass(MongoDbMapper.class);
+		 job.setReducerClass(MongoDbReducer.class);
+		 job.setMapOutputKeyClass(Text.class);
+		 job.setMapOutputValueClass(Text.class);
+		 job.setInputFormatClass(com.mongodb.hadoop.MongoInputFormat.class);
+		 job.setOutputKeyClass(Text.class);
+		 job.setOutputValueClass(Text.class);
+		 
+		 FileSystem fs = FileSystem.get(conf);
+		 deleteExistedDir(fs, new Path("/home/webuser/dmp/alex/mongo"), true);
+		 FileOutputFormat.setOutputPath(job, new Path("/home/webuser/dmp/alex/mongo"));
+		 Path out = new Path("/home/webuser/dmp/alex/mongo");
+		 FileOutputFormat.setOutputPath(job, out);
+		 System.exit(job.waitForCompletion(true) ? 0 : 1);
+		
 		
 		
 	    
-		JobConf jobConf = new JobConf();
-		jobConf.set("mapred.job.tracker", "5");
-		jobConf.setNumMapTasks(8);
-		jobConf.set("mapred.max.split.size","5000");
-		jobConf.set("mapred.min.split.size","5000");
-		jobConf.set("mapred.max.split.size","5000");
-		jobConf.set("mapred.min.split.size","5000");
-		jobConf.set("dfs.namenode.fs-limits.min-block-size","5000");
-		jobConf.set("dfs.namenode.fs-limits.max-blocks-per-file","5000");
-		
-		
-		
-//		jobConf.set("mapred.child.java.opts", "-Xmx2g");
-//		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
-//		jobConf.set("mapred.compress.map.output", "true");
-//		jobConf.set("spring.profiles.active", "stg");
-//		jobConf.set("hadoop.job.ugi", jobUgi);
-//		jobConf.set("fs.defaultFS", hdfsPath);
-//		jobConf.set("mapreduce.jobtracker.address", tracker);
-//		jobConf.set("mapreduce.map.output.compress.codec", codec);
-//		jobConf.set("mapreduce.map.speculative", mapredExecution);
-//		jobConf.set("mapreduce.reduce.speculative", mapredReduceExecution);
-//		jobConf.set("mapreduce.task.timeout", mapredTimeout);
-//		jobConf.set("mapred.child.java.opts", "-Xmx4072m");
-//		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx4072m");
-
-//		jobConf.set("mapreduce.min.split.size","128388608");
-//		jobConf.set("mapreduce.max.split.size","128388608");
-//		jobConf.set("dfs.namenode.fs-limits.min-block-size","3088608");
-//		jobConf.set("dfs.namenode.fs-limits.max-blocks-per-file","3088608");
-		
-		
-		
-////		
-////		jobConf.set("fileinputformat.split.maxsize","388608");
-//		jobConf.set("mongo.input.split_size","3088608");
-		
-		
-		
-		
-		
-		
-		//stg
-//		MongoConfigUtil.setInputURI(jobConf, "mongodb://192.168.1.37:27017/dmp.user_detail");
-		//prd
-//		MongoConfigUtil.setInputURI(jobConf, "mongodb://141.8.230.20:27017/dmp.user_detail");
-		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
-		MongoConfigUtil.setCreateInputSplits(jobConf, true);
-		MongoConfigUtil.setReadSplitsFromSecondary(jobConf, true);
-		
-		
-//		MongoConfigUtil.setBatchSize(jobConf, 10000);
-//		MongoConfigUtil.setSplitSize(jobConf, 5);
-//		MongoConfigUtil.setLimit(jobConf, 5);
-
-		
-		FileSystem fs = FileSystem.get(jobConf);
-		deleteExistedDir(fs, new Path("/home/webuser/dmp/alex/mongo"), true);
-		Path out = new Path("/home/webuser/dmp/alex/mongo");
-		
-		final Job job = new Job(jobConf, "alex_mongo_db_log");
-		FileOutputFormat.setOutputPath(job, out);
-		job.setJarByClass(MongoDbDriver.class);
-		job.setMapperClass(MongoDbMapper.class);
-		job.setReducerClass(MongoDbReducer.class);
-
-		job.setMapOutputKeyClass(Text.class);
-		job.setMapOutputValueClass(Text.class);
-
-		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(Text.class);
-
-		job.setInputFormatClass(MongoInputFormat.class);
-		job.setOutputFormatClass(TextOutputFormat.class);
-		job.setNumReduceTasks(1);
-		System.exit(job.waitForCompletion(true) ? 0 : 1);
-		
+//		JobConf jobConf = new JobConf();
+//		jobConf.set("mapred.job.tracker", "5");
+//		jobConf.setNumMapTasks(8);
+//		jobConf.set("mapred.max.split.size","5000");
+//		jobConf.set("mapred.min.split.size","5000");
+//		jobConf.set("mapred.max.split.size","5000");
+//		jobConf.set("mapred.min.split.size","5000");
+//		jobConf.set("dfs.namenode.fs-limits.min-block-size","5000");
+//		jobConf.set("dfs.namenode.fs-limits.max-blocks-per-file","5000");
+//		
+//		
+//		
+////		jobConf.set("mapred.child.java.opts", "-Xmx2g");
+////		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
+////		jobConf.set("mapred.compress.map.output", "true");
+////		jobConf.set("spring.profiles.active", "stg");
+////		jobConf.set("hadoop.job.ugi", jobUgi);
+////		jobConf.set("fs.defaultFS", hdfsPath);
+////		jobConf.set("mapreduce.jobtracker.address", tracker);
+////		jobConf.set("mapreduce.map.output.compress.codec", codec);
+////		jobConf.set("mapreduce.map.speculative", mapredExecution);
+////		jobConf.set("mapreduce.reduce.speculative", mapredReduceExecution);
+////		jobConf.set("mapreduce.task.timeout", mapredTimeout);
+////		jobConf.set("mapred.child.java.opts", "-Xmx4072m");
+////		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx4072m");
+//
+////		jobConf.set("mapreduce.min.split.size","128388608");
+////		jobConf.set("mapreduce.max.split.size","128388608");
+////		jobConf.set("dfs.namenode.fs-limits.min-block-size","3088608");
+////		jobConf.set("dfs.namenode.fs-limits.max-blocks-per-file","3088608");
+//		
+//		
+//		
+//////		
+//////		jobConf.set("fileinputformat.split.maxsize","388608");
+////		jobConf.set("mongo.input.split_size","3088608");
+//		
+//		
+//		
+//		
+//		
+//		
+//		//stg
+////		MongoConfigUtil.setInputURI(jobConf, "mongodb://192.168.1.37:27017/dmp.user_detail");
+//		//prd
+////		MongoConfigUtil.setInputURI(jobConf, "mongodb://141.8.230.20:27017/dmp.user_detail");
+//		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
+//		MongoConfigUtil.setCreateInputSplits(jobConf, true);
+//		MongoConfigUtil.setReadSplitsFromSecondary(jobConf, true);
+//		
+//		
+////		MongoConfigUtil.setBatchSize(jobConf, 10000);
+////		MongoConfigUtil.setSplitSize(jobConf, 5);
+////		MongoConfigUtil.setLimit(jobConf, 5);
+//
+//		
+//		FileSystem fs = FileSystem.get(jobConf);
+//		deleteExistedDir(fs, new Path("/home/webuser/dmp/alex/mongo"), true);
+//		Path out = new Path("/home/webuser/dmp/alex/mongo");
+//		
+//		final Job job = new Job(jobConf, "alex_mongo_db_log");
+//		FileOutputFormat.setOutputPath(job, out);
+//		job.setJarByClass(MongoDbDriver.class);
+//		job.setMapperClass(MongoDbMapper.class);
+//		job.setReducerClass(MongoDbReducer.class);
+//
+//		job.setMapOutputKeyClass(Text.class);
+//		job.setMapOutputValueClass(Text.class);
+//
+//		job.setOutputKeyClass(Text.class);
+//		job.setOutputValueClass(Text.class);
+//
+//		job.setInputFormatClass(MongoInputFormat.class);
+//		job.setOutputFormatClass(TextOutputFormat.class);
+//		job.setNumReduceTasks(1);
+//		System.exit(job.waitForCompletion(true) ? 0 : 1);
+//		
 		
 		
 		
