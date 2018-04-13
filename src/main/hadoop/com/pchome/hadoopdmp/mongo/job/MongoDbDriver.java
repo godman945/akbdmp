@@ -78,7 +78,7 @@ public class MongoDbDriver {
 //		jobConf.set("mapred.min.split.size","388608");
 		jobConf.set("mapred.child.java.opts", "-Xmx2g");
 		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
-//		jobConf.set("mapred.compress.map.output", "true");
+		jobConf.set("mapred.compress.map.output", "true");
 		jobConf.set("spring.profiles.active", "stg");
 //		
 		jobConf.set("hadoop.job.ugi", jobUgi);
@@ -112,8 +112,8 @@ public class MongoDbDriver {
 //		MongoConfigUtil.setInputURI(jobConf, "mongodb://141.8.230.20:27017/dmp.user_detail");
 		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
 		MongoConfigUtil.setSplitSize(jobConf, 5);
-		MongoConfigUtil.setCreateInputSplits(jobConf, true);
-		MongoConfigUtil.setLimit(jobConf, 5);
+//		MongoConfigUtil.setCreateInputSplits(jobConf, true);
+//		MongoConfigUtil.setLimit(jobConf, 5);
 
 		
 		final Job job = new Job(jobConf, "alex_mongo_db_log");
