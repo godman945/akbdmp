@@ -72,7 +72,7 @@ public class MongoDbDriver {
 	public void drive() throws Exception {
 		 Configuration conf = new Configuration();
 		 Job job = Job.getInstance(conf, "alex_mongo_db_log");
-		 MongoConfigUtil.setInputURI(conf, "mongodb://141.8.230.20:27017/dmp.user_detail");
+		 MongoConfigUtil.setInputURI(conf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
 		 job.setJarByClass(MongoDbDriver.class);
 		 job.setNumReduceTasks(0);
 		 job.setMapperClass(MongoDbMapper.class);
