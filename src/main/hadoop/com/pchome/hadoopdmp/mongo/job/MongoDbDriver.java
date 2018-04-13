@@ -119,7 +119,7 @@ public class MongoDbDriver {
 		//prd
 //		MongoConfigUtil.setInputURI(jobConf, "mongodb://141.8.230.20:27017/dmp.user_detail");
 		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
-		MongoConfigUtil.setCreateInputSplits(jobConf, false);
+//		MongoConfigUtil.setCreateInputSplits(jobConf, false);
 		MongoConfigUtil.setReadSplitsFromSecondary(jobConf, true);
 		
 		
