@@ -79,17 +79,17 @@ public class MongoDbDriver {
 		jobConf.set("mapred.child.java.opts", "-Xmx2g");
 		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 //		jobConf.set("mapred.compress.map.output", "true");
-//		jobConf.set("spring.profiles.active", "stg");
+		jobConf.set("spring.profiles.active", "stg");
 //		
-//		jobConf.set("hadoop.job.ugi", jobUgi);
-//		jobConf.set("fs.defaultFS", hdfsPath);
-//		jobConf.set("mapreduce.jobtracker.address", tracker);
-//		jobConf.set("mapreduce.map.output.compress.codec", codec);
-//		jobConf.set("mapreduce.map.speculative", mapredExecution);
-//		jobConf.set("mapreduce.reduce.speculative", mapredReduceExecution);
-//		jobConf.set("mapreduce.task.timeout", mapredTimeout);
+		jobConf.set("hadoop.job.ugi", jobUgi);
+		jobConf.set("fs.defaultFS", hdfsPath);
+		jobConf.set("mapreduce.jobtracker.address", tracker);
+		jobConf.set("mapreduce.map.output.compress.codec", codec);
+		jobConf.set("mapreduce.map.speculative", mapredExecution);
+		jobConf.set("mapreduce.reduce.speculative", mapredReduceExecution);
+		jobConf.set("mapreduce.task.timeout", mapredTimeout);
 //		jobConf.set("mapred.child.java.opts", "-Xmx4072m");
-//		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx4072m");
+		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx4072m");
 //		jobConf.set("mapred.max.split.size","3088608");
 //		jobConf.set("mapred.min.split.size","3088608");
 //		jobConf.set("mapreduce.min.split.size","128388608");
