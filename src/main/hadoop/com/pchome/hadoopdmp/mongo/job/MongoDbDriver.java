@@ -92,11 +92,10 @@ public class MongoDbDriver {
 		
 		
 		final Configuration conf = new Configuration();
-		MongoConfigUtil.setInputURI(jobConf, "mongodb://192.168.1.37:27017/dmp.user_detail");
-		// conf.set("mongo.input.query",
-		// "{'update_date':{'$gt':{'$date':'2017-06-01 23:59:59'}}}");
-		// conf.set("mongo.input.query", "{'update_date':{'$gt':'2017-06-19
-		// 23:59:59'}}");
+		//stg
+//		MongoConfigUtil.setInputURI(jobConf, "mongodb://192.168.1.37:27017/dmp.user_detail");
+		//prd
+		MongoConfigUtil.setInputURI(jobConf, "mongodb://141.8.230.20:27017/dmp.user_detail");
 		MongoConfigUtil.setCreateInputSplits(jobConf, false);
 
 		final Job job = new Job(jobConf, "alex_mongo_db_log");
