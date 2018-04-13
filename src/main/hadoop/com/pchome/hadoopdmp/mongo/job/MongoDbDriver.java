@@ -143,7 +143,7 @@ public class MongoDbDriver {
 
 		job.setInputFormatClass(MongoInputFormat.class);
 		job.setOutputFormatClass(TextOutputFormat.class);
-		job.setNumReduceTasks(1);
+		job.setNumReduceTasks(5);
 		System.exit(job.waitForCompletion(true) ? 0 : 1);
 		
 		
