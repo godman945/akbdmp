@@ -1,5 +1,6 @@
 package com.pchome.hadoopdmp.mongo.job;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,6 +21,8 @@ import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Mapper.Context;
+import org.bson.BSONObject;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -33,7 +36,7 @@ import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig
 import com.pchome.hadoopdmp.spring.config.bean.mongodb.MongodbHadoopConfig;
 
 @Component
-public class MongoDbMapper extends Mapper<LongWritable, Text, Text, Text> {
+public class MongoDbMapper extends Mapper<Object, BSONObject, Text, Text> {
 	Log log = LogFactory.getLog(this.getClass());
 	
 	private static int LOG_LENGTH = 30;
@@ -103,7 +106,7 @@ public class MongoDbMapper extends Mapper<LongWritable, Text, Text, Text> {
 	}
 
 	@Override
-	public void map(LongWritable offset, Text value, Context context) {
+	public void map(Object key, BSONObject value, Context context) throws IOException, InterruptedException {
 //		// values[1] //memid
 //		// values[2] //uuid
 //		// values[4] //url
@@ -156,9 +159,14 @@ public class MongoDbMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			// 0:Memid + 1:Uuid + 2:AdClass + 3:Age + 4:Sex + 5:Source + 6:RecodeDate + 7:Type + 8:Classify
 //			String memid = StringUtils.isBlank(categoryLogBeanResult.getMemid()) ? "null" : categoryLogBeanResult.getMemid();
 //			String result = memid + SYMBOL + categoryLogBeanResult.getUuid() + SYMBOL + categoryLogBeanResult.getAdClass() + SYMBOL + categoryLogBeanResult.getAge() + SYMBOL + categoryLogBeanResult.getSex() + SYMBOL + categoryLogBeanResult.getSource()+ SYMBOL +categoryLogBeanResult.getRecodeDate() + SYMBOL + categoryLogBeanResult.getType() + SYMBOL + values[4] + SYMBOL + categoryLogBeanResult.getType()+"_"+categoryLogBeanResult.getSource()+"_"+categoryLogBeanResult.getBehaviorClassify() + SYMBOL + "user_info_Classify_"+categoryLogBeanResult.getPersonalInfoClassify();
-			log.info(">>>>>> Mapper write key:" + value);
-			keyOut.set(value);
-			context.write(keyOut, valueOut);
+			log.info(">>>>>> Mapper write key:" + key);
+			log.info(">>>>>> Mapper write value:" + value);
+			
+			
+//			context.write(new Text(value), new Text("1"));
+			keyOut.set(new Text(value.toString()));
+//			keyOut.set(value);
+//			context.write(keyOut, valueOut);
 			
 		} catch (Exception e) {
 			log.error(">>>>>> " + e.getMessage());

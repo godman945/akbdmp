@@ -118,6 +118,11 @@ public class MongoDbReducer extends Reducer<Text, Text, Text, Text> {
 	@Override
 	public void reduce(Text key, Iterable<Text> value, Context context) {
 		log.info(">>>>>> mongoDb Reduce reduce >>>>>>>>>>>>>>>>>>>>>>>>>>");
+		
+		
+		log.info(">>>>>> mongoDb Reduce key >>>>>>>>>>>>>>>>>>>>>>>>>>"+key);
+		log.info(">>>>>> mongoDb Reduce value >>>>>>>>>>>>>>>>>>>>>>>>>>"+value);
+		
 		// 0 : Memid
 		// 1 : Uuid
 		// 2 : AdClass
