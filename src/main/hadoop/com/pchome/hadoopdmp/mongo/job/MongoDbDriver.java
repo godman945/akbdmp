@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
@@ -73,12 +74,16 @@ public class MongoDbDriver {
 	    
 		JobConf jobConf = new JobConf();
 		jobConf.set("mapred.job.tracker", "5");
+		jobConf.setNumMapTasks(8);
+		jobConf.set("mapred.max.split.size","5000");
+		jobConf.set("mapred.min.split.size","5000");
+		jobConf.set("mapred.max.split.size","5000");
+		jobConf.set("mapred.min.split.size","5000");
+		jobConf.set("dfs.namenode.fs-limits.min-block-size","5000");
+		jobConf.set("dfs.namenode.fs-limits.max-blocks-per-file","5000");
 		
 		
 		
-//		jobConf.setNumMapTasks(8);
-//		jobConf.set("mapred.max.split.size","388608");
-//		jobConf.set("mapred.min.split.size","388608");
 //		jobConf.set("mapred.child.java.opts", "-Xmx2g");
 //		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 //		jobConf.set("mapred.compress.map.output", "true");
@@ -92,8 +97,7 @@ public class MongoDbDriver {
 //		jobConf.set("mapreduce.task.timeout", mapredTimeout);
 //		jobConf.set("mapred.child.java.opts", "-Xmx4072m");
 //		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx4072m");
-//		jobConf.set("mapred.max.split.size","3088608");
-//		jobConf.set("mapred.min.split.size","3088608");
+
 //		jobConf.set("mapreduce.min.split.size","128388608");
 //		jobConf.set("mapreduce.max.split.size","128388608");
 //		jobConf.set("dfs.namenode.fs-limits.min-block-size","3088608");
@@ -115,7 +119,7 @@ public class MongoDbDriver {
 		//prd
 //		MongoConfigUtil.setInputURI(jobConf, "mongodb://141.8.230.20:27017/dmp.user_detail");
 		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
-		MongoConfigUtil.setCreateInputSplits(jobConf, false);
+//		MongoConfigUtil.setCreateInputSplits(jobConf, false);
 		
 		
 		
@@ -261,47 +265,37 @@ public class MongoDbDriver {
 //			FileOutputFormat.setOutputPath(job, new Path("/home/webuser/dmp/adLogClassPrd/categorylog/mongo_db_log"));
 ////			FileInputFormat.addInputPaths(job, adLogClassPpath);
 //
-//			String[] jarPaths = {
-//				"/home/webuser/dmp/webapps/analyzer/lib/commons-lang-2.6.jar",
-//				"/home/webuser/dmp/webapps/analyzer/lib/commons-logging-1.1.1.jar",
-//				"/home/webuser/dmp/webapps/analyzer/lib/log4j-1.2.15.jar",
-//				"/home/webuser/dmp/webapps/analyzer/lib/mongo-java-driver-2.11.3.jar",
-//				"/home/webuser/dmp/webapps/analyzer/lib/softdepot-1.0.9.jar",
-//				"/home/webuser/dmp/webapps/analyzer/lib/solr-solrj-4.5.0.jar",
-//				"/home/webuser/dmp/webapps/analyzer/lib/noggit-0.5.jar",
-//				"/home/webuser/dmp/webapps/analyzer/lib/httpcore-4.2.2.jar",
-//				"/home/webuser/dmp/webapps/analyzer/lib/httpclient-4.2.3.jar",
-//				"/home/webuser/dmp/webapps/analyzer/lib/httpmime-4.2.3.jar",
-//				"/home/webuser/dmp/webapps/analyzer/lib/mysql-connector-java-5.1.12-bin.jar",
-//				"/home/webuser/dmp/webapps/analyzer/lib/mongo-hadoop-core-2.0.2.jar",
-//
-//				// add kafka jar
-//				"/home/webuser/dmp/webapps/analyzer/lib/kafka-clients-0.9.0.0.jar",
-//				"/home/webuser/dmp/webapps/analyzer/lib/kafka_2.11-0.9.0.0.jar",
-//				"/home/webuser/dmp/webapps/analyzer/lib/slf4j-api-1.7.19.jar",
-//				"/home/webuser/dmp/webapps/analyzer/lib/slf4j-log4j12-1.7.6.jar",
-//				"/home/webuser/dmp/webapps/analyzer/lib/json-smart-2.3.jar",
-//				"/home/webuser/dmp/webapps/analyzer/lib/asm-1.0.2.jar" 
-//		}; 
-//		for (String jarPath : jarPaths) {
-//			DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fs);
-//		}
-//
-//		//load 分類表、分類個資表、log4j檔
-//		String[] filePaths = {
-//				hdfsPath + "/home/webuser/dmp/crawlBreadCrumb/data/pfp_ad_category_new.csv",
-//				hdfsPath + "/home/webuser/dmp/readingdata/ClsfyGndAgeCrspTable.txt",
-//				hdfsPath + "/home/webuser/dmp/alex/log4j.xml"
-//		};
-//		for (String filePath : filePaths) {
-//			DistributedCache.addCacheFile(new URI(filePath), job.getConfiguration());
-//		}
-//
-//		if (job.waitForCompletion(true)) {
-//			log.info("Job is OK");
-//		} else {
-//			log.info("Job is Failed");
-//		}
+			String[] jarPaths = {
+				"/home/webuser/dmp/webapps/analyzer/lib/commons-lang-2.6.jar",
+				"/home/webuser/dmp/webapps/analyzer/lib/commons-logging-1.1.1.jar",
+				"/home/webuser/dmp/webapps/analyzer/lib/log4j-1.2.15.jar",
+				"/home/webuser/dmp/webapps/analyzer/lib/mongo-java-driver-2.11.3.jar",
+				"/home/webuser/dmp/webapps/analyzer/lib/softdepot-1.0.9.jar",
+				"/home/webuser/dmp/webapps/analyzer/lib/solr-solrj-4.5.0.jar",
+				"/home/webuser/dmp/webapps/analyzer/lib/noggit-0.5.jar",
+				"/home/webuser/dmp/webapps/analyzer/lib/httpcore-4.2.2.jar",
+				"/home/webuser/dmp/webapps/analyzer/lib/httpclient-4.2.3.jar",
+				"/home/webuser/dmp/webapps/analyzer/lib/httpmime-4.2.3.jar",
+				"/home/webuser/dmp/webapps/analyzer/lib/mysql-connector-java-5.1.12-bin.jar",
+				"/home/webuser/dmp/webapps/analyzer/lib/mongo-hadoop-core-2.0.2.jar",
+
+				// add kafka jar
+				"/home/webuser/dmp/webapps/analyzer/lib/kafka-clients-0.9.0.0.jar",
+				"/home/webuser/dmp/webapps/analyzer/lib/kafka_2.11-0.9.0.0.jar",
+				"/home/webuser/dmp/webapps/analyzer/lib/slf4j-api-1.7.19.jar",
+				"/home/webuser/dmp/webapps/analyzer/lib/slf4j-log4j12-1.7.6.jar",
+				"/home/webuser/dmp/webapps/analyzer/lib/json-smart-2.3.jar",
+				"/home/webuser/dmp/webapps/analyzer/lib/asm-1.0.2.jar" 
+		}; 
+		for (String jarPath : jarPaths) {
+			DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fs);
+		}
+
+		if (job.waitForCompletion(true)) {
+			log.info("Job is OK");
+		} else {
+			log.info("Job is Failed");
+		}
 
 	}
 
