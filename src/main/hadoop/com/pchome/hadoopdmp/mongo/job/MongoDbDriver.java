@@ -98,6 +98,7 @@ public class MongoDbDriver {
 		jobConf.set("dfs.namenode.fs-limits.max-blocks-per-file","388608");
 		
 		jobConf.set("fileinputformat.split.maxsize","388608");
+		jobConf.set("mapreduce.input.fileinputformat.split.minsize","388608");
 		
 		
 		
