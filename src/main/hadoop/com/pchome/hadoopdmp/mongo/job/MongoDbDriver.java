@@ -17,7 +17,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.mongodb.hadoop.MongoConfig;
 import com.mongodb.hadoop.MongoInputFormat;
 import com.mongodb.hadoop.util.MongoConfigUtil;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
@@ -98,7 +97,6 @@ public class MongoDbDriver {
 		jobConf.set("dfs.namenode.fs-limits.max-blocks-per-file","3088608");
 		
 		
-		MongoConfig config = new MongoConfig(jobConf);
 		
 ////		
 ////		jobConf.set("fileinputformat.split.maxsize","388608");
@@ -114,19 +112,12 @@ public class MongoDbDriver {
 		//prd
 //		MongoConfigUtil.setInputURI(jobConf, "mongodb://141.8.230.20:27017/dmp.user_detail");
 		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
-		MongoConfigUtil.setCreateInputSplits(jobConf, false);
-		MongoConfigUtil.setBatchSize(jobConf, 10000);
-		
-		
-		
-		
+//		MongoConfigUtil.setCreateInputSplits(jobConf, false);
+//		MongoConfigUtil.setBatchSize(jobConf, 10000);
 //		MongoConfigUtil.setSplitSize(jobConf, 5);
-		
 //		MongoConfigUtil.setLimit(jobConf, 5);
 
 		final Job job = new Job(jobConf, "alex_mongo_db_log");
-		
-		
 		FileSystem fs = FileSystem.get(jobConf);
 		deleteExistedDir(fs, new Path("/home/webuser/dmp/alex/mongo"), true);
 		Path out = new Path("/home/webuser/dmp/alex/mongo");
