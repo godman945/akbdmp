@@ -113,8 +113,8 @@ public class MongoDbDriver {
 		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
 		MongoConfigUtil.setSplitSize(jobConf, 5);
 		MongoConfigUtil.setCreateInputSplits(jobConf, false);
-		
-		
+		MongoConfigUtil.setLimit(jobConf, 5);
+
 		
 		final Job job = new Job(jobConf, "alex_mongo_db_log");
 		
