@@ -1,16 +1,10 @@
 package com.pchome.hadoopdmp.mongo.job;
 
 import java.io.IOException;
-import java.net.URI;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
@@ -25,9 +19,6 @@ import org.springframework.stereotype.Component;
 
 import com.mongodb.hadoop.MongoInputFormat;
 import com.mongodb.hadoop.util.MongoConfigUtil;
-import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategoryAudienceAnalyze;
-import com.pchome.hadoopdmp.mongo.job.MapReduceMongoJob.MyMapper;
-import com.pchome.hadoopdmp.mongo.job.MapReduceMongoJob.MyReducer;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 
 @Component
@@ -89,6 +80,29 @@ public class MongoDbDriver {
 		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 		jobConf.set("mapred.compress.map.output", "true");
 		jobConf.set("spring.profiles.active", "stg");
+		
+		jobConf.set("hadoop.job.ugi", jobUgi);
+		jobConf.set("fs.defaultFS", hdfsPath);
+		jobConf.set("mapreduce.jobtracker.address", tracker);
+		jobConf.set("mapreduce.map.output.compress.codec", codec);
+		jobConf.set("mapreduce.map.speculative", mapredExecution);
+		jobConf.set("mapreduce.reduce.speculative", mapredReduceExecution);
+		jobConf.set("mapreduce.task.timeout", mapredTimeout);
+		jobConf.set("mapred.child.java.opts", "-Xmx4072m");
+		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx4072m");
+		jobConf.set("mapred.max.split.size","128388608");
+		jobConf.set("mapred.min.split.size","128388608");
+		jobConf.set("mapreduce.min.split.size","128388608");
+		jobConf.set("mapreduce.max.split.size","128388608");
+		jobConf.set("dfs.namenode.fs-limits.min-block-size","1048576");
+		jobConf.set("dfs.namenode.fs-limits.max-blocks-per-file","1048576");
+		
+		
+		
+		
+		
+		
+		
 		
 		
 		//stg
