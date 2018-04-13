@@ -6,7 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -14,15 +13,14 @@ import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
-import org.apache.hadoop.mapred.JobConf;
-import com.hadoop.mapreduce.LzoTextInputFormat;
+
 import com.mongodb.hadoop.MongoInputFormat;
 import com.mongodb.hadoop.util.MongoConfigUtil;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
@@ -166,12 +164,12 @@ public class MongoDbDriver {
 			String bessieTempPath = "/home/webuser/dmp/adLogClassPrd/categorylog/"+timePath;
 			
 			//hdfs存在則刪除
-			deleteExistedDir(fs, new Path(bessieTempPath), true);
+			deleteExistedDir(fs, new Path("/home/webuser/dmp/adLogClassPrd/categorylog/mongo_db_log"), true);
 			
 			log.info(">>>>>>INPUT PATH:"+adLogClassPpath);
 			log.info(">>>>>>OUTPUT PATH:"+bessieTempPath);
 			
-//			FileOutputFormat.setOutputPath(job, new Path(bessieTempPath));
+			FileOutputFormat.setOutputPath(job, new Path("/home/webuser/dmp/adLogClassPrd/categorylog/mongo_db_log"));
 //			FileInputFormat.addInputPaths(job, adLogClassPpath);
 
 			String[] jarPaths = {
@@ -243,8 +241,8 @@ public class MongoDbDriver {
 		log.info("====driver start====");
 		System.setProperty("spring.profiles.active", "stg");
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-		MongoDbDriver CategoryDriver = (MongoDbDriver) ctx.getBean(MongoDbDriver.class);
-		CategoryDriver.drive();
+		MongoDbDriver mongoDbDriver = (MongoDbDriver) ctx.getBean(MongoDbDriver.class);
+		mongoDbDriver.drive();
 		log.info("====driver end====");
 	}
 
