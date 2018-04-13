@@ -74,32 +74,32 @@ public class MongoDbDriver {
 	    
 		JobConf jobConf = new JobConf();
 		jobConf.setNumMapTasks(8);
-		jobConf.set("mapred.max.split.size","388608");
-		jobConf.set("mapred.min.split.size","388608");
+//		jobConf.set("mapred.max.split.size","388608");
+//		jobConf.set("mapred.min.split.size","388608");
 		jobConf.set("mapred.child.java.opts", "-Xmx2g");
 		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
-		jobConf.set("mapred.compress.map.output", "true");
-		jobConf.set("spring.profiles.active", "stg");
-		
-		jobConf.set("hadoop.job.ugi", jobUgi);
-		jobConf.set("fs.defaultFS", hdfsPath);
-		jobConf.set("mapreduce.jobtracker.address", tracker);
-		jobConf.set("mapreduce.map.output.compress.codec", codec);
-		jobConf.set("mapreduce.map.speculative", mapredExecution);
-		jobConf.set("mapreduce.reduce.speculative", mapredReduceExecution);
-		jobConf.set("mapreduce.task.timeout", mapredTimeout);
-		jobConf.set("mapred.child.java.opts", "-Xmx4072m");
-		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx4072m");
-		jobConf.set("mapred.max.split.size","388608");
-		jobConf.set("mapred.min.split.size","388608");
-		jobConf.set("mapreduce.min.split.size","128388608");
-		jobConf.set("mapreduce.max.split.size","128388608");
-		jobConf.set("dfs.namenode.fs-limits.min-block-size","388608");
-		jobConf.set("dfs.namenode.fs-limits.max-blocks-per-file","388608");
-		
-		jobConf.set("fileinputformat.split.maxsize","388608");
-		jobConf.set("mapreduce.input.fileinputformat.split.minsize","388608");
-		jobConf.set("mongo.input.split_size","388608");
+//		jobConf.set("mapred.compress.map.output", "true");
+//		jobConf.set("spring.profiles.active", "stg");
+//		
+//		jobConf.set("hadoop.job.ugi", jobUgi);
+//		jobConf.set("fs.defaultFS", hdfsPath);
+//		jobConf.set("mapreduce.jobtracker.address", tracker);
+//		jobConf.set("mapreduce.map.output.compress.codec", codec);
+//		jobConf.set("mapreduce.map.speculative", mapredExecution);
+//		jobConf.set("mapreduce.reduce.speculative", mapredReduceExecution);
+//		jobConf.set("mapreduce.task.timeout", mapredTimeout);
+//		jobConf.set("mapred.child.java.opts", "-Xmx4072m");
+//		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx4072m");
+//		jobConf.set("mapred.max.split.size","3088608");
+//		jobConf.set("mapred.min.split.size","3088608");
+//		jobConf.set("mapreduce.min.split.size","128388608");
+//		jobConf.set("mapreduce.max.split.size","128388608");
+//		jobConf.set("dfs.namenode.fs-limits.min-block-size","3088608");
+//		jobConf.set("dfs.namenode.fs-limits.max-blocks-per-file","3088608");
+//		
+//		jobConf.set("fileinputformat.split.maxsize","388608");
+		jobConf.set("mapreduce.input.fileinputformat.split.minsize","5");
+//		jobConf.set("mongo.input.split_size","3088608");
 		
 		
 		
@@ -112,7 +112,7 @@ public class MongoDbDriver {
 //		MongoConfigUtil.setInputURI(jobConf, "mongodb://141.8.230.20:27017/dmp.user_detail");
 		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
 		MongoConfigUtil.setSplitSize(jobConf, 5);
-		MongoConfigUtil.setCreateInputSplits(jobConf, false);
+		MongoConfigUtil.setCreateInputSplits(jobConf, true);
 		MongoConfigUtil.setLimit(jobConf, 5);
 
 		
