@@ -66,12 +66,9 @@ public class MongoDbDriver {
 	@Value("${akb.path.alllog}")
 	private String akbPathAllLog;
 	
-	private SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
-	private SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMddHHmmss");
-	
 	public void drive() throws Exception {
 		 Configuration conf = new Configuration();
-		 Job job = Job.getInstance(conf, "alex_mongo_db_log");
+		 Job job = new Job(conf, "alex_mongo_db_log");
 		 MongoConfigUtil.setInputURI(conf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
 		 job.setJarByClass(MongoDbDriver.class);
 		 job.setNumReduceTasks(0);
