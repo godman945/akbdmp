@@ -69,7 +69,7 @@ public class MongoDbDriver {
 		 Job job = new Job(conf, "alex_mongo_db_log");
 		 MongoConfigUtil.setInputURI(conf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
 		 MongoConfigUtil.setCreateInputSplits(conf, false);
-		 MongoConfigUtil.setReadSplitsFromSecondary(conf, true);
+//		 MongoConfigUtil.setReadSplitsFromSecondary(conf, true);
 		 
 		 job.setJarByClass(MongoDbDriver.class);
 		 job.setNumReduceTasks(0);
@@ -83,7 +83,6 @@ public class MongoDbDriver {
 		 
 		 FileSystem fs = FileSystem.get(conf);
 		 deleteExistedDir(fs, new Path("/home/webuser/dmp/alex/mongo"), true);
-		 FileOutputFormat.setOutputPath(job, new Path("/home/webuser/dmp/alex/mongo"));
 		 Path out = new Path("/home/webuser/dmp/alex/mongo");
 		 FileOutputFormat.setOutputPath(job, out);
 		 System.exit(job.waitForCompletion(true) ? 0 : 1);
