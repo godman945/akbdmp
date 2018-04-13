@@ -71,33 +71,28 @@ public class MongoDbDriver {
 		 JobConf conf = new JobConf();
 		 Job job = new Job(conf, "alex_mongo_db_log");
 		 
-		 
-		 
-		 
 		 MongoConfigUtil.setInputURI(conf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
 		 MongoConfigUtil.setCreateInputSplits(conf, false);
 		 MongoConfigUtil.setReadSplitsFromSecondary(conf, true);
-		 conf.set("mapred.job.tracker", "5");
-		 conf.setNumMapTasks(5);
-		 conf.set("mapred.max.split.size","5000");
-		 conf.set("mapred.min.split.size","5000");
-		 conf.set("mapred.max.split.size","5000");
-		 conf.set("mapred.min.split.size","5000");
-		 conf.set("dfs.namenode.fs-limits.min-block-size","5000");
-		 conf.set("dfs.namenode.fs-limits.max-blocks-per-file","5000");
-		 
-		 
-		 
+//		 conf.set("mapred.job.tracker", "5");
+//		 conf.setNumMapTasks(5);
+//		 conf.set("mapred.max.split.size","5000");
+//		 conf.set("mapred.min.split.size","5000");
+//		 conf.set("mapred.max.split.size","5000");
+//		 conf.set("mapred.min.split.size","5000");
+//		 conf.set("dfs.namenode.fs-limits.min-block-size","5000");
+//		 conf.set("dfs.namenode.fs-limits.max-blocks-per-file","5000");
 		 
 		 job.setJarByClass(MongoDbDriver.class);
-		 job.setNumReduceTasks(1);
 		 job.setMapperClass(MongoDbMapper.class);
 		 job.setReducerClass(MongoDbReducer.class);
 		 job.setMapOutputKeyClass(Text.class);
 		 job.setMapOutputValueClass(Text.class);
-		 job.setInputFormatClass(MongoInputFormat.class);
 		 job.setOutputKeyClass(Text.class);
 		 job.setOutputValueClass(Text.class);
+		 job.setInputFormatClass(MongoInputFormat.class);
+		 job.setOutputFormatClass(TextOutputFormat.class);
+		 job.setNumReduceTasks(1);
 		 
 		 FileSystem fs = FileSystem.get(conf);
 		 deleteExistedDir(fs, new Path("/home/webuser/dmp/alex/mongo"), true);
