@@ -1,7 +1,6 @@
 package com.pchome.hadoopdmp.mongo.job;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -10,14 +9,13 @@ import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
+
 import com.mongodb.hadoop.MongoInputFormat;
 import com.mongodb.hadoop.util.MongoConfigUtil;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
@@ -70,13 +68,16 @@ public class MongoDbDriver {
 		 Configuration conf = new Configuration();
 		 Job job = new Job(conf, "alex_mongo_db_log");
 		 MongoConfigUtil.setInputURI(conf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
+		 MongoConfigUtil.setCreateInputSplits(conf, false);
+		 MongoConfigUtil.setReadSplitsFromSecondary(conf, true);
+		 
 		 job.setJarByClass(MongoDbDriver.class);
 		 job.setNumReduceTasks(0);
 		 job.setMapperClass(MongoDbMapper.class);
 		 job.setReducerClass(MongoDbReducer.class);
 		 job.setMapOutputKeyClass(Text.class);
 		 job.setMapOutputValueClass(Text.class);
-		 job.setInputFormatClass(com.mongodb.hadoop.MongoInputFormat.class);
+		 job.setInputFormatClass(MongoInputFormat.class);
 		 job.setOutputKeyClass(Text.class);
 		 job.setOutputValueClass(Text.class);
 		 
