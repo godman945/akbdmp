@@ -108,6 +108,8 @@ public class MongoDbDriver {
 		JobConf jobConf = new JobConf();
 		jobConf.set("mapred.max.split.size","5000");
 		jobConf.set("mapred.min.split.size","5000");
+		jobConf.set("mapreduce.min.split.size","5000");
+		jobConf.set("mapreduce.max.split.size","5000");
 		jobConf.set("mapred.child.java.opts", "-Xmx2g");
 		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 		jobConf.set("mapred.compress.map.output", "true");
@@ -149,12 +151,15 @@ public class MongoDbDriver {
 		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
 		MongoConfigUtil.setCreateInputSplits(jobConf, false);
 		MongoConfigUtil.setInputFormat(jobConf, MongoInputFormat.class);
+		MongoConfigUtil.setSplitSize(jobConf, 9000);
+		MongoConfigUtil.setReadSplitsFromShards(jobConf,true);
+		
+		
 //		MongoConfigUtil.BSON_READ_SPLITS
 //		MongoConfigUtil.setReadSplitsFromSecondary(jobConf, true);
 //		MongoConfigUtil.setBatchSize(jobConf, 10000);
-		MongoConfigUtil.setSplitSize(jobConf, 9000);
+		
 //		MongoConfigUtil.setLimit(jobConf, 5);
-
 		
 		FileSystem fs = FileSystem.get(jobConf);
 		deleteExistedDir(fs, new Path("/home/webuser/dmp/alex/mongo"), true);
@@ -171,15 +176,12 @@ public class MongoDbDriver {
 
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
-
+		
 		job.setInputFormatClass(MongoInputFormat.class);
 		job.setOutputFormatClass(TextOutputFormat.class);
 		
-		job.setInputFormatClass(MongoInputFormat.class);
 		job.setNumReduceTasks(1);
-		
 		System.exit(job.waitForCompletion(true) ? 0 : 1);
-		
 		
 		
 		
