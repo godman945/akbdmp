@@ -74,6 +74,7 @@ public class MongoDbDriver {
 		 MongoConfigUtil.setInputURI(conf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
 		 MongoConfigUtil.setCreateInputSplits(conf, false);
 		 MongoConfigUtil.setReadSplitsFromSecondary(conf, true);
+		 MongoConfigUtil.setInputFormat(conf, MongoInputFormat.class);
 //		 conf.set("mapred.job.tracker", "5");
 //		 conf.setNumMapTasks(5);
 //		 conf.set("mapred.max.split.size","5000");
