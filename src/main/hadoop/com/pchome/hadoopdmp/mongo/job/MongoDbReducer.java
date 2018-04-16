@@ -55,7 +55,6 @@ public class MongoDbReducer extends Reducer<Text, Text, Text, Text> {
 		try {
 			count = count + 1;
 			context.write(new Text(key), new Text("1"));
-			
 			if(key.equals("sizeCount")){
 				sizeCount = value.toString();
 			}

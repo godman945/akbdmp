@@ -21,6 +21,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.stereotype.Component;
 
 import com.mongodb.hadoop.MongoInputFormat;
+import com.mongodb.hadoop.input.MongoInputSplit;
 import com.mongodb.hadoop.util.MongoConfigUtil;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 
@@ -106,14 +107,15 @@ public class MongoDbDriver {
 		
 		
 	    
-		Configuration jobConf = new Configuration();
+		JobConf jobConf = new JobConf();
+		jobConf.set("spring.profiles.active", "stg");
 		jobConf.set("mapred.child.java.opts", "-Xmx2g");
 		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 		jobConf.set("mapred.compress.map.output", "true");
-		jobConf.set("mapred.max.split.size","10000"); //no
-		jobConf.set("mapreduce.input.fileinputformat.split.maxsize", "10000"); //no
-		jobConf.set("mongo.input.split_size", "10000");//no
-		
+//		jobConf.set("mapred.max.split.size","10000"); //no
+//		jobConf.set("mapreduce.input.fileinputformat.split.maxsize", "10000"); //no
+//		jobConf.set("mongo.input.split_size", "10000");//no
+		jobConf.setNumTasksToExecutePerJvm(10);
 		
 //		jobConf.set("mapred.max.split.size","5000");
 //		jobConf.set("mapred.min.split.size","5000");
@@ -157,6 +159,7 @@ public class MongoDbDriver {
 		MongoConfigUtil.setInputFormat(jobConf, MongoInputFormat.class);
 		MongoConfigUtil.setCreateInputSplits(jobConf, false);
 		MongoConfigUtil.setSplitSize(jobConf, 10000);
+		
 //		MongoConfigUtil.setCreateInputSplits(jobConf, false);
 //		MongoConfigUtil.setReadSplitsFromShards(jobConf,true);
 //		MongoConfigUtil.setSplitSize(jobConf, 9000);

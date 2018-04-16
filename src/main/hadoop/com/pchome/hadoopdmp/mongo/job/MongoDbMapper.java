@@ -21,6 +21,7 @@ public class MongoDbMapper extends Mapper<Object, BSONObject, Text, Text> {
 
 	private Text keyOut = new Text();
 	private Text valueOut = new Text();
+	private Text totalSizeCount = new Text();
 
 	public static String record_date;
 	public static ArrayList<Map<String, String>> categoryList = new ArrayList<Map<String, String>>();//分類表	
@@ -30,13 +31,14 @@ public class MongoDbMapper extends Mapper<Object, BSONObject, Text, Text> {
 		log.info(">>>>>> mongoDb Mapper  setup >>>>>>>>>>>>>>>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
 	}
 	int count = 0;
-	int sizeCount = 0;
+	long sizeCount = 0;
 	@Override
 	public void map(Object key, BSONObject value, Context context) throws IOException, InterruptedException {
 		try {
 			sizeCount = sizeCount + 1;
-			
-			context.write(new Text("sizeCount"), new Text(String.valueOf(sizeCount)));
+			log.info(">>>>>> Mapper process sizeCount:" + sizeCount);
+			totalSizeCount.set(new Text("sizeCount"));
+			context.write(totalSizeCount, new Text(String.valueOf(sizeCount)));
 			
 			int range = 365;
 			
