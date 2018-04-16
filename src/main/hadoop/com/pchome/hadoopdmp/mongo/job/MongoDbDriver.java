@@ -174,10 +174,10 @@ public class MongoDbDriver {
 //		MongoConfigUtil.setLimit(jobConf, 5);
 		
 		FileSystem fs = FileSystem.get(jobConf);
-		deleteExistedDir(fs, new Path("/home/webuser/dmp/alex/mongo2"), true);
-		Path out = new Path("/home/webuser/dmp/alex/mongo2");
+		deleteExistedDir(fs, new Path("/home/webuser/dmp/alex/mongo"), true);
+		Path out = new Path("/home/webuser/dmp/alex/mongo");
 		
-		final Job job = new Job(jobConf, "alex_mongo_db_log2");
+		final Job job = new Job(jobConf, "alex_mongo_db_log");
 		FileOutputFormat.setOutputPath(job, out);
 		job.setJarByClass(MongoDbDriver.class);
 		job.setMapperClass(MongoDbMapper.class);
