@@ -22,7 +22,6 @@ public class MongoDbMapper extends Mapper<Object, BSONObject, Text, Text> {
 	private Text keyOut = new Text();
 	private Text valueOut = new Text();
 	private Text totalSizeCount = new Text();
-
 	public static String record_date;
 	public static ArrayList<Map<String, String>> categoryList = new ArrayList<Map<String, String>>();//分類表	
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -37,12 +36,6 @@ public class MongoDbMapper extends Mapper<Object, BSONObject, Text, Text> {
 		try {
 			sizeCount = sizeCount + 1;
 			log.info(">>>>>> Mapper process sizeCount:" + sizeCount);
-			log.info(">>>>>> Mapper process BSONObject:" + value.toString());
-			
-			
-			log.info(">>>>>> Mapper process BSONObject create_date:" + String.valueOf(value.get("create_date")));
-			
-			
 			totalSizeCount.set(new Text("sizeCount"));
 			context.write(totalSizeCount, new Text(String.valueOf(sizeCount)));
 			
