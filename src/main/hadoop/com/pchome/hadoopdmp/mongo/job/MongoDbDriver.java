@@ -106,14 +106,21 @@ public class MongoDbDriver {
 		
 	    
 		JobConf jobConf = new JobConf();
-		jobConf.set("mapred.max.split.size","5000");
-		jobConf.set("mapred.min.split.size","5000");
-		jobConf.set("mapreduce.min.split.size","5000");
-		jobConf.set("mapreduce.max.split.size","5000");
+		
+		
+		
+//		jobConf.set("mapred.max.split.size","5000");
+//		jobConf.set("mapred.min.split.size","5000");
+//		jobConf.set("mapreduce.min.split.size","5000");
+//		jobConf.set("mapreduce.max.split.size","5000");
 		jobConf.set("mapred.child.java.opts", "-Xmx2g");
 		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 		jobConf.set("mapred.compress.map.output", "true");
 		jobConf.setNumMapTasks(2);
+		jobConf.setMaxMapTaskFailuresPercent(2);
+		jobConf.setMemoryForMapTask(100);
+		jobConf.setNumTasksToExecutePerJvm(2);
+		
 		
 //		jobConf.set("mapred.job.tracker", "5");
 //		jobConf.setNumMapTasks(2);
