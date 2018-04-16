@@ -148,7 +148,7 @@ public class MongoDbDriver {
 //		MongoConfigUtil.BSON_READ_SPLITS
 //		MongoConfigUtil.setReadSplitsFromSecondary(jobConf, true);
 //		MongoConfigUtil.setBatchSize(jobConf, 10000);
-//		MongoConfigUtil.setSplitSize(jobConf, 5);
+		MongoConfigUtil.setSplitSize(jobConf, 9000);
 //		MongoConfigUtil.setLimit(jobConf, 5);
 
 		
@@ -170,7 +170,7 @@ public class MongoDbDriver {
 
 		job.setInputFormatClass(MongoInputFormat.class);
 		job.setOutputFormatClass(TextOutputFormat.class);
-		job.setNumReduceTasks(1);
+		job.setNumReduceTasks(2);
 		System.exit(job.waitForCompletion(true) ? 0 : 1);
 		
 		

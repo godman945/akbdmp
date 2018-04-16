@@ -29,12 +29,12 @@ public class MongoDbMapper extends Mapper<Object, BSONObject, Text, Text> {
 	public void setup(Context context) {
 		log.info(">>>>>> mongoDb Mapper  setup >>>>>>>>>>>>>>>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
 	}
-
+	int count = 0;
 	@Override
 	public void map(Object key, BSONObject value, Context context) throws IOException, InterruptedException {
 		try {
 			int range = 365;
-			int count = 0;
+			
 			
 			Date date1 = sdf.parse(value.get("create_date").toString());
 			Date date2 = sdf.parse(value.get("update_date").toString());
@@ -45,8 +45,10 @@ public class MongoDbMapper extends Mapper<Object, BSONObject, Text, Text> {
 	        cal2.setTime(date2);
 	        int rangeDay = ( int ) ((date2.getTime() - date1.getTime()) / (1000*3600*24 )); 
 			if(rangeDay > range){
+				count = count + 1;
 				log.info(">>>>>> Mapper write key:" + key);
 				log.info(">>>>>> Mapper write value:" + value);
+				log.info(">>>>>> Mapper write count:" + count);
 				keyOut.set(new Text(key.toString()));
 				context.write(keyOut, valueOut);
 			}
