@@ -121,59 +121,48 @@ public class MongoDbDriver {
 		jobConf.set("mapreduce.input.fileinputformat.split.maxsize", "10000");
 		
 		
-//		jobConf.setNumMapTasks(2);
-//		jobConf.setMaxMapTaskFailuresPercent(2);
-//		jobConf.setMemoryForMapTask(100);
-//		jobConf.setNumTasksToExecutePerJvm(2);
+//		jobConf.setNumMapTasks(2); //no
+//		jobConf.setMaxMapTaskFailuresPercent(2);//no
+//		jobConf.setMemoryForMapTask(100);//no
+//		jobConf.setNumTasksToExecutePerJvm(2);//no
 		
-//		jobConf.set("mapred.job.tracker", "5");
-//		jobConf.setNumMapTasks(2);
-//		jobConf.set("mapred.max.split.size","5000");
-//		jobConf.set("mapred.min.split.size","5000");
-//		jobConf.set("mapred.max.split.size","5000");
-//		jobConf.set("mapred.min.split.size","5000");
-//		jobConf.set("dfs.namenode.fs-limits.min-block-size","5000");
-//		jobConf.set("dfs.namenode.fs-limits.max-blocks-per-file","5000");
-//		jobConf.set("mapred.child.java.opts", "-Xmx2g");
-//		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
-//		jobConf.set("mapred.compress.map.output", "true");
-//		jobConf.set("spring.profiles.active", "stg");
-//		jobConf.set("hadoop.job.ugi", jobUgi);
-//		jobConf.set("fs.defaultFS", hdfsPath);
-//		jobConf.set("mapreduce.jobtracker.address", tracker);
-//		jobConf.set("mapreduce.map.output.compress.codec", codec);
-//		jobConf.set("mapreduce.map.speculative", mapredExecution);
-//		jobConf.set("mapreduce.reduce.speculative", mapredReduceExecution);
-//		jobConf.set("mapreduce.task.timeout", mapredTimeout);
-//		jobConf.set("mapred.child.java.opts", "-Xmx4072m");
-//		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx4072m");
-//		jobConf.set("mapreduce.min.split.size","128388608");
-//		jobConf.set("mapreduce.max.split.size","128388608");
-//		jobConf.set("dfs.namenode.fs-limits.min-block-size","3088608");
-//		jobConf.set("dfs.namenode.fs-limits.max-blocks-per-file","3088608");
-//		jobConf.set("mapreduce.input.fileinputformat.split.maxsize","388608");
-//		jobConf.set("mapreduce.input.fileinputformat.split.minsize","3088608");
+//		jobConf.set("mapred.job.tracker", "5");//no
+//		jobConf.setNumMapTasks(2);//no
+//		jobConf.set("mapred.max.split.size","5000");//no
+//		jobConf.set("mapred.min.split.size","5000");//no
+//		jobConf.set("mapred.max.split.size","5000");//no
+//		jobConf.set("mapred.min.split.size","5000");//no
+//		jobConf.set("dfs.namenode.fs-limits.min-block-size","5000");//no
+//		jobConf.set("dfs.namenode.fs-limits.max-blocks-per-file","5000");//no
+//		jobConf.set("mapred.child.java.opts", "-Xmx2g");//no
+//		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");//no
+//		jobConf.set("mapred.compress.map.output", "true");//no
+//		jobConf.set("spring.profiles.active", "stg");//no
+//		jobConf.set("hadoop.job.ugi", jobUgi);//no
+//		jobConf.set("fs.defaultFS", hdfsPath);//no
+//		jobConf.set("mapreduce.jobtracker.address", tracker);//no
+//		jobConf.set("mapreduce.map.output.compress.codec", codec);//no
+//		jobConf.set("mapreduce.map.speculative", mapredExecution);//no
+//		jobConf.set("mapreduce.reduce.speculative", mapredReduceExecution);//no
+//		jobConf.set("mapreduce.task.timeout", mapredTimeout);//no
+//		jobConf.set("mapred.child.java.opts", "-Xmx4072m");//no
+//		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx4072m");//no
+//		jobConf.set("mapreduce.min.split.size","128388608");//no
+//		jobConf.set("mapreduce.max.split.size","128388608");//no
+//		jobConf.set("dfs.namenode.fs-limits.min-block-size","3088608");//no
+//		jobConf.set("dfs.namenode.fs-limits.max-blocks-per-file","3088608");//no
+//		jobConf.set("mapreduce.input.fileinputformat.split.maxsize","388608");//no
+//		jobConf.set("mapreduce.input.fileinputformat.split.minsize","3088608");//no
 		
 		
-		//stg
-//		MongoConfigUtil.setInputURI(jobConf, "mongodb://192.168.1.37:27017/dmp.user_detail");
-		//prd
-//		MongoConfigUtil.setInputURI(jobConf, "mongodb://141.8.230.20:27017/dmp.user_detail");
 		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
-		MongoConfigUtil.setCreateInputSplits(jobConf, false);
 		MongoConfigUtil.setInputFormat(jobConf, MongoInputFormat.class);
-		MongoConfigUtil.setReadSplitsFromShards(jobConf,true);
 		
-		
+//		MongoConfigUtil.setCreateInputSplits(jobConf, false);
+//		MongoConfigUtil.setReadSplitsFromShards(jobConf,true);
 //		MongoConfigUtil.setSplitSize(jobConf, 9000);
 //		MongoConfigUtil.setBSONOutputBuildSplits(jobConf, true);
 //		MongoConfigUtil.setLimit(conf, limit);
-		
-		
-		
-		
-		
-		
 //		MongoConfigUtil.BSON_READ_SPLITS
 //		MongoConfigUtil.setReadSplitsFromSecondary(jobConf, true);
 //		MongoConfigUtil.setBatchSize(jobConf, 10000);
