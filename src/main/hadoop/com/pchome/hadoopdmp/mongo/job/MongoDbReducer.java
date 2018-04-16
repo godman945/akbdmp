@@ -32,12 +32,12 @@ public class MongoDbReducer extends Reducer<Text, Text, Text, Text> {
 
 	SimpleDateFormat sdf = null;
 	private final static String SYMBOL = String.valueOf(new char[] { 9, 31 });
-	
 	List<JSONObject> kafkaList = new ArrayList<>();
-
 	Producer<String, String> producer = null;
-	long count = 0;
-	String sizeCount;
+	
+	private long totalDeleteSize;
+	private long totalSize;
+	
 	public void setup(Context context) {
 		log.info("****** mongoDb Reduce  setup ******");
 		try {
@@ -53,10 +53,12 @@ public class MongoDbReducer extends Reducer<Text, Text, Text, Text> {
 		log.info(">>>>>> mongoDb Reduce key >>>>>>>>>>>>>>>>>>>>>>>>>>"+key);
 		log.info(">>>>>> mongoDb Reduce value >>>>>>>>>>>>>>>>>>>>>>>>>>"+value);
 		try {
-			count = count + 1;
-			context.write(new Text(key), new Text("1"));
-			if(key.equals("sizeCount")){
-				sizeCount = value.toString();
+			if(key.toString().contains("_count")){
+				totalSize = totalSize + 1;
+				context.write(new Text("delete"), new Text("1"));
+			}else if(key.toString().contains("_delete")){
+				totalDeleteSize = totalDeleteSize + 1;
+				context.write(new Text(key), new Text("1"));
 			}
 			
 			
@@ -69,8 +71,8 @@ public class MongoDbReducer extends Reducer<Text, Text, Text, Text> {
 
 	public void cleanup(Context context) {
 		log.info("****************** mongoDb Reduce  cleanup ***********************");
-		log.info(">>>>>> count:"+count);
-		log.info(">>>>>> sizeCount:"+sizeCount);
+		log.info(">>>>>> count:"+totalSize);
+		log.info(">>>>>> sizeCount:"+totalDeleteSize);
 		
 		
 	}

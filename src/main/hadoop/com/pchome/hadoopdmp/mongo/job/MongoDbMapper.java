@@ -30,15 +30,11 @@ public class MongoDbMapper extends Mapper<Object, BSONObject, Text, Text> {
 	public void setup(Context context) {
 		log.info(">>>>>> mongoDb Mapper  setup >>>>>>>>>>>>>>>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
 	}
-	int count = 0;
-	long sizeCount = 0;
 	@Override
 	public void map(Object key, BSONObject value, Context context) throws IOException, InterruptedException {
 		try {
-			sizeCount = sizeCount + 1;
-			log.info(">>>>>> Mapper process sizeCount:" + sizeCount);
 			totalSizeCount.set(new Text("sizeCount"));
-			context.write(totalSizeCount, new Text(String.valueOf(sizeCount)));
+			context.write(new Text(String.valueOf(key+"_count")), new Text(String.valueOf(key)));
 			
 			int range = 365;
 			
@@ -55,12 +51,11 @@ public class MongoDbMapper extends Mapper<Object, BSONObject, Text, Text> {
 	        cal2.setTime(date2);
 	        int rangeDay = ( int ) ((date2.getTime() - date1.getTime()) / (1000*3600*24 )); 
 			if(rangeDay > range){
-				count = count + 1;
 				log.info(">>>>>> Mapper write key:" + key);
 				log.info(">>>>>> rangeDay:" + rangeDay);
 //				log.info(">>>>>> Mapper write value:" + value);
 //				log.info(">>>>>> Mapper write count:" + count);
-				keyOut.set(new Text(key.toString()));
+				keyOut.set(new Text(key.toString())+"_delete");
 				context.write(keyOut, new Text(value.toString()));
 			}
 		} catch (Exception e) {

@@ -116,7 +116,7 @@ public class MongoDbDriver {
 //		jobConf.set("mapred.max.split.size","10000"); //no
 //		jobConf.set("mapreduce.input.fileinputformat.split.maxsize", "10000"); //no
 		jobConf.set("mongo.input.split_size", "10000");//no
-		jobConf.setNumTasksToExecutePerJvm(10);
+		jobConf.setNumTasksToExecutePerJvm(5);
 		
 //		jobConf.set("mapred.max.split.size","5000");
 //		jobConf.set("mapred.min.split.size","5000");
