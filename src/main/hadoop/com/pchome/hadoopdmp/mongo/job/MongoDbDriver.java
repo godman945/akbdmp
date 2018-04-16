@@ -121,7 +121,6 @@ public class MongoDbDriver {
 		jobConf.setMemoryForMapTask(100);
 		jobConf.setNumTasksToExecutePerJvm(2);
 		
-		
 //		jobConf.set("mapred.job.tracker", "5");
 //		jobConf.setNumMapTasks(2);
 //		jobConf.set("mapred.max.split.size","5000");
@@ -156,11 +155,16 @@ public class MongoDbDriver {
 		//prd
 //		MongoConfigUtil.setInputURI(jobConf, "mongodb://141.8.230.20:27017/dmp.user_detail");
 		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
-		MongoConfigUtil.setCreateInputSplits(jobConf, true);
-		MongoConfigUtil.setShardChunkSplittingEnabled(jobConf, false);
+		MongoConfigUtil.setCreateInputSplits(jobConf, false);
 		MongoConfigUtil.setInputFormat(jobConf, MongoInputFormat.class);
 		MongoConfigUtil.setSplitSize(jobConf, 9000);
 		MongoConfigUtil.setReadSplitsFromShards(jobConf,true);
+		MongoConfigUtil.setBSONOutputBuildSplits(jobConf, true);
+//		MongoConfigUtil.setLimit(conf, limit);
+		
+		
+		
+		
 		
 		
 //		MongoConfigUtil.BSON_READ_SPLITS
