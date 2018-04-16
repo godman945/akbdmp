@@ -10,6 +10,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.JobConf;
+import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
@@ -153,12 +154,11 @@ public class MongoDbDriver {
 		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
 		MongoConfigUtil.setCreateInputSplits(jobConf, false);
 		MongoConfigUtil.setInputFormat(jobConf, MongoInputFormat.class);
+//		MongoConfigUtil.BSON_READ_SPLITS
 //		MongoConfigUtil.setReadSplitsFromSecondary(jobConf, true);
-		
-		
-//		MongoConfigUtil.setBatchSize(jobConf, 10000);
-//		MongoConfigUtil.setSplitSize(jobConf, 5);
-//		MongoConfigUtil.setLimit(jobConf, 5);
+		MongoConfigUtil.setBatchSize(jobConf, 10000);
+		MongoConfigUtil.setSplitSize(jobConf, 5);
+		MongoConfigUtil.setLimit(jobConf, 5);
 
 		
 		FileSystem fs = FileSystem.get(jobConf);
