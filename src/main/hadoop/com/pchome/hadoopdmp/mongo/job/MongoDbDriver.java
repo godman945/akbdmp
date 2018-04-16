@@ -189,7 +189,7 @@ public class MongoDbDriver {
 
 		
 		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(BSONWritable.class);
+		job.setOutputValueClass(Text.class);
 		
 		
 		
