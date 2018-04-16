@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import com.mongodb.hadoop.MongoInputFormat;
 import com.mongodb.hadoop.input.MongoInputSplit;
+import com.mongodb.hadoop.io.BSONWritable;
 import com.mongodb.hadoop.util.MongoConfigUtil;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 
@@ -179,15 +180,18 @@ public class MongoDbDriver {
 		job.setJarByClass(MongoDbDriver.class);
 		job.setMapperClass(MongoDbMapper.class);
 		job.setReducerClass(MongoDbReducer.class);
-
-		job.setMapOutputKeyClass(Text.class);
-		job.setMapOutputValueClass(Text.class);
-
-		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(Text.class);
-		
 		job.setInputFormatClass(MongoInputFormat.class);
 		job.setOutputFormatClass(TextOutputFormat.class);
+		
+		
+		job.setMapOutputKeyClass(Text.class);
+		job.setMapOutputValueClass(BSONWritable.class);
+
+		
+		job.setOutputKeyClass(Text.class);
+		job.setOutputValueClass(BSONWritable.class);
+		
+		
 		
 		
 		job.setMapSpeculativeExecution(true);
