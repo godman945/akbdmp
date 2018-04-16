@@ -47,7 +47,8 @@ public class MongoDbMapper extends Mapper<Object, BSONObject, Text, Text> {
 			if(rangeDay > range){
 				count = count + 1;
 				log.info(">>>>>> Mapper write key:" + key);
-				log.info(">>>>>> Mapper write value:" + value);
+				log.info(">>>>>> rangeDay:" + rangeDay);
+//				log.info(">>>>>> Mapper write value:" + value);
 				log.info(">>>>>> Mapper write count:" + count);
 				keyOut.set(new Text(key.toString()));
 				context.write(keyOut, valueOut);
