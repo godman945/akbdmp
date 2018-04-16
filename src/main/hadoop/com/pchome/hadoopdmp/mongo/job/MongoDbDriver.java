@@ -24,6 +24,7 @@ import com.mongodb.hadoop.MongoInputFormat;
 import com.mongodb.hadoop.input.MongoInputSplit;
 import com.mongodb.hadoop.io.BSONWritable;
 import com.mongodb.hadoop.splitter.MongoSplitter;
+import com.mongodb.hadoop.splitter.ShardMongoSplitter;
 import com.mongodb.hadoop.util.MongoConfigUtil;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 
@@ -111,6 +112,9 @@ public class MongoDbDriver {
 	    
 		JobConf jobConf = new JobConf();
 		jobConf.set("spring.profiles.active", "stg");
+		jobConf.set("bson.split.read_splits", "50000");
+		
+		
 //		jobConf.set("mapred.child.java.opts", "-Xmx2g");
 //		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 //		jobConf.set("mapred.compress.map.output", "true");
@@ -160,10 +164,9 @@ public class MongoDbDriver {
 		
 		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
 		MongoConfigUtil.setInputFormat(jobConf, MongoInputFormat.class);
-//		MongoConfigUtil.setCreateInputSplits(jobConf, false);
+		MongoConfigUtil.setCreateInputSplits(jobConf, false);
 //		MongoConfigUtil.setSplitSize(jobConf, 10000);
 		MongoConfigUtil.setMapper(jobConf, MongoDbMapper.class);
-		
 //		MongoConfigUtil.setCreateInputSplits(jobConf, false);
 //		MongoConfigUtil.setReadSplitsFromShards(jobConf,true);
 //		MongoConfigUtil.setSplitSize(jobConf, 9000);
