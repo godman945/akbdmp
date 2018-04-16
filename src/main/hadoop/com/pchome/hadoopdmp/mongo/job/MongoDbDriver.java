@@ -185,7 +185,7 @@ public class MongoDbDriver {
 		
 		
 		job.setMapOutputKeyClass(Text.class);
-		job.setMapOutputValueClass(BSONWritable.class);
+		job.setMapOutputValueClass(Text.class);
 
 		
 		job.setOutputKeyClass(Text.class);
