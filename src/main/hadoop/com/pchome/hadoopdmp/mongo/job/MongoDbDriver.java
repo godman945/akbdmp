@@ -115,7 +115,7 @@ public class MongoDbDriver {
 		jobConf.set("mapred.compress.map.output", "true");
 //		jobConf.set("mapred.max.split.size","10000"); //no
 //		jobConf.set("mapreduce.input.fileinputformat.split.maxsize", "10000"); //no
-//		jobConf.set("mongo.input.split_size", "10000");//no
+		jobConf.set("mongo.input.split_size", "10000");//no
 		jobConf.setNumTasksToExecutePerJvm(10);
 		
 //		jobConf.set("mapred.max.split.size","5000");
@@ -161,6 +161,8 @@ public class MongoDbDriver {
 		MongoConfigUtil.setCreateInputSplits(jobConf, false);
 		MongoConfigUtil.setSplitSize(jobConf, 10000);
 		
+		
+		
 //		MongoConfigUtil.setCreateInputSplits(jobConf, false);
 //		MongoConfigUtil.setReadSplitsFromShards(jobConf,true);
 //		MongoConfigUtil.setSplitSize(jobConf, 9000);
@@ -172,10 +174,10 @@ public class MongoDbDriver {
 //		MongoConfigUtil.setLimit(jobConf, 5);
 		
 		FileSystem fs = FileSystem.get(jobConf);
-		deleteExistedDir(fs, new Path("/home/webuser/dmp/alex/mongo"), true);
-		Path out = new Path("/home/webuser/dmp/alex/mongo");
+		deleteExistedDir(fs, new Path("/home/webuser/dmp/alex/mongo2"), true);
+		Path out = new Path("/home/webuser/dmp/alex/mongo2");
 		
-		final Job job = new Job(jobConf, "alex_mongo_db_log");
+		final Job job = new Job(jobConf, "alex_mongo_db_log2");
 		FileOutputFormat.setOutputPath(job, out);
 		job.setJarByClass(MongoDbDriver.class);
 		job.setMapperClass(MongoDbMapper.class);
