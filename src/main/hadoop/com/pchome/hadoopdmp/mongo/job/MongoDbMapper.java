@@ -40,13 +40,16 @@ public class MongoDbMapper extends Mapper<Object, BSONObject, Text, Text> {
 			log.info(">>>>>> Mapper process BSONObject:" + value.toString());
 			
 			
+			log.info(">>>>>> Mapper process BSONObject create_date:" + String.valueOf(value.get("create_date")));
+			
+			
 			totalSizeCount.set(new Text("sizeCount"));
 			context.write(totalSizeCount, new Text(String.valueOf(sizeCount)));
 			
 			int range = 365;
 			
-			Date date1 = sdf.parse(value.get("create_date").toString());
-			Date date2 = sdf.parse(value.get("update_date").toString());
+			Date date1 = sdf.parse(String.valueOf(value.get("create_date")));
+			Date date2 = sdf.parse(String.valueOf(value.get("update_date")));
 			Calendar cal1 = Calendar.getInstance();
 	        cal1.setTime(date1);
 	        
