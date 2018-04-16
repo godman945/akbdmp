@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 import com.mongodb.hadoop.MongoInputFormat;
 import com.mongodb.hadoop.input.MongoInputSplit;
 import com.mongodb.hadoop.io.BSONWritable;
+import com.mongodb.hadoop.splitter.MongoSplitter;
 import com.mongodb.hadoop.util.MongoConfigUtil;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 
@@ -160,8 +161,7 @@ public class MongoDbDriver {
 		MongoConfigUtil.setInputFormat(jobConf, MongoInputFormat.class);
 		MongoConfigUtil.setCreateInputSplits(jobConf, false);
 		MongoConfigUtil.setSplitSize(jobConf, 10000);
-		
-		
+		MongoConfigUtil.setMapper(jobConf, MongoDbMapper.class);
 		
 //		MongoConfigUtil.setCreateInputSplits(jobConf, false);
 //		MongoConfigUtil.setReadSplitsFromShards(jobConf,true);

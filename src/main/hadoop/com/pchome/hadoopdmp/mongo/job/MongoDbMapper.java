@@ -33,9 +33,11 @@ public class MongoDbMapper extends Mapper<Object, BSONObject, Text, Text> {
 	@Override
 	public void map(Object key, BSONObject value, Context context) throws IOException, InterruptedException {
 		try {
+			log.info(">>>>>> Mapper write key:" + key);
+			log.info(">>>>>> Mapper write value:" + value);
 			totalSizeCount.set(new Text("sizeCount"));
-			context.write(new Text(String.valueOf(key+"_count")), new Text(String.valueOf(key)));
 			
+			context.write(new Text(String.valueOf(key+"_count")), new Text(String.valueOf(key)));
 			int range = 365;
 			
 //			Date date1 = sdf.parse(String.valueOf(value.get("create_date")));
