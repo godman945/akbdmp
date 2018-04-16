@@ -111,14 +111,14 @@ public class MongoDbDriver {
 	    
 		JobConf jobConf = new JobConf();
 		jobConf.set("spring.profiles.active", "stg");
-		jobConf.set("mapred.child.java.opts", "-Xmx2g");
-		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
-		jobConf.set("mapred.compress.map.output", "true");
+//		jobConf.set("mapred.child.java.opts", "-Xmx2g");
+//		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
+//		jobConf.set("mapred.compress.map.output", "true");
 //		jobConf.set("mapred.max.split.size","10000"); //no
 //		jobConf.set("mapreduce.input.fileinputformat.split.maxsize", "10000"); //no
-		jobConf.set("mongo.input.split_size", "20000");//no
-		jobConf.setNumTasksToExecutePerJvm(5);
-		jobConf.set("mapred.reduce.tasks", "5");//no
+//		jobConf.set("mongo.input.split_size", "20000");//no
+//		jobConf.setNumTasksToExecutePerJvm(5);
+//		jobConf.set("mapred.reduce.tasks", "5");//no
 		
 //		jobConf.set("mapred.max.split.size","5000");
 //		jobConf.set("mapred.min.split.size","5000");
@@ -160,8 +160,8 @@ public class MongoDbDriver {
 		
 		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
 		MongoConfigUtil.setInputFormat(jobConf, MongoInputFormat.class);
-		MongoConfigUtil.setCreateInputSplits(jobConf, false);
-		MongoConfigUtil.setSplitSize(jobConf, 10000);
+//		MongoConfigUtil.setCreateInputSplits(jobConf, false);
+//		MongoConfigUtil.setSplitSize(jobConf, 10000);
 		MongoConfigUtil.setMapper(jobConf, MongoDbMapper.class);
 		
 //		MongoConfigUtil.setCreateInputSplits(jobConf, false);
@@ -195,10 +195,7 @@ public class MongoDbDriver {
 		job.setOutputValueClass(BSONWritable.class);
 		
 		
-		
-		
 		job.setMapSpeculativeExecution(true);
-		
 		job.setNumReduceTasks(1);
 		System.exit(job.waitForCompletion(true) ? 0 : 1);
 		
