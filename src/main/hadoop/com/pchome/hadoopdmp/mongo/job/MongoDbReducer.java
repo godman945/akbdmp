@@ -39,7 +39,7 @@ public class MongoDbReducer extends Reducer<Text, Text, Text, Text> {
 	long count = 0;
 	String sizeCount;
 	public void setup(Context context) {
-		log.info(">>>>>> mongoDb Reduce  setup>>>>>>>>>>>>>>>>>>>>>>>>>>");
+		log.info("****** mongoDb Reduce  setup ******");
 		try {
 
 		} catch (Exception e) {
@@ -49,7 +49,7 @@ public class MongoDbReducer extends Reducer<Text, Text, Text, Text> {
 
 	@Override
 	public void reduce(Text key, Iterable<Text> value, Context context) {
-		log.info(">>>>>> mongoDb Reduce reduce >>>>>>>>>>>>>>>>>>>>>>>>>>");
+		log.info("****** mongoDb Reduce reduce ******");
 		log.info(">>>>>> mongoDb Reduce key >>>>>>>>>>>>>>>>>>>>>>>>>>"+key);
 		log.info(">>>>>> mongoDb Reduce value >>>>>>>>>>>>>>>>>>>>>>>>>>"+value);
 		try {
@@ -69,8 +69,11 @@ public class MongoDbReducer extends Reducer<Text, Text, Text, Text> {
 	}
 
 	public void cleanup(Context context) {
-		log.info(">>>>>> mongoDb Reduce  cleanup >>>>>>>>>>>>>>>>>>>>>>>>>>");
+		log.info("****************** mongoDb Reduce  cleanup ***********************");
 		log.info(">>>>>> count:"+count);
+		log.info(">>>>>> sizeCount:"+sizeCount);
+		
+		
 	}
 
 	
