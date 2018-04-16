@@ -37,6 +37,7 @@ public class MongoDbReducer extends Reducer<Text, Text, Text, Text> {
 
 	Producer<String, String> producer = null;
 	long count = 0;
+	String sizeCount;
 	public void setup(Context context) {
 		log.info(">>>>>> mongoDb Reduce  setup>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		try {
@@ -51,10 +52,14 @@ public class MongoDbReducer extends Reducer<Text, Text, Text, Text> {
 		log.info(">>>>>> mongoDb Reduce reduce >>>>>>>>>>>>>>>>>>>>>>>>>>");
 		log.info(">>>>>> mongoDb Reduce key >>>>>>>>>>>>>>>>>>>>>>>>>>"+key);
 		log.info(">>>>>> mongoDb Reduce value >>>>>>>>>>>>>>>>>>>>>>>>>>"+value);
-		
 		try {
 			count = count + 1;
 			context.write(new Text(key), new Text("1"));
+			
+			if(key.equals("sizeCount")){
+				sizeCount = value.toString();
+			}
+			
 			
 		} catch (Exception e) {
 			log.info("reduce error"+e.getMessage());

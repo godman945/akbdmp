@@ -9,6 +9,7 @@ import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapred.FileInputFormat;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.hadoop.mapreduce.Job;
@@ -157,7 +158,7 @@ public class MongoDbDriver {
 		
 		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
 		MongoConfigUtil.setInputFormat(jobConf, MongoInputFormat.class);
-		
+		MongoConfigUtil.setCreateInputSplits(jobConf, false);
 //		MongoConfigUtil.setCreateInputSplits(jobConf, false);
 //		MongoConfigUtil.setReadSplitsFromShards(jobConf,true);
 //		MongoConfigUtil.setSplitSize(jobConf, 9000);
@@ -166,7 +167,6 @@ public class MongoDbDriver {
 //		MongoConfigUtil.BSON_READ_SPLITS
 //		MongoConfigUtil.setReadSplitsFromSecondary(jobConf, true);
 //		MongoConfigUtil.setBatchSize(jobConf, 10000);
-		
 //		MongoConfigUtil.setLimit(jobConf, 5);
 		
 		FileSystem fs = FileSystem.get(jobConf);
@@ -187,7 +187,6 @@ public class MongoDbDriver {
 		
 		job.setInputFormatClass(MongoInputFormat.class);
 		job.setOutputFormatClass(TextOutputFormat.class);
-		
 		
 		
 		
