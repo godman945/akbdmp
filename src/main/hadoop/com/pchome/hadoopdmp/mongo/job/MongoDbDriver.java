@@ -116,10 +116,15 @@ public class MongoDbDriver {
 		jobConf.set("mapred.child.java.opts", "-Xmx2g");
 		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 		jobConf.set("mapred.compress.map.output", "true");
-		jobConf.setNumMapTasks(2);
-		jobConf.setMaxMapTaskFailuresPercent(2);
-		jobConf.setMemoryForMapTask(100);
-		jobConf.setNumTasksToExecutePerJvm(2);
+		
+		
+		jobConf.set("mapreduce.input.fileinputformat.split.maxsize", "10000");
+		
+		
+//		jobConf.setNumMapTasks(2);
+//		jobConf.setMaxMapTaskFailuresPercent(2);
+//		jobConf.setMemoryForMapTask(100);
+//		jobConf.setNumTasksToExecutePerJvm(2);
 		
 //		jobConf.set("mapred.job.tracker", "5");
 //		jobConf.setNumMapTasks(2);
@@ -157,9 +162,11 @@ public class MongoDbDriver {
 		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
 		MongoConfigUtil.setCreateInputSplits(jobConf, false);
 		MongoConfigUtil.setInputFormat(jobConf, MongoInputFormat.class);
-		MongoConfigUtil.setSplitSize(jobConf, 9000);
 		MongoConfigUtil.setReadSplitsFromShards(jobConf,true);
-		MongoConfigUtil.setBSONOutputBuildSplits(jobConf, true);
+		
+		
+//		MongoConfigUtil.setSplitSize(jobConf, 9000);
+//		MongoConfigUtil.setBSONOutputBuildSplits(jobConf, true);
 //		MongoConfigUtil.setLimit(conf, limit);
 		
 		
@@ -191,6 +198,10 @@ public class MongoDbDriver {
 		
 		job.setInputFormatClass(MongoInputFormat.class);
 		job.setOutputFormatClass(TextOutputFormat.class);
+		
+		
+		
+		
 		
 		job.setNumReduceTasks(1);
 		System.exit(job.waitForCompletion(true) ? 0 : 1);
