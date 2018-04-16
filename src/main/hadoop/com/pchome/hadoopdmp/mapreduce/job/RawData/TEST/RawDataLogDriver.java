@@ -160,7 +160,7 @@ public class RawDataLogDriver {
 			String bessieTempPath = "/home/webuser/bessie/output";
 			
 			//hdfs存在則刪除
-			deleteExistedDir(fs, new Path(bessieTempPath), true);
+//			deleteExistedDir(fs, new Path(bessieTempPath), true);
 			
 			log.info(">>>>>>INPUT PATH:"+adLogClassPpath);
 			log.info(">>>>>>OUTPUT PATH:"+bessieTempPath);
