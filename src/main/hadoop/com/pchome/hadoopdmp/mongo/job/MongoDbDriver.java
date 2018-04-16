@@ -110,9 +110,7 @@ public class MongoDbDriver {
 		jobConf.set("mapred.child.java.opts", "-Xmx2g");
 		jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 		jobConf.set("mapred.compress.map.output", "true");
-		jobConf.set("mapred.max.split.size","10000");
-		
-		
+//		jobConf.set("mapred.max.split.size","10000"); //no
 //		jobConf.set("mapreduce.input.fileinputformat.split.maxsize", "10000"); //no
 //		jobConf.set("mongo.input.split_size", "10000");//no
 //		jobConf.set("mapred.max.split.size","5000");
@@ -157,7 +155,6 @@ public class MongoDbDriver {
 		MongoConfigUtil.setInputFormat(jobConf, MongoInputFormat.class);
 		MongoConfigUtil.setCreateInputSplits(jobConf, false);
 		MongoConfigUtil.setSplitSize(jobConf, 10000);
-		log.info(">>>>>>>>>>>MongoConfigUtil.DEFAULT_SPLIT_SIZE:"+MongoConfigUtil.DEFAULT_SPLIT_SIZE);
 //		MongoConfigUtil.setCreateInputSplits(jobConf, false);
 //		MongoConfigUtil.setReadSplitsFromShards(jobConf,true);
 //		MongoConfigUtil.setSplitSize(jobConf, 9000);
@@ -188,7 +185,7 @@ public class MongoDbDriver {
 		job.setOutputFormatClass(TextOutputFormat.class);
 		
 		
-		
+		job.setMapSpeculativeExecution(true);
 		
 		job.setNumReduceTasks(1);
 		System.exit(job.waitForCompletion(true) ? 0 : 1);
