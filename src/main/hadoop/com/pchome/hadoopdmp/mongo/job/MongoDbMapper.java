@@ -37,6 +37,9 @@ public class MongoDbMapper extends Mapper<Object, BSONObject, Text, Text> {
 		try {
 			sizeCount = sizeCount + 1;
 			log.info(">>>>>> Mapper process sizeCount:" + sizeCount);
+			log.info(">>>>>> Mapper process BSONObject:" + value.toString());
+			
+			
 			totalSizeCount.set(new Text("sizeCount"));
 			context.write(totalSizeCount, new Text(String.valueOf(sizeCount)));
 			
