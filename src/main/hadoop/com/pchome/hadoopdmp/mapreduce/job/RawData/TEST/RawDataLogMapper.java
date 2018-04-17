@@ -120,12 +120,13 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			String memid = values[1];
 			String uuid = values[2];
 			String sourceUrl = values[4];
+			String adClass = values[15];
 			
 			if ((StringUtils.isBlank(memid) || memid.equals("null")) && (StringUtils.isBlank(uuid) || uuid.equals("null"))) {
 				return ;
 			}
 			
-			String result = memid + SYMBOL + uuid + SYMBOL + sourceUrl+ SYMBOL ;
+			String result = memid + SYMBOL + uuid + SYMBOL + sourceUrl+ SYMBOL + adClass+"   >>>>>>>>>> ";
 			log.info(">>>>>> Mapper write key:" + result);
 			keyOut.set(result);
 			context.write(keyOut, valueOut);
