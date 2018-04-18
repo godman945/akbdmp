@@ -131,8 +131,8 @@ public class MongoDbDriver {
 	    
 		JobConf jobConf = new JobConf();
 		jobConf.set("spring.profiles.active", "stg");
-		jobConf.set("mongo.input.split_size", "32");
-		jobConf.set("mongo.input.split.read_shard_chunks", "true");
+//		jobConf.set("mongo.input.split_size", "32");
+//		jobConf.set("mongo.input.split.read_shard_chunks", "true");
 		
 		
 		
@@ -193,7 +193,7 @@ public class MongoDbDriver {
 		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:axw2mP1i@192.168.1.37:27017/dmp.user_detail");
 //		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
 		MongoConfigUtil.setInputFormat(jobConf, MongoInputFormat.class);
-//		MongoConfigUtil.setCreateInputSplits(jobConf, false);
+		MongoConfigUtil.setCreateInputSplits(jobConf, false);
 		
 //		MongoConfigUtil.setSplitSize(jobConf, 10000);
 		MongoConfigUtil.setMapper(jobConf, MongoDbMapper.class);
