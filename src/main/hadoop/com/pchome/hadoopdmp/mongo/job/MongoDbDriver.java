@@ -351,8 +351,8 @@ public class MongoDbDriver {
 				"/home/webuser/dmp/webapps/analyzer/lib/commons-lang-2.6.jar",
 				"/home/webuser/dmp/webapps/analyzer/lib/commons-logging-1.1.1.jar",
 				"/home/webuser/dmp/webapps/analyzer/lib/log4j-1.2.15.jar",
-//				"/home/webuser/dmp/webapps/analyzer/lib/mongo-java-driver-2.11.3.jar",
-				"/home/webuser/dmp/webapps/analyzer/lib/mongo-java-driver-3.6.3.jar",
+				"/home/webuser/dmp/webapps/analyzer/lib/mongo-java-driver-2.11.3.jar",
+//				"/home/webuser/dmp/webapps/analyzer/lib/mongo-java-driver-3.6.3.jar",
 				
 				
 				"/home/webuser/dmp/webapps/analyzer/lib/softdepot-1.0.9.jar",
