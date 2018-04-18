@@ -13,6 +13,7 @@ import org.apache.hadoop.mapred.FileInputFormat;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.springframework.beans.factory.annotation.Value;
@@ -112,7 +113,12 @@ public class MongoDbDriver {
 	    
 		JobConf jobConf = new JobConf();
 		jobConf.set("spring.profiles.active", "stg");
-		jobConf.set("bson.split.read_splits", "50000");
+		jobConf.set("mongo.input.split_size", "32");
+		jobConf.set("mongo.input.split.read_shard_chunks", "true");
+		
+		
+		
+//		jobConf.set("bson.split.read_splits", "50000");
 		
 		
 //		jobConf.set("mapred.child.java.opts", "-Xmx2g");
@@ -162,9 +168,15 @@ public class MongoDbDriver {
 //		jobConf.set("mapreduce.input.fileinputformat.split.minsize","3088608");//no
 		
 		
-		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
+//		JobContext j = new JobContext();
+//		MongoInputFormat.getSplits(j);
+		
+		
+		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:axw2mP1i@192.168.1.37:27017/dmp.user_detail");
+//		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
 		MongoConfigUtil.setInputFormat(jobConf, MongoInputFormat.class);
 		MongoConfigUtil.setCreateInputSplits(jobConf, false);
+		
 //		MongoConfigUtil.setSplitSize(jobConf, 10000);
 		MongoConfigUtil.setMapper(jobConf, MongoDbMapper.class);
 //		MongoConfigUtil.setCreateInputSplits(jobConf, false);
