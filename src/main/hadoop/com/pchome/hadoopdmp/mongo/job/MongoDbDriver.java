@@ -4,16 +4,12 @@ import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.FileInputFormat;
 import org.apache.hadoop.mapred.JobConf;
-import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,12 +18,26 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.stereotype.Component;
 
 import com.mongodb.hadoop.MongoInputFormat;
-import com.mongodb.hadoop.input.MongoInputSplit;
 import com.mongodb.hadoop.io.BSONWritable;
-import com.mongodb.hadoop.splitter.MongoSplitter;
-import com.mongodb.hadoop.splitter.ShardMongoSplitter;
 import com.mongodb.hadoop.util.MongoConfigUtil;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
+
+
+
+
+
+
+
+import com.mongodb.BasicDBObject; 
+import com.mongodb.DB; 
+import com.mongodb.DBCollection; 
+import com.mongodb.DBCursor; 
+import com.mongodb.DBObject; 
+import com.mongodb.MongoClient; 
+import com.mongodb.MongoException; 
+
+
+
 
 @Component
 public class MongoDbDriver {
@@ -74,6 +84,14 @@ public class MongoDbDriver {
 	private String akbPathAllLog;
 	
 	public void drive() throws Exception {
+		
+		
+		 
+		
+		
+		
+		
+		
 ////		 Configuration conf = new Configuration();
 //		 JobConf conf = new JobConf();
 //		 Job job = new Job(conf, "alex_mongo_db_log");
@@ -333,7 +351,10 @@ public class MongoDbDriver {
 				"/home/webuser/dmp/webapps/analyzer/lib/commons-lang-2.6.jar",
 				"/home/webuser/dmp/webapps/analyzer/lib/commons-logging-1.1.1.jar",
 				"/home/webuser/dmp/webapps/analyzer/lib/log4j-1.2.15.jar",
-				"/home/webuser/dmp/webapps/analyzer/lib/mongo-java-driver-2.11.3.jar",
+//				"/home/webuser/dmp/webapps/analyzer/lib/mongo-java-driver-2.11.3.jar",
+				"/home/webuser/dmp/webapps/analyzer/lib/mongo-java-driver-3.6.3.jar",
+				
+				
 				"/home/webuser/dmp/webapps/analyzer/lib/softdepot-1.0.9.jar",
 				"/home/webuser/dmp/webapps/analyzer/lib/solr-solrj-4.5.0.jar",
 				"/home/webuser/dmp/webapps/analyzer/lib/noggit-0.5.jar",
