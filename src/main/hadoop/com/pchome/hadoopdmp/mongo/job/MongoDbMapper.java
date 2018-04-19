@@ -45,7 +45,6 @@ public class MongoDbMapper extends Mapper<Object, BSONObject, Text, Text> {
 		
 	}
 	
-	
 	@Override
 	public void map(Object key, BSONObject value, Context context) throws IOException, InterruptedException {
 		try {
@@ -54,7 +53,7 @@ public class MongoDbMapper extends Mapper<Object, BSONObject, Text, Text> {
 			DBObject object = (DBObject)value;
 			String dbKey = key.toString();
 			this.dBCollection.remove(object);
-			keyOut.set(new Text(dbKey)+"_delete");
+			keyOut.set(new Text(dbKey));
 			context.write(keyOut, new Text(value.toString()));
 		} catch (Exception e) {
 			log.error(">>>>>> " + e.getMessage());

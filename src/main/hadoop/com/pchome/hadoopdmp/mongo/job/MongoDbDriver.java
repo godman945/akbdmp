@@ -106,7 +106,7 @@ public class MongoDbDriver {
 		log.info(">>>>>>mongo output path:"+outputPathName);
 		
 		MongoConfigUtil.setQuery(jobConf,andQuery);
-		MongoConfigUtil.setLimit(jobConf,1);
+//		MongoConfigUtil.setLimit(jobConf,1);
 		MongoConfigUtil.setInputFormat(jobConf, MongoInputFormat.class);
 		MongoConfigUtil.setCreateInputSplits(jobConf, false);
 		MongoConfigUtil.setMapper(jobConf, MongoDbMapper.class);
