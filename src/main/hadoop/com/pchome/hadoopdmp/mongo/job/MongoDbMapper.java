@@ -32,17 +32,17 @@ public class MongoDbMapper extends Mapper<Object, BSONObject, Text, Text> {
 	public void setup(Context context) {
 		log.info(">>>>>> mongoDb Mapper  setup >>>>>>>>>>>>>>>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
 		try {
-//			Mongo mongo;
-//			mongo = new Mongo("mongodb.mypchome.com.tw");
-//			DB db = mongo.getDB("dmp");
-//			db.authenticate("webuser", "MonG0Dmp".toCharArray());  
-//			this.dBCollection = db.getCollection("user_detail");
-			
 			Mongo mongo;
-			mongo = new Mongo("192.168.1.37",27017);
+			mongo = new Mongo("mongodb.mypchome.com.tw");
 			DB db = mongo.getDB("dmp");
-			db.authenticate("webuser", "axw2mP1i".toCharArray());
+			db.authenticate("webuser", "MonG0Dmp".toCharArray());  
 			this.dBCollection = db.getCollection("user_detail");
+			
+//			Mongo mongo;
+//			mongo = new Mongo("192.168.1.37",27017);
+//			DB db = mongo.getDB("dmp");
+//			db.authenticate("webuser", "axw2mP1i".toCharArray());
+//			this.dBCollection = db.getCollection("user_detail");
 			
 //			DB db = m.getDB( "dmp" );  
 //			DBCollection dBCollection = db.getCollection("user_detail");
