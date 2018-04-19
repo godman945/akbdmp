@@ -202,15 +202,15 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				return ;
 			}
 			
-			List<CategoryCodeBean> list = CategoryLogMapper.categoryBeanList;
-			for (CategoryCodeBean categoryBean : list) {
-				if(sourceUrl.indexOf(categoryBean.getEnglishCode()) != -1){
-					adClass = categoryBean.getNumberCode();
-					behaviorClassify = "Y";
-					break;
-				}
-			}
-			
+//			List<CategoryCodeBean> list = CategoryLogMapper.categoryBeanList;
+//			for (CategoryCodeBean categoryBean : list) {
+//				if(sourceUrl.indexOf(categoryBean.getEnglishCode()) != -1){
+//					adClass = categoryBean.getNumberCode();
+//					behaviorClassify = "Y";
+//					break;
+//				}
+//			}
+//			
 //			if (behaviorClassify.equals("N")){
 //				ClassUrlMongoBean classUrlMongoBean = null;
 //				Query query = new Query(Criteria.where("url").is(sourceUrl.trim()));
