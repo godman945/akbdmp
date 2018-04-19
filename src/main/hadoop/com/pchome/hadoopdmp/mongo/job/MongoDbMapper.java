@@ -2,9 +2,7 @@ package com.pchome.hadoopdmp.mongo.job;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -23,9 +21,7 @@ import com.mongodb.Mongo;
 public class MongoDbMapper extends Mapper<Object, BSONObject, Text, Text> {
 	Log log = LogFactory.getLog(this.getClass());
 	private Text keyOut = new Text();
-	public static String record_date;
 	public static ArrayList<Map<String, String>> categoryList = new ArrayList<Map<String, String>>();//分類表	
-	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	private DBCollection dBCollection;
 	@SuppressWarnings("deprecation")
 	@Override
@@ -43,12 +39,6 @@ public class MongoDbMapper extends Mapper<Object, BSONObject, Text, Text> {
 //			DB db = mongo.getDB("dmp");
 //			db.authenticate("webuser", "axw2mP1i".toCharArray());
 //			this.dBCollection = db.getCollection("user_detail");
-			
-//			DB db = m.getDB( "dmp" );  
-//			DBCollection dBCollection = db.getCollection("user_detail");
-			
-			
-			
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}  
@@ -60,35 +50,12 @@ public class MongoDbMapper extends Mapper<Object, BSONObject, Text, Text> {
 	public void map(Object key, BSONObject value, Context context) throws IOException, InterruptedException {
 		try {
 			log.info(">>>>>> Mapper write key:" + key);
-			log.info(">>>>>> Mapper write value:" + value);
-			log.info("***************************");
+//			log.info(">>>>>> Mapper write value:" + value);
 			DBObject object = (DBObject)value;
-			log.info(">>>>>> object:" + object.toString());
 			String dbKey = key.toString();
 			this.dBCollection.remove(object);
-//			context.write(new Text(String.valueOf(key+"_count")), new Text(String.valueOf(key)));
-//			int range = 365;
-//			
-////			Date date1 = sdf.parse(String.valueOf(value.get("create_date")));
-////			Date date2 = sdf.parse(String.valueOf(value.get("update_date")));
-//			
-//			Date date1 = sdf.parse(String.valueOf(value.get("update_date")));
-//			Date date2 = sdf.parse(sdf.format(date));
-//			
-//			Calendar cal1 = Calendar.getInstance();
-//	        cal1.setTime(date1);
-//	        
-//	        Calendar cal2 = Calendar.getInstance();
-//	        cal2.setTime(date2);
-//	        int rangeDay = ( int ) ((date2.getTime() - date1.getTime()) / (1000*3600*24 )); 
-//			if(rangeDay > range){
-//				log.info(">>>>>> Mapper write key:" + key);
-//				log.info(">>>>>> rangeDay:" + rangeDay);
-////				log.info(">>>>>> Mapper write value:" + value);
-////				log.info(">>>>>> Mapper write count:" + count);
-				keyOut.set(new Text(dbKey)+"_delete");
-				context.write(keyOut, new Text(value.toString()));
-//			}
+			keyOut.set(new Text(dbKey)+"_delete");
+			context.write(keyOut, new Text(value.toString()));
 		} catch (Exception e) {
 			log.error(">>>>>> " + e.getMessage());
 		}

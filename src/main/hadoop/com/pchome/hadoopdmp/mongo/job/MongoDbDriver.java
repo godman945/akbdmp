@@ -1,7 +1,9 @@
 package com.pchome.hadoopdmp.mongo.job;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -72,39 +74,44 @@ public class MongoDbDriver {
 	@Value("${akb.path.alllog}")
 	private String akbPathAllLog;
 	
+	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	
+	private Calendar calendar = null;
+	private Calendar deleteCalendar = null;
+	
 	public void drive() throws Exception {
+		this.calendar = Calendar.getInstance();
+		this.deleteCalendar = Calendar.getInstance();
+		this.deleteCalendar.add(Calendar.YEAR,-1);
+		
 		JobConf jobConf = new JobConf();
-		jobConf.set("spring.profiles.active", "stg");
+		jobConf.set("spring.profiles.active", "prd");
+		jobConf.set("record_date", sdf.format(calendar.getTime()));
 		
-		
+		String outputPathName = "/home/webuser/dmp/delete_expired_user/year/"+calendar.getWeekYear()+"/"+sdf.format(calendar.getTime());
+		String expiredDate = sdf.format(deleteCalendar.getTime());
 		
 //		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:axw2mP1i@192.168.1.37:27017/dmp.user_detail");
 		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
 		
-		
 		BasicDBObject andQuery = new BasicDBObject();
 		List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
-		obj.add(new BasicDBObject("update_date", new BasicDBObject("$lt", "2017-04-19")));
+		obj.add(new BasicDBObject("update_date", new BasicDBObject("$lt", expiredDate)));
 		obj.add(new BasicDBObject("user_info.type", "uuid"));
 		andQuery.put("$and", obj);
-		
-		
 		log.info(">>>>>>mongo:"+MongoConfigUtil.getInputURI(jobConf).getURI());
 		log.info(">>>>>>mongo Query:"+andQuery.toString());
-		
+		log.info(">>>>>>mongo expired date:"+expiredDate);
+		log.info(">>>>>>mongo output path:"+outputPathName);
 		MongoConfigUtil.setQuery(jobConf,andQuery);
-		MongoConfigUtil.setLimit(jobConf,1000000);
-		
-		
+		MongoConfigUtil.setLimit(jobConf,1);
 		MongoConfigUtil.setInputFormat(jobConf, MongoInputFormat.class);
 		MongoConfigUtil.setCreateInputSplits(jobConf, false);
 		MongoConfigUtil.setMapper(jobConf, MongoDbMapper.class);
-		
 		FileSystem fs = FileSystem.get(jobConf);
-		deleteExistedDir(fs, new Path("/home/webuser/dmp/alex/mongo"), true);
-		Path out = new Path("/home/webuser/dmp/alex/mongo");
-		
-		final Job job = new Job(jobConf, "alex_mongo_db_log");
+		deleteExistedDir(fs, new Path(outputPathName), true);
+		Path out = new Path(outputPathName);
+		final Job job = new Job(jobConf, "mongo_delete_expired_user_detail");
 		FileOutputFormat.setOutputPath(job, out);
 		job.setJarByClass(MongoDbDriver.class);
 		job.setMapperClass(MongoDbMapper.class);
@@ -123,9 +130,6 @@ public class MongoDbDriver {
 				"/home/webuser/dmp/webapps/analyzer/lib/commons-logging-1.1.1.jar",
 				"/home/webuser/dmp/webapps/analyzer/lib/log4j-1.2.15.jar",
 				"/home/webuser/dmp/webapps/analyzer/lib/mongo-java-driver-2.11.3.jar",
-//				"/home/webuser/dmp/webapps/analyzer/lib/mongo-java-driver-3.6.3.jar",
-				
-				
 				"/home/webuser/dmp/webapps/analyzer/lib/softdepot-1.0.9.jar",
 				"/home/webuser/dmp/webapps/analyzer/lib/solr-solrj-4.5.0.jar",
 				"/home/webuser/dmp/webapps/analyzer/lib/noggit-0.5.jar",
@@ -224,14 +228,17 @@ public class MongoDbDriver {
 ////			dBCollection.remove(a);
 ////			break;
 //		}
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar cal1 = Calendar.getInstance();
+		cal1.add(Calendar.YEAR,-1);
+		System.out.println(sdf.format(cal1.getTime()));
 		
-		
-		log.info("====driver start====");
-		System.setProperty("spring.profiles.active", "stg");
-		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-		MongoDbDriver mongoDbDriver = (MongoDbDriver) ctx.getBean(MongoDbDriver.class);
-		mongoDbDriver.drive();
-		log.info("====driver end====");
+//		log.info("====driver start====");
+//		System.setProperty("spring.profiles.active", "stg");
+//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//		MongoDbDriver mongoDbDriver = (MongoDbDriver) ctx.getBean(MongoDbDriver.class);
+//		mongoDbDriver.drive();
+//		log.info("====driver end====");
 	}
 
 }
