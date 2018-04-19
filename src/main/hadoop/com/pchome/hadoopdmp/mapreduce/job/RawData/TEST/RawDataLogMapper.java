@@ -47,8 +47,8 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private Text valueOut = new Text();
 
 	public static String record_date;
-	public static ArrayList<Map<String, String>> categoryList = new ArrayList<Map<String, String>>();//分類表	
-	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();	 //分類個資表
+//	public static ArrayList<Map<String, String>> categoryList = new ArrayList<Map<String, String>>();//分類表	
+//	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();	 //分類個資表
 	public static List<CategoryCodeBean> categoryBeanList = new ArrayList<CategoryCodeBean>();				 //24H分類表
 	private MongoOperations mongoOperations;
 
