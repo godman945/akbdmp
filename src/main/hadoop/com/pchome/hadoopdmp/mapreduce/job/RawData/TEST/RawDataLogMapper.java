@@ -1,6 +1,10 @@
 package com.pchome.hadoopdmp.mapreduce.job.RawData.TEST;
 
 import java.io.FileInputStream;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,6 +36,7 @@ import org.springframework.stereotype.Component;
 
 import com.pchome.hadoopdmp.data.mongo.pojo.ClassUrlMongoBean;
 import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper;
+import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper.combinedValue;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryCodeBean;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 import com.pchome.hadoopdmp.spring.config.bean.mongodb.MongodbHadoopConfig;
@@ -47,8 +52,8 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private Text valueOut = new Text();
 
 	public static String record_date;
-//	public static ArrayList<Map<String, String>> categoryList = new ArrayList<Map<String, String>>();//分類表	
-//	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();	 //分類個資表
+	public static ArrayList<Map<String, String>> categoryList = new ArrayList<Map<String, String>>();//分類表	
+	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();	 //分類個資表
 	public static List<CategoryCodeBean> categoryBeanList = new ArrayList<CategoryCodeBean>();				 //24H分類表
 	private MongoOperations mongoOperations;
 
@@ -70,40 +75,37 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			this.mongoOperations = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
 			record_date = context.getConfiguration().get("job.date");
 			Configuration conf = context.getConfiguration();
-			
-//			//load 分類個資表(ClsfyGndAgeCrspTable.txt)
-//			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
-//			Path clsfyTable = Paths.get(path[1].toString());
-//			Charset charset = Charset.forName("UTF-8");
-//			List<String> lines = Files.readAllLines(clsfyTable, charset);
-//			for (String line : lines) {
-//				String[] tmpStrAry = line.split(";"); // 0001000000000000;M,35
-//				String[] tmpStrAry2 = tmpStrAry[1].split(",");
-//				clsfyCraspMap.put(tmpStrAry[0],new combinedValue(tmpStrAry[1].split(",")[0], tmpStrAry2.length > 1 ? tmpStrAry2[1] : ""));
-//			}
-//			
-
-//			// load 分類表(pfp_ad_category_new.csv)
-//			Path cate_path = Paths.get(path[0].toString());
-//			charset = Charset.forName("UTF-8");
-//			int maxCateLvl = 4;
-//			categoryList = new ArrayList<Map<String, String>>();
-//			for (int i = 0; i < maxCateLvl; i++) {
-//				categoryList.add(new HashMap<String, String>());
-//			}
-//			lines.clear();
-//			lines = Files.readAllLines(cate_path, charset);
-//			// 將 table: pfp_ad_category_new 內容放入list中(共有 maxCateLvl 層)
-//			for (String line : lines) {
-//				String[] tmpStr = line.split(";");
-//				int lvl = Integer.parseInt(tmpStr[5].replaceAll("\"", "").trim());
-//				if (lvl <= maxCateLvl) {
-//					categoryList.get(lvl - 1).put(tmpStr[3].replaceAll("\"", "").trim(),tmpStr[4].replaceAll("\"", "").replaceAll("@", "").trim());
-//				}
-//
-//			}
-			
+			//load 分類個資表(ClsfyGndAgeCrspTable.txt)
 			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
+			Path clsfyTable = Paths.get(path[1].toString());
+			Charset charset = Charset.forName("UTF-8");
+			List<String> lines = Files.readAllLines(clsfyTable, charset);
+			for (String line : lines) {
+				String[] tmpStrAry = line.split(";"); // 0001000000000000;M,35
+				String[] tmpStrAry2 = tmpStrAry[1].split(",");
+				clsfyCraspMap.put(tmpStrAry[0],new combinedValue(tmpStrAry[1].split(",")[0], tmpStrAry2.length > 1 ? tmpStrAry2[1] : ""));
+			}
+			
+
+			// load 分類表(pfp_ad_category_new.csv)
+			Path cate_path = Paths.get(path[0].toString());
+			charset = Charset.forName("UTF-8");
+			int maxCateLvl = 4;
+			categoryList = new ArrayList<Map<String, String>>();
+			for (int i = 0; i < maxCateLvl; i++) {
+				categoryList.add(new HashMap<String, String>());
+			}
+			lines.clear();
+			lines = Files.readAllLines(cate_path, charset);
+			// 將 table: pfp_ad_category_new 內容放入list中(共有 maxCateLvl 層)
+			for (String line : lines) {
+				String[] tmpStr = line.split(";");
+				int lvl = Integer.parseInt(tmpStr[5].replaceAll("\"", "").trim());
+				if (lvl <= maxCateLvl) {
+					categoryList.get(lvl - 1).put(tmpStr[3].replaceAll("\"", "").trim(),tmpStr[4].replaceAll("\"", "").replaceAll("@", "").trim());
+				}
+			}
+			
 			// load 24h分類表
 			FileInputStream fis;
 			POIFSFileSystem fs;
@@ -120,7 +122,7 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				HSSFRow row = sheet.getRow(i);
 				if (row != null) {
 					int j = 0;
-					for (j = 0; j < 4; j++) {
+					for (j = 0; j < 4; j++) { 
 						cell = row.getCell(j);
 						if (j == 0) {
 							categoryBean.setNumberCode(cell.toString());
@@ -144,10 +146,10 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 
 							categoryBean.setEnglishCode(urlAry[2]);
 						}
-						// System.out.println(cell.toString());
+//						System.out.println(cell.toString());
 					}
 					categoryBeanList.add(categoryBean);
-					// System.out.println("-----------------------");
+//					System.out.println("-----------------------");
 				}
 			}
 			fis.close();
