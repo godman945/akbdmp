@@ -1,13 +1,10 @@
 package com.pchome.hadoopdmp.mapreduce.job.RawData.TEST;
 
-import java.io.FileInputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,21 +19,11 @@ import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
-import com.pchome.hadoopdmp.data.mongo.pojo.ClassUrlMongoBean;
-import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper;
-import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper.combinedValue;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryCodeBean;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 import com.pchome.hadoopdmp.spring.config.bean.mongodb.MongodbHadoopConfig;
@@ -167,7 +154,7 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				return ;
 			}
 			
-			List<CategoryCodeBean> list = CategoryLogMapper.categoryBeanList;
+			List<CategoryCodeBean> list = RawDataLogMapper.categoryBeanList;
 //			for (CategoryCodeBean categoryBean : list) {
 //				if(sourceUrl.indexOf(categoryBean.getEnglishCode()) != -1){
 //					adClass = categoryBean.getNumberCode();
