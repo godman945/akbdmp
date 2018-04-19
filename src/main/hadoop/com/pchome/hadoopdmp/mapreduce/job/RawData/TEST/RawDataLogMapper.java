@@ -1,13 +1,10 @@
 package com.pchome.hadoopdmp.mapreduce.job.RawData.TEST;
 
-import java.io.FileInputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,21 +19,11 @@ import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
-import com.pchome.hadoopdmp.data.mongo.pojo.ClassUrlMongoBean;
-import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper;
-import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper.combinedValue;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryCodeBean;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 import com.pchome.hadoopdmp.spring.config.bean.mongodb.MongodbHadoopConfig;
@@ -107,52 +94,20 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			}
 			
 			// load 24h分類表
-			FileInputStream fis;
-			POIFSFileSystem fs;
-			HSSFWorkbook wb;
-			String filePath = path[3].toString();
-			fis = new FileInputStream(filePath);
-			fs = new POIFSFileSystem(fis);
-			wb = new HSSFWorkbook(fs);
-			HSSFSheet sheet = wb.getSheetAt(0);
-			HSSFCell cell;
-
-			for (int i = 0; i < sheet.getPhysicalNumberOfRows(); i++) {
+			Path category24HPath = Paths.get(path[3].toString());
+			List<String> lines24H = Files.readAllLines(category24HPath, charset);
+			for (String line : lines24H) {
 				CategoryCodeBean categoryBean = new CategoryCodeBean();
-				HSSFRow row = sheet.getRow(i);
-				if (row != null) {
-					int j = 0;
-					for (j = 0; j < 4; j++) { 
-						cell = row.getCell(j);
-						if (j == 0) {
-							categoryBean.setNumberCode(cell.toString());
-						}
-						if (j == 1) {
-							categoryBean.setChineseDesc(cell.toString());
-						}
-						if (j == 2) {
-							categoryBean.setBreadCrumb(cell.toString());
-						}
-						if (j == 3) {
-							categoryBean.setUrl(cell.toString());
-
-							String urlStr = categoryBean.getUrl();
-							if (urlStr.indexOf("http") != -1) {
-								urlStr = urlStr.replaceAll("http://", "");
-							} else if (urlStr.indexOf("https") != -1) {
-								urlStr = urlStr.replaceAll("https://", "");
-							}
-							String[] urlAry = urlStr.split("/");
-
-							categoryBean.setEnglishCode(urlAry[2]);
-						}
-//						System.out.println(cell.toString());
-					}
-					categoryBeanList.add(categoryBean);
-//					System.out.println("-----------------------");
-				}
+				
+				String[] tmpStrAry = line.split(","); // 0001000000000000;M,35
+				
+				categoryBean.setNumberCode(tmpStrAry[0]);
+				categoryBean.setChineseDesc(tmpStrAry[1]);
+				categoryBean.setBreadCrumb(tmpStrAry[2]);
+				categoryBean.setEnglishCode(tmpStrAry[3]);
+				
+				categoryBeanList.add(categoryBean);
 			}
-			fis.close();
 			
 		} catch (Exception e) {
 			log.info("Mapper  setup Exception: "+e.getMessage());
@@ -202,14 +157,18 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				return ;
 			}
 			
-//			List<CategoryCodeBean> list = CategoryLogMapper.categoryBeanList;
-//			for (CategoryCodeBean categoryBean : list) {
-//				if(sourceUrl.indexOf(categoryBean.getEnglishCode()) != -1){
-//					adClass = categoryBean.getNumberCode();
-//					behaviorClassify = "Y";
-//					break;
-//				}
-//			}
+			List<CategoryCodeBean> list = RawDataLogMapper.categoryBeanList;
+			for (CategoryCodeBean categoryBean : list) {
+				if(sourceUrl.indexOf(categoryBean.getEnglishCode()) != -1){
+					adClass = categoryBean.getNumberCode();
+					behaviorClassify = "Y";
+					break;
+				}
+			}
+			
+			if (StringUtils.isBlank(adClass)) {
+				return ;
+			}
 //			
 //			if (behaviorClassify.equals("N")){
 //				ClassUrlMongoBean classUrlMongoBean = null;
@@ -250,9 +209,8 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			}
 			
 			
-			String result = categoryBeanList.size()+"   >>>>>>>>>  24H  >>>>>>> ";
-			
-//			String result = memid + SYMBOL + uuid + SYMBOL + sourceUrl+ SYMBOL + adClass+"   >>>>>>>>>24H>>>>>>> ";
+//			String result = categoryBeanList.size()+"   >>>>>>>>>  24H  >>>>>>> ";
+			String result = memid + SYMBOL + uuid + SYMBOL + sourceUrl+ SYMBOL + adClass+"   >>>>>NEW>>>>24H>>>>>>> ";
 			log.info(">>>>>> Mapper write key:" + result);
 			keyOut.set(result);
 			context.write(keyOut, valueOut);
