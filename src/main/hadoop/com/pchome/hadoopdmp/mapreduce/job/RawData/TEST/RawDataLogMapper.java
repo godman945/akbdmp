@@ -43,7 +43,7 @@ import com.pchome.hadoopdmp.spring.config.bean.mongodb.MongodbHadoopConfig;
 
 @Component
 public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
-	Log log = LogFactory.getLog("CategoryLogMapper");
+	Log log = LogFactory.getLog("RawDataLogMapper");
 	
 	private static int LOG_LENGTH = 30;
 	private static String SYMBOL = String.valueOf(new char[] { 9, 31 });
@@ -188,66 +188,66 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			String adClass = "";
 			String behaviorClassify = "N";
 			
-			if ((StringUtils.isBlank(memid) || memid.equals("null")) && (StringUtils.isBlank(uuid) || uuid.equals("null"))) {
-				return ;
-			}
-
-			if (StringUtils.isBlank(sourceUrl)) {
-				return ;
-			}
-			
-			Pattern p = Pattern.compile("(http|https)://24h.pchome.com.tw/(store|region)/([a-zA-Z0-9]+)([&|\\?|\\.]\\S*)?");
-			Matcher m = p.matcher(sourceUrl);
-			if (!m.find()) {
-				return ;
-			}
-			
-			List<CategoryCodeBean> list = CategoryLogMapper.categoryBeanList;
-			for (CategoryCodeBean categoryBean : list) {
-				if(sourceUrl.indexOf(categoryBean.getEnglishCode()) != -1){
-					adClass = categoryBean.getNumberCode();
-					behaviorClassify = "Y";
-					break;
-				}
-			}
-			
-			if (behaviorClassify.equals("N")){
-				ClassUrlMongoBean classUrlMongoBean = null;
-				Query query = new Query(Criteria.where("url").is(sourceUrl.trim()));
-				classUrlMongoBean = mongoOperations.findOne(query, ClassUrlMongoBean.class);
-				
-				if(classUrlMongoBean != null){
-					if(classUrlMongoBean.getStatus().equals("0")){
-						Date today = new Date();
-						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-						String todayStr = sdf.format(today);
-						
-						Date updateDate = classUrlMongoBean.getUpdate_date();
-						String updateDateStr = sdf.format(updateDate);
-						
-						if ( (!todayStr.equals(updateDateStr)) && (classUrlMongoBean.getQuery_time()<2000) ){
-							Date date = new Date();
-							classUrlMongoBean.setUpdate_date(date);
-							classUrlMongoBean.setQuery_time(classUrlMongoBean.getQuery_time()+1);
-						}
-						mongoOperations.save(classUrlMongoBean);
-						
-					}else if( (classUrlMongoBean.getStatus().equals("1")) && (!classUrlMongoBean.getAd_class().equals("")) ){
-						adClass = classUrlMongoBean.getAd_class();
-						behaviorClassify = "Y"; 
-					}
-				}else{
-					Date date = new Date();
-					ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
-					classUrlMongoBeanCreate.setUrl(sourceUrl);
-					classUrlMongoBeanCreate.setAd_class("");
-					classUrlMongoBeanCreate.setStatus("0");
-					classUrlMongoBeanCreate.setQuery_time(1);
-					classUrlMongoBeanCreate.setCreate_date(date);
-					classUrlMongoBeanCreate.setUpdate_date(date);
-					mongoOperations.save(classUrlMongoBeanCreate);
-				}
-			}
+//			if ((StringUtils.isBlank(memid) || memid.equals("null")) && (StringUtils.isBlank(uuid) || uuid.equals("null"))) {
+//				return ;
+//			}
+//
+//			if (StringUtils.isBlank(sourceUrl)) {
+//				return ;
+//			}
+//			
+//			Pattern p = Pattern.compile("(http|https)://24h.pchome.com.tw/(store|region)/([a-zA-Z0-9]+)([&|\\?|\\.]\\S*)?");
+//			Matcher m = p.matcher(sourceUrl);
+//			if (!m.find()) {
+//				return ;
+//			}
+//			
+//			List<CategoryCodeBean> list = CategoryLogMapper.categoryBeanList;
+//			for (CategoryCodeBean categoryBean : list) {
+//				if(sourceUrl.indexOf(categoryBean.getEnglishCode()) != -1){
+//					adClass = categoryBean.getNumberCode();
+//					behaviorClassify = "Y";
+//					break;
+//				}
+//			}
+//			
+//			if (behaviorClassify.equals("N")){
+//				ClassUrlMongoBean classUrlMongoBean = null;
+//				Query query = new Query(Criteria.where("url").is(sourceUrl.trim()));
+//				classUrlMongoBean = mongoOperations.findOne(query, ClassUrlMongoBean.class);
+//				
+//				if(classUrlMongoBean != null){
+//					if(classUrlMongoBean.getStatus().equals("0")){
+//						Date today = new Date();
+//						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//						String todayStr = sdf.format(today);
+//						
+//						Date updateDate = classUrlMongoBean.getUpdate_date();
+//						String updateDateStr = sdf.format(updateDate);
+//						
+//						if ( (!todayStr.equals(updateDateStr)) && (classUrlMongoBean.getQuery_time()<2000) ){
+//							Date date = new Date();
+//							classUrlMongoBean.setUpdate_date(date);
+//							classUrlMongoBean.setQuery_time(classUrlMongoBean.getQuery_time()+1);
+//						}
+//						mongoOperations.save(classUrlMongoBean);
+//						
+//					}else if( (classUrlMongoBean.getStatus().equals("1")) && (!classUrlMongoBean.getAd_class().equals("")) ){
+//						adClass = classUrlMongoBean.getAd_class();
+//						behaviorClassify = "Y"; 
+//					}
+//				}else{
+//					Date date = new Date();
+//					ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
+//					classUrlMongoBeanCreate.setUrl(sourceUrl);
+//					classUrlMongoBeanCreate.setAd_class("");
+//					classUrlMongoBeanCreate.setStatus("0");
+//					classUrlMongoBeanCreate.setQuery_time(1);
+//					classUrlMongoBeanCreate.setCreate_date(date);
+//					classUrlMongoBeanCreate.setUpdate_date(date);
+//					mongoOperations.save(classUrlMongoBeanCreate);
+//				}
+//			}
 			
 			
 			String result = memid + SYMBOL + uuid + SYMBOL + sourceUrl+ SYMBOL + adClass+"   >>>>>>>>>24H>>>>>>> ";
