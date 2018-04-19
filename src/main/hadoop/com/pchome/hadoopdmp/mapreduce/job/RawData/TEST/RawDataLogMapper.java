@@ -101,7 +101,10 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				
 				String[] tmpStrAry = line.split(","); // 0001000000000000;M,35
 				
+				categoryBean.setNumberCode(tmpStrAry[0]);
 				categoryBean.setChineseDesc(tmpStrAry[1]);
+				categoryBean.setBreadCrumb(tmpStrAry[2]);
+				categoryBean.setEnglishCode(tmpStrAry[3]);
 				
 				categoryBeanList.add(categoryBean);
 			}
@@ -155,13 +158,17 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			}
 			
 			List<CategoryCodeBean> list = RawDataLogMapper.categoryBeanList;
-//			for (CategoryCodeBean categoryBean : list) {
-//				if(sourceUrl.indexOf(categoryBean.getEnglishCode()) != -1){
-//					adClass = categoryBean.getNumberCode();
-//					behaviorClassify = "Y";
-//					break;
-//				}
-//			}
+			for (CategoryCodeBean categoryBean : list) {
+				if(sourceUrl.indexOf(categoryBean.getEnglishCode()) != -1){
+					adClass = categoryBean.getNumberCode();
+					behaviorClassify = "Y";
+					break;
+				}
+			}
+			
+			if (StringUtils.isBlank(adClass)) {
+				return ;
+			}
 //			
 //			if (behaviorClassify.equals("N")){
 //				ClassUrlMongoBean classUrlMongoBean = null;
@@ -202,9 +209,8 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			}
 			
 			
-			String result = categoryBeanList.size()+"   >>>>>>>>>  24H  >>>>>>> ";
-			
-//			String result = memid + SYMBOL + uuid + SYMBOL + sourceUrl+ SYMBOL + adClass+"   >>>>>>>>>24H>>>>>>> ";
+//			String result = categoryBeanList.size()+"   >>>>>>>>>  24H  >>>>>>> ";
+			String result = memid + SYMBOL + uuid + SYMBOL + sourceUrl+ SYMBOL + adClass+"   >>>>>NEW>>>>24H>>>>>>> ";
 			log.info(">>>>>> Mapper write key:" + result);
 			keyOut.set(result);
 			context.write(keyOut, valueOut);
