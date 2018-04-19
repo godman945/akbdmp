@@ -188,29 +188,29 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			String adClass = "";
 			String behaviorClassify = "N";
 			
-//			if ((StringUtils.isBlank(memid) || memid.equals("null")) && (StringUtils.isBlank(uuid) || uuid.equals("null"))) {
-//				return ;
-//			}
-//
-//			if (StringUtils.isBlank(sourceUrl)) {
-//				return ;
-//			}
-//			
-//			Pattern p = Pattern.compile("(http|https)://24h.pchome.com.tw/(store|region)/([a-zA-Z0-9]+)([&|\\?|\\.]\\S*)?");
-//			Matcher m = p.matcher(sourceUrl);
-//			if (!m.find()) {
-//				return ;
-//			}
-//			
-//			List<CategoryCodeBean> list = CategoryLogMapper.categoryBeanList;
-//			for (CategoryCodeBean categoryBean : list) {
-//				if(sourceUrl.indexOf(categoryBean.getEnglishCode()) != -1){
-//					adClass = categoryBean.getNumberCode();
-//					behaviorClassify = "Y";
-//					break;
-//				}
-//			}
-//			
+			if ((StringUtils.isBlank(memid) || memid.equals("null")) && (StringUtils.isBlank(uuid) || uuid.equals("null"))) {
+				return ;
+			}
+
+			if (StringUtils.isBlank(sourceUrl)) {
+				return ;
+			}
+			
+			Pattern p = Pattern.compile("(http|https)://24h.pchome.com.tw/(store|region)/([a-zA-Z0-9]+)([&|\\?|\\.]\\S*)?");
+			Matcher m = p.matcher(sourceUrl);
+			if (!m.find()) {
+				return ;
+			}
+			
+			List<CategoryCodeBean> list = CategoryLogMapper.categoryBeanList;
+			for (CategoryCodeBean categoryBean : list) {
+				if(sourceUrl.indexOf(categoryBean.getEnglishCode()) != -1){
+					adClass = categoryBean.getNumberCode();
+					behaviorClassify = "Y";
+					break;
+				}
+			}
+			
 //			if (behaviorClassify.equals("N")){
 //				ClassUrlMongoBean classUrlMongoBean = null;
 //				Query query = new Query(Criteria.where("url").is(sourceUrl.trim()));
