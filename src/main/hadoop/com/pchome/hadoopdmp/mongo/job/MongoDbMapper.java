@@ -27,6 +27,7 @@ public class MongoDbMapper extends Mapper<Object, BSONObject, Text, Text> {
 	public static ArrayList<Map<String, String>> categoryList = new ArrayList<Map<String, String>>();//分類表	
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	private DBCollection dBCollection;
+	@SuppressWarnings("deprecation")
 	@Override
 	public void setup(Context context) {
 		log.info(">>>>>> mongoDb Mapper  setup >>>>>>>>>>>>>>>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
@@ -38,7 +39,7 @@ public class MongoDbMapper extends Mapper<Object, BSONObject, Text, Text> {
 //			this.dBCollection = db.getCollection("user_detail");
 			
 			Mongo mongo;
-			mongo = new Mongo("192.168.1.37" , 27017);
+			mongo = new Mongo("192.168.1.37",27017);
 			DB db = mongo.getDB("dmp");
 			db.authenticate("webuser", "axw2mP1i".toCharArray());
 			this.dBCollection = db.getCollection("user_detail");
@@ -60,6 +61,7 @@ public class MongoDbMapper extends Mapper<Object, BSONObject, Text, Text> {
 		try {
 			log.info(">>>>>> Mapper write key:" + key);
 			log.info(">>>>>> Mapper write value:" + value);
+			log.info("***************************");
 			DBObject object = (DBObject)value;
 			log.info(">>>>>> object:" + object.toString());
 			String dbKey = key.toString();
