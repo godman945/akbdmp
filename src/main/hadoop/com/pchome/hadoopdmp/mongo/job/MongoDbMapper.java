@@ -64,7 +64,7 @@ public class MongoDbMapper extends Mapper<Object, BSONObject, Text, Text> {
 			log.info(">>>>>> object:" + object.toString());
 			String dbKey = key.toString();
 			
-			this.dBCollection.remove(object);
+//			this.dBCollection.remove(object);
 //			context.write(new Text(String.valueOf(key+"_count")), new Text(String.valueOf(key)));
 //			int range = 365;
 //			
