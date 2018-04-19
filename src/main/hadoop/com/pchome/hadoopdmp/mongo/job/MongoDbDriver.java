@@ -78,13 +78,14 @@ public class MongoDbDriver {
 		
 		BasicDBObject andQuery = new BasicDBObject();
 		List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
-		obj.add(new BasicDBObject("update_date", new BasicDBObject("$lte", "2017-04-18")));
+		obj.add(new BasicDBObject("update_date", new BasicDBObject("$gte", "2017-04-19")));
 		obj.add(new BasicDBObject("user_info.type", "uuid"));
 		andQuery.put("$and", obj);
 		
 		MongoConfigUtil.setQuery(jobConf,andQuery);
-//		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:axw2mP1i@192.168.1.37:27017/dmp.user_detail");
-		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
+		MongoConfigUtil.setLimit(jobConf,1000000);
+		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:axw2mP1i@192.168.1.37:27017/dmp.user_detail");
+//		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
 		MongoConfigUtil.setInputFormat(jobConf, MongoInputFormat.class);
 		MongoConfigUtil.setCreateInputSplits(jobConf, false);
 		MongoConfigUtil.setMapper(jobConf, MongoDbMapper.class);
