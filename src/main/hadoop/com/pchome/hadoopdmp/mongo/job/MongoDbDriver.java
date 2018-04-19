@@ -84,6 +84,7 @@ public class MongoDbDriver {
 		
 		MongoConfigUtil.setQuery(jobConf,andQuery);
 		MongoConfigUtil.setLimit(jobConf,1000000);
+		
 		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:axw2mP1i@192.168.1.37:27017/dmp.user_detail");
 //		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
 		MongoConfigUtil.setInputFormat(jobConf, MongoInputFormat.class);
