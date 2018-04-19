@@ -202,7 +202,7 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				return ;
 			}
 			
-//			List<CategoryCodeBean> list = CategoryLogMapper.categoryBeanList;
+			List<CategoryCodeBean> list = CategoryLogMapper.categoryBeanList;
 //			for (CategoryCodeBean categoryBean : list) {
 //				if(sourceUrl.indexOf(categoryBean.getEnglishCode()) != -1){
 //					adClass = categoryBean.getNumberCode();
