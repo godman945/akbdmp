@@ -20,6 +20,11 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.stereotype.Component;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.Mongo;
 import com.mongodb.hadoop.MongoInputFormat;
 import com.mongodb.hadoop.io.BSONWritable;
 import com.mongodb.hadoop.util.MongoConfigUtil;
@@ -76,6 +81,12 @@ public class MongoDbDriver {
 		JobConf jobConf = new JobConf();
 		jobConf.set("spring.profiles.active", "stg");
 		
+		
+		
+		MongoConfigUtil.setInputURI(jobConf,"mongodb://192.168.1.37:27017/dmp.user_detail");
+//		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
+		
+		
 		BasicDBObject andQuery = new BasicDBObject();
 		List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
 		obj.add(new BasicDBObject("update_date", new BasicDBObject("$gte", "2017-04-19")));
@@ -85,8 +96,7 @@ public class MongoDbDriver {
 		MongoConfigUtil.setQuery(jobConf,andQuery);
 		MongoConfigUtil.setLimit(jobConf,1000000);
 		
-		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:axw2mP1i@192.168.1.37:27017/dmp.user_detail");
-//		MongoConfigUtil.setInputURI(jobConf,"mongodb://webuser:MonG0Dmp@mongodb.mypchome.com.tw/dmp.user_detail");
+		
 		MongoConfigUtil.setInputFormat(jobConf, MongoInputFormat.class);
 		MongoConfigUtil.setCreateInputSplits(jobConf, false);
 		MongoConfigUtil.setMapper(jobConf, MongoDbMapper.class);
@@ -169,19 +179,37 @@ public class MongoDbDriver {
 	
 
 	public static void main(String[] args) throws Exception {
-//		Mongo m = new Mongo( "192.168.1.37" , 27017 );  
+//		Mongo m = new Mongo("mongodb://webuser:axw2mP1i@192.168.1.37:27017/dmp.user_detail");  
 //		DB db = m.getDB( "dmp" );  
 //		DBCollection dBCollection = db.getCollection("user_detail");
-//		System.out.println(dBCollection.count());
+////		System.out.println(dBCollection.count());
+////		
+////		
+//////		Mongo m = new Mongo("mongodb.mypchome.com.tw");  
+//////		DB db = m.getDB("dmp");
+//////		db.authenticate("webuser", "MonG0Dmp".toCharArray());  
+//////		DBCollection dBCollection = db.getCollection("user_detail");
+////		
+////		
 //		
-//		
-////		Mongo m = new Mongo("mongodb.mypchome.com.tw");  
-////		DB db = m.getDB("dmp");
-////		db.authenticate("webuser", "MonG0Dmp".toCharArray());  
-////		DBCollection dBCollection = db.getCollection("user_detail");
-//		
-//		
-//		
+//		BasicDBObject andQuery = new BasicDBObject();
+//		List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+//		obj.add(new BasicDBObject("update_date", new BasicDBObject("$gte", "2017-04-19")));
+//		obj.add(new BasicDBObject("user_info.type", "uuid"));
+//		andQuery.put("$and", obj);
+		
+		
+//		DBCursor cursor = dBCollection.find(andQuery).limit(1);
+//		while(cursor.hasNext()) {
+//			DBObject a = cursor.next();
+//			System.out.println(a.get("_id"));
+////			dBCollection.remove(a);
+////			break;
+//		}
+		
+		
+		
+		
 //		BasicDBObject andQuery = new BasicDBObject();
 //		List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
 //		obj.add(new BasicDBObject("update_date", new BasicDBObject("$lte", "2017-04-18")));
