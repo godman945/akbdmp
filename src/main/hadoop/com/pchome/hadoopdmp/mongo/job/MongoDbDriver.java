@@ -20,11 +20,6 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.stereotype.Component;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.Mongo;
 import com.mongodb.hadoop.MongoInputFormat;
 import com.mongodb.hadoop.io.BSONWritable;
 import com.mongodb.hadoop.util.MongoConfigUtil;
@@ -92,6 +87,10 @@ public class MongoDbDriver {
 		obj.add(new BasicDBObject("update_date", new BasicDBObject("$gte", "2017-04-19")));
 		obj.add(new BasicDBObject("user_info.type", "uuid"));
 		andQuery.put("$and", obj);
+		
+		
+		log.info(">>>>>>mongo:"+MongoConfigUtil.getInputURI(jobConf).getURI());
+		log.info(">>>>>>mongo Query:"+andQuery.toString());
 		
 		MongoConfigUtil.setQuery(jobConf,andQuery);
 		MongoConfigUtil.setLimit(jobConf,1000000);
