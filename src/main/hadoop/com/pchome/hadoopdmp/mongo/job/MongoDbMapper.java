@@ -1,9 +1,9 @@
 package com.pchome.hadoopdmp.mongo.job;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
@@ -14,29 +14,57 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.bson.BSONObject;
 import org.springframework.stereotype.Component;
 
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
+import com.mongodb.Mongo;
+
 @Component
 public class MongoDbMapper extends Mapper<Object, BSONObject, Text, Text> {
 	Log log = LogFactory.getLog(this.getClass());
-	
-
 	private Text keyOut = new Text();
-	private Text valueOut = new Text();
-	private Text totalSizeCount = new Text();
-	private Date date = new Date();
 	public static String record_date;
 	public static ArrayList<Map<String, String>> categoryList = new ArrayList<Map<String, String>>();//分類表	
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	private DBCollection dBCollection;
 	@Override
 	public void setup(Context context) {
 		log.info(">>>>>> mongoDb Mapper  setup >>>>>>>>>>>>>>>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
+		try {
+//			Mongo mongo;
+//			mongo = new Mongo("mongodb.mypchome.com.tw");
+//			DB db = mongo.getDB("dmp");
+//			db.authenticate("webuser", "MonG0Dmp".toCharArray());  
+//			this.dBCollection = db.getCollection("user_detail");
+			
+			Mongo mongo;
+			mongo = new Mongo("192.168.1.37" , 27017);
+			DB db = mongo.getDB("dmp");
+			db.authenticate("webuser", "axw2mP1i".toCharArray());
+			this.dBCollection = db.getCollection("user_detail");
+			
+//			DB db = m.getDB( "dmp" );  
+//			DBCollection dBCollection = db.getCollection("user_detail");
+			
+			
+			
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}  
+		
 	}
+	
+	
 	@Override
 	public void map(Object key, BSONObject value, Context context) throws IOException, InterruptedException {
 		try {
 			log.info(">>>>>> Mapper write key:" + key);
 			log.info(">>>>>> Mapper write value:" + value);
-			totalSizeCount.set(new Text("sizeCount"));
+			DBObject object = (DBObject)value;
+			log.info(">>>>>> object:" + object.toString());
+			String dbKey = key.toString();
 			
+			this.dBCollection.remove(object);
 //			context.write(new Text(String.valueOf(key+"_count")), new Text(String.valueOf(key)));
 //			int range = 365;
 //			
@@ -57,7 +85,7 @@ public class MongoDbMapper extends Mapper<Object, BSONObject, Text, Text> {
 //				log.info(">>>>>> rangeDay:" + rangeDay);
 ////				log.info(">>>>>> Mapper write value:" + value);
 ////				log.info(">>>>>> Mapper write count:" + count);
-				keyOut.set(new Text(key.toString())+"_delete");
+				keyOut.set(new Text(dbKey)+"_delete");
 				context.write(keyOut, new Text(value.toString()));
 //			}
 		} catch (Exception e) {
