@@ -250,7 +250,9 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			}
 			
 			
-			String result = memid + SYMBOL + uuid + SYMBOL + sourceUrl+ SYMBOL + adClass+"   >>>>>>>>>24H>>>>>>> ";
+			String result = categoryBeanList.size()+"   >>>>>>>>>  24H  >>>>>>> ";
+			
+//			String result = memid + SYMBOL + uuid + SYMBOL + sourceUrl+ SYMBOL + adClass+"   >>>>>>>>>24H>>>>>>> ";
 			log.info(">>>>>> Mapper write key:" + result);
 			keyOut.set(result);
 			context.write(keyOut, valueOut);
