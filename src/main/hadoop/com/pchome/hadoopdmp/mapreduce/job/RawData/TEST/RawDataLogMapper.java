@@ -107,52 +107,17 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			}
 			
 			// load 24h分類表
-			FileInputStream fis;
-			POIFSFileSystem fs;
-			HSSFWorkbook wb;
-			String filePath = path[3].toString();
-			fis = new FileInputStream(filePath);
-			fs = new POIFSFileSystem(fis);
-			wb = new HSSFWorkbook(fs);
-			HSSFSheet sheet = wb.getSheetAt(0);
-			HSSFCell cell;
-
-			for (int i = 0; i < sheet.getPhysicalNumberOfRows(); i++) {
+			Path category24HPath = Paths.get(path[3].toString());
+			List<String> lines24H = Files.readAllLines(category24HPath, charset);
+			for (String line : lines24H) {
 				CategoryCodeBean categoryBean = new CategoryCodeBean();
-				HSSFRow row = sheet.getRow(i);
-				if (row != null) {
-					int j = 0;
-					for (j = 0; j < 4; j++) { 
-						cell = row.getCell(j);
-						if (j == 0) {
-							categoryBean.setNumberCode(cell.toString());
-						}
-						if (j == 1) {
-							categoryBean.setChineseDesc(cell.toString());
-						}
-						if (j == 2) {
-							categoryBean.setBreadCrumb(cell.toString());
-						}
-						if (j == 3) {
-							categoryBean.setUrl(cell.toString());
-
-							String urlStr = categoryBean.getUrl();
-							if (urlStr.indexOf("http") != -1) {
-								urlStr = urlStr.replaceAll("http://", "");
-							} else if (urlStr.indexOf("https") != -1) {
-								urlStr = urlStr.replaceAll("https://", "");
-							}
-							String[] urlAry = urlStr.split("/");
-
-							categoryBean.setEnglishCode(urlAry[2]);
-						}
-//						System.out.println(cell.toString());
-					}
-					categoryBeanList.add(categoryBean);
-//					System.out.println("-----------------------");
-				}
+				
+				String[] tmpStrAry = line.split(","); // 0001000000000000;M,35
+				
+				categoryBean.setChineseDesc(tmpStrAry[1]);
+				
+				categoryBeanList.add(categoryBean);
 			}
-			fis.close();
 			
 		} catch (Exception e) {
 			log.info("Mapper  setup Exception: "+e.getMessage());
@@ -202,7 +167,7 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				return ;
 			}
 			
-//			List<CategoryCodeBean> list = CategoryLogMapper.categoryBeanList;
+			List<CategoryCodeBean> list = CategoryLogMapper.categoryBeanList;
 //			for (CategoryCodeBean categoryBean : list) {
 //				if(sourceUrl.indexOf(categoryBean.getEnglishCode()) != -1){
 //					adClass = categoryBean.getNumberCode();

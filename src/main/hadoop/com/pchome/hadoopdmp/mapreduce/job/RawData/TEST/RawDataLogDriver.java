@@ -28,7 +28,7 @@ import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig
 @Component
 public class RawDataLogDriver {
 
-	private static Log log = LogFactory.getLog("CategoryLogDriver");
+	private static Log log = LogFactory.getLog("RawDataLogDriver");
 
 	@Value("${hpd11.fs.default.name}")
 	private String hdfsPath;
@@ -205,7 +205,7 @@ public class RawDataLogDriver {
 				hdfsPath + "/home/webuser/dmp/crawlBreadCrumb/data/pfp_ad_category_new.csv",
 				hdfsPath + "/home/webuser/dmp/readingdata/ClsfyGndAgeCrspTable.txt",
 				hdfsPath + "/home/webuser/dmp/alex/log4j.xml",
-				hdfsPath + "/home/webuser/dmp/jobfile/Test_DMP_24h_category.xls"
+				hdfsPath + "/home/webuser/dmp/jobfile/Test_DMP_24h_category.csv"
 		};
 		for (String filePath : filePaths) {
 			DistributedCache.addCacheFile(new URI(filePath), job.getConfiguration());
