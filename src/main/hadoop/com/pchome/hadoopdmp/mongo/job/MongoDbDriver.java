@@ -99,10 +99,12 @@ public class MongoDbDriver {
 		obj.add(new BasicDBObject("update_date", new BasicDBObject("$lt", expiredDate)));
 		obj.add(new BasicDBObject("user_info.type", "uuid"));
 		andQuery.put("$and", obj);
+		
 		log.info(">>>>>>mongo:"+MongoConfigUtil.getInputURI(jobConf).getURI());
 		log.info(">>>>>>mongo Query:"+andQuery.toString());
 		log.info(">>>>>>mongo expired date:"+expiredDate);
 		log.info(">>>>>>mongo output path:"+outputPathName);
+		
 		MongoConfigUtil.setQuery(jobConf,andQuery);
 		MongoConfigUtil.setLimit(jobConf,1);
 		MongoConfigUtil.setInputFormat(jobConf, MongoInputFormat.class);
@@ -228,17 +230,17 @@ public class MongoDbDriver {
 ////			dBCollection.remove(a);
 ////			break;
 //		}
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		Calendar cal1 = Calendar.getInstance();
-		cal1.add(Calendar.YEAR,-1);
-		System.out.println(sdf.format(cal1.getTime()));
+//		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//		Calendar cal1 = Calendar.getInstance();
+//		cal1.add(Calendar.YEAR,-1);
+//		System.out.println(sdf.format(cal1.getTime()));
 		
-//		log.info("====driver start====");
-//		System.setProperty("spring.profiles.active", "stg");
-//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-//		MongoDbDriver mongoDbDriver = (MongoDbDriver) ctx.getBean(MongoDbDriver.class);
-//		mongoDbDriver.drive();
-//		log.info("====driver end====");
+		log.info("====driver start====");
+		System.setProperty("spring.profiles.active", "stg");
+		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+		MongoDbDriver mongoDbDriver = (MongoDbDriver) ctx.getBean(MongoDbDriver.class);
+		mongoDbDriver.drive();
+		log.info("====driver end====");
 	}
 
 }
