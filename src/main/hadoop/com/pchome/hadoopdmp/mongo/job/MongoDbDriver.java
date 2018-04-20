@@ -190,7 +190,7 @@ public class MongoDbDriver {
 
 		
 	  log.info("====driver start====");
-	  System.setProperty("spring.profiles.active", "stg");
+	  System.setProperty("spring.profiles.active", "prd");
 	  ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 	  MongoDbDriver mongoDbDriver = (MongoDbDriver) ctx.getBean(MongoDbDriver.class);
 	  mongoDbDriver.drive();
