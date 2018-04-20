@@ -1,12 +1,6 @@
 package com.pchome.hadoopdmp.mongo.job;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -22,47 +16,16 @@ import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.Mongo;
 import com.mongodb.hadoop.MongoInputFormat;
 import com.mongodb.hadoop.io.BSONWritable;
 import com.mongodb.hadoop.util.MongoConfigUtil;
-import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryCodeBean;
-import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig; 
-
-
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.filecache.DistributedCache;
-import org.apache.hadoop.io.Text;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-import org.springframework.stereotype.Component;
+import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 
 @Component
 public class MongoDbDriver {
@@ -142,9 +105,9 @@ public class MongoDbDriver {
 		MongoConfigUtil.setQuery(jobConf,andQuery);
 //		MongoConfigUtil.setLimit(jobConf,1);
 		MongoConfigUtil.setInputFormat(jobConf, MongoInputFormat.class);
-//		MongoConfigUtil.setCreateInputSplits(jobConf, false);
-		MongoConfigUtil.setCreateInputSplits(jobConf, true);
-		MongoConfigUtil.setSplitSize(jobConf, 5000);
+		MongoConfigUtil.setCreateInputSplits(jobConf, false);
+//		MongoConfigUtil.setCreateInputSplits(jobConf, true);
+//		MongoConfigUtil.setSplitSize(jobConf, 5000);
 		
 		MongoConfigUtil.setMapper(jobConf, MongoDbMapper.class);
 		FileSystem fs = FileSystem.get(jobConf);
