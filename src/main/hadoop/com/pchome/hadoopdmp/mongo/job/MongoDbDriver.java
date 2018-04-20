@@ -220,64 +220,17 @@ public class MongoDbDriver {
 //		log.info("====driver end====");
 //	}
 	public static void main(String[] args) throws Exception {
-		
-		
-//		Mongo m = new Mongo( "192.168.1.37" , 27017 );  
-//		DB db = m.getDB( "dmp" );  
-//		DBCollection dBCollection = db.getCollection("user_detail");
-//		System.out.println(dBCollection.count());
-		
-		
-		Mongo m = new Mongo("mongodb.mypchome.com.tw");  
-		DB db = m.getDB("dmp");
-		db.authenticate("webuser", "MonG0Dmp".toCharArray());  
-		DBCollection dBCollection = db.getCollection("user_detail");
-		
-		
-		
-		BasicDBObject andQuery = new BasicDBObject();
-		List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
-		obj.add(new BasicDBObject("update_date", new BasicDBObject("$lt", "2017-04-20")));
-		obj.add(new BasicDBObject("user_info.type", "uuid"));
-		andQuery.put("$and", obj);
-//		andQuery.put("update_date", new BasicDBObject("$lte", "2017-04-18"));
-		System.out.println(andQuery.toString());
-		DBCursor cursor = dBCollection.find(andQuery);
-		System.out.println(cursor.count());
-		
-		while(cursor.hasNext()) {
-			DBObject a = cursor.next();
-			System.out.println(a.get("_id"));
-			dBCollection.remove(a);
-		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 //		6990015
 //		6639872
 //		{ "$and" : [ { "update_date" : { "$gt" : "2017-04-19"}} , { "user_info.type" : "memid"}]}
 //		202221
 
 		
-	//  log.info("====driver start====");
-	//  System.setProperty("spring.profiles.active", "stg");
-	//  ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-	//  MongoDbDriver mongoDbDriver = (MongoDbDriver) ctx.getBean(MongoDbDriver.class);
-	//  mongoDbDriver.drive();
-	//  log.info("====driver end====");
-	  
-	  
-	  
-	  
-	  
+	  log.info("====driver start====");
+	  System.setProperty("spring.profiles.active", "stg");
+	  ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+	  MongoDbDriver mongoDbDriver = (MongoDbDriver) ctx.getBean(MongoDbDriver.class);
+	  mongoDbDriver.drive();
+	  log.info("====driver end====");
 	 }
 }
