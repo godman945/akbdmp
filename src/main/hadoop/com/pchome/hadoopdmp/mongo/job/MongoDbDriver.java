@@ -1,6 +1,12 @@
 package com.pchome.hadoopdmp.mongo.job;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -16,19 +22,47 @@ import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.Mongo;
 import com.mongodb.hadoop.MongoInputFormat;
 import com.mongodb.hadoop.io.BSONWritable;
 import com.mongodb.hadoop.util.MongoConfigUtil;
+import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryCodeBean;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig; 
 
 
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.filecache.DistributedCache;
+import org.apache.hadoop.io.Text;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+import org.springframework.stereotype.Component;
 
 @Component
 public class MongoDbDriver {
@@ -108,7 +142,10 @@ public class MongoDbDriver {
 		MongoConfigUtil.setQuery(jobConf,andQuery);
 //		MongoConfigUtil.setLimit(jobConf,1);
 		MongoConfigUtil.setInputFormat(jobConf, MongoInputFormat.class);
-		MongoConfigUtil.setCreateInputSplits(jobConf, false);
+//		MongoConfigUtil.setCreateInputSplits(jobConf, false);
+		MongoConfigUtil.setCreateInputSplits(jobConf, true);
+		MongoConfigUtil.setSplitSize(jobConf, 5000);
+		
 		MongoConfigUtil.setMapper(jobConf, MongoDbMapper.class);
 		FileSystem fs = FileSystem.get(jobConf);
 		deleteExistedDir(fs, new Path(outputPathName), true);
@@ -161,13 +198,6 @@ public class MongoDbDriver {
 
 	}
 
-	public static void printUsage() {
-		System.out.println("Usage(hour): [DATE] [HOUR]");
-		System.out.println("Usage(day): [DATE]");
-		System.out.println();
-		System.out.println("[DATE] format: yyyy-MM-dd");
-	}
-	
 	public static boolean deleteExistedDir(FileSystem fs, Path path, boolean recursive) throws IOException {
         try {
             // check path exists
@@ -181,66 +211,73 @@ public class MongoDbDriver {
         return false;
 	}
 	
-	
-
+//	public static void main(String[] args) throws Exception {
+//		log.info("====driver start====");
+//		System.setProperty("spring.profiles.active", "stg");
+//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//		MongoDbDriver mongoDbDriver = (MongoDbDriver) ctx.getBean(MongoDbDriver.class);
+//		mongoDbDriver.drive();
+//		log.info("====driver end====");
+//	}
 	public static void main(String[] args) throws Exception {
-//		Mongo m = new Mongo("mongodb://webuser:axw2mP1i@192.168.1.37:27017/dmp.user_detail");  
+		
+		
+//		Mongo m = new Mongo( "192.168.1.37" , 27017 );  
 //		DB db = m.getDB( "dmp" );  
 //		DBCollection dBCollection = db.getCollection("user_detail");
-////		System.out.println(dBCollection.count());
-////		
-////		
-//////		Mongo m = new Mongo("mongodb.mypchome.com.tw");  
-//////		DB db = m.getDB("dmp");
-//////		db.authenticate("webuser", "MonG0Dmp".toCharArray());  
-//////		DBCollection dBCollection = db.getCollection("user_detail");
-////		
-////		
-//		
-//		BasicDBObject andQuery = new BasicDBObject();
-//		List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
-//		obj.add(new BasicDBObject("update_date", new BasicDBObject("$gte", "2017-04-19")));
-//		obj.add(new BasicDBObject("user_info.type", "uuid"));
-//		andQuery.put("$and", obj);
+//		System.out.println(dBCollection.count());
 		
 		
-//		DBCursor cursor = dBCollection.find(andQuery).limit(1);
-//		while(cursor.hasNext()) {
-//			DBObject a = cursor.next();
-//			System.out.println(a.get("_id"));
-////			dBCollection.remove(a);
-////			break;
-//		}
+		Mongo m = new Mongo("mongodb.mypchome.com.tw");  
+		DB db = m.getDB("dmp");
+		db.authenticate("webuser", "MonG0Dmp".toCharArray());  
+		DBCollection dBCollection = db.getCollection("user_detail");
 		
 		
 		
+		BasicDBObject andQuery = new BasicDBObject();
+		List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+		obj.add(new BasicDBObject("update_date", new BasicDBObject("$lt", "2017-04-20")));
+		obj.add(new BasicDBObject("user_info.type", "uuid"));
+		andQuery.put("$and", obj);
+//		andQuery.put("update_date", new BasicDBObject("$lte", "2017-04-18"));
+		System.out.println(andQuery.toString());
+		DBCursor cursor = dBCollection.find(andQuery);
+		System.out.println(cursor.count());
 		
-//		BasicDBObject andQuery = new BasicDBObject();
-//		List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
-//		obj.add(new BasicDBObject("update_date", new BasicDBObject("$lte", "2017-04-18")));
-////		obj.add(new BasicDBObject("user_info.type", "uuid"));
-//		andQuery.put("$and", obj);
-////		andQuery.put("update_date", new BasicDBObject("$lte", "2017-04-18"));
-//		System.out.println(andQuery.toString());
-//		DBCursor cursor = dBCollection.find(andQuery).limit(5);
-//		System.out.println(cursor.count());
-//		while(cursor.hasNext()) {
-//			DBObject a = cursor.next();
-//			System.out.println(a.get("_id"));
-////			dBCollection.remove(a);
-////			break;
-//		}
-//		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//		Calendar cal1 = Calendar.getInstance();
-//		cal1.add(Calendar.YEAR,-1);
-//		System.out.println(sdf.format(cal1.getTime()));
+		while(cursor.hasNext()) {
+			DBObject a = cursor.next();
+			System.out.println(a.get("_id"));
+			dBCollection.remove(a);
+		}
 		
-		log.info("====driver start====");
-		System.setProperty("spring.profiles.active", "stg");
-		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-		MongoDbDriver mongoDbDriver = (MongoDbDriver) ctx.getBean(MongoDbDriver.class);
-		mongoDbDriver.drive();
-		log.info("====driver end====");
-	}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+//		6990015
+//		6639872
+//		{ "$and" : [ { "update_date" : { "$gt" : "2017-04-19"}} , { "user_info.type" : "memid"}]}
+//		202221
 
+		
+	//  log.info("====driver start====");
+	//  System.setProperty("spring.profiles.active", "stg");
+	//  ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+	//  MongoDbDriver mongoDbDriver = (MongoDbDriver) ctx.getBean(MongoDbDriver.class);
+	//  mongoDbDriver.drive();
+	//  log.info("====driver end====");
+	  
+	  
+	  
+	  
+	  
+	 }
 }
