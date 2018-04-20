@@ -1,10 +1,11 @@
 package com.pchome.hadoopdmp.mapreduce.job.RawData.TEST;
-
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,8 +23,11 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
+import com.pchome.hadoopdmp.data.mongo.pojo.ClassUrlMongoBean;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryCodeBean;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 import com.pchome.hadoopdmp.spring.config.bean.mongodb.MongodbHadoopConfig;
@@ -101,10 +105,10 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				
 				String[] tmpStrAry = line.split(","); // 0001000000000000;M,35
 				
-				categoryBean.setNumberCode(tmpStrAry[0]);
-				categoryBean.setChineseDesc(tmpStrAry[1]);
-				categoryBean.setBreadCrumb(tmpStrAry[2]);
-				categoryBean.setEnglishCode(tmpStrAry[3]);
+				categoryBean.setNumberCode(tmpStrAry[0].replaceAll("\"", ""));
+				categoryBean.setChineseDesc(tmpStrAry[1].replaceAll("\"", ""));
+				categoryBean.setBreadCrumb(tmpStrAry[2].replaceAll("\"", ""));
+				categoryBean.setEnglishCode(tmpStrAry[3].replaceAll("\"", ""));
 				
 				categoryBeanList.add(categoryBean);
 			}
@@ -157,6 +161,29 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				return ;
 			}
 			
+			
+			
+			//test
+//			String eng="" ;
+//			String num="" ;
+//			String ch="" ;
+//			String br="" ;
+//			
+//			List<CategoryCodeBean> list = RawDataLogMapper.categoryBeanList;
+//			for (CategoryCodeBean categoryBean : list) {
+//				eng = categoryBean.getEnglishCode();
+//				num = categoryBean.getNumberCode();
+//				ch = categoryBean.getChineseDesc();
+//				br = categoryBean.getBreadCrumb();
+//			}
+////			String result = categoryBeanList.size()+"   >>>>>>>>>  24H  >>>>>>> ";
+//			String result = eng + SYMBOL + num + SYMBOL + ch+ SYMBOL + br+"   >>>>>NEW>>>>24H>>>>>>>size: "+ categoryBeanList.size();
+//			if (StringUtils.isBlank(adClass)) {
+//				return ;
+//			}
+			//test
+			
+			
 			List<CategoryCodeBean> list = RawDataLogMapper.categoryBeanList;
 			for (CategoryCodeBean categoryBean : list) {
 				if(sourceUrl.indexOf(categoryBean.getEnglishCode()) != -1){
@@ -166,51 +193,47 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				}
 			}
 			
-			if (StringUtils.isBlank(adClass)) {
-				return ;
+			if (behaviorClassify.equals("N")){
+				ClassUrlMongoBean classUrlMongoBean = null;
+				Query query = new Query(Criteria.where("url").is(sourceUrl.trim()));
+				classUrlMongoBean = mongoOperations.findOne(query, ClassUrlMongoBean.class);
+				
+				if(classUrlMongoBean != null){
+					if(classUrlMongoBean.getStatus().equals("0")){
+						Date today = new Date();
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+						String todayStr = sdf.format(today);
+						
+						Date updateDate = classUrlMongoBean.getUpdate_date();
+						String updateDateStr = sdf.format(updateDate);
+						
+						if ( (!todayStr.equals(updateDateStr)) && (classUrlMongoBean.getQuery_time()<2000) ){
+							Date date = new Date();
+							classUrlMongoBean.setUpdate_date(date);
+							classUrlMongoBean.setQuery_time(classUrlMongoBean.getQuery_time()+1);
+						}
+						mongoOperations.save(classUrlMongoBean);
+						
+					}else if( (classUrlMongoBean.getStatus().equals("1")) && (!classUrlMongoBean.getAd_class().equals("")) ){
+						adClass = classUrlMongoBean.getAd_class();
+						behaviorClassify = "Y"; 
+					}
+				}else{
+					Date date = new Date();
+					ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
+					classUrlMongoBeanCreate.setUrl(sourceUrl);
+					classUrlMongoBeanCreate.setAd_class("");
+					classUrlMongoBeanCreate.setStatus("0");
+					classUrlMongoBeanCreate.setQuery_time(1);
+					classUrlMongoBeanCreate.setCreate_date(date);
+					classUrlMongoBeanCreate.setUpdate_date(date);
+					mongoOperations.save(classUrlMongoBeanCreate);
+				}
 			}
-//			
-//			if (behaviorClassify.equals("N")){
-//				ClassUrlMongoBean classUrlMongoBean = null;
-//				Query query = new Query(Criteria.where("url").is(sourceUrl.trim()));
-//				classUrlMongoBean = mongoOperations.findOne(query, ClassUrlMongoBean.class);
-//				
-//				if(classUrlMongoBean != null){
-//					if(classUrlMongoBean.getStatus().equals("0")){
-//						Date today = new Date();
-//						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//						String todayStr = sdf.format(today);
-//						
-//						Date updateDate = classUrlMongoBean.getUpdate_date();
-//						String updateDateStr = sdf.format(updateDate);
-//						
-//						if ( (!todayStr.equals(updateDateStr)) && (classUrlMongoBean.getQuery_time()<2000) ){
-//							Date date = new Date();
-//							classUrlMongoBean.setUpdate_date(date);
-//							classUrlMongoBean.setQuery_time(classUrlMongoBean.getQuery_time()+1);
-//						}
-//						mongoOperations.save(classUrlMongoBean);
-//						
-//					}else if( (classUrlMongoBean.getStatus().equals("1")) && (!classUrlMongoBean.getAd_class().equals("")) ){
-//						adClass = classUrlMongoBean.getAd_class();
-//						behaviorClassify = "Y"; 
-//					}
-//				}else{
-//					Date date = new Date();
-//					ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
-//					classUrlMongoBeanCreate.setUrl(sourceUrl);
-//					classUrlMongoBeanCreate.setAd_class("");
-//					classUrlMongoBeanCreate.setStatus("0");
-//					classUrlMongoBeanCreate.setQuery_time(1);
-//					classUrlMongoBeanCreate.setCreate_date(date);
-//					classUrlMongoBeanCreate.setUpdate_date(date);
-//					mongoOperations.save(classUrlMongoBeanCreate);
-//				}
-//			}
 			
 			
-//			String result = categoryBeanList.size()+"   >>>>>>>>>  24H  >>>>>>> ";
-			String result = memid + SYMBOL + uuid + SYMBOL + sourceUrl+ SYMBOL + adClass+"   >>>>>NEW>>>>24H>>>>>>> ";
+
+			String result = memid + SYMBOL + uuid + SYMBOL + sourceUrl+ SYMBOL + adClass+ SYMBOL+ behaviorClassify+"   >>>>>NEW>>>>24H>>>>>>> ";
 			log.info(">>>>>> Mapper write key:" + result);
 			keyOut.set(result);
 			context.write(keyOut, valueOut);
