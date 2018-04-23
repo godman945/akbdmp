@@ -175,7 +175,8 @@ public class CategoryLogDriver {
 //			//輸出
 //			String bessieTempPath = "/home/webuser/dmp/adLogClassStg/2018-03-20/day";
 			//輸入
-			String adLogClassPpath = "/home/webuser/akb/storedata/alllog/"+timePath;
+//			String adLogClassPpath = "/home/webuser/akb/storedata/alllog/"+timePath;
+			String adLogClassPpath = "/home/webuser/akb/storedata/alllog/2018-04-16/06";
 			//輸出
 //			String bessieTempPath = "/home/webuser/dmp/adLogClassPrd/categorylog/"+timePath;
 			String bessieTempPath = "/home/webuser/bessie/output";
