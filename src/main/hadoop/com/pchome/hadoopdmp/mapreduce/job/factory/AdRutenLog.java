@@ -121,7 +121,6 @@ public class AdRutenLog extends ACategoryLogData {
 						}
 						for (CategoryRutenCodeBean categoryRutenBean : categoryRutenList) {
 							if (categoryRutenBean.getChineseDesc().trim().equals(breadcrumbAry[i].trim())){
-//								System.out.println(categoryRutenBean.getChineseDesc() +" == "+breadAry[i]);
 								adClass = categoryRutenBean.getNumberCode();
 								hasCategory = true;
 								break;
@@ -139,7 +138,6 @@ public class AdRutenLog extends ACategoryLogData {
 						classUrlMongoBeanCreate.setUrl(sourceUrl);
 						classUrlMongoBeanCreate.setAd_class(adClass);
 						classUrlMongoBeanCreate.setStatus("1");
-//						classUrlMongoBeanCreate.setQuery_time(1);
 						classUrlMongoBeanCreate.setCreate_date(date);
 						classUrlMongoBeanCreate.setUpdate_date(date);
 						mongoOperations.save(classUrlMongoBeanCreate);
@@ -182,7 +180,6 @@ public class AdRutenLog extends ACategoryLogData {
 		categoryLogBean.setMemid(values[1]);
 		categoryLogBean.setUuid(values[2]);
 		categoryLogBean.setSource("ruten");
-//		categoryLogBean.setType("uuid");
 		categoryLogBean.setBehaviorClassify(behaviorClassify);
 		return categoryLogBean;
 	}
