@@ -177,7 +177,8 @@ public class CategoryLogDriver {
 			//輸入
 			String adLogClassPpath = "/home/webuser/akb/storedata/alllog/"+timePath;
 			//輸出
-			String bessieTempPath = "/home/webuser/dmp/adLogClassPrd/categorylog/"+timePath;
+//			String bessieTempPath = "/home/webuser/dmp/adLogClassPrd/categorylog/"+timePath;
+			String bessieTempPath = "/home/webuser/bessie/output";
 			
 			//hdfs存在則刪除
 			deleteExistedDir(fs, new Path(bessieTempPath), true);
