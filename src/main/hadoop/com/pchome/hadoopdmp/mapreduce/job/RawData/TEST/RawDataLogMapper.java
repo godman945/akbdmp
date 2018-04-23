@@ -43,9 +43,9 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private Text valueOut = new Text();
 
 	public static String record_date;
-	public static ArrayList<Map<String, String>> categoryList = new ArrayList<Map<String, String>>();//分類表	
-	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();	 //分類個資表
-	public static List<CategoryCodeBean> categoryBeanList = new ArrayList<CategoryCodeBean>();				 //24H分類表
+//	public static ArrayList<Map<String, String>> categoryList = new ArrayList<Map<String, String>>();//分類表	
+//	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();	 //分類個資表
+//	public static List<CategoryCodeBean> categoryBeanList = new ArrayList<CategoryCodeBean>();				 //24H分類表
 	private MongoOperations mongoOperations;
 
 	private int adClick_process = 0;
@@ -66,52 +66,53 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			this.mongoOperations = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
 			record_date = context.getConfiguration().get("job.date");
 			Configuration conf = context.getConfiguration();
-			//load 分類個資表(ClsfyGndAgeCrspTable.txt)
-			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
-			Path clsfyTable = Paths.get(path[1].toString());
-			Charset charset = Charset.forName("UTF-8");
-			List<String> lines = Files.readAllLines(clsfyTable, charset);
-			for (String line : lines) {
-				String[] tmpStrAry = line.split(";"); // 0001000000000000;M,35
-				String[] tmpStrAry2 = tmpStrAry[1].split(",");
-				clsfyCraspMap.put(tmpStrAry[0],new combinedValue(tmpStrAry[1].split(",")[0], tmpStrAry2.length > 1 ? tmpStrAry2[1] : ""));
-			}
 			
-
-			// load 分類表(pfp_ad_category_new.csv)
-			Path cate_path = Paths.get(path[0].toString());
-			charset = Charset.forName("UTF-8");
-			int maxCateLvl = 4;
-			categoryList = new ArrayList<Map<String, String>>();
-			for (int i = 0; i < maxCateLvl; i++) {
-				categoryList.add(new HashMap<String, String>());
-			}
-			lines.clear();
-			lines = Files.readAllLines(cate_path, charset);
-			// 將 table: pfp_ad_category_new 內容放入list中(共有 maxCateLvl 層)
-			for (String line : lines) {
-				String[] tmpStr = line.split(";");
-				int lvl = Integer.parseInt(tmpStr[5].replaceAll("\"", "").trim());
-				if (lvl <= maxCateLvl) {
-					categoryList.get(lvl - 1).put(tmpStr[3].replaceAll("\"", "").trim(),tmpStr[4].replaceAll("\"", "").replaceAll("@", "").trim());
-				}
-			}
-			
-			// load 24h分類表
-			Path category24HPath = Paths.get(path[3].toString());
-			List<String> lines24H = Files.readAllLines(category24HPath, charset);
-			for (String line : lines24H) {
-				CategoryCodeBean categoryBean = new CategoryCodeBean();
-				
-				String[] tmpStrAry = line.split(","); // 0001000000000000;M,35
-				
-				categoryBean.setNumberCode(tmpStrAry[0].replaceAll("\"", ""));
-				categoryBean.setChineseDesc(tmpStrAry[1].replaceAll("\"", ""));
-				categoryBean.setBreadCrumb(tmpStrAry[2].replaceAll("\"", ""));
-				categoryBean.setEnglishCode(tmpStrAry[3].replaceAll("\"", ""));
-				
-				categoryBeanList.add(categoryBean);
-			}
+//			//load 分類個資表(ClsfyGndAgeCrspTable.txt)
+//			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
+//			Path clsfyTable = Paths.get(path[1].toString());
+//			Charset charset = Charset.forName("UTF-8");
+//			List<String> lines = Files.readAllLines(clsfyTable, charset);
+//			for (String line : lines) {
+//				String[] tmpStrAry = line.split(";"); // 0001000000000000;M,35
+//				String[] tmpStrAry2 = tmpStrAry[1].split(",");
+//				clsfyCraspMap.put(tmpStrAry[0],new combinedValue(tmpStrAry[1].split(",")[0], tmpStrAry2.length > 1 ? tmpStrAry2[1] : ""));
+//			}
+//			
+//
+//			// load 分類表(pfp_ad_category_new.csv)
+//			Path cate_path = Paths.get(path[0].toString());
+//			charset = Charset.forName("UTF-8");
+//			int maxCateLvl = 4;
+//			categoryList = new ArrayList<Map<String, String>>();
+//			for (int i = 0; i < maxCateLvl; i++) {
+//				categoryList.add(new HashMap<String, String>());
+//			}
+//			lines.clear();
+//			lines = Files.readAllLines(cate_path, charset);
+//			// 將 table: pfp_ad_category_new 內容放入list中(共有 maxCateLvl 層)
+//			for (String line : lines) {
+//				String[] tmpStr = line.split(";");
+//				int lvl = Integer.parseInt(tmpStr[5].replaceAll("\"", "").trim());
+//				if (lvl <= maxCateLvl) {
+//					categoryList.get(lvl - 1).put(tmpStr[3].replaceAll("\"", "").trim(),tmpStr[4].replaceAll("\"", "").replaceAll("@", "").trim());
+//				}
+//			}
+//			
+//			// load 24h分類表
+//			Path category24HPath = Paths.get(path[3].toString());
+//			List<String> lines24H = Files.readAllLines(category24HPath, charset);
+//			for (String line : lines24H) {
+//				CategoryCodeBean categoryBean = new CategoryCodeBean();
+//				
+//				String[] tmpStrAry = line.split(","); // 0001000000000000;M,35
+//				
+//				categoryBean.setNumberCode(tmpStrAry[0].replaceAll("\"", ""));
+//				categoryBean.setChineseDesc(tmpStrAry[1].replaceAll("\"", ""));
+//				categoryBean.setBreadCrumb(tmpStrAry[2].replaceAll("\"", ""));
+//				categoryBean.setEnglishCode(tmpStrAry[3].replaceAll("\"", ""));
+//				
+//				categoryBeanList.add(categoryBean);
+//			}
 			
 		} catch (Exception e) {
 			log.info("Mapper  setup Exception: "+e.getMessage());
@@ -155,85 +156,63 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				return ;
 			}
 			
-			Pattern p = Pattern.compile("(http|https)://24h.pchome.com.tw/(store|region)/([a-zA-Z0-9]+)([&|\\?|\\.]\\S*)?");
-			Matcher m = p.matcher(sourceUrl);
-			if (!m.find()) {
-				return ;
-			}
-			
-			
-			
-			//test
-//			String eng="" ;
-//			String num="" ;
-//			String ch="" ;
-//			String br="" ;
+//			// 24H邏輯
+//			Pattern p = Pattern.compile("(http|https)://24h.pchome.com.tw/(store|region)/([a-zA-Z0-9]+)([&|\\?|\\.]\\S*)?");
+//			Matcher m = p.matcher(sourceUrl);
+//			if (!m.find()) {
+//				return ;
+//			}
 //			
 //			List<CategoryCodeBean> list = RawDataLogMapper.categoryBeanList;
 //			for (CategoryCodeBean categoryBean : list) {
-//				eng = categoryBean.getEnglishCode();
-//				num = categoryBean.getNumberCode();
-//				ch = categoryBean.getChineseDesc();
-//				br = categoryBean.getBreadCrumb();
+//				if(sourceUrl.indexOf(categoryBean.getEnglishCode()) != -1){
+//					adClass = categoryBean.getNumberCode();
+//					behaviorClassify = "Y";
+//					break;
+//				}
 //			}
-////			String result = categoryBeanList.size()+"   >>>>>>>>>  24H  >>>>>>> ";
-//			String result = eng + SYMBOL + num + SYMBOL + ch+ SYMBOL + br+"   >>>>>NEW>>>>24H>>>>>>>size: "+ categoryBeanList.size();
-//			if (StringUtils.isBlank(adClass)) {
-//				return ;
+//			
+//			if (behaviorClassify.equals("N")){
+//				ClassUrlMongoBean classUrlMongoBean = null;
+//				Query query = new Query(Criteria.where("url").is(sourceUrl.trim()));
+//				classUrlMongoBean = mongoOperations.findOne(query, ClassUrlMongoBean.class);
+//				
+//				if(classUrlMongoBean != null){
+//					if(classUrlMongoBean.getStatus().equals("0")){
+//						Date today = new Date();
+//						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//						String todayStr = sdf.format(today);
+//						
+//						Date updateDate = classUrlMongoBean.getUpdate_date();
+//						String updateDateStr = sdf.format(updateDate);
+//						
+//						if ( (!todayStr.equals(updateDateStr)) && (classUrlMongoBean.getQuery_time()<2000) ){
+//							Date date = new Date();
+//							classUrlMongoBean.setUpdate_date(date);
+//							classUrlMongoBean.setQuery_time(classUrlMongoBean.getQuery_time()+1);
+//						}
+//						mongoOperations.save(classUrlMongoBean);
+//						
+//					}else if( (classUrlMongoBean.getStatus().equals("1")) && (!classUrlMongoBean.getAd_class().equals("")) ){
+//						adClass = classUrlMongoBean.getAd_class();
+//						behaviorClassify = "Y"; 
+//					}
+//				}else{
+//					Date date = new Date();
+//					ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
+//					classUrlMongoBeanCreate.setUrl(sourceUrl);
+//					classUrlMongoBeanCreate.setAd_class("");
+//					classUrlMongoBeanCreate.setStatus("0");
+//					classUrlMongoBeanCreate.setQuery_time(1);
+//					classUrlMongoBeanCreate.setCreate_date(date);
+//					classUrlMongoBeanCreate.setUpdate_date(date);
+//					mongoOperations.save(classUrlMongoBeanCreate);
+//				}
 //			}
-			//test
-			
-			
-			List<CategoryCodeBean> list = RawDataLogMapper.categoryBeanList;
-			for (CategoryCodeBean categoryBean : list) {
-				if(sourceUrl.indexOf(categoryBean.getEnglishCode()) != -1){
-					adClass = categoryBean.getNumberCode();
-					behaviorClassify = "Y";
-					break;
-				}
-			}
-			
-			if (behaviorClassify.equals("N")){
-				ClassUrlMongoBean classUrlMongoBean = null;
-				Query query = new Query(Criteria.where("url").is(sourceUrl.trim()));
-				classUrlMongoBean = mongoOperations.findOne(query, ClassUrlMongoBean.class);
-				
-				if(classUrlMongoBean != null){
-					if(classUrlMongoBean.getStatus().equals("0")){
-						Date today = new Date();
-						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-						String todayStr = sdf.format(today);
-						
-						Date updateDate = classUrlMongoBean.getUpdate_date();
-						String updateDateStr = sdf.format(updateDate);
-						
-						if ( (!todayStr.equals(updateDateStr)) && (classUrlMongoBean.getQuery_time()<2000) ){
-							Date date = new Date();
-							classUrlMongoBean.setUpdate_date(date);
-							classUrlMongoBean.setQuery_time(classUrlMongoBean.getQuery_time()+1);
-						}
-						mongoOperations.save(classUrlMongoBean);
-						
-					}else if( (classUrlMongoBean.getStatus().equals("1")) && (!classUrlMongoBean.getAd_class().equals("")) ){
-						adClass = classUrlMongoBean.getAd_class();
-						behaviorClassify = "Y"; 
-					}
-				}else{
-					Date date = new Date();
-					ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
-					classUrlMongoBeanCreate.setUrl(sourceUrl);
-					classUrlMongoBeanCreate.setAd_class("");
-					classUrlMongoBeanCreate.setStatus("0");
-					classUrlMongoBeanCreate.setQuery_time(1);
-					classUrlMongoBeanCreate.setCreate_date(date);
-					classUrlMongoBeanCreate.setUpdate_date(date);
-					mongoOperations.save(classUrlMongoBeanCreate);
-				}
-			}
-			
+//			// 24H邏輯
 			
 
-			String result = memid + SYMBOL + uuid + SYMBOL + sourceUrl+ SYMBOL + adClass+ SYMBOL+ behaviorClassify+"   >>>>>NEW>>>>24H>>>>>>> ";
+			String result = memid + SYMBOL + uuid + SYMBOL + sourceUrl+ SYMBOL + adClass+ SYMBOL+ behaviorClassify+"   >>>>>NEW>>>>24H、Ruten>>>>>>> ";
 			log.info(">>>>>> Mapper write key:" + result);
 			keyOut.set(result);
 			context.write(keyOut, valueOut);
