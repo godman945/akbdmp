@@ -6,11 +6,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -27,8 +24,10 @@ import org.springframework.stereotype.Component;
 
 import com.pchome.hadoopdmp.enumerate.CategoryLogEnum;
 import com.pchome.hadoopdmp.mapreduce.job.factory.ACategoryLogData;
+import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryCodeBean;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryLogBean;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryLogFactory;
+import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryRutenCodeBean;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 import com.pchome.hadoopdmp.spring.config.bean.mongodb.MongodbHadoopConfig;
 
@@ -43,8 +42,11 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private Text valueOut = new Text();
 
 	public static String record_date;
-	public static ArrayList<Map<String, String>> categoryList = new ArrayList<Map<String, String>>();//分類表	
-	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();	 //分類個資表
+	public static ArrayList<Map<String, String>> categoryList = new ArrayList<Map<String, String>>();		     //分類表	
+	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();				 //分類個資表
+	public static List<CategoryCodeBean> category24hBeanList = new ArrayList<CategoryCodeBean>();				 //24H分類表
+	public static List<CategoryRutenCodeBean> categoryRutenBeanList = new ArrayList<CategoryRutenCodeBean>();	 //Ruten分類表
+	
 	private MongoOperations mongoOperations;
 
 	private int adClick_process = 0;
@@ -94,8 +96,38 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				if (lvl <= maxCateLvl) {
 					categoryList.get(lvl - 1).put(tmpStr[3].replaceAll("\"", "").trim(),tmpStr[4].replaceAll("\"", "").replaceAll("@", "").trim());
 				}
-
 			}
+			
+			// load 24h分類表(DMP_24h_category.csv)
+			Path category24HPath = Paths.get(path[3].toString());
+			List<String> lines24H = Files.readAllLines(category24HPath, charset);
+			for (String line : lines24H) {
+				CategoryCodeBean categoryBean = new CategoryCodeBean();
+				
+				String[] tmpStrAry = line.split(","); // 0001000000000000;M,35
+				
+				categoryBean.setNumberCode(tmpStrAry[0].replaceAll("\"", ""));
+				categoryBean.setChineseDesc(tmpStrAry[1].replaceAll("\"", ""));
+				categoryBean.setBreadCrumb(tmpStrAry[2].replaceAll("\"", ""));
+				categoryBean.setEnglishCode(tmpStrAry[3].replaceAll("\"", ""));
+				
+				category24hBeanList.add(categoryBean);
+			}
+			
+			// load Ruten分類表(DMP_Ruten_category.csv)
+			Path categoryRutenPath = Paths.get(path[4].toString());
+			List<String> linesRuten = Files.readAllLines(categoryRutenPath, charset);
+			for (String line : linesRuten) {
+				CategoryRutenCodeBean categoryRutenBean = new CategoryRutenCodeBean();
+				
+				String[] tmpStrAry = line.split(","); //"0001000000000000","電腦、電腦周邊"
+				
+				categoryRutenBean.setNumberCode(tmpStrAry[0].replaceAll("\"", ""));
+				categoryRutenBean.setChineseDesc(tmpStrAry[1].replaceAll("\"", ""));
+				
+				categoryRutenBeanList.add(categoryRutenBean);
+			}
+			
 			
 		} catch (Exception e) {
 			log.info("Mapper  setup Exception: "+e.getMessage());
@@ -124,27 +156,17 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 
 			CategoryLogBean categoryLogBean = new CategoryLogBean();
 			CategoryLogBean categoryLogBeanResult = null;
-			// ad_click
-			if (values[13].equals("ck") && StringUtils.isNotBlank(values[4]) && StringUtils.isNotBlank(values[15])) {
+			
+			if (values[13].equals("ck") && StringUtils.isNotBlank(values[4]) && StringUtils.isNotBlank(values[15])) {	// ad_click
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
 				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean, mongoOperations);
-				
-			}
-			else
-//			
-			// 露天
-			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].contains("ruten")) {
+			}else if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].contains("ruten")) {	// 露天
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
 				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean, mongoOperations);
-			}
-				else
-//
-//			// 24h
-			if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].contains("24h")) {
+			}else if (values[13].equals("pv") && StringUtils.isNotBlank(values[4]) && values[4].contains("24h")) {		// 24h
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
 				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean, mongoOperations);
-			}
-			else{
+			}else{
 				return;
 			}
 
@@ -178,16 +200,17 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //	 System.out.println("AAA");
 	 }
 
-//	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {
 //		 CategoryLogMapper categoryLogMapper = new CategoryLogMapper();
 //		 categoryLogMapper.map(null, null, null);
-//
-////		System.setProperty("spring.profiles.active", "stg");
-////		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-////		CategoryLogMapper categoryLogMapper = ctx.getBean(CategoryLogMapper.class);
-////		categoryLogMapper.test();
-//
-//	}
+
+//		System.setProperty("spring.profiles.active", "stg");
+//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//		CategoryLogMapper categoryLogMapper = ctx.getBean(CategoryLogMapper.class);
+//		categoryLogMapper.test();
+//		 categoryLogMapper.map(null, null, null);
+
+	}
 
 	public class combinedValue {
 		public String gender;

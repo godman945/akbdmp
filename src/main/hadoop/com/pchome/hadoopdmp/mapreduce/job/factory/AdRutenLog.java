@@ -1,11 +1,9 @@
 package com.pchome.hadoopdmp.mapreduce.job.factory;
 
 import java.net.URL;
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,10 +14,9 @@ import org.jsoup.select.Elements;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 
-import com.pchome.akbdmp.api.data.enumeration.ClassCountMongoDBEnum;
 import com.pchome.hadoopdmp.data.mongo.pojo.ClassUrlMongoBean;
-import com.pchome.hadoopdmp.data.mongo.pojo.UserDetailMongoBean;
 import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper;
 
 @SuppressWarnings({ "unchecked"})
@@ -41,197 +38,152 @@ public class AdRutenLog extends ACategoryLogData {
 			return null;
 		}
 		
-		Pattern p = Pattern.compile("http://goods.ruten.com.tw/item/\\S+\\?\\d+");
-		Matcher m = p.matcher(sourceUrl);
-		if(!m.find() ) {
-			return null;
- 		} 
-		
 		ClassUrlMongoBean classUrlMongoBean = null;
 		Query query = new Query(Criteria.where("url").is(sourceUrl.trim()));
 		classUrlMongoBean = mongoOperations.findOne(query, ClassUrlMongoBean.class);
 		
 		if(classUrlMongoBean != null){
-			//爬蟲
+			
 			if(classUrlMongoBean.getStatus().equals("0")){
-				adClass = crawlerGetAdclass(sourceUrl);
-				if(StringUtils.isNotBlank(adClass)){
+				// url 存在 status = 0 跳過回傳空值 , mongo update_date 更新(一天一次) mongo,query_time+1 如大於 2000 不再加  behaviorClassify = "N"
+				behaviorClassify = "N"; 
+
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				Date today = new Date();
+				String todayStr = sdf.format(today);
+				
+				Date updateDate = classUrlMongoBean.getUpdate_date();
+				String updateDateStr = sdf.format(updateDate);
+				
+				if ( (!todayStr.equals(updateDateStr)) ){
 					Date date = new Date();
-					classUrlMongoBean.setAd_class(adClass);
-					classUrlMongoBean.setStatus("1");
-					classUrlMongoBean.setUpdate_date(date);
+					classUrlMongoBean.setUpdate_date(date);					
 					mongoOperations.save(classUrlMongoBean);
-					behaviorClassify = "Y";
+				}
+				
+				if ( (classUrlMongoBean.getQuery_time()<2000) ){
+					Update querytime = new Update();
+					querytime.inc( "query_time" , 1 );
+					mongoOperations.updateFirst(new Query(Criteria.where( "url" ).is(sourceUrl.trim())), querytime, "class_url");
+				}
+				
+			}else if( (classUrlMongoBean.getStatus().equals("1")) && (!classUrlMongoBean.getAd_class().equals("")) ){
+				//url 存在 status = 1 取分類代號回傳 mongodn update_date 更新(一天一次) behaviorClassify = "Y";
+				adClass = classUrlMongoBean.getAd_class();
+				behaviorClassify = "Y"; 
+				
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				Date today = new Date();
+				String todayStr = sdf.format(today);
+				
+				Date updateDate = classUrlMongoBean.getUpdate_date();
+				String updateDateStr = sdf.format(updateDate);
+				
+				if ( (!todayStr.equals(updateDateStr)) ){
+					classUrlMongoBean.setUpdate_date(today);
+					mongoOperations.save(classUrlMongoBean);
 				}
 			}
 			
-			//有ad_class
-			if(classUrlMongoBean.getStatus().equals("1")){
-				adClass = classUrlMongoBean.getAd_class();
-				behaviorClassify = "Y";
+		}else{
+			//url 不存在
+			StringBuffer transformUrl = new StringBuffer();
+			Pattern p = Pattern.compile("http://goods.ruten.com.tw/item/\\S+\\?\\d+");
+			Matcher m = p.matcher(sourceUrl.toString());
+			
+			if (m.find()) {
+				//url是Ruten商品頁，爬蟲撈麵包屑
+				transformUrl.append("http://m.ruten.com.tw/goods/show.php?g=");
+				transformUrl.append(m.group().replaceAll("http://goods.ruten.com.tw/item/\\S+\\?", ""));
+//				Thread.sleep(500); 
+				Document doc =  Jsoup.parse( new URL(transformUrl.toString()) , 10000 );
+				Elements breadcrumbE = doc.body().select("table[class=goods-list]");
+				String breadcrumbResult = "";
+				
+				if (breadcrumbE.size()>0){
+					for (int i = 0; i < breadcrumbE.get(0).getElementsByClass("rt-breadcrumb-link").size(); i++) {
+						if (i != (breadcrumbE.get(0).getElementsByClass("rt-breadcrumb-link").size() - 1)) {
+							breadcrumbResult = breadcrumbResult + breadcrumbE.get(0).getElementsByClass("rt-breadcrumb-link").get(i).text() + ">";
+						} else {
+							breadcrumbResult = breadcrumbResult + breadcrumbE.get(0).getElementsByClass("rt-breadcrumb-link").get(i).text();
+						}
+		
+					}
+					
+					//比對爬蟲回來的分類，由最底層分類開始比對Ruten分類表
+					String[] breadcrumbAry = breadcrumbResult.split(">");
+					List<CategoryRutenCodeBean> categoryRutenList = CategoryLogMapper.categoryRutenBeanList;
+					boolean hasCategory = false;
+					
+					for(int i = breadcrumbAry.length-1; i >=0; i--){
+						if (hasCategory){
+							break;
+						}
+						for (CategoryRutenCodeBean categoryRutenBean : categoryRutenList) {
+							if (categoryRutenBean.getChineseDesc().trim().equals(breadcrumbAry[i].trim())){
+//								System.out.println(categoryRutenBean.getChineseDesc() +" == "+breadAry[i]);
+								adClass = categoryRutenBean.getNumberCode();
+								hasCategory = true;
+								break;
+							}
+						}
+					}
+					
+				
+					if (StringUtils.isNotBlank(adClass)){
+						//爬蟲有比對到Ruten分類
+						behaviorClassify = "Y";
+						
+						Date date = new Date();
+						ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
+						classUrlMongoBeanCreate.setUrl(sourceUrl);
+						classUrlMongoBeanCreate.setAd_class(adClass);
+						classUrlMongoBeanCreate.setStatus("1");
+//						classUrlMongoBeanCreate.setQuery_time(1);
+						classUrlMongoBeanCreate.setCreate_date(date);
+						classUrlMongoBeanCreate.setUpdate_date(date);
+						mongoOperations.save(classUrlMongoBeanCreate);
+					}else{
+						//爬蟲沒有比對到Ruten分類
+						behaviorClassify = "N";
+						
+						Date date = new Date();
+						ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
+						classUrlMongoBeanCreate.setUrl(sourceUrl);
+						classUrlMongoBeanCreate.setAd_class("");
+						classUrlMongoBeanCreate.setStatus("0");
+						classUrlMongoBeanCreate.setQuery_time(1);
+						classUrlMongoBeanCreate.setCreate_date(date);
+						classUrlMongoBeanCreate.setUpdate_date(date);
+						mongoOperations.save(classUrlMongoBeanCreate);
+					}
+				}
+			} else {
+				//url不是Ruten商品頁，寫入mongo
+				Date date = new Date();
+				ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
+				classUrlMongoBeanCreate.setUrl(sourceUrl);
+				classUrlMongoBeanCreate.setAd_class("");
+				classUrlMongoBeanCreate.setStatus("0");
+				classUrlMongoBeanCreate.setQuery_time(1);
+				classUrlMongoBeanCreate.setCreate_date(date);
+				classUrlMongoBeanCreate.setUpdate_date(date);
+				mongoOperations.save(classUrlMongoBeanCreate);
 			}
-		}else {
-			adClass = crawlerGetAdclass(sourceUrl);
-			Date date = new Date();
-			ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
-			classUrlMongoBeanCreate.setAd_class(adClass.matches("\\d{16}") ?  adClass : "");
-			classUrlMongoBeanCreate.setStatus(adClass.matches("\\d{16}") ? "1" : "0");
-			classUrlMongoBeanCreate.setUrl(sourceUrl); 
-			classUrlMongoBeanCreate.setCreate_date(date);
-			classUrlMongoBeanCreate.setUpdate_date(date);
-			mongoOperations.save(classUrlMongoBeanCreate);
 		}
 		
-		
-		//爬蟲沒有adclass
-		if(!adClass.matches("\\d{16}")){
-	    	return null;
-	    }
-
-	    //取個資
-	    if((StringUtils.isNotBlank(memid)) && (!memid.equals("null")) ) {
-			Query queryUserInfo = new Query(Criteria.where(ClassCountMongoDBEnum.USER_ID.getKey()).is(uuid));
-			UserDetailMongoBean userDetailMongoBean =  mongoOperations.findOne(queryUserInfo, UserDetailMongoBean.class);
-			String sex = "";
-			String age = "";
-			if(userDetailMongoBean != null){
-				sex = (String)userDetailMongoBean.getUser_info().get("sex");
-				age = (String)userDetailMongoBean.getUser_info().get("age");
-				categoryLogBean.setPersonalInfoClassify("Y");
-			}else{
-				categoryLogBean.setPersonalInfoClassify("N");
-			}
-			categoryLogBean.setAdClass(adClass);
-			categoryLogBean.setMemid(values[1]);
-			categoryLogBean.setUuid(values[2]);
-			categoryLogBean.setSource("ruten");
-			categoryLogBean.setType("memid");
-			categoryLogBean.setBehaviorClassify(behaviorClassify);
-			categoryLogBean.setSex(StringUtils.isNotBlank(sex) ? sex : "null");
-			categoryLogBean.setAge(StringUtils.isNotBlank(age) ? age : "null");
-			return categoryLogBean;
-		}else if(StringUtils.isNotBlank(uuid) && (!uuid.equals("null"))){
-			Query queryUserInfo = new Query(Criteria.where(ClassCountMongoDBEnum.USER_ID.getKey()).is(uuid));
-			UserDetailMongoBean userDetailMongoBean =  mongoOperations.findOne(queryUserInfo, UserDetailMongoBean.class);
-			String sex = "";
-			String age = "";
-			if(userDetailMongoBean != null){
-				sex = (String)userDetailMongoBean.getUser_info().get("sex");
-				age = (String)userDetailMongoBean.getUser_info().get("age");
-				categoryLogBean.setPersonalInfoClassify("Y");
-			}else{
-				categoryLogBean.setPersonalInfoClassify("N");
-			}
-			categoryLogBean.setSex(StringUtils.isNotBlank(sex) ? sex : "null");
-			categoryLogBean.setAge(StringUtils.isNotBlank(age) ? age : "null");
-			categoryLogBean.setAdClass(adClass);
-			categoryLogBean.setMemid(values[1]);
-			categoryLogBean.setUuid(values[2]);
-			categoryLogBean.setSource("ruten");
-			categoryLogBean.setType("uuid");
-			categoryLogBean.setBehaviorClassify(behaviorClassify);
-			return categoryLogBean;
-		}
-
-		return null;
-	}
-	
-	public String crawlerGetAdclass(String sourceUrl) throws Exception {
-		StringBuffer url = new StringBuffer();
-		String urlCated = "";// ad_class
-		
-		// url transform
-		Pattern p = Pattern.compile("http://goods.ruten.com.tw/item/\\S+\\?\\d+");
-		Matcher m = p.matcher(sourceUrl.toString());
-		if (m.find()) {
-			url.append("http://m.ruten.com.tw/goods/show.php?g=");
-			url.append(m.group().replaceAll("http://goods.ruten.com.tw/item/\\S+\\?", ""));
-		} else {
+		//最後如果adClass為空，不寫入Reducer
+		if (StringUtils.isBlank(adClass)){
 			return null;
 		}
-
-//		Thread.sleep(500); 
-
-		Document doc =  Jsoup.parse( new URL(url.toString()) , 10000 );
-
-		Elements breadcrumbE = doc.body().select("ul[class=rt-breadcrumb-list]");
-
-		String breadcrumb = breadcrumbE.size() > 0 ? breadcrumbE.get(0).text() : "nothing";
-
-		// adult
-		if (breadcrumb.equals("nothing")) {
-			p = Pattern
-					.compile(".+(http|https):\\\\/\\\\/member.ruten.com.tw\\\\/user\\\\/mlogin.php\\?refer=.+");
-			m = p.matcher(doc.toString());
-			if (m.find()) {
-				urlCated = "0025000000000000";
-			} else {
-				return urlCated;
-			}
-			return urlCated;
-		}
-
-		//如果ad_class不是16位數字，去分類表比對
-		if (!urlCated.matches("\\d{16}")) {
-			StringBuffer tmpBuf = new StringBuffer().append(">").append(breadcrumb.replaceAll(" ", ">"));
-			breadcrumb = tmpBuf.toString();
-
-			String[] catedLvl = breadcrumb.replaceAll(" ", "").replaceAll("\t", "").replaceAll("@", "").trim()
-					.split(">");
-
-			ArrayList<Map<String, String>> list = CategoryLogMapper.categoryList;
-			List<String> urlCatedList = CateMatch((catedLvl.length > 4 ? 4 : (catedLvl.length - 1)), catedLvl, list);
-			urlCated = (urlCatedList.size() > 0 ? urlCatedList.get(0) : "unclassed");
-			list=null;
-		}
-
-		urlCated = urlCated.matches("\\d{16}") ? urlCated : "";
-
-		return urlCated;
-	}
-	
-	
-	public static List<String> CateMatch(int nowSearchLvl, String [] catedLvl ,ArrayList<Map<String, String>> list) {
-
-		if( nowSearchLvl==0 ) {
-			List<String> templist = new ArrayList<String>();
-			templist.add("nothing");
-			return templist;
-		}
-
-		String [] matchPatternTemp = catedLvl[nowSearchLvl].split("、");
-
-		List <String> listSearchResult = likeStringSearch(list.get(nowSearchLvl-1), matchPatternTemp);
-
-	    if( listSearchResult.size()==1 || nowSearchLvl==1 ) {
-	    	return listSearchResult;
-	    } else {
-	    	listSearchResult = CateMatch(nowSearchLvl-1, catedLvl, list);
-	    }
-
-	    return listSearchResult;
-	}
-	
-	public static List<String> likeStringSearch(Map<String, String> map, String[] matchPatternTemp) {
-	    List<String> list = new ArrayList<String>();
-	    Iterator it = map.entrySet().iterator();
-	    int score;
-	    int maxScore = 0;
-	    while(it.hasNext()) {
-	        Map.Entry<String, String> entry = (Map.Entry<String, String>)it.next();
-	        score = 0;
-	        for(int i=0;i<matchPatternTemp.length;i++) {
-	        	if( entry.getValue().contains(matchPatternTemp[i]) )
-	        		score++;
-	        }
-	        if( score>0 ) {
-	        	if( score>maxScore )
-	        		list.add(0, entry.getKey());
-	        	else
-	        		list.add(entry.getKey());
-	        }
-
-	    }
-	    return list;
+		
+		
+		categoryLogBean.setAdClass(adClass);
+		categoryLogBean.setMemid(values[1]);
+		categoryLogBean.setUuid(values[2]);
+		categoryLogBean.setSource("ruten");
+//		categoryLogBean.setType("uuid");
+		categoryLogBean.setBehaviorClassify(behaviorClassify);
+		return categoryLogBean;
 	}
 }
