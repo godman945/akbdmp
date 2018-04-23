@@ -76,43 +76,43 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	Producer<String, String> producer = null;
 
 	public void setup(Context context) {
-		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>>>>>>>>>>>>>");
-		try {
-			this.sdf = new SimpleDateFormat("yyyy-MM-dd");
-			if(StringUtils.isNotBlank(context.getConfiguration().get("spring.profiles.active"))){
-				System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
-				this.environment = "prd";
-			}else{
-				System.setProperty("spring.profiles.active", "stg");
-				this.environment = "stg";
-			}
-			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-			this.kdclStatisticsSourceService = ctx.getBean(KdclStatisticsSourceService.class);
-			this.kafkaMetadataBrokerlist = ctx.getEnvironment().getProperty("kafka.metadata.broker.list");
-			this.kafkaAcks = ctx.getEnvironment().getProperty("kafka.acks");
-			this.kafkaRetries = ctx.getEnvironment().getProperty("kafka.retries");
-			this.kafkaBatchSize = ctx.getEnvironment().getProperty("kafka.batch.size");
-			this.kafkaLingerMs = ctx.getEnvironment().getProperty("kafka.linger.ms");
-			this.kafkaBufferMemory = ctx.getEnvironment().getProperty("kafka.buffer.memory");
-			this.kafkaSerializerClass = ctx.getEnvironment().getProperty("kafka.serializer.class");
-			this.kafkaKeySerializer = ctx.getEnvironment().getProperty("kafka.key.serializer");
-			this.kafkaValueSerializer = ctx.getEnvironment().getProperty("kafka.value.serializer");
-			
-			Properties props = new Properties();
-			props.put("bootstrap.servers", kafkaMetadataBrokerlist);
-			props.put("acks", kafkaAcks);
-			props.put("retries", kafkaRetries);
-			props.put("batch.size", kafkaBatchSize);
-			props.put("linger.ms", kafkaLingerMs);
-			props.put("buffer.memory", kafkaBufferMemory);
-			props.put("serializer.class", kafkaSerializerClass);
-			props.put("key.serializer", kafkaKeySerializer);
-			props.put("value.serializer", kafkaValueSerializer);
-			producer = new KafkaProducer<String, String>(props);
-
-		} catch (Exception e) {
-			log.error(e.getMessage());
-		}
+//		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>>>>>>>>>>>>>");
+//		try {
+//			this.sdf = new SimpleDateFormat("yyyy-MM-dd");
+//			if(StringUtils.isNotBlank(context.getConfiguration().get("spring.profiles.active"))){
+//				System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
+//				this.environment = "prd";
+//			}else{
+//				System.setProperty("spring.profiles.active", "stg");
+//				this.environment = "stg";
+//			}
+//			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//			this.kdclStatisticsSourceService = ctx.getBean(KdclStatisticsSourceService.class);
+//			this.kafkaMetadataBrokerlist = ctx.getEnvironment().getProperty("kafka.metadata.broker.list");
+//			this.kafkaAcks = ctx.getEnvironment().getProperty("kafka.acks");
+//			this.kafkaRetries = ctx.getEnvironment().getProperty("kafka.retries");
+//			this.kafkaBatchSize = ctx.getEnvironment().getProperty("kafka.batch.size");
+//			this.kafkaLingerMs = ctx.getEnvironment().getProperty("kafka.linger.ms");
+//			this.kafkaBufferMemory = ctx.getEnvironment().getProperty("kafka.buffer.memory");
+//			this.kafkaSerializerClass = ctx.getEnvironment().getProperty("kafka.serializer.class");
+//			this.kafkaKeySerializer = ctx.getEnvironment().getProperty("kafka.key.serializer");
+//			this.kafkaValueSerializer = ctx.getEnvironment().getProperty("kafka.value.serializer");
+//			
+//			Properties props = new Properties();
+//			props.put("bootstrap.servers", kafkaMetadataBrokerlist);
+//			props.put("acks", kafkaAcks);
+//			props.put("retries", kafkaRetries);
+//			props.put("batch.size", kafkaBatchSize);
+//			props.put("linger.ms", kafkaLingerMs);
+//			props.put("buffer.memory", kafkaBufferMemory);
+//			props.put("serializer.class", kafkaSerializerClass);
+//			props.put("key.serializer", kafkaKeySerializer);
+//			props.put("value.serializer", kafkaValueSerializer);
+//			producer = new KafkaProducer<String, String>(props);
+//
+//		} catch (Exception e) {
+//			log.error(e.getMessage());
+//		}
 	}
 
 	@Override
@@ -128,27 +128,41 @@ public class CategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 		try {
 //			log.info(">>>>>> reduce start : " + key);
 
-			String data[] = key.toString().split(SYMBOL);
-
-			JSONObject json = new JSONObject();
-			json.put("memid", data[0]);
-			json.put("uuid", data[1]);
-			json.put("adClass", data[2]);
-			json.put("age", data[3]);
-			json.put("sex", data[4]);
-			json.put("source", data[5]);
-			json.put("recordDate", data[6]);
-
-			//發送給kafka
-			if(this.environment.equals("prd")){
-				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_prd", "", json.toString()));
-				 while (!f.isDone()) {
-				 }
-			}else{
-				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_stg", "", json.toString()));
-				 while (!f.isDone()) {
-				 }
-			}
+			
+			//新版
+			keyOut.set(key);
+			context.write(keyOut, valueOut);
+			
+			
+			
+//			//舊版送kafka
+//			String data[] = key.toString().split(SYMBOL);
+//
+//			JSONObject json = new JSONObject();
+//			json.put("memid", data[0]);
+//			json.put("uuid", data[1]);
+//			json.put("adClass", data[2]);
+//			json.put("age", data[3]);
+//			json.put("sex", data[4]);
+//			json.put("source", data[5]);
+//			json.put("recordDate", data[6]);
+//
+//			//發送給kafka
+//			if(this.environment.equals("prd")){
+//				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_prd", "", json.toString()));
+//				 while (!f.isDone()) {
+//				 }
+//			}else{
+//				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_stg", "", json.toString()));
+//				 while (!f.isDone()) {
+//				 }
+//			}
+//			//舊版送kafka
+			
+			
+			
+			
+			
 //			
 //
 //			log.info(">>>>>>reduce write key:" + key);
