@@ -32,12 +32,6 @@ public class Ad24HLog extends ACategoryLogData {
 			return null;
 		}
 		
-//		Pattern p = Pattern.compile("(http|https)://24h.pchome.com.tw/(store|region)/([a-zA-Z0-9]+)([&|\\?|\\.]\\S*)?");
-//		Matcher m = p.matcher(sourceUrl);
-//		if (!m.find()) {
-//			return null;
-//		}
-		
 		List<CategoryCodeBean> list = CategoryLogMapper.category24hBeanList;
 		for (CategoryCodeBean categoryBean : list) {
 			if(sourceUrl.indexOf(categoryBean.getEnglishCode()) != -1){
@@ -118,7 +112,6 @@ public class Ad24HLog extends ACategoryLogData {
 		categoryLogBean.setMemid(values[1]);
 		categoryLogBean.setUuid(values[2]);
 		categoryLogBean.setSource("24h");
-//		categoryLogBean.setType("uuid");
 		categoryLogBean.setBehaviorClassify(behaviorClassify);
 		return categoryLogBean;
 	}
