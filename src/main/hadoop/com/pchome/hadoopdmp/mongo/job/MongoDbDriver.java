@@ -83,6 +83,7 @@ public class MongoDbDriver {
 		
 		JobConf jobConf = new JobConf();
 		jobConf.set("spring.profiles.active", "prd");
+		jobConf.set("start_time", String.valueOf(System.currentTimeMillis()));
 		jobConf.set("record_date", sdf.format(calendar.getTime()));
 		
 		String outputPathName = "/home/webuser/dmp/delete_expired_user/year/"+calendar.getWeekYear()+"/"+sdf.format(calendar.getTime());

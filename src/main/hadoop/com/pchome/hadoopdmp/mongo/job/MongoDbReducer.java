@@ -48,13 +48,17 @@ public class MongoDbReducer extends Reducer<Text, Text, Text, Text> {
 		try {
 			log.info("****************** mongoDb Reduce  cleanup ***********************");
 			log.info(">>>>>> totalSize:"+totalSize);
-			context.write(new Text("delete count"), new Text(String.valueOf(totalSize)));
-			context.write(new Text("record_date"), new Text(context.getConfiguration().get("record_date")));
-		} catch (IOException e) {
+			long start_time = Long.valueOf(context.getConfiguration().get("start_time"));
+			long end_time = System.currentTimeMillis();
+			long total_time = (end_time-start_time)/1000 ;
+			context.write(new Text("alex"), new Text("SSSS"));
+			
+//			context.write(new Text("delete count"), new Text(String.valueOf(totalSize)));
+//			context.write(new Text("delete count"), new Text(String.valueOf(totalSize)));
+//			context.write(new Text("record_date"), new Text(context.getConfiguration().get("record_date")));
+		} catch (Exception e) {
 			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		} 
 	}
 
 }
