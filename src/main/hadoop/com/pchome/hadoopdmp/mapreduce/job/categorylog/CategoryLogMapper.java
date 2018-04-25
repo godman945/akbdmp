@@ -23,6 +23,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Component;
 
 import com.pchome.hadoopdmp.enumerate.CategoryLogEnum;
+import com.pchome.hadoopdmp.mapreduce.job.component.PersonalInfoComponent;
 import com.pchome.hadoopdmp.mapreduce.job.factory.ACategoryLogData;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryCodeBean;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryLogBean;
@@ -46,8 +47,9 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();				 //分類個資表
 	public static List<CategoryCodeBean> category24hBeanList = new ArrayList<CategoryCodeBean>();				 //24H分類表
 	public static List<CategoryRutenCodeBean> categoryRutenBeanList = new ArrayList<CategoryRutenCodeBean>();	 //Ruten分類表
-	
+	public static PersonalInfoComponent personalInfoComponent = new PersonalInfoComponent();
 	private MongoOperations mongoOperations;
+	
 
 	private int adClick_process = 0;
 	private int tweenFour_process = 0;
@@ -67,6 +69,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			this.mongoOperations = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
 			record_date = context.getConfiguration().get("job.date");
 			Configuration conf = context.getConfiguration();
+			
 			//load 分類個資表(ClsfyGndAgeCrspTable.txt)
 			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
 			Path clsfyTable = Paths.get(path[1].toString());
@@ -157,6 +160,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			CategoryLogBean categoryLogBean = new CategoryLogBean();
 			CategoryLogBean categoryLogBeanResult = null;
 			
+			//分析click、24H、Ruten 分類 
 			if (values[13].equals("ck") && StringUtils.isNotBlank(values[4]) && StringUtils.isNotBlank(values[15])) {	// ad_click
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
 				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(values, categoryLogBean, mongoOperations);
@@ -169,20 +173,35 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			}else{
 				return;
 			}
-
+			
+			//分類物件為null，不往下做
 			if (categoryLogBeanResult == null) {
 				return;
 			}
 			
+			//處理個資
+			categoryLogBeanResult = personalInfoComponent.processPersonalInfo(categoryLogBeanResult);
+							
+			
 			categoryLogBeanResult.setRecodeDate(record_date);
-			// 0:Memid + 1:Uuid + 2:AdClass + 3:Age + 4:Sex + 5:Source + 6:RecodeDate + 7:Type + 8:Classify
+			// 0:Memid + 1:Uuid + 2:AdClass + 3.URL +
+			// 4.Source + 5.MemberSex(會員中心性別) + 6.MemberAge(會員中心年齡) + 7.birthday(會員中心出生年月日)
+			// 8.PersonalInfoMemberApiClassify(打會員api是否有完整個資 Y/N) + 9.Sex(推估性別) + 10.Age(推估年齡) +
+			// 11.PersonalInfoClassify(依adClass比對分類年齡性別對應表ClsfyGndAgeCrspTable，是否有完整的推估個資 Y/N)
 			String memid = StringUtils.isBlank(categoryLogBeanResult.getMemid()) ? "null" : categoryLogBeanResult.getMemid();
-//			String result = memid + SYMBOL + categoryLogBeanResult.getUuid() + SYMBOL + categoryLogBeanResult.getAdClass() + SYMBOL + categoryLogBeanResult.getAge() + SYMBOL + categoryLogBeanResult.getSex() + SYMBOL + categoryLogBeanResult.getSource()+ SYMBOL +categoryLogBeanResult.getRecodeDate() + SYMBOL + categoryLogBeanResult.getType() + SYMBOL + values[4] + SYMBOL + categoryLogBeanResult.getType()+"_"+categoryLogBeanResult.getSource()+"_"+categoryLogBeanResult.getBehaviorClassify() + SYMBOL + "user_info_Classify_"+categoryLogBeanResult.getPersonalInfoClassify();
-			
-			String result = memid + SYMBOL + categoryLogBeanResult.getUuid() + SYMBOL + categoryLogBeanResult.getAdClass() + SYMBOL  + values[4] + SYMBOL + categoryLogBeanResult.getSource();
-			
+			String result = memid + SYMBOL + categoryLogBeanResult.getUuid() + SYMBOL + categoryLogBeanResult.getAdClass() + SYMBOL  + values[4] 
+							+ SYMBOL + categoryLogBeanResult.getSource() + SYMBOL + categoryLogBeanResult.getMsex() + SYMBOL + categoryLogBeanResult.getMage() + SYMBOL + categoryLogBeanResult.getBirthday() 
+							+ SYMBOL + categoryLogBeanResult.getPersonalInfoMemberApiClassify()+ SYMBOL + categoryLogBeanResult.getSex() + SYMBOL + categoryLogBeanResult.getAge() + SYMBOL 
+							+ categoryLogBeanResult.getPersonalInfoClassify() ;
 			
 			log.info(">>>>>> Mapper write key:" + result);
+			
+			
+			/*舊版			
+			 0:Memid + 1:Uuid + 2:AdClass + 3:Age + 4:Sex + 5:Source + 6:RecodeDate + 7:Type + 8:Classify
+			String result = memid + SYMBOL + categoryLogBeanResult.getUuid() + SYMBOL + categoryLogBeanResult.getAdClass() + SYMBOL + categoryLogBeanResult.getAge() + SYMBOL + categoryLogBeanResult.getSex() + SYMBOL + categoryLogBeanResult.getSource()+ SYMBOL +categoryLogBeanResult.getRecodeDate() + SYMBOL + categoryLogBeanResult.getType() + SYMBOL + values[4] + SYMBOL + categoryLogBeanResult.getType()+"_"+categoryLogBeanResult.getSource()+"_"+categoryLogBeanResult.getBehaviorClassify() + SYMBOL + "user_info_Classify_"+categoryLogBeanResult.getPersonalInfoClassify();
+			 */	
+			
 			keyOut.set(result);
 			context.write(keyOut, valueOut);
 			
@@ -191,6 +210,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		}
 
 	}
+	
 
 //	 @Autowired
 //	 MongoOperations mongoOperations;

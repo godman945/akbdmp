@@ -15,9 +15,13 @@ public class CategoryLogBean {
 	private String source;
 	private String type;
 	private String behaviorClassify;
-	private String personalInfoClassify;
 	private Map<String, combinedValue> clsfyCraspMap;
 	private ArrayList<Map<String, String>> list;
+	private String msex;
+	private String mage;
+	private String birthday;
+	private String personalInfoMemberApiClassify;
+	private String personalInfoClassify;
 
 	public String getType() {
 		return type;
@@ -114,5 +118,37 @@ public class CategoryLogBean {
 	public void setPersonalInfoClassify(String personalInfoClassify) {
 		this.personalInfoClassify = personalInfoClassify;
 	}
+	
+	public String getPersonalInfoMemberApiClassify() {
+		return personalInfoMemberApiClassify;
+	}
 
+	public void setPersonalInfoMemberApiClassify(String personalInfoMemberApiClassify) {
+		this.personalInfoMemberApiClassify = personalInfoMemberApiClassify;
+	}
+
+	public String getMsex() {
+		return msex;
+	}
+
+	public void setMsex(String msex) {
+		this.msex = msex;
+	}
+
+	public String getMage() {
+		return mage;
+	}
+
+	public void setMage(String mage) {
+		this.mage = mage;
+	}
+
+	public String getBirthday() {
+		return birthday;
+	}
+
+	public void setBirthday(String birthday) {
+		this.birthday = birthday;
+	}
+	
 }
