@@ -30,7 +30,7 @@ public class PersonalInfoComponent {
 	Log log = LogFactory.getLog("PersonalInfoComponent");
 
 	// 處理個資元件
-	public CategoryLogBean processPersonalInfo(CategoryLogBean categoryLogBean,MongoOperations mongoOperations) throws Exception {
+	public CategoryLogBean processPersonalInfo(CategoryLogBean categoryLogBean ,MongoOperations mongoOperations) throws Exception {
 		String memid = categoryLogBean.getMemid();
 		String adClass = categoryLogBean.getAdClass();
 
