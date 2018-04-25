@@ -180,7 +180,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			}
 			
 			//處理個資
-			categoryLogBeanResult = personalInfoComponent.processPersonalInfo(categoryLogBeanResult);
+			categoryLogBeanResult = personalInfoComponent.processPersonalInfo(categoryLogBeanResult, mongoOperations);
 							
 			
 			categoryLogBeanResult.setRecodeDate(record_date);

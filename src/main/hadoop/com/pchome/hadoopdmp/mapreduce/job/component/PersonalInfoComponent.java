@@ -28,10 +28,9 @@ import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryLogBean;
 public class PersonalInfoComponent {
 	
 	Log log = LogFactory.getLog("PersonalInfoComponent");
-	private MongoOperations mongoOperations;
 
 	// 處理個資元件
-	public CategoryLogBean processPersonalInfo(CategoryLogBean categoryLogBean) throws Exception {
+	public CategoryLogBean processPersonalInfo(CategoryLogBean categoryLogBean,MongoOperations mongoOperations) throws Exception {
 		String memid = categoryLogBean.getMemid();
 		String adClass = categoryLogBean.getAdClass();
 
