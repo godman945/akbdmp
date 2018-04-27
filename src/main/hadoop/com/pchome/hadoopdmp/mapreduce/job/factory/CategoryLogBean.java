@@ -19,7 +19,6 @@ public class CategoryLogBean {
 	private ArrayList<Map<String, String>> list;
 	private String msex;
 	private String mage;
-	private String birthday;
 	private String personalInfoMemberApiClassify;
 	private String personalInfoClassify;
 
@@ -141,14 +140,6 @@ public class CategoryLogBean {
 
 	public void setMage(String mage) {
 		this.mage = mage;
-	}
-
-	public String getBirthday() {
-		return birthday;
-	}
-
-	public void setBirthday(String birthday) {
-		this.birthday = birthday;
 	}
 	
 }

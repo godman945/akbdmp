@@ -21,6 +21,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import com.jayway.jsonpath.JsonPath;
 import com.pchome.akbdmp.api.data.enumeration.ClassCountMongoDBEnum;
 import com.pchome.hadoopdmp.data.mongo.pojo.UserDetailMongoBean;
+import com.pchome.hadoopdmp.data.mongo.pojo.UserDetailMongoBeanForHadoop;
 import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper;
 import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper.combinedValue;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryLogBean;
@@ -41,29 +42,25 @@ public class PersonalInfoComponent {
 			UserDetailMongoBean userDetailMongoBean = mongoOperations.findOne(queryUserInfo, UserDetailMongoBean.class);
 			String msex = "";
 			String mage = "";
-			String birthday = "";
 			if (userDetailMongoBean != null) {
 				// 查看user_detail結構中有無mage和msex
 				Map<String, Object> userInfoMap = new HashMap<String, Object>();
 				userInfoMap = userDetailMongoBean.getUser_info();
 				if ((userInfoMap.get("mage") == null) || (userInfoMap.get("msex") == null)) {
 					// 沒有資料空的打會員中心 API
-					// 會員中心有資料寫回 mogodb msex mage birthday
+					// 會員中心有資料寫回 mogodb msex mage 
 					// 會員中心沒有資料寫入 NA
 					Map<String, Object> memberInfoMap = findMemberInfoAPI(memid);
 					msex = (String) memberInfoMap.get("msex");
 					mage = (String) memberInfoMap.get("mage");
-					birthday = (String) memberInfoMap.get("birthday");
 
 					Update realPersonalData = new Update();
 					realPersonalData.set("user_info.msex", msex);
 					realPersonalData.set("user_info.mage", mage);
-					realPersonalData.set("user_info.birthday", birthday);
 					mongoOperations.updateFirst(new Query(Criteria.where("user_id").is(memid)), realPersonalData,"user_detail");
 					
 					categoryLogBean.setMsex("null");
 					categoryLogBean.setMage("null");
-					categoryLogBean.setBirthday("null");
 					
 					if ( (!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA")) ) {
 						categoryLogBean.setPersonalInfoMemberApiClassify("Y");
@@ -74,20 +71,30 @@ public class PersonalInfoComponent {
 					// mongodb已有資料就跳過,包括NA (mongo user_detail結構中已有mage和msex)
 					categoryLogBean.setMsex("null");
 					categoryLogBean.setMage("null");
-					categoryLogBean.setBirthday("null");
-					categoryLogBean.setPersonalInfoMemberApiClassify("N");
+					categoryLogBean.setPersonalInfoMemberApiClassify("Y");
 				}
 				
 			} else {
-				// mongo尚未新增user_detail，Bean要帶mage、msex、birthday資料，會員中心打回來是空的已轉成NA帶入
+				// mongo尚未新增user_detail，直接新增一筆mongo資料，塞會員中心打回來的性別、年齡(空的轉成NA寫入)
 				Map<String, Object> memberInfoMap = findMemberInfoAPI(memid);
 				msex = (String) memberInfoMap.get("msex");
 				mage = (String) memberInfoMap.get("mage");
-				birthday = (String) memberInfoMap.get("birthday");
 				
-				categoryLogBean.setMage(mage);
-				categoryLogBean.setMsex(msex);
-				categoryLogBean.setBirthday(birthday);
+				Map<String, String> map = new HashMap<String, String>();
+				map.put("mage", mage);
+				map.put("msex", msex);
+				
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				Date today = new Date();
+				String todayStr = sdf.format(today);
+
+				UserDetailMongoBeanForHadoop hadoopUserDetailBean = new UserDetailMongoBeanForHadoop();
+				hadoopUserDetailBean.setUser_info(map);
+				hadoopUserDetailBean.setUser_id(memid);
+				hadoopUserDetailBean.setCreate_date(todayStr);
+				hadoopUserDetailBean.setUpdate_date(todayStr);
+				
+				mongoOperations.save(hadoopUserDetailBean);
 				
 				if ( (!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA")) ) {
 					categoryLogBean.setPersonalInfoMemberApiClassify("Y");
@@ -144,12 +151,9 @@ public class PersonalInfoComponent {
 		map.put("msex", StringUtils.isNotBlank(msex) ? msex : "NA");
 		
 		if ( StringUtils.isNotBlank(mage) ){
-			map.put("mage",String.valueOf(getAge(sdf.parse(mage))));
-			map.put("birthday",mage);
-			
+			map.put("mage", mage.split("-")[0]);
 		}else{
 			map.put("mage","NA");
-			map.put("birthday","NA");
 		}
 
 		return map;

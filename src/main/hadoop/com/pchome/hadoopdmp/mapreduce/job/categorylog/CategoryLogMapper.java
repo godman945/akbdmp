@@ -174,10 +174,10 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				return;
 			}
 			
-			//分類物件為null，不往下做
-			if (categoryLogBeanResult == null) {
-				return;
-			}
+//			//分類物件為null，不往下做
+//			if (categoryLogBeanResult == null) {
+//				return;
+//			}
 			
 			//處理個資
 			categoryLogBeanResult = personalInfoComponent.processPersonalInfo(categoryLogBeanResult, mongoOperations);
@@ -185,12 +185,12 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			
 			categoryLogBeanResult.setRecodeDate(record_date);
 			// 0:Memid + 1:Uuid + 2:AdClass + 3.URL +
-			// 4.Source + 5.MemberSex(會員中心性別) + 6.MemberAge(會員中心年齡) + 7.birthday(會員中心出生年月日)
-			// 8.PersonalInfoMemberApiClassify(打會員api是否有完整個資 Y/N) + 9.Sex(推估性別) + 10.Age(推估年齡) +
-			// 11.PersonalInfoClassify(依adClass比對分類年齡性別對應表ClsfyGndAgeCrspTable，是否有完整的推估個資 Y/N)
+			// 4.Source + 5.MSex(會員中心性別) + 6.MAge(會員中心年齡) 
+			// 7.PersonalInfoMemberApiClassify(打會員api是否有完整個資 Y/N) + 8.Sex(推估性別) + 9.Age(推估年齡) +
+			// 10.PersonalInfoClassify(依adClass比對分類年齡性別對應表ClsfyGndAgeCrspTable，是否有完整的推估個資 Y/N)
 			String memid = StringUtils.isBlank(categoryLogBeanResult.getMemid()) ? "null" : categoryLogBeanResult.getMemid();
 			String result = memid + SYMBOL + categoryLogBeanResult.getUuid() + SYMBOL + categoryLogBeanResult.getAdClass() + SYMBOL  + values[4] 
-							+ SYMBOL + categoryLogBeanResult.getSource() + SYMBOL + categoryLogBeanResult.getMsex() + SYMBOL + categoryLogBeanResult.getMage() + SYMBOL + categoryLogBeanResult.getBirthday() 
+							+ SYMBOL + categoryLogBeanResult.getSource() + SYMBOL + categoryLogBeanResult.getMsex() + SYMBOL + categoryLogBeanResult.getMage()  
 							+ SYMBOL + categoryLogBeanResult.getPersonalInfoMemberApiClassify()+ SYMBOL + categoryLogBeanResult.getSex() + SYMBOL + categoryLogBeanResult.getAge() + SYMBOL 
 							+ categoryLogBeanResult.getPersonalInfoClassify() ;
 			
