@@ -140,6 +140,11 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //            	  return;
 //              }
 			
+			String memid = values[0];
+			String uuid = values[1];
+			String sourceUrl = values[4];
+//			String adClass = values[2];
+//			String behaviorClassify = "N";
 			
 			
 			
@@ -152,11 +157,11 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			}
 			
 			
-			String memid = values[1];
-			String uuid = values[2];
-			String sourceUrl = values[4];
-			String adClass = "";
-			String behaviorClassify = "N";
+//			String memid = values[1];
+//			String uuid = values[2];
+//			String sourceUrl = values[4];
+//			String adClass = "";
+//			String behaviorClassify = "N";
 			
 			if ((StringUtils.isBlank(memid) || memid.equals("null")) && (StringUtils.isBlank(uuid) || uuid.equals("null"))) {
 				return ;
@@ -221,7 +226,7 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			}
 //			// 24H邏輯
 			
-			String result = memid + SYMBOL + uuid + SYMBOL + sourceUrl+"   >>>>>NEW>>>>camp_log>>>>>>> ";
+			String result = memid + SYMBOL + uuid + SYMBOL + sourceUrl+"   >>>>>NEW campaign log>>>>> ";
 //			String result = memid + SYMBOL + uuid + SYMBOL + sourceUrl+ SYMBOL + adClass+ SYMBOL+ behaviorClassify+"   >>>>>NEW>>>>24H、Ruten>>>>>>> ";
 			log.info(">>>>>> Mapper write key:" + result);
 			keyOut.set(result);
