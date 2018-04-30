@@ -211,8 +211,8 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			}
 //			// 24H邏輯
 			
-
-			String result = memid + SYMBOL + uuid + SYMBOL + sourceUrl+ SYMBOL + adClass+ SYMBOL+ behaviorClassify+"   >>>>>NEW>>>>24H、Ruten>>>>>>> ";
+			String result = memid + SYMBOL + uuid + SYMBOL + sourceUrl+"   >>>>>NEW>>>>camp_log>>>>>>> ";
+//			String result = memid + SYMBOL + uuid + SYMBOL + sourceUrl+ SYMBOL + adClass+ SYMBOL+ behaviorClassify+"   >>>>>NEW>>>>24H、Ruten>>>>>>> ";
 			log.info(">>>>>> Mapper write key:" + result);
 			keyOut.set(result);
 			context.write(keyOut, valueOut);
