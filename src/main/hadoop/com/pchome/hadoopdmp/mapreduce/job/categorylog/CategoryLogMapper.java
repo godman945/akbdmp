@@ -196,7 +196,8 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				 if (values.length < 9) {
 					 return;
                  }
-				 categoryRawDataBean.setMemid(values[0]);
+				 
+				 categoryRawDataBean.setMemid(StringUtils.isBlank(values[0])? "null" :values[0]);
 				 categoryRawDataBean.setUuid(values[1]);
 				 categoryRawDataBean.setUrl("");
 				 categoryRawDataBean.setAdClass(values[2]);
