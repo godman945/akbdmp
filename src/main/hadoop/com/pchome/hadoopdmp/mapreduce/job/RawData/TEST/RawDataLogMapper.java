@@ -127,11 +127,19 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		// values[13] //ck,pv
 		// values[15] //ad_class
 		try {
-			String[] values = value.toString().split(SYMBOL);
+			//kdcl
+//			String[] values = value.toString().split(SYMBOL);
 //			if (values.length < LOG_LENGTH) {
 //				log.info("values.length < " + LOG_LENGTH);
 //				return;
 //			}
+			
+			//campaign
+			String[] values = value.toString().split(",");
+//              if (values.length < 9) {
+//            	  return;
+//              }
+			
 			
 			
 			
