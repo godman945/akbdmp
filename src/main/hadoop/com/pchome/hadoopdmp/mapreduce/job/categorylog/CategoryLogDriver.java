@@ -124,7 +124,7 @@ public class CategoryLogDriver {
 		// job
 		log.info("----job start----");
 
-		Job job = new Job(jobConf, "dmp_category_log " + sdf.format(date));
+		Job job = new Job(jobConf, "dmp_category_log_STG " + sdf.format(date));
 		job.setJarByClass(CategoryLogDriver.class);
 		job.setMapperClass(CategoryLogMapper.class);
 		job.setMapOutputKeyClass(Text.class);
