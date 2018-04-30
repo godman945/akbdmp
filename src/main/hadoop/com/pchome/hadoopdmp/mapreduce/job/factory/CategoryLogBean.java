@@ -21,6 +21,7 @@ public class CategoryLogBean {
 	private String mage;
 	private String personalInfoMemberApiClassify;
 	private String personalInfoClassify;
+	private String url;
 
 	public String getType() {
 		return type;
@@ -140,6 +141,14 @@ public class CategoryLogBean {
 
 	public void setMage(String mage) {
 		this.mage = mage;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
 	}
 	
 }

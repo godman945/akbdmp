@@ -16,11 +16,11 @@ import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper;
 
 public class Ad24HLog extends ACategoryLogData {
 
-	public Object processCategory(String[] values, CategoryLogBean categoryLogBean,MongoOperations mongoOperations) throws Exception {
+	public Object processCategory(CategoryLogBean categoryRawDataBean, CategoryLogBean categoryLogBean,MongoOperations mongoOperations) throws Exception {
 		
-		String memid = values[1];
-		String uuid = values[2];
-		String sourceUrl = values[4];
+		String memid = categoryRawDataBean.getMemid();
+		String uuid = categoryRawDataBean.getUuid();
+		String sourceUrl = categoryRawDataBean.getUrl();
 		String adClass = "";
 		String behaviorClassify = "N";
 		
@@ -109,8 +109,8 @@ public class Ad24HLog extends ACategoryLogData {
 		}
 		
 		categoryLogBean.setAdClass(adClass);
-		categoryLogBean.setMemid(values[1]);
-		categoryLogBean.setUuid(values[2]);
+		categoryLogBean.setMemid(memid);
+		categoryLogBean.setUuid(uuid);
 		categoryLogBean.setSource("24h");
 		categoryLogBean.setBehaviorClassify(behaviorClassify);
 		return categoryLogBean;

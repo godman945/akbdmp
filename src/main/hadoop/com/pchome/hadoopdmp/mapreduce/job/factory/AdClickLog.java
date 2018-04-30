@@ -6,11 +6,11 @@ import org.springframework.data.mongodb.core.MongoOperations;
 @SuppressWarnings({ "unchecked", "deprecation" ,"static-access","resource"})
 public class AdClickLog extends ACategoryLogData {
 
-	public Object processCategory(String[] values, CategoryLogBean categoryLogBean,MongoOperations mongoOperations) throws Exception {
+	public Object processCategory(CategoryLogBean categoryRawDataBean, CategoryLogBean categoryLogBean,MongoOperations mongoOperations) throws Exception {
 		
-		String memid = values[1];
-		String uuid = values[2];
-		String adClass = values[15];
+		String memid = categoryRawDataBean.getMemid();
+		String uuid = categoryRawDataBean.getUuid();
+		String adClass = categoryRawDataBean.getAdClass();
 		String behaviorClassify = "Y";
 		
 		if ((StringUtils.isBlank(memid) || memid.equals("null")) && (StringUtils.isBlank(uuid) || uuid.equals("null")) ) {
@@ -22,8 +22,8 @@ public class AdClickLog extends ACategoryLogData {
 		}
 		
 		categoryLogBean.setAdClass(adClass);
-		categoryLogBean.setMemid(values[1]);
-		categoryLogBean.setUuid(values[2]);
+		categoryLogBean.setMemid(memid);
+		categoryLogBean.setUuid(uuid);
 		categoryLogBean.setSource("adclick");
 		categoryLogBean.setBehaviorClassify(behaviorClassify);
 		
