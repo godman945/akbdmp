@@ -188,6 +188,8 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				categoryRawDataBean.setAdClass(values[15]);
 				categoryRawDataBean.setSource(values[13]);
 				
+				log.info(">>>>>> kdcl rawdata:" + valuestr);
+				
 			}else{	//campaign log
 				String[] values = valuestr.toString().split(",");
 				
@@ -199,6 +201,8 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				 categoryRawDataBean.setUrl("");
 				 categoryRawDataBean.setAdClass(values[2]);
 				 categoryRawDataBean.setSource("campaign");
+				 
+				 log.info(">>>>>> campaige rawdata:" + valuestr);
 			}
 			
 
