@@ -127,6 +127,48 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		// values[13] //ck,pv
 		// values[15] //ad_class
 		try {
+			
+			
+			String memid ="";
+			String uuid ="";
+			String sourceUrl ="";
+			String adClass ="";
+			String behaviorClassify = "N";
+			
+			
+			
+			String valuestr = value.toString();
+			//kdcl log
+			if ( valuestr.indexOf(SYMBOL) >-1){
+				
+				String[] values = valuestr.toString().split(SYMBOL);
+				
+				if (values.length < LOG_LENGTH) {
+					log.info("values.length < " + LOG_LENGTH);
+					return;
+				}
+				
+				memid = values[1];
+				uuid = values[2];
+				sourceUrl = values[4];
+				adClass = values[15];
+				
+				
+			}else{	//campaign log
+				
+				String[] values = valuestr.toString().split(",");
+				
+				 if (values.length < 9) {
+					 return;
+                 }
+				 
+				memid = values[0];
+				uuid = values[1];
+				sourceUrl ="NO URL";
+				adClass = values[2];
+			}
+			
+			
 			//kdcl
 //			String[] values = value.toString().split(SYMBOL);
 //			if (values.length < LOG_LENGTH) {
@@ -135,14 +177,14 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			}
 			
 			//campaign
-			String[] values = value.toString().split(",");
+//			String[] values = value.toString().split(",");
 //              if (values.length < 9) {
 //            	  return;
 //              }
 			
-			String memid = values[0];
-			String uuid = values[1];
-			String sourceUrl = values[4];
+//			String memid = values[0];
+//			String uuid = values[1];
+//			String sourceUrl = values[4];
 //			String adClass = values[2];
 //			String behaviorClassify = "N";
 			
@@ -226,7 +268,7 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			}
 //			// 24H邏輯
 			
-			String result = memid + SYMBOL + uuid + SYMBOL + sourceUrl+"   >>>>>NEW campaign log>>>>> ";
+			String result = memid + SYMBOL + uuid + SYMBOL + adClass+ SYMBOL + sourceUrl + "   >>>>>kdcl、 campaign log>>>>> ";
 //			String result = memid + SYMBOL + uuid + SYMBOL + sourceUrl+ SYMBOL + adClass+ SYMBOL+ behaviorClassify+"   >>>>>NEW>>>>24H、Ruten>>>>>>> ";
 			log.info(">>>>>> Mapper write key:" + result);
 			keyOut.set(result);
