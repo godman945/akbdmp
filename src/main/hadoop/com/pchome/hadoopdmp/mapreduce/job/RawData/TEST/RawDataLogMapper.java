@@ -128,10 +128,12 @@ public class RawDataLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		// values[15] //ad_class
 		try {
 			String[] values = value.toString().split(SYMBOL);
-			if (values.length < LOG_LENGTH) {
-				log.info("values.length < " + LOG_LENGTH);
-				return;
-			}
+//			if (values.length < LOG_LENGTH) {
+//				log.info("values.length < " + LOG_LENGTH);
+//				return;
+//			}
+			
+			
 			
 //			String memid = values[1];
 //			String uuid = values[2];
