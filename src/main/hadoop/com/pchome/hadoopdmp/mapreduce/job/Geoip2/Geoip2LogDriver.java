@@ -203,10 +203,7 @@ public class Geoip2LogDriver {
 
 		//load 分類表、分類個資表、log4j檔
 		String[] filePaths = {
-				hdfsPath + "/home/webuser/dmp/crawlBreadCrumb/data/pfp_ad_category_new.csv",
-				hdfsPath + "/home/webuser/dmp/readingdata/ClsfyGndAgeCrspTable.txt",
-				hdfsPath + "/home/webuser/dmp/alex/log4j.xml",
-				hdfsPath + "/home/webuser/dmp/jobfile/DMP_24h_category.csv"
+				hdfsPath + "/home/webuser/dmp/jobfile/GeoLite2-City.mmdb"
 		};
 		for (String filePath : filePaths) {
 			DistributedCache.addCacheFile(new URI(filePath), job.getConfiguration());

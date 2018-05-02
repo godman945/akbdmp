@@ -1,4 +1,6 @@
 package com.pchome.hadoopdmp.mapreduce.job.Geoip2;
+import java.io.File;
+import java.net.InetAddress;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,6 +29,9 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
+import com.maxmind.geoip2.DatabaseReader;
+import com.maxmind.geoip2.model.CityResponse;
+import com.maxmind.geoip2.record.City;
 import com.pchome.hadoopdmp.data.mongo.pojo.ClassUrlMongoBean;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryCodeBean;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
@@ -47,6 +52,8 @@ public class Geoip2LogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();	 //分類個資表
 //	public static List<CategoryCodeBean> categoryBeanList = new ArrayList<CategoryCodeBean>();				 //24H分類表
 	private MongoOperations mongoOperations;
+	
+	DatabaseReader reader = null;
 
 	private int adClick_process = 0;
 	private int tweenFour_process = 0;
@@ -66,53 +73,12 @@ public class Geoip2LogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			this.mongoOperations = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
 			record_date = context.getConfiguration().get("job.date");
 			Configuration conf = context.getConfiguration();
+			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
 			
-//			//load 分類個資表(ClsfyGndAgeCrspTable.txt)
-//			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
-//			Path clsfyTable = Paths.get(path[1].toString());
-//			Charset charset = Charset.forName("UTF-8");
-//			List<String> lines = Files.readAllLines(clsfyTable, charset);
-//			for (String line : lines) {
-//				String[] tmpStrAry = line.split(";"); // 0001000000000000;M,35
-//				String[] tmpStrAry2 = tmpStrAry[1].split(",");
-//				clsfyCraspMap.put(tmpStrAry[0],new combinedValue(tmpStrAry[1].split(",")[0], tmpStrAry2.length > 1 ? tmpStrAry2[1] : ""));
-//			}
-//			
-//
-//			// load 分類表(pfp_ad_category_new.csv)
-//			Path cate_path = Paths.get(path[0].toString());
-//			charset = Charset.forName("UTF-8");
-//			int maxCateLvl = 4;
-//			categoryList = new ArrayList<Map<String, String>>();
-//			for (int i = 0; i < maxCateLvl; i++) {
-//				categoryList.add(new HashMap<String, String>());
-//			}
-//			lines.clear();
-//			lines = Files.readAllLines(cate_path, charset);
-//			// 將 table: pfp_ad_category_new 內容放入list中(共有 maxCateLvl 層)
-//			for (String line : lines) {
-//				String[] tmpStr = line.split(";");
-//				int lvl = Integer.parseInt(tmpStr[5].replaceAll("\"", "").trim());
-//				if (lvl <= maxCateLvl) {
-//					categoryList.get(lvl - 1).put(tmpStr[3].replaceAll("\"", "").trim(),tmpStr[4].replaceAll("\"", "").replaceAll("@", "").trim());
-//				}
-//			}
-//			
-//			// load 24h分類表
-//			Path category24HPath = Paths.get(path[3].toString());
-//			List<String> lines24H = Files.readAllLines(category24HPath, charset);
-//			for (String line : lines24H) {
-//				CategoryCodeBean categoryBean = new CategoryCodeBean();
-//				
-//				String[] tmpStrAry = line.split(","); // 0001000000000000;M,35
-//				
-//				categoryBean.setNumberCode(tmpStrAry[0].replaceAll("\"", ""));
-//				categoryBean.setChineseDesc(tmpStrAry[1].replaceAll("\"", ""));
-//				categoryBean.setBreadCrumb(tmpStrAry[2].replaceAll("\"", ""));
-//				categoryBean.setEnglishCode(tmpStrAry[3].replaceAll("\"", ""));
-//				
-//				categoryBeanList.add(categoryBean);
-//			}
+			//IP轉城市
+//			File database = new File("D:/PCWork0301/Bessie/Work/新DMP系統/GeoLite2-City.mmdb");
+			File database = new File(path[0].toString());
+			reader = new DatabaseReader.Builder(database).build(); 
 			
 		} catch (Exception e) {
 			log.info("Mapper  setup Exception: "+e.getMessage());
@@ -134,9 +100,13 @@ public class Geoip2LogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			
 			String ip = values[3];
 			
+			//IP轉城市
+			InetAddress ipAddress = InetAddress.getByName(ip);//台北市
+			CityResponse response = reader.city(ipAddress);   
+			City city = response.getCity();
+			String cityStr = city.getNames().get("zh-CN");
 			
-			
-			String result = ip + SYMBOL+"   >>>>>ip log>>>>> ";
+			String result = ip + SYMBOL + cityStr +"   >>>>>ip log>>>>> ";
 			log.info(">>>>>> Mapper write key:" + result);
 			keyOut.set(result);
 			context.write(keyOut, valueOut);
