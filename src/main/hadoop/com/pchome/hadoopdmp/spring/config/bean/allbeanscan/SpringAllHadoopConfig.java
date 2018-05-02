@@ -25,7 +25,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 	+"com.pchome.hadoopdmp.spring.config.bean,"
 	+"test.bessie,"
 	+"com.pchome.hadoopdmp.mapreduce.job.RawData.TEST,"
-	+"com.pchome.hadoopdmp.mapreduce.job.Geoip2"
+	+"com.pchome.hadoopdmp.mapreduce.job.Geoip2,"
 	
 )
 @PropertySource({ 
