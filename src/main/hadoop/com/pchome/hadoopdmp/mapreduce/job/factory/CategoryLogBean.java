@@ -14,14 +14,22 @@ public class CategoryLogBean {
 	private String recodeDate;
 	private String source;
 	private String type;
-	private String behaviorClassify;
+//	private String behaviorClassify;
 	private Map<String, combinedValue> clsfyCraspMap;
 	private ArrayList<Map<String, String>> list;
 	private String msex;
 	private String mage;
-	private String personalInfoMemberApiClassify;
-	private String personalInfoClassify;
+//	private String personalInfoMemberApiClassify;
+//	private String personalInfoClassify;
 	private String url;
+	private String personalInfoApi;
+	private String personalInfo;
+	private String classAdClick;
+	private String class24hUrl;
+	private String classRutenUrl;
+	private String areaInfo;
+	private String deviceInfo;
+	private String devicePhoneInfo;
 
 	public String getType() {
 		return type;
@@ -103,30 +111,6 @@ public class CategoryLogBean {
 		this.source = source;
 	}
 
-	public String getBehaviorClassify() {
-		return behaviorClassify;
-	}
-
-	public void setBehaviorClassify(String behaviorClassify) {
-		this.behaviorClassify = behaviorClassify;
-	}
-
-	public String getPersonalInfoClassify() {
-		return personalInfoClassify;
-	}
-
-	public void setPersonalInfoClassify(String personalInfoClassify) {
-		this.personalInfoClassify = personalInfoClassify;
-	}
-	
-	public String getPersonalInfoMemberApiClassify() {
-		return personalInfoMemberApiClassify;
-	}
-
-	public void setPersonalInfoMemberApiClassify(String personalInfoMemberApiClassify) {
-		this.personalInfoMemberApiClassify = personalInfoMemberApiClassify;
-	}
-
 	public String getMsex() {
 		return msex;
 	}
@@ -149,6 +133,70 @@ public class CategoryLogBean {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public String getPersonalInfoApi() {
+		return personalInfoApi;
+	}
+
+	public void setPersonalInfoApi(String personalInfoApi) {
+		this.personalInfoApi = personalInfoApi;
+	}
+
+	public String getPersonalInfo() {
+		return personalInfo;
+	}
+
+	public void setPersonalInfo(String personalInfo) {
+		this.personalInfo = personalInfo;
+	}
+
+	public String getClassAdClick() {
+		return classAdClick;
+	}
+
+	public void setClassAdClick(String classAdClick) {
+		this.classAdClick = classAdClick;
+	}
+
+	public String getClass24hUrl() {
+		return class24hUrl;
+	}
+
+	public void setClass24hUrl(String class24hUrl) {
+		this.class24hUrl = class24hUrl;
+	}
+
+	public String getClassRutenUrl() {
+		return classRutenUrl;
+	}
+
+	public void setClassRutenUrl(String classRutenUrl) {
+		this.classRutenUrl = classRutenUrl;
+	}
+
+	public String getAreaInfo() {
+		return areaInfo;
+	}
+
+	public void setAreaInfo(String areaInfo) {
+		this.areaInfo = areaInfo;
+	}
+
+	public String getDeviceInfo() {
+		return deviceInfo;
+	}
+
+	public void setDeviceInfo(String deviceInfo) {
+		this.deviceInfo = deviceInfo;
+	}
+
+	public String getDevicePhoneInfo() {
+		return devicePhoneInfo;
+	}
+
+	public void setDevicePhoneInfo(String devicePhoneInfo) {
+		this.devicePhoneInfo = devicePhoneInfo;
 	}
 	
 }

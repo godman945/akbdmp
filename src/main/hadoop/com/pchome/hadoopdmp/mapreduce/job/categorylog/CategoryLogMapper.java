@@ -240,9 +240,9 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			// 10.PersonalInfoClassify(依adClass比對分類年齡性別對應表ClsfyGndAgeCrspTable，是否有完整的推估個資 Y/N)
 			String memid = StringUtils.isBlank(categoryLogBeanResult.getMemid()) ? "null" : categoryLogBeanResult.getMemid();
 			String result = memid + SYMBOL + categoryLogBeanResult.getUuid() + SYMBOL + categoryLogBeanResult.getAdClass() + SYMBOL  + categoryRawDataBean.getUrl() 
-							+ SYMBOL + categoryLogBeanResult.getSource() + SYMBOL + categoryLogBeanResult.getMsex() + SYMBOL + categoryLogBeanResult.getMage()  
-							+ SYMBOL + categoryLogBeanResult.getPersonalInfoMemberApiClassify()+ SYMBOL + categoryLogBeanResult.getSex() + SYMBOL + categoryLogBeanResult.getAge() + SYMBOL 
-							+ categoryLogBeanResult.getPersonalInfoClassify() ;
+							+ SYMBOL + categoryLogBeanResult.getMsex() + SYMBOL + categoryLogBeanResult.getMage()+ SYMBOL + categoryLogBeanResult.getSource()   
+							+ SYMBOL + categoryLogBeanResult.getSex() + SYMBOL + categoryLogBeanResult.getAge(); 
+							
 			
 			log.info(">>>>>> Mapper write key:" + result);
 			

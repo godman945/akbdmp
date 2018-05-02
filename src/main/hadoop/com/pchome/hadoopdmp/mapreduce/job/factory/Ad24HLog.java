@@ -22,7 +22,7 @@ public class Ad24HLog extends ACategoryLogData {
 		String uuid = categoryRawDataBean.getUuid();
 		String sourceUrl = categoryRawDataBean.getUrl();
 		String adClass = "";
-		String behaviorClassify = "N";
+		String class24hUrl = "";
 		
 		if ((StringUtils.isBlank(memid) || memid.equals("null")) && (StringUtils.isBlank(uuid) || uuid.equals("null"))) {
 			return null;
@@ -36,7 +36,7 @@ public class Ad24HLog extends ACategoryLogData {
 		for (CategoryCodeBean categoryBean : list) {
 			if(sourceUrl.indexOf(categoryBean.getEnglishCode()) != -1){
 				adClass = categoryBean.getNumberCode();
-				behaviorClassify = "Y";
+				class24hUrl = "Y";
 				break;
 			}
 		}
@@ -50,7 +50,7 @@ public class Ad24HLog extends ACategoryLogData {
 				if(classUrlMongoBean.getStatus().equals("0")){
 					// url 存在 status = 0  , mongo update_date 更新(一天一次) query_time+1 如大於 2000 不再加 
 					adClass ="";
-					behaviorClassify = "N";
+					class24hUrl = "N";
 					
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 					Date today = new Date();
@@ -72,7 +72,7 @@ public class Ad24HLog extends ACategoryLogData {
 				}else if( (classUrlMongoBean.getStatus().equals("1")) && (!classUrlMongoBean.getAd_class().equals("")) ){
 					//url 存在 status = 1 取分類代號回傳 mongodn update_date 更新(一天一次) behaviorClassify = "Y"
 					adClass = classUrlMongoBean.getAd_class();
-					behaviorClassify = "Y"; 
+					class24hUrl = "Y"; 
 					
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 					Date today = new Date();
@@ -89,7 +89,7 @@ public class Ad24HLog extends ACategoryLogData {
 			}else{
 				// url 不存在  ,寫入 mongo url代號 status=0 
 				adClass ="";
-				behaviorClassify = "N";
+				class24hUrl = "N";
 				
 				Date date = new Date();
 				ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
@@ -112,7 +112,7 @@ public class Ad24HLog extends ACategoryLogData {
 		categoryLogBean.setMemid(memid);
 		categoryLogBean.setUuid(uuid);
 		categoryLogBean.setSource("24h");
-		categoryLogBean.setBehaviorClassify(behaviorClassify);
+		categoryLogBean.setClass24hUrl(class24hUrl);
 		return categoryLogBean;
 	}
 	

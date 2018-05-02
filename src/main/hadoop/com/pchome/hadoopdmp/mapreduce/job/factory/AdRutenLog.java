@@ -28,7 +28,7 @@ public class AdRutenLog extends ACategoryLogData {
 		String uuid = categoryRawDataBean.getUuid();
 		String sourceUrl = categoryRawDataBean.getUrl();
 		String adClass = "";
-		String behaviorClassify = "N";
+		String classRutenUrl = "" ;
 		
 		if ((StringUtils.isBlank(memid) || memid.equals("null")) && (StringUtils.isBlank(uuid) || uuid.equals("null"))) {
 			return null;
@@ -45,8 +45,8 @@ public class AdRutenLog extends ACategoryLogData {
 		if(classUrlMongoBean != null){
 			
 			if(classUrlMongoBean.getStatus().equals("0")){
-				// url 存在 status = 0 跳過回傳空值 , mongo update_date 更新(一天一次) mongo,query_time+1 如大於 2000 不再加  behaviorClassify = "N"
-				behaviorClassify = "N"; 
+				// url 存在 status = 0 跳過回傳空值 , mongo update_date 更新(一天一次) mongo,query_time+1 如大於 2000 不再加  classRutenUrl = "N"
+				classRutenUrl = "N"; 
 
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 				Date today = new Date();
@@ -68,9 +68,9 @@ public class AdRutenLog extends ACategoryLogData {
 				}
 				
 			}else if( (classUrlMongoBean.getStatus().equals("1")) && (!classUrlMongoBean.getAd_class().equals("")) ){
-				//url 存在 status = 1 取分類代號回傳 mongodn update_date 更新(一天一次) behaviorClassify = "Y";
+				//url 存在 status = 1 取分類代號回傳 mongodn update_date 更新(一天一次) classRutenUrl = "Y";
 				adClass = classUrlMongoBean.getAd_class();
-				behaviorClassify = "Y"; 
+				classRutenUrl = "Y"; 
 				
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 				Date today = new Date();
@@ -131,7 +131,7 @@ public class AdRutenLog extends ACategoryLogData {
 				
 					if (StringUtils.isNotBlank(adClass)){
 						//爬蟲有比對到Ruten分類
-						behaviorClassify = "Y";
+						classRutenUrl = "Y";
 						
 						Date date = new Date();
 						ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
@@ -143,7 +143,7 @@ public class AdRutenLog extends ACategoryLogData {
 						mongoOperations.save(classUrlMongoBeanCreate);
 					}else{
 						//爬蟲沒有比對到Ruten分類
-						behaviorClassify = "N";
+						classRutenUrl = "N";
 						
 						Date date = new Date();
 						ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
@@ -180,7 +180,7 @@ public class AdRutenLog extends ACategoryLogData {
 		categoryLogBean.setMemid(memid);
 		categoryLogBean.setUuid(uuid);
 		categoryLogBean.setSource("ruten");
-		categoryLogBean.setBehaviorClassify(behaviorClassify);
+		categoryLogBean.setClassRutenUrl(classRutenUrl);
 		return categoryLogBean;
 	}
 }

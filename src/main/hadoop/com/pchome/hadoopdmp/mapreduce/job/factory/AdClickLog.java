@@ -11,7 +11,6 @@ public class AdClickLog extends ACategoryLogData {
 		String memid = categoryRawDataBean.getMemid();
 		String uuid = categoryRawDataBean.getUuid();
 		String adClass = categoryRawDataBean.getAdClass();
-		String behaviorClassify = "Y";
 		
 		if ((StringUtils.isBlank(memid) || memid.equals("null")) && (StringUtils.isBlank(uuid) || uuid.equals("null")) ) {
 			return null;
@@ -24,8 +23,8 @@ public class AdClickLog extends ACategoryLogData {
 		categoryLogBean.setAdClass(adClass);
 		categoryLogBean.setMemid(memid);
 		categoryLogBean.setUuid(uuid);
-		categoryLogBean.setSource("adclick");
-		categoryLogBean.setBehaviorClassify(behaviorClassify);
+		categoryLogBean.setSource(categoryRawDataBean.getSource());
+		categoryLogBean.setClassAdClick("Y");
 		
 		return categoryLogBean;
 	}

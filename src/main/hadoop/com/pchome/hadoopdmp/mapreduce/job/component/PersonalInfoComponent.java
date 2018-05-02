@@ -63,15 +63,15 @@ public class PersonalInfoComponent {
 					categoryLogBean.setMage("null");
 					
 					if ( (!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA")) ) {
-						categoryLogBean.setPersonalInfoMemberApiClassify("Y");
+						categoryLogBean.setPersonalInfoApi("Y");
 					} else {
-						categoryLogBean.setPersonalInfoMemberApiClassify("N");
+						categoryLogBean.setPersonalInfoApi("N");
 					}
 				}else{
 					// mongodb已有資料就跳過,包括NA (mongo user_detail結構中已有mage和msex)
 					categoryLogBean.setMsex("null");
 					categoryLogBean.setMage("null");
-					categoryLogBean.setPersonalInfoMemberApiClassify("Y");
+					categoryLogBean.setPersonalInfoApi("Y");
 				}
 				
 			} else {
@@ -97,9 +97,9 @@ public class PersonalInfoComponent {
 				mongoOperations.save(hadoopUserDetailBean);
 				
 				if ( (!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA")) ) {
-					categoryLogBean.setPersonalInfoMemberApiClassify("Y");
+					categoryLogBean.setPersonalInfoApi("Y");
 				} else {
-					categoryLogBean.setPersonalInfoMemberApiClassify("N");
+					categoryLogBean.setPersonalInfoApi("N");
 				}
 			}
 		}
@@ -114,9 +114,9 @@ public class PersonalInfoComponent {
 		categoryLogBean.setAge(age);
 		
 		if ( (!StringUtils.equals(age, "null")) && (!StringUtils.equals(sex, "null")) ) {
-			categoryLogBean.setPersonalInfoClassify("Y");
+			categoryLogBean.setPersonalInfo("Y");
 		} else {
-			categoryLogBean.setPersonalInfoClassify("N");
+			categoryLogBean.setPersonalInfo("N");
 		}
 
 		return categoryLogBean;
