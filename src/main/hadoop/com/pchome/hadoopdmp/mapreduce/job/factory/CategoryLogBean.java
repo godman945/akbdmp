@@ -14,13 +14,10 @@ public class CategoryLogBean {
 	private String recodeDate;
 	private String source;
 	private String type;
-//	private String behaviorClassify;
 	private Map<String, combinedValue> clsfyCraspMap;
 	private ArrayList<Map<String, String>> list;
 	private String msex;
 	private String mage;
-//	private String personalInfoMemberApiClassify;
-//	private String personalInfoClassify;
 	private String url;
 	private String personalInfoApi;
 	private String personalInfo;

@@ -51,14 +51,9 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private MongoOperations mongoOperations;
 	
 
-	private int adClick_process = 0;
-	private int tweenFour_process = 0;
-	private int ruten_process = 0;
-	private long time1, time2,time3;
 	@Override
 	public void setup(Context context) {
 		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
-		time1 = System.currentTimeMillis();
 		try {
 			if(StringUtils.isNotBlank(context.getConfiguration().get("spring.profiles.active"))){
 				System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
@@ -140,86 +135,73 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	@Override
 	public void map(LongWritable offset, Text value, Context context) {
 		
-		/*Kdcl log	raw data格式
-		// values[1] //memid
-		// values[2] //uuid
-		// values[4] //url
-		// values[13] //ck,pv
-		// values[15] //ad_class
-		 */
-		
-		/*Campaign log raw data格式
-		// values[0] //memid		會員帳號
-		// values[1] //uuid			通用唯一識別碼	
-		// values[2] //ad_class		分類
-		// values[3] //Count		數量
-		// values[4] //age			年齡
-		// values[5] //sex			性別(F|M)
-		// values[6] //ip_area		地區
-		// values[7] //record_date	紀錄日期(yyyy-MM-dd)
-		// values[8] //Over_write	是否覆寫(true|false)
-		 */
 		try {
+			//讀取kdcl、Campaign資料
+//			log.info("raw_data : " + value);
+
+			CategoryLogBean dmpDataBean = new CategoryLogBean();
+			String valueStr = value.toString();
 			
-//			log.info("raw_data [memid] : " + values[1]);
-//			log.info("raw_data [uuid] : " + values[2]);
-//			log.info("raw_data [url] : " + values[4]);
-//			log.info("raw_data [ck,pv] : " + values[13]);
-//			log.info("raw_data [ad_class] : " + values[15]);
-//			String[] values = value.toString().split(SYMBOL);
-//			if (values.length < LOG_LENGTH) {
-//				log.info("values.length < " + LOG_LENGTH);
-//				return;
-//			}
-			
-			CategoryLogBean categoryRawDataBean = new CategoryLogBean();
-			String valuestr = value.toString();
-			//kdcl log
-			if ( valuestr.indexOf(SYMBOL) >-1){
-				String[] values = valuestr.toString().split(SYMBOL);
-				
+			if ( valueStr.indexOf(SYMBOL) > -1 ){	//kdcl log
+				//kdcl log	raw data格式
+				// values[1]  memid
+				// values[2]  uuid
+				// values[3]  ip
+				// values[4]  url
+				// values[13] ck,pv
+				// values[15] ad_class
+				String[] values = valueStr.toString().split(SYMBOL);
 				if (values.length < LOG_LENGTH) {
 					log.info("values.length < " + LOG_LENGTH);
 					return;
 				}
-				categoryRawDataBean.setMemid(values[1]);
-				categoryRawDataBean.setUuid(values[2]);
-				categoryRawDataBean.setUrl(values[4]);
-				categoryRawDataBean.setAdClass(values[15]);
-				categoryRawDataBean.setSource(values[13]);
+				dmpDataBean.setMemid(values[1]);
+				dmpDataBean.setUuid(values[2]);
+				dmpDataBean.setUrl(values[4]);
+				dmpDataBean.setAdClass(values[15]);
+				dmpDataBean.setSource(values[13]);
+				log.info(">>>>>> kdcl rawdata:" + valueStr);
 				
-				log.info(">>>>>> kdcl rawdata:" + valuestr);
-				
-			}else{	//campaign log
-				String[] values = valuestr.toString().split(",");
-				
+			}else if( valueStr.indexOf(",") > -1 ){	//campaign log
+				//Campaign log raw data格式
+				// values[0] memid			會員帳號
+				// values[1] uuid			通用唯一識別碼	
+				// values[2] ad_class		分類
+				// values[3] Count			數量
+				// values[4] age			年齡
+				// values[5] sex			性別(F|M)
+				// values[6] ip_area		地區(台北市 or 空字串)
+				// values[7] record_date	紀錄日期(yyyy-MM-dd)
+				// values[8] Over_write		是否覆寫(true|false)
+				String[] values = valueStr.toString().split(",");
 				 if (values.length < 9) {
 					 return;
                  }
+				 dmpDataBean.setMemid(StringUtils.isBlank(values[0])? "null" :values[0]);
+				 dmpDataBean.setUuid(values[1]);
+				 dmpDataBean.setAdClass(values[2]);
+				 dmpDataBean.setUrl("");
+				 dmpDataBean.setSource("campaign");
+				 log.info(">>>>>> campaige rawdata:" + valueStr);
 				 
-				 categoryRawDataBean.setMemid(StringUtils.isBlank(values[0])? "null" :values[0]);
-				 categoryRawDataBean.setUuid(values[1]);
-				 categoryRawDataBean.setUrl("");
-				 categoryRawDataBean.setAdClass(values[2]);
-				 categoryRawDataBean.setSource("campaign");
-				 
-				 log.info(">>>>>> campaige rawdata:" + valuestr);
+			}else{
+				 return;
 			}
 			
 
 			CategoryLogBean categoryLogBean = new CategoryLogBean();
 			CategoryLogBean categoryLogBeanResult = null;
 			
-			//分析click、24H、Ruten 分類 
-			if ( (categoryRawDataBean.getSource().equals("ck")||categoryRawDataBean.getSource().equals("campaign")) && StringUtils.isNotBlank(categoryRawDataBean.getAdClass())) {	// kdcl log的ad_click 或 campaign log的adclass 
+			//分析click、24H、Ruten、campaign分類 
+			if ( (dmpDataBean.getSource().equals("ck")||dmpDataBean.getSource().equals("campaign")) && StringUtils.isNotBlank(dmpDataBean.getAdClass())) {	// kdcl log的ad_click 或 campaign log的adclass 
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
-				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(categoryRawDataBean, categoryLogBean, mongoOperations);
-			}else if (categoryRawDataBean.getSource().equals("pv") && StringUtils.isNotBlank(categoryRawDataBean.getUrl()) && categoryRawDataBean.getUrl().contains("ruten")) {	// 露天
+				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(dmpDataBean, mongoOperations);
+			}else if (dmpDataBean.getSource().equals("pv") && StringUtils.isNotBlank(dmpDataBean.getUrl()) && dmpDataBean.getUrl().contains("ruten")) {	// 露天
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
-				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(categoryRawDataBean, categoryLogBean, mongoOperations);
-			}else if (categoryRawDataBean.getSource().equals("pv") && StringUtils.isNotBlank(categoryRawDataBean.getUrl()) && categoryRawDataBean.getUrl().contains("24h")) {		// 24h
+				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(dmpDataBean, mongoOperations);
+			}else if (dmpDataBean.getSource().equals("pv") && StringUtils.isNotBlank(dmpDataBean.getUrl()) && dmpDataBean.getUrl().contains("24h")) {		// 24h
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
-				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(categoryRawDataBean, categoryLogBean, mongoOperations);
+				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(dmpDataBean, mongoOperations);
 			}else{
 				return;
 			}
@@ -239,7 +221,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			// 7.PersonalInfoMemberApiClassify(打會員api是否有完整個資 Y/N) + 8.Sex(推估性別) + 9.Age(推估年齡) +
 			// 10.PersonalInfoClassify(依adClass比對分類年齡性別對應表ClsfyGndAgeCrspTable，是否有完整的推估個資 Y/N)
 			String memid = StringUtils.isBlank(categoryLogBeanResult.getMemid()) ? "null" : categoryLogBeanResult.getMemid();
-			String result = memid + SYMBOL + categoryLogBeanResult.getUuid() + SYMBOL + categoryLogBeanResult.getAdClass() + SYMBOL  + categoryRawDataBean.getUrl() 
+			String result = memid + SYMBOL + categoryLogBeanResult.getUuid() + SYMBOL + categoryLogBeanResult.getAdClass() + SYMBOL  + dmpDataBean.getUrl() 
 							+ SYMBOL + categoryLogBeanResult.getMsex() + SYMBOL + categoryLogBeanResult.getMage()+ SYMBOL + categoryLogBeanResult.getSource()   
 							+ SYMBOL + categoryLogBeanResult.getSex() + SYMBOL + categoryLogBeanResult.getAge(); 
 							
@@ -256,6 +238,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			context.write(keyOut, valueOut);
 			
 		} catch (Exception e) {
+			log.error(">>>>>> " + e);
 			log.error(">>>>>> " + e.getMessage());
 		}
 

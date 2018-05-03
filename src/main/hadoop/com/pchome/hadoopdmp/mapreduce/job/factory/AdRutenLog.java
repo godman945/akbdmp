@@ -22,20 +22,20 @@ import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper;
 @SuppressWarnings({ "unchecked"})
 public class AdRutenLog extends ACategoryLogData {
 
-	public Object processCategory(CategoryLogBean categoryRawDataBean, CategoryLogBean categoryLogBean,MongoOperations mongoOperations) throws Exception {
+	public Object processCategory(CategoryLogBean dmpDataBean, MongoOperations mongoOperations) throws Exception {
 		
-		String memid = categoryRawDataBean.getMemid();
-		String uuid = categoryRawDataBean.getUuid();
-		String sourceUrl = categoryRawDataBean.getUrl();
+		String memid = dmpDataBean.getMemid();
+		String uuid = dmpDataBean.getUuid();
+		String sourceUrl = dmpDataBean.getUrl();
 		String adClass = "";
 		String classRutenUrl = "" ;
 		
-		if ((StringUtils.isBlank(memid) || memid.equals("null")) && (StringUtils.isBlank(uuid) || uuid.equals("null"))) {
-			return null;
-		}
-
 		if (StringUtils.isBlank(sourceUrl)) {
-			return null;
+			dmpDataBean.setAdClass(adClass);
+			dmpDataBean.setUrl("");
+			dmpDataBean.setClassRutenUrl("N");
+			dmpDataBean.setSource("ruten");
+			return dmpDataBean;
 		}
 		
 		ClassUrlMongoBean classUrlMongoBean = null;
@@ -170,17 +170,11 @@ public class AdRutenLog extends ACategoryLogData {
 			}
 		}
 		
-		//最後如果adClass為空，不寫入Reducer
-		if (StringUtils.isBlank(adClass)){
-			return null;
-		}
-		
-		
-		categoryLogBean.setAdClass(adClass);
-		categoryLogBean.setMemid(memid);
-		categoryLogBean.setUuid(uuid);
-		categoryLogBean.setSource("ruten");
-		categoryLogBean.setClassRutenUrl(classRutenUrl);
-		return categoryLogBean;
+		dmpDataBean.setAdClass(adClass);
+		dmpDataBean.setClassRutenUrl(classRutenUrl);
+		dmpDataBean.setSource("ruten");
+//		dmpDataBean.setMemid(memid);
+//		dmpDataBean.setUuid(uuid);
+		return dmpDataBean;
 	}
 }

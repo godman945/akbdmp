@@ -16,20 +16,20 @@ import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper;
 
 public class Ad24HLog extends ACategoryLogData {
 
-	public Object processCategory(CategoryLogBean categoryRawDataBean, CategoryLogBean categoryLogBean,MongoOperations mongoOperations) throws Exception {
+	public Object processCategory(CategoryLogBean dmpDataBean, MongoOperations mongoOperations) throws Exception {
 		
-		String memid = categoryRawDataBean.getMemid();
-		String uuid = categoryRawDataBean.getUuid();
-		String sourceUrl = categoryRawDataBean.getUrl();
+		String memid = dmpDataBean.getMemid();
+		String uuid = dmpDataBean.getUuid();
+		String sourceUrl = dmpDataBean.getUrl();
 		String adClass = "";
 		String class24hUrl = "";
 		
-		if ((StringUtils.isBlank(memid) || memid.equals("null")) && (StringUtils.isBlank(uuid) || uuid.equals("null"))) {
-			return null;
-		}
-
 		if (StringUtils.isBlank(sourceUrl)) {
-			return null;
+			dmpDataBean.setAdClass(adClass);
+			dmpDataBean.setUrl("");
+			dmpDataBean.setClass24hUrl("N");
+			dmpDataBean.setSource("24h");
+			return dmpDataBean;
 		}
 		
 		List<CategoryCodeBean> list = CategoryLogMapper.category24hBeanList;
@@ -103,17 +103,14 @@ public class Ad24HLog extends ACategoryLogData {
 			}
 		}
 		
-		//最後如果adClass為空，不寫入Reducer
-		if (StringUtils.isBlank(adClass)){
-			return null;
-		}
 		
-		categoryLogBean.setAdClass(adClass);
-		categoryLogBean.setMemid(memid);
-		categoryLogBean.setUuid(uuid);
-		categoryLogBean.setSource("24h");
-		categoryLogBean.setClass24hUrl(class24hUrl);
-		return categoryLogBean;
+//		dmpDataBean.setMemid(memid);
+//		dmpDataBean.setUuid(uuid);
+		dmpDataBean.setAdClass(adClass);
+		dmpDataBean.setClass24hUrl(class24hUrl);
+		dmpDataBean.setSource("24h");
+		
+		return dmpDataBean;
 	}
 	
 }

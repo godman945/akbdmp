@@ -1,31 +1,24 @@
 package com.pchome.hadoopdmp.mapreduce.job.factory;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.data.mongodb.core.MongoOperations;
 
 @SuppressWarnings({ "unchecked", "deprecation" ,"static-access","resource"})
 public class AdClickLog extends ACategoryLogData {
 
-	public Object processCategory(CategoryLogBean categoryRawDataBean, CategoryLogBean categoryLogBean,MongoOperations mongoOperations) throws Exception {
+	public Object processCategory(CategoryLogBean dmpDataBean, MongoOperations mongoOperations) throws Exception {
 		
-		String memid = categoryRawDataBean.getMemid();
-		String uuid = categoryRawDataBean.getUuid();
-		String adClass = categoryRawDataBean.getAdClass();
+		String adClass = dmpDataBean.getAdClass();
 		
-		if ((StringUtils.isBlank(memid) || memid.equals("null")) && (StringUtils.isBlank(uuid) || uuid.equals("null")) ) {
-			return null;
+		if (!adClass.matches("\\d{16}")) {
+			dmpDataBean.setClassAdClick("N");
 		}
 		
-		if (adClass.matches("\\d{16}")) {
-			return null;
-		}
+		dmpDataBean.setAdClass(adClass);
+		dmpDataBean.setClassAdClick("Y");
+//		dmpDataBean.setMemid(memid);
+//		dmpDataBean.setUuid(uuid);
+//		dmpDataBean.setSource(dmpDataBean.getSource());
 		
-		categoryLogBean.setAdClass(adClass);
-		categoryLogBean.setMemid(memid);
-		categoryLogBean.setUuid(uuid);
-		categoryLogBean.setSource(categoryRawDataBean.getSource());
-		categoryLogBean.setClassAdClick("Y");
-		
-		return categoryLogBean;
+		return dmpDataBean;
 	}
 }
