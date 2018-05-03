@@ -126,9 +126,12 @@ public class PersonalInfoComponent {
 		
 		// 讀取ClsfyGndAgeCrspTable.txt做age、sex個資推估
 		Map<String, String> forecastInfoMap = forecastPersonalInfo(adClass);
+		log.info("adClass 1 :"+adClass);
 		String sex = StringUtils.isNotBlank(forecastInfoMap.get("sex")) ? forecastInfoMap.get("sex") : "null";
+		log.info("sex  1 :"+sex);
 		String age = StringUtils.isNotBlank(forecastInfoMap.get("age")) ? forecastInfoMap.get("age") : "null";
-	
+		log.info("age 1 :"+age);
+		
 		dmpDataBean.setSex(sex);
 		dmpDataBean.setAge(age);
 		
@@ -147,8 +150,16 @@ public class PersonalInfoComponent {
 	
 	public Map<String, String> forecastPersonalInfo(String adClass) throws Exception {
 		combinedValue combineObj = CategoryLogMapper.clsfyCraspMap.get(adClass);
+		log.info("forecast  combineObj 1 :"+combineObj);
+		
 		String sex = combineObj.gender;
+		log.info("forecast sex  1 :"+sex);
+		
 		String age = combineObj.age;
+		
+		log.info("forecast age  1 :"+age);
+		
+		
 		
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("sex", sex);
