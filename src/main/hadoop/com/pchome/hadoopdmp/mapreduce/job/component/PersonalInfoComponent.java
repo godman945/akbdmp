@@ -152,11 +152,12 @@ public class PersonalInfoComponent {
 		combinedValue combineObj = CategoryLogMapper.clsfyCraspMap.get(adClass);
 		log.info("forecast  combineObj 1 :"+combineObj);
 		
-		String sex = combineObj.gender;
+		
+		String sex = (combineObj != null) ? combineObj.gender : "";
 		log.info("forecast sex  1 :"+sex);
 		
-		String age = combineObj.age;
 		
+		String age = (combineObj != null) ? combineObj.age : "";
 		log.info("forecast age  1 :"+age);
 		
 		
