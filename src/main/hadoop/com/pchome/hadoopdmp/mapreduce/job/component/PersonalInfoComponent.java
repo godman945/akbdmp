@@ -42,11 +42,18 @@ public class PersonalInfoComponent {
 			UserDetailMongoBean userDetailMongoBean = mongoOperations.findOne(queryUserInfo, UserDetailMongoBean.class);
 			String msex = "";
 			String mage = "";
+			
+			log.info(">>>>>> person 1");
+			
 			if (userDetailMongoBean != null) {
 				// 查看user_detail結構中有無mage和msex
 				Map<String, Object> userInfoMap = new HashMap<String, Object>();
 				userInfoMap = userDetailMongoBean.getUser_info();
 				if ((userInfoMap.get("mage") == null) || (userInfoMap.get("msex") == null)) {
+					
+					log.info(">>>>>> person 2");
+					
+					
 					// 沒有資料空的打會員中心 API
 					// 會員中心有資料寫回 mogodb msex mage 
 					// 會員中心沒有資料寫入 NA
@@ -68,6 +75,9 @@ public class PersonalInfoComponent {
 						dmpDataBean.setPersonalInfoApi("N");
 					}
 				}else{
+					log.info(">>>>>> person 3");
+					
+					
 					// mongodb已有資料就跳過,包括NA (mongo user_detail結構中已有mage和msex)
 					dmpDataBean.setMsex("null");
 					dmpDataBean.setMage("null");
@@ -75,6 +85,10 @@ public class PersonalInfoComponent {
 				}
 				
 			} else {
+				
+				log.info(">>>>>> person 4");
+				
+				
 				// mongo尚未新增user_detail，直接新增一筆mongo資料，塞會員中心打回來的性別、年齡(空的轉成NA寫入)
 				Map<String, Object> memberInfoMap = findMemberInfoAPI(memid);
 				msex = (String) memberInfoMap.get("msex");
@@ -104,6 +118,8 @@ public class PersonalInfoComponent {
 			}
 		}
 		
+		log.info(">>>>>> person 5");
+		
 		
 		// 讀取ClsfyGndAgeCrspTable.txt做age、sex個資推估
 		Map<String, String> forecastInfoMap = forecastPersonalInfo(adClass);
@@ -119,6 +135,8 @@ public class PersonalInfoComponent {
 			dmpDataBean.setPersonalInfo("N");
 		}
 
+		log.info(">>>>>> person 6");
+		
 		return dmpDataBean;
 	}
 	

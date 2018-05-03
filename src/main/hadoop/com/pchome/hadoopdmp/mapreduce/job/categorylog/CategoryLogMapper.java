@@ -136,57 +136,69 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public void map(LongWritable offset, Text value, Context context) {
 		
 		try {
-			//讀取kdcl、Campaign資料
-//			log.info("raw_data : " + value);
-
-			CategoryLogBean dmpDataBean = new CategoryLogBean();
-			String valueStr = value.toString();
+//			//讀取kdcl、Campaign資料
+////			log.info("raw_data : " + value);
+//
+//			CategoryLogBean dmpDataBean = new CategoryLogBean();
+//			String valueStr = value.toString();
+//			if ( valueStr.indexOf(SYMBOL) > -1 ){	//kdcl log
+//				//kdcl log	raw data格式
+//				// values[1]  memid
+//				// values[2]  uuid
+//				// values[3]  ip
+//				// values[4]  url
+//				// values[13] ck,pv
+//				// values[15] ad_class
+//				String[] values = valueStr.toString().split(SYMBOL);
+//				if (values.length < LOG_LENGTH) {
+//					log.info("values.length < " + LOG_LENGTH);
+//					return;
+//				}
+//				dmpDataBean.setMemid(values[1]);
+//				dmpDataBean.setUuid(values[2]);
+//				dmpDataBean.setUrl(values[4]);
+//				dmpDataBean.setAdClass(values[15]);
+//				dmpDataBean.setSource(values[13]);
+//				log.info(">>>>>> kdcl rawdata:" + valueStr);
+//				
+//			}else if( valueStr.indexOf(",") > -1 ){	//campaign log
+//				//Campaign log raw data格式
+//				// values[0] memid			會員帳號
+//				// values[1] uuid			通用唯一識別碼	
+//				// values[2] ad_class		分類
+//				// values[3] Count			數量
+//				// values[4] age			年齡
+//				// values[5] sex			性別(F|M)
+//				// values[6] ip_area		地區(台北市 or 空字串)
+//				// values[7] record_date	紀錄日期(yyyy-MM-dd)
+//				// values[8] Over_write		是否覆寫(true|false)
+//				String[] values = valueStr.toString().split(",");
+//				 if (values.length < 9) {
+//					 return;
+//                 }
+//				 dmpDataBean.setMemid(StringUtils.isBlank(values[0])? "null" :values[0]);
+//				 dmpDataBean.setUuid(values[1]);
+//				 dmpDataBean.setAdClass(values[2]);
+//				 dmpDataBean.setUrl("");
+//				 dmpDataBean.setSource("campaign");
+//				 log.info(">>>>>> campaige rawdata:" + valueStr);
+//				 
+//			}else{
+//				 return;
+//			}
 			
-			if ( valueStr.indexOf(SYMBOL) > -1 ){	//kdcl log
-				//kdcl log	raw data格式
-				// values[1]  memid
-				// values[2]  uuid
-				// values[3]  ip
-				// values[4]  url
-				// values[13] ck,pv
-				// values[15] ad_class
-				String[] values = valueStr.toString().split(SYMBOL);
-				if (values.length < LOG_LENGTH) {
-					log.info("values.length < " + LOG_LENGTH);
-					return;
-				}
-				dmpDataBean.setMemid(values[1]);
-				dmpDataBean.setUuid(values[2]);
-				dmpDataBean.setUrl(values[4]);
-				dmpDataBean.setAdClass(values[15]);
-				dmpDataBean.setSource(values[13]);
-				log.info(">>>>>> kdcl rawdata:" + valueStr);
-				
-			}else if( valueStr.indexOf(",") > -1 ){	//campaign log
-				//Campaign log raw data格式
-				// values[0] memid			會員帳號
-				// values[1] uuid			通用唯一識別碼	
-				// values[2] ad_class		分類
-				// values[3] Count			數量
-				// values[4] age			年齡
-				// values[5] sex			性別(F|M)
-				// values[6] ip_area		地區(台北市 or 空字串)
-				// values[7] record_date	紀錄日期(yyyy-MM-dd)
-				// values[8] Over_write		是否覆寫(true|false)
-				String[] values = valueStr.toString().split(",");
-				 if (values.length < 9) {
-					 return;
-                 }
-				 dmpDataBean.setMemid(StringUtils.isBlank(values[0])? "null" :values[0]);
-				 dmpDataBean.setUuid(values[1]);
-				 dmpDataBean.setAdClass(values[2]);
-				 dmpDataBean.setUrl("");
-				 dmpDataBean.setSource("campaign");
-				 log.info(">>>>>> campaige rawdata:" + valueStr);
-				 
-			}else{
-				 return;
-			}
+			
+			//test>>>>>>>>>>>>>>>
+			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+			this.mongoOperations = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
+			CategoryLogBean dmpDataBean = new CategoryLogBean();
+			 dmpDataBean.setMemid("null");
+			 dmpDataBean.setUuid("uuidtest");
+			 dmpDataBean.setAdClass("0006010600000000");
+			 dmpDataBean.setUrl("");
+			 dmpDataBean.setSource("campaign");
+//			 dmpDataBean.setUrl("ruten");
+			
 			
 
 			CategoryLogBean categoryLogBeanResult = null;
@@ -261,14 +273,14 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	 }
 
 	public static void main(String[] args) throws Exception {
-//		 CategoryLogMapper categoryLogMapper = new CategoryLogMapper();
-//		 categoryLogMapper.map(null, null, null);
+		 CategoryLogMapper categoryLogMapper = new CategoryLogMapper();
+		 categoryLogMapper.map(null, null, null);
 
-//		System.setProperty("spring.profiles.active", "stg");
-//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-//		CategoryLogMapper categoryLogMapper = ctx.getBean(CategoryLogMapper.class);
-//		categoryLogMapper.test();
-//		 categoryLogMapper.map(null, null, null);
+		System.setProperty("spring.profiles.active", "stg");
+		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+		CategoryLogMapper categoryLogMapper1 = ctx.getBean(CategoryLogMapper.class);
+		categoryLogMapper1.test();
+		categoryLogMapper1.map(null, null, null);
 
 	}
 
