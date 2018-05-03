@@ -207,7 +207,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			
 			
 			//處理個資
-//			categoryLogBeanResult = personalInfoComponent.processPersonalInfo(categoryLogBeanResult, mongoOperations);
+			categoryLogBeanResult = personalInfoComponent.processPersonalInfo(categoryLogBeanResult, mongoOperations);
 							
 			
 			categoryLogBeanResult.setRecodeDate(record_date);
@@ -215,12 +215,13 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			// 4.Source + 5.MSex(會員中心性別) + 6.MAge(會員中心年齡) 
 			// 7.PersonalInfoMemberApiClassify(打會員api是否有完整個資 Y/N) + 8.Sex(推估性別) + 9.Age(推估年齡) +
 			// 10.PersonalInfoClassify(依adClass比對分類年齡性別對應表ClsfyGndAgeCrspTable，是否有完整的推估個資 Y/N)
-			String memid = StringUtils.isBlank(categoryLogBeanResult.getMemid()) ? "null" : categoryLogBeanResult.getMemid();
 //			String result = memid + SYMBOL + categoryLogBeanResult.getUuid() + SYMBOL + categoryLogBeanResult.getAdClass() + SYMBOL  + dmpDataBean.getUrl() 
 //							+ SYMBOL + categoryLogBeanResult.getMsex() + SYMBOL + categoryLogBeanResult.getMage()+ SYMBOL + categoryLogBeanResult.getSource()   
 //							+ SYMBOL + categoryLogBeanResult.getSex() + SYMBOL + categoryLogBeanResult.getAge(); 
-			String result = memid + SYMBOL + categoryLogBeanResult.getUuid() + SYMBOL + categoryLogBeanResult.getAdClass() + SYMBOL  + dmpDataBean.getUrl() 
-			+ SYMBOL + categoryLogBeanResult.getSource(); 
+			String memid = StringUtils.isBlank(categoryLogBeanResult.getMemid()) ? "null" : categoryLogBeanResult.getMemid();
+			String result = memid + SYMBOL + categoryLogBeanResult.getUuid() + SYMBOL + categoryLogBeanResult.getAdClass() + SYMBOL  + categoryLogBeanResult.getUrl() 
+			+ SYMBOL + categoryLogBeanResult.getAdClass() + SYMBOL + categoryLogBeanResult.getClass24hUrl() + SYMBOL + categoryLogBeanResult.getClassRutenUrl()
+			+ SYMBOL + categoryLogBeanResult.getSource() + SYMBOL + categoryLogBeanResult.getSex() + SYMBOL + categoryLogBeanResult.getAge(); 
 			
 			
 			log.info(">>>>>> Mapper write key:" + result);

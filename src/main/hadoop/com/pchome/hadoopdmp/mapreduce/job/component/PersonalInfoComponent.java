@@ -31,9 +31,9 @@ public class PersonalInfoComponent {
 	Log log = LogFactory.getLog("PersonalInfoComponent");
 
 	// 處理個資元件
-	public CategoryLogBean processPersonalInfo(CategoryLogBean categoryLogBean ,MongoOperations mongoOperations) throws Exception {
-		String memid = categoryLogBean.getMemid();
-		String adClass = categoryLogBean.getAdClass();
+	public CategoryLogBean processPersonalInfo(CategoryLogBean dmpDataBean ,MongoOperations mongoOperations) throws Exception {
+		String memid = dmpDataBean.getMemid();
+		String adClass = dmpDataBean.getAdClass();
 
 		// 如有memid資料，先查mongo，再撈會員中心查個資
 		// 撈回mongo為NA也算已打過會員中心API，不再重打會員中心api
@@ -59,19 +59,19 @@ public class PersonalInfoComponent {
 					realPersonalData.set("user_info.mage", mage);
 					mongoOperations.updateFirst(new Query(Criteria.where("user_id").is(memid)), realPersonalData,"user_detail");
 					
-					categoryLogBean.setMsex("null");
-					categoryLogBean.setMage("null");
+					dmpDataBean.setMsex("null");
+					dmpDataBean.setMage("null");
 					
 					if ( (!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA")) ) {
-						categoryLogBean.setPersonalInfoApi("Y");
+						dmpDataBean.setPersonalInfoApi("Y");
 					} else {
-						categoryLogBean.setPersonalInfoApi("N");
+						dmpDataBean.setPersonalInfoApi("N");
 					}
 				}else{
 					// mongodb已有資料就跳過,包括NA (mongo user_detail結構中已有mage和msex)
-					categoryLogBean.setMsex("null");
-					categoryLogBean.setMage("null");
-					categoryLogBean.setPersonalInfoApi("Y");
+					dmpDataBean.setMsex("null");
+					dmpDataBean.setMage("null");
+					dmpDataBean.setPersonalInfoApi("Y");
 				}
 				
 			} else {
@@ -97,9 +97,9 @@ public class PersonalInfoComponent {
 				mongoOperations.save(hadoopUserDetailBean);
 				
 				if ( (!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA")) ) {
-					categoryLogBean.setPersonalInfoApi("Y");
+					dmpDataBean.setPersonalInfoApi("Y");
 				} else {
-					categoryLogBean.setPersonalInfoApi("N");
+					dmpDataBean.setPersonalInfoApi("N");
 				}
 			}
 		}
@@ -110,16 +110,16 @@ public class PersonalInfoComponent {
 		String sex = StringUtils.isNotBlank(forecastInfoMap.get("sex")) ? forecastInfoMap.get("sex") : "null";
 		String age = StringUtils.isNotBlank(forecastInfoMap.get("age")) ? forecastInfoMap.get("age") : "null";
 	
-		categoryLogBean.setSex(sex);
-		categoryLogBean.setAge(age);
+		dmpDataBean.setSex(sex);
+		dmpDataBean.setAge(age);
 		
 		if ( (!StringUtils.equals(age, "null")) && (!StringUtils.equals(sex, "null")) ) {
-			categoryLogBean.setPersonalInfo("Y");
+			dmpDataBean.setPersonalInfo("Y");
 		} else {
-			categoryLogBean.setPersonalInfo("N");
+			dmpDataBean.setPersonalInfo("N");
 		}
 
-		return categoryLogBean;
+		return dmpDataBean;
 	}
 	
 	

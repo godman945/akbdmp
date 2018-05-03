@@ -6,27 +6,27 @@ import java.util.Map;
 import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper.combinedValue;
 
 public class CategoryLogBean {
-	private String memid;
-	private String uuid;
-	private String adClass;
-	private String sex;
-	private String age;
-	private String recodeDate;
-	private String source;
-	private String type;
+	private String memid ;
+	private String uuid ;
+	private String adClass ;
+	private String sex ;
+	private String age ;
+	private String recodeDate ;
+	private String source ;
+	private String type ;
 	private Map<String, combinedValue> clsfyCraspMap;
 	private ArrayList<Map<String, String>> list;
-	private String msex;
-	private String mage;
-	private String url;
-	private String personalInfoApi;
-	private String personalInfo;
-	private String classAdClick;
-	private String class24hUrl;
-	private String classRutenUrl;
-	private String areaInfo;
-	private String deviceInfo;
-	private String devicePhoneInfo;
+	private String msex ;
+	private String mage ;
+	private String url ;
+	private String personalInfoApi ;
+	private String personalInfo ;
+	private String classAdClick ;
+	private String class24hUrl ;
+	private String classRutenUrl ;
+	private String areaInfo ;
+	private String deviceInfo ;
+	private String devicePhoneInfo ;
 
 	public String getType() {
 		return type;
