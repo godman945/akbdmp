@@ -38,8 +38,11 @@ public class PersonalInfoComponent {
 		// 如有memid資料，先查mongo，再撈會員中心查個資
 		// 撈回mongo為NA也算已打過會員中心API，不再重打會員中心api
 		if ((StringUtils.isNotBlank(memid)) && (!memid.equals("null"))) {
+			log.info(">>>>>> mongo 1");
 			Query queryUserInfo = new Query(Criteria.where(ClassCountMongoDBEnum.USER_ID.getKey()).is(memid));
+			log.info(">>>>>> mongo 2");
 			UserDetailMongoBean userDetailMongoBean = mongoOperations.findOne(queryUserInfo, UserDetailMongoBean.class);
+			log.info(">>>>>> mongo 3");
 			String msex = "";
 			String mage = "";
 			
