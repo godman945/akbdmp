@@ -208,6 +208,17 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			
 			//處理個資
 			categoryLogBeanResult = personalInfoComponent.processPersonalInfo(categoryLogBeanResult, mongoOperations);
+			
+			
+			log.info(">>>>>> debug:" + categoryLogBeanResult.getMemid());
+			log.info(">>>>>> debug:" + categoryLogBeanResult.getUuid());
+			log.info(">>>>>> debug:" + categoryLogBeanResult.getAdClass());
+			log.info(">>>>>> debug:" + categoryLogBeanResult.getUrl());
+			log.info(">>>>>> debug:" + categoryLogBeanResult.getClass24hUrl());
+			log.info(">>>>>> debug:" + categoryLogBeanResult.getClassRutenUrl());
+			log.info(">>>>>> debug:" + categoryLogBeanResult.getSource());
+			log.info(">>>>>> debug:" + categoryLogBeanResult.getSex());
+			log.info(">>>>>> debug:" + categoryLogBeanResult.getAge());
 							
 			
 			categoryLogBeanResult.setRecodeDate(record_date);
@@ -220,7 +231,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //							+ SYMBOL + categoryLogBeanResult.getSex() + SYMBOL + categoryLogBeanResult.getAge(); 
 			String memid = StringUtils.isBlank(categoryLogBeanResult.getMemid()) ? "null" : categoryLogBeanResult.getMemid();
 			String result = memid + SYMBOL + categoryLogBeanResult.getUuid() + SYMBOL + categoryLogBeanResult.getAdClass() + SYMBOL  + categoryLogBeanResult.getUrl() 
-			+ SYMBOL + categoryLogBeanResult.getAdClass() + SYMBOL + categoryLogBeanResult.getClass24hUrl() + SYMBOL + categoryLogBeanResult.getClassRutenUrl()
+			+ SYMBOL + categoryLogBeanResult.getClass24hUrl() + SYMBOL + categoryLogBeanResult.getClassRutenUrl()
 			+ SYMBOL + categoryLogBeanResult.getSource() + SYMBOL + categoryLogBeanResult.getSex() + SYMBOL + categoryLogBeanResult.getAge(); 
 			
 			
