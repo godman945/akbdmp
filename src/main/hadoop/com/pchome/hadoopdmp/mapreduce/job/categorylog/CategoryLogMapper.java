@@ -1,5 +1,7 @@
 package com.pchome.hadoopdmp.mapreduce.job.categorylog;
 
+import java.io.File;
+import java.net.InetAddress;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,7 +24,9 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Component;
 
+import com.maxmind.geoip2.DatabaseReader;
 import com.pchome.hadoopdmp.enumerate.CategoryLogEnum;
+import com.pchome.hadoopdmp.mapreduce.job.component.GeoIp;
 import com.pchome.hadoopdmp.mapreduce.job.component.PersonalInfoComponent;
 import com.pchome.hadoopdmp.mapreduce.job.factory.ACategoryLogData;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryCodeBean;
@@ -48,8 +52,10 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public static List<CategoryCodeBean> category24hBeanList = new ArrayList<CategoryCodeBean>();				 //24H分類表
 	public static List<CategoryRutenCodeBean> categoryRutenBeanList = new ArrayList<CategoryRutenCodeBean>();	 //Ruten分類表
 	public static PersonalInfoComponent personalInfoComponent = new PersonalInfoComponent();
+	public static GeoIp geoIp = new GeoIp();
 	private MongoOperations mongoOperations;
-	
+	public static DatabaseReader reader = null;
+	public static InetAddress ipAddress = null;
 
 	@Override
 	public void setup(Context context) {
@@ -126,6 +132,10 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				categoryRutenBeanList.add(categoryRutenBean);
 			}
 			
+			//IP轉城市
+			File database = new File(path[5].toString());
+			reader = new DatabaseReader.Builder(database).build();  
+			
 			
 		} catch (Exception e) {
 			log.info("Mapper  setup Exception: "+e.getMessage());
@@ -156,8 +166,9 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				}
 				dmpDataBean.setMemid(values[1]);
 				dmpDataBean.setUuid(values[2]);
-				dmpDataBean.setUrl(values[4]);
 				dmpDataBean.setAdClass(values[15]);
+				dmpDataBean.setUrl(values[4]);
+				dmpDataBean.setIp(values[3]);
 				dmpDataBean.setSource(values[13]);
 				log.info(">>>>>> kdcl rawdata:" + valueStr);
 				
@@ -180,6 +191,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				 dmpDataBean.setUuid(values[1]);
 				 dmpDataBean.setAdClass(values[2]);
 				 dmpDataBean.setUrl("");
+				 dmpDataBean.setIp(values[6]);
 				 dmpDataBean.setSource("campaign");
 				 log.info(">>>>>> campaige rawdata:" + valueStr);
 				 
@@ -225,6 +237,9 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			//處理個資
 			categoryLogBeanResult = personalInfoComponent.processPersonalInfo(categoryLogBeanResult, mongoOperations);
 			
+			//ip 轉國家、城市
+			categoryLogBeanResult = geoIp.ipTransformGEO(categoryLogBeanResult, mongoOperations);
+			
 			
 			categoryLogBeanResult.setRecodeDate(record_date);
 			// 0:Memid + 1:Uuid + 2:AdClass + 3.URL +
@@ -238,7 +253,8 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			String result = memid + SYMBOL + categoryLogBeanResult.getUuid() + SYMBOL + categoryLogBeanResult.getAdClass() + SYMBOL  + categoryLogBeanResult.getUrl() 
 			+ SYMBOL + categoryLogBeanResult.getClass24hUrl() + SYMBOL + categoryLogBeanResult.getClassRutenUrl()
 			+ SYMBOL + categoryLogBeanResult.getSource() + SYMBOL + categoryLogBeanResult.getSex() + SYMBOL + categoryLogBeanResult.getAge()
-			+ SYMBOL + categoryLogBeanResult.getMsex() + SYMBOL + categoryLogBeanResult.getMage(); 
+			+ SYMBOL + categoryLogBeanResult.getMsex() + SYMBOL + categoryLogBeanResult.getMage()
+			+ SYMBOL + categoryLogBeanResult.getAreaInfo() + SYMBOL + categoryLogBeanResult.getCountry() + SYMBOL + categoryLogBeanResult.getCity(); 
 			
 			log.info(">>>>>> Mapper write key:" + result);
 			

@@ -14,11 +14,14 @@ public class CategoryLogBean {
 	private String recodeDate ;
 	private String source ;
 	private String type ;
+	private String country ;
+	private String city ;
 	private Map<String, combinedValue> clsfyCraspMap;
 	private ArrayList<Map<String, String>> list;
 	private String msex ;
 	private String mage ;
 	private String url ;
+	private String ip ;
 	private String personalInfoApi ;
 	private String personalInfo ;
 	private String classAdClick ;
@@ -34,6 +37,22 @@ public class CategoryLogBean {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+	
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
 	}
 
 	public String getMemid() {
@@ -130,6 +149,14 @@ public class CategoryLogBean {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+	
+	public String getIp() {
+		return ip;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
 	}
 
 	public String getPersonalInfoApi() {
