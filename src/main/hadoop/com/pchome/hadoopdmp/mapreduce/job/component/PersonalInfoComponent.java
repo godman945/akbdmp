@@ -38,25 +38,15 @@ public class PersonalInfoComponent {
 		// 如有memid資料，先查mongo，再撈會員中心查個資
 		// 撈回mongo為NA也算已打過會員中心API，不再重打會員中心api
 		if ((StringUtils.isNotBlank(memid)) && (!memid.equals("null"))) {
-			log.info(">>>>>> mongo 1");
 			Query queryUserInfo = new Query(Criteria.where(ClassCountMongoDBEnum.USER_ID.getKey()).is(memid));
-			log.info(">>>>>> mongo 2");
 			UserDetailMongoBean userDetailMongoBean = mongoOperations.findOne(queryUserInfo, UserDetailMongoBean.class);
-			log.info(">>>>>> mongo 3");
 			String msex = "";
 			String mage = "";
-			
-			log.info(">>>>>> person 1");
-			
 			if (userDetailMongoBean != null) {
 				// 查看user_detail結構中有無mage和msex
 				Map<String, Object> userInfoMap = new HashMap<String, Object>();
 				userInfoMap = userDetailMongoBean.getUser_info();
 				if ((userInfoMap.get("mage") == null) || (userInfoMap.get("msex") == null)) {
-					
-					log.info(">>>>>> person 2");
-					
-					
 					// 沒有資料空的打會員中心 API
 					// 會員中心有資料寫回 mogodb msex mage 
 					// 會員中心沒有資料寫入 NA
@@ -78,20 +68,12 @@ public class PersonalInfoComponent {
 						dmpDataBean.setPersonalInfoApi("N");
 					}
 				}else{
-					log.info(">>>>>> person 3");
-					
-					
 					// mongodb已有資料就跳過,包括NA (mongo user_detail結構中已有mage和msex)
 					dmpDataBean.setMsex("null");
 					dmpDataBean.setMage("null");
 					dmpDataBean.setPersonalInfoApi("Y");
 				}
-				
 			} else {
-				
-				log.info(">>>>>> person 4");
-				
-				
 				// mongo尚未新增user_detail，直接新增一筆mongo資料，塞會員中心打回來的性別、年齡(空的轉成NA寫入)
 				Map<String, Object> memberInfoMap = findMemberInfoAPI(memid);
 				msex = (String) memberInfoMap.get("msex");
@@ -121,16 +103,10 @@ public class PersonalInfoComponent {
 			}
 		}
 		
-		log.info(">>>>>> person 5");
-		
-		
 		// 讀取ClsfyGndAgeCrspTable.txt做age、sex個資推估
 		Map<String, String> forecastInfoMap = forecastPersonalInfo(adClass);
-		log.info("adClass 1 :"+adClass);
 		String sex = StringUtils.isNotBlank(forecastInfoMap.get("sex")) ? forecastInfoMap.get("sex") : "null";
-		log.info("sex  1 :"+sex);
 		String age = StringUtils.isNotBlank(forecastInfoMap.get("age")) ? forecastInfoMap.get("age") : "null";
-		log.info("age 1 :"+age);
 		
 		dmpDataBean.setSex(sex);
 		dmpDataBean.setAge(age);
@@ -140,9 +116,6 @@ public class PersonalInfoComponent {
 		} else {
 			dmpDataBean.setPersonalInfo("N");
 		}
-
-		log.info(">>>>>> person 6");
-		
 		return dmpDataBean;
 	}
 	
@@ -150,18 +123,9 @@ public class PersonalInfoComponent {
 	
 	public Map<String, String> forecastPersonalInfo(String adClass) throws Exception {
 		combinedValue combineObj = CategoryLogMapper.clsfyCraspMap.get(adClass);
-		log.info("forecast  combineObj 1 :"+combineObj);
-		
-		
 		String sex = (combineObj != null) ? combineObj.gender : "";
-		log.info("forecast sex  1 :"+sex);
-		
-		
 		String age = (combineObj != null) ? combineObj.age : "";
-		log.info("forecast age  1 :"+age);
-		
-		
-		
+
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("sex", sex);
 		map.put("age", age);
@@ -233,7 +197,6 @@ public class PersonalInfoComponent {
 		} catch (Exception e) {
 			log.error("findMemberInfoAPI Error : " + e.getMessage());
 		}
-
 		return sb.toString();
 	}
 }

@@ -226,17 +226,6 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			categoryLogBeanResult = personalInfoComponent.processPersonalInfo(categoryLogBeanResult, mongoOperations);
 			
 			
-			log.info(">>>>>> debug:" + categoryLogBeanResult.getMemid());
-			log.info(">>>>>> debug:" + categoryLogBeanResult.getUuid());
-			log.info(">>>>>> debug:" + categoryLogBeanResult.getAdClass());
-			log.info(">>>>>> debug:" + categoryLogBeanResult.getUrl());
-			log.info(">>>>>> debug:" + categoryLogBeanResult.getClass24hUrl());
-			log.info(">>>>>> debug:" + categoryLogBeanResult.getClassRutenUrl());
-			log.info(">>>>>> debug:" + categoryLogBeanResult.getSource());
-			log.info(">>>>>> debug:" + categoryLogBeanResult.getSex());
-			log.info(">>>>>> debug:" + categoryLogBeanResult.getAge());
-							
-			
 			categoryLogBeanResult.setRecodeDate(record_date);
 			// 0:Memid + 1:Uuid + 2:AdClass + 3.URL +
 			// 4.Source + 5.MSex(會員中心性別) + 6.MAge(會員中心年齡) 
@@ -248,8 +237,8 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			String memid = StringUtils.isBlank(categoryLogBeanResult.getMemid()) ? "null" : categoryLogBeanResult.getMemid();
 			String result = memid + SYMBOL + categoryLogBeanResult.getUuid() + SYMBOL + categoryLogBeanResult.getAdClass() + SYMBOL  + categoryLogBeanResult.getUrl() 
 			+ SYMBOL + categoryLogBeanResult.getClass24hUrl() + SYMBOL + categoryLogBeanResult.getClassRutenUrl()
-			+ SYMBOL + categoryLogBeanResult.getSource() + SYMBOL + categoryLogBeanResult.getSex() + SYMBOL + categoryLogBeanResult.getAge(); 
-			
+			+ SYMBOL + categoryLogBeanResult.getSource() + SYMBOL + categoryLogBeanResult.getSex() + SYMBOL + categoryLogBeanResult.getAge()
+			+ SYMBOL + categoryLogBeanResult.getMsex() + SYMBOL + categoryLogBeanResult.getMage(); 
 			
 			log.info(">>>>>> Mapper write key:" + result);
 			
@@ -260,7 +249,6 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			log.error(">>>>>> " + e);
 			log.error(">>>>>> " + e.getMessage());
 		}
-
 	}
 	
 
