@@ -26,7 +26,8 @@ import org.springframework.stereotype.Component;
 
 import com.maxmind.geoip2.DatabaseReader;
 import com.pchome.hadoopdmp.enumerate.CategoryLogEnum;
-import com.pchome.hadoopdmp.mapreduce.job.component.GeoIp;
+import com.pchome.hadoopdmp.mapreduce.job.component.DateTimeComponent;
+import com.pchome.hadoopdmp.mapreduce.job.component.GeoIpComponent;
 import com.pchome.hadoopdmp.mapreduce.job.component.PersonalInfoComponent;
 import com.pchome.hadoopdmp.mapreduce.job.factory.ACategoryLogData;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryCodeBean;
@@ -52,7 +53,8 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public static List<CategoryCodeBean> category24hBeanList = new ArrayList<CategoryCodeBean>();				 //24H分類表
 	public static List<CategoryRutenCodeBean> categoryRutenBeanList = new ArrayList<CategoryRutenCodeBean>();	 //Ruten分類表
 	public static PersonalInfoComponent personalInfoComponent = new PersonalInfoComponent();
-	public static GeoIp geoIp = new GeoIp();
+	public static GeoIpComponent geoIpComponent = new GeoIpComponent();
+	public static DateTimeComponent dateTimeComponent = new DateTimeComponent();
 	private MongoOperations mongoOperations;
 	public static DatabaseReader reader = null;
 	public static InetAddress ipAddress = null;
@@ -153,6 +155,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			String valueStr = value.toString();
 			if ( valueStr.indexOf(SYMBOL) > -1 ){	//kdcl log
 				//kdcl log	raw data格式
+				// values[0]  date time (2018-01-04 04:57:12)
 				// values[1]  memid
 				// values[2]  uuid
 				// values[3]  ip
@@ -169,9 +172,9 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				dmpDataBean.setAdClass(values[15]);
 				dmpDataBean.setUrl(values[4]);
 				dmpDataBean.setIp(values[3]);
+				dmpDataBean.setDateTime(values[0]);
 				dmpDataBean.setSource(values[13]);
 				log.info(">>>>>> kdcl rawdata:" + valueStr);
-				
 			}else if( valueStr.indexOf(",") > -1 ){	//campaign log
 				//Campaign log raw data格式
 				// values[0] memid			會員帳號
@@ -181,7 +184,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				// values[4] age			年齡
 				// values[5] sex			性別(F|M)
 				// values[6] ip_area		地區(台北市 or 空字串)
-				// values[7] record_date	紀錄日期(yyyy-MM-dd)
+				// values[7] record_date	紀錄日期(2018-04-27)
 				// values[8] Over_write		是否覆寫(true|false)
 				String[] values = valueStr.toString().split(",");
 				 if (values.length < 9) {
@@ -192,9 +195,9 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				 dmpDataBean.setAdClass(values[2]);
 				 dmpDataBean.setUrl("");
 				 dmpDataBean.setIp(values[6]);
+				 dmpDataBean.setDateTime(values[7]);
 				 dmpDataBean.setSource("campaign");
 				 log.info(">>>>>> campaige rawdata:" + valueStr);
-				 
 			}else{
 				 return;
 			}
@@ -238,7 +241,12 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			categoryLogBeanResult = personalInfoComponent.processPersonalInfo(categoryLogBeanResult, mongoOperations);
 			
 			//ip 轉國家、城市
-			categoryLogBeanResult = geoIp.ipTransformGEO(categoryLogBeanResult, mongoOperations);
+			categoryLogBeanResult = geoIpComponent.ipTransformGEO(categoryLogBeanResult);
+			
+			//日期時間字串轉成小時			
+			categoryLogBeanResult = dateTimeComponent.datetimeTransformHour(categoryLogBeanResult);
+			
+			
 			
 			
 			categoryLogBeanResult.setRecodeDate(record_date);
@@ -254,7 +262,8 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			+ SYMBOL + categoryLogBeanResult.getClass24hUrl() + SYMBOL + categoryLogBeanResult.getClassRutenUrl()
 			+ SYMBOL + categoryLogBeanResult.getSource() + SYMBOL + categoryLogBeanResult.getSex() + SYMBOL + categoryLogBeanResult.getAge()
 			+ SYMBOL + categoryLogBeanResult.getMsex() + SYMBOL + categoryLogBeanResult.getMage()
-			+ SYMBOL + categoryLogBeanResult.getAreaInfo() + SYMBOL + categoryLogBeanResult.getCountry() + SYMBOL + categoryLogBeanResult.getCity(); 
+			+ SYMBOL + categoryLogBeanResult.getAreaInfo() + SYMBOL + categoryLogBeanResult.getCountry() + SYMBOL + categoryLogBeanResult.getCity()
+			+ SYMBOL + categoryLogBeanResult.getDateTime();
 			
 			log.info(">>>>>> Mapper write key:" + result);
 			

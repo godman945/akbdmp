@@ -5,20 +5,17 @@ import java.net.InetAddress;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.data.mongodb.core.MongoOperations;
 
 import com.maxmind.geoip2.model.CityResponse;
-import com.maxmind.geoip2.record.City;
-import com.maxmind.geoip2.record.Country;
 import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper;
 import com.pchome.hadoopdmp.mapreduce.job.component.IpAddress.IpAdd;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryLogBean;
 
-public class GeoIp {
+public class GeoIpComponent {
 
 	Log log = LogFactory.getLog("GeoIp");
 
-	public CategoryLogBean ipTransformGEO(CategoryLogBean dmpDataBean, MongoOperations mongoOperations) throws Exception {
+	public CategoryLogBean ipTransformGEO(CategoryLogBean dmpDataBean) throws Exception {
 		String ip = dmpDataBean.getIp();
 		String countryStr = "";
 		String cityStr = "";

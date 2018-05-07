@@ -22,6 +22,7 @@ public class CategoryLogBean {
 	private String mage ;
 	private String url ;
 	private String ip ;
+	private String dateTime ;
 	private String personalInfoApi ;
 	private String personalInfo ;
 	private String classAdClick ;
@@ -157,6 +158,14 @@ public class CategoryLogBean {
 
 	public void setIp(String ip) {
 		this.ip = ip;
+	}
+	
+	public String getDateTime() {
+		return dateTime;
+	}
+
+	public void setDateTime(String dateTime) {
+		this.dateTime = dateTime;
 	}
 
 	public String getPersonalInfoApi() {
