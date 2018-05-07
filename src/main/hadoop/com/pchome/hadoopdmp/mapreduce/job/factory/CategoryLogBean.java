@@ -22,6 +22,7 @@ public class CategoryLogBean {
 	private String mage ;
 	private String url ;
 	private String ip ;
+	private String userAgent ;
 	private String dateTime ;
 	private String personalInfoApi ;
 	private String personalInfo ;
@@ -31,6 +32,8 @@ public class CategoryLogBean {
 	private String areaInfo ;
 	private String deviceInfo ;
 	private String devicePhoneInfo ;
+	private String deviceOsInfo ;
+	private String deviceBrowserInfo;
 
 	public String getType() {
 		return type;
@@ -160,6 +163,14 @@ public class CategoryLogBean {
 		this.ip = ip;
 	}
 	
+	public String getUserAgent() {
+		return userAgent;
+	}
+
+	public void setUserAgent(String userAgent) {
+		this.userAgent = userAgent;
+	}
+
 	public String getDateTime() {
 		return dateTime;
 	}
@@ -230,6 +241,22 @@ public class CategoryLogBean {
 
 	public void setDevicePhoneInfo(String devicePhoneInfo) {
 		this.devicePhoneInfo = devicePhoneInfo;
+	}
+
+	public String getDeviceOsInfo() {
+		return deviceOsInfo;
+	}
+
+	public void setDeviceOsInfo(String deviceOsInfo) {
+		this.deviceOsInfo = deviceOsInfo;
+	}
+
+	public String getDeviceBrowserInfo() {
+		return deviceBrowserInfo;
+	}
+
+	public void setDeviceBrowserInfo(String deviceBrowserInfo) {
+		this.deviceBrowserInfo = deviceBrowserInfo;
 	}
 	
 }

@@ -27,6 +27,7 @@ import org.springframework.stereotype.Component;
 import com.maxmind.geoip2.DatabaseReader;
 import com.pchome.hadoopdmp.enumerate.CategoryLogEnum;
 import com.pchome.hadoopdmp.mapreduce.job.component.DateTimeComponent;
+import com.pchome.hadoopdmp.mapreduce.job.component.DeviceComponent;
 import com.pchome.hadoopdmp.mapreduce.job.component.GeoIpComponent;
 import com.pchome.hadoopdmp.mapreduce.job.component.PersonalInfoComponent;
 import com.pchome.hadoopdmp.mapreduce.job.factory.ACategoryLogData;
@@ -55,6 +56,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public static PersonalInfoComponent personalInfoComponent = new PersonalInfoComponent();
 	public static GeoIpComponent geoIpComponent = new GeoIpComponent();
 	public static DateTimeComponent dateTimeComponent = new DateTimeComponent();
+	public static DeviceComponent deviceComponent = new DeviceComponent();
 	private MongoOperations mongoOperations;
 	public static DatabaseReader reader = null;
 	public static InetAddress ipAddress = null;
@@ -172,6 +174,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				dmpDataBean.setAdClass(values[15]);
 				dmpDataBean.setUrl(values[4]);
 				dmpDataBean.setIp(values[3]);
+				dmpDataBean.setUserAgent(values[5]);
 				dmpDataBean.setDateTime(values[0]);
 				dmpDataBean.setSource(values[13]);
 				log.info(">>>>>> kdcl rawdata:" + valueStr);
@@ -195,6 +198,7 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				 dmpDataBean.setAdClass(values[2]);
 				 dmpDataBean.setUrl("");
 				 dmpDataBean.setIp(values[6]);
+				 dmpDataBean.setUserAgent("");
 				 dmpDataBean.setDateTime(values[7]);
 				 dmpDataBean.setSource("campaign");
 				 log.info(">>>>>> campaige rawdata:" + valueStr);
@@ -222,30 +226,32 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 
 			CategoryLogBean categoryLogBeanResult = null;
 			
+			//地區處理元件(ip 轉國家、城市)
+			categoryLogBeanResult = geoIpComponent.ipTransformGEO(dmpDataBean);
+			
+			//時間處理元件(日期時間字串轉成小時)			
+			categoryLogBeanResult = dateTimeComponent.datetimeTransformHour(categoryLogBeanResult);
+			
+			//裝置處理元件
+			categoryLogBeanResult = deviceComponent.parseUserAgentToDevice(categoryLogBeanResult);
+			
+			
 			//分析click、24H、Ruten、campaign分類 
-			if ( (dmpDataBean.getSource().equals("ck")||dmpDataBean.getSource().equals("campaign")) && StringUtils.isNotBlank(dmpDataBean.getAdClass())) {	// kdcl log的ad_click 或 campaign log的adclass 
+			if ( (categoryLogBeanResult.getSource().equals("ck")||categoryLogBeanResult.getSource().equals("campaign")) && StringUtils.isNotBlank(categoryLogBeanResult.getAdClass())) {	// kdcl log的ad_click 或 campaign log的adclass 
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
-				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(dmpDataBean, mongoOperations);
-			}else if (dmpDataBean.getSource().equals("pv") && StringUtils.isNotBlank(dmpDataBean.getUrl()) && dmpDataBean.getUrl().contains("ruten")) {	// 露天
+				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(categoryLogBeanResult, mongoOperations);
+			}else if (categoryLogBeanResult.getSource().equals("pv") && StringUtils.isNotBlank(categoryLogBeanResult.getUrl()) && categoryLogBeanResult.getUrl().contains("ruten")) {	// 露天
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
-				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(dmpDataBean, mongoOperations);
-			}else if (dmpDataBean.getSource().equals("pv") && StringUtils.isNotBlank(dmpDataBean.getUrl()) && dmpDataBean.getUrl().contains("24h")) {		// 24h
+				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(categoryLogBeanResult, mongoOperations);
+			}else if (categoryLogBeanResult.getSource().equals("pv") && StringUtils.isNotBlank(categoryLogBeanResult.getUrl()) && categoryLogBeanResult.getUrl().contains("24h")) {		// 24h
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
-				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(dmpDataBean, mongoOperations);
+				categoryLogBeanResult = (CategoryLogBean) aCategoryLogData.processCategory(categoryLogBeanResult, mongoOperations);
 			}else{
 				return;
 			}
 			
-			
 			//處理個資
 			categoryLogBeanResult = personalInfoComponent.processPersonalInfo(categoryLogBeanResult, mongoOperations);
-			
-			//ip 轉國家、城市
-			categoryLogBeanResult = geoIpComponent.ipTransformGEO(categoryLogBeanResult);
-			
-			//日期時間字串轉成小時			
-			categoryLogBeanResult = dateTimeComponent.datetimeTransformHour(categoryLogBeanResult);
-			
 			
 			
 			
@@ -263,7 +269,9 @@ public class CategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			+ SYMBOL + categoryLogBeanResult.getSource() + SYMBOL + categoryLogBeanResult.getSex() + SYMBOL + categoryLogBeanResult.getAge()
 			+ SYMBOL + categoryLogBeanResult.getMsex() + SYMBOL + categoryLogBeanResult.getMage()
 			+ SYMBOL + categoryLogBeanResult.getAreaInfo() + SYMBOL + categoryLogBeanResult.getCountry() + SYMBOL + categoryLogBeanResult.getCity()
-			+ SYMBOL + categoryLogBeanResult.getDateTime();
+			+ SYMBOL + categoryLogBeanResult.getDateTime()
+			+ SYMBOL + categoryLogBeanResult.getDeviceInfo()+ SYMBOL + categoryLogBeanResult.getDevicePhoneInfo()+ SYMBOL + categoryLogBeanResult.getDeviceOsInfo()+ SYMBOL + categoryLogBeanResult.getDeviceBrowserInfo();
+			
 			
 			log.info(">>>>>> Mapper write key:" + result);
 			
