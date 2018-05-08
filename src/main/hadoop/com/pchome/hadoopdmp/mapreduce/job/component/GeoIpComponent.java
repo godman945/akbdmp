@@ -7,15 +7,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.maxmind.geoip2.model.CityResponse;
-import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper;
 import com.pchome.hadoopdmp.mapreduce.job.component.IpAddress.IpAdd;
-import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryLogBean;
+import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper;
+import com.pchome.hadoopdmp.mapreduce.job.factory.DmpLogBean;
 
 public class GeoIpComponent {
 
-	Log log = LogFactory.getLog("GeoIp");
+	Log log = LogFactory.getLog("GeoIpComponent");
 
-	public CategoryLogBean ipTransformGEO(CategoryLogBean dmpDataBean) throws Exception {
+	public DmpLogBean ipTransformGEO(DmpLogBean dmpDataBean) throws Exception {
 		String ip = dmpDataBean.getIp();
 		String countryStr = "";
 		String cityStr = "";
@@ -31,9 +31,9 @@ public class GeoIpComponent {
 
 		// ip轉換國家、城市
 		CityResponse response = null;
-		InetAddress ipAddress = CategoryLogMapper.ipAddress.getByName(ip);
+		InetAddress ipAddress = DmpLogMapper.ipAddress.getByName(ip);
 		try {
-			response = CategoryLogMapper.reader.city(ipAddress);
+			response = DmpLogMapper.reader.city(ipAddress);
 		} catch (Exception e) {
 			System.out.println("The address is not in the database");
 		}

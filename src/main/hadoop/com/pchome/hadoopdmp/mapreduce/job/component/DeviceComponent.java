@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryLogBean;
+import com.pchome.hadoopdmp.mapreduce.job.factory.DmpLogBean;
 
 import eu.bitwalker.useragentutils.Browser;
 import eu.bitwalker.useragentutils.OperatingSystem;
@@ -14,7 +14,7 @@ public class DeviceComponent {
 
 	Log log = LogFactory.getLog("DeviceComponent");
 
-	public CategoryLogBean parseUserAgentToDevice(CategoryLogBean dmpDataBean) throws Exception {
+	public DmpLogBean parseUserAgentToDevice(DmpLogBean dmpDataBean) throws Exception {
 		
 		if (StringUtils.isBlank(dmpDataBean.getUserAgent())){
 			dmpDataBean.setDeviceInfo("null");

@@ -17,12 +17,12 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
 import com.pchome.hadoopdmp.data.mongo.pojo.ClassUrlMongoBean;
-import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper;
+import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper;
 
 @SuppressWarnings({ "unchecked"})
 public class AdRutenLog extends ACategoryLogData {
 
-	public Object processCategory(CategoryLogBean dmpDataBean, MongoOperations mongoOperations) throws Exception {
+	public Object processCategory(DmpLogBean dmpDataBean, MongoOperations mongoOperations) throws Exception {
 		
 		String memid = dmpDataBean.getMemid();
 		String uuid = dmpDataBean.getUuid();
@@ -112,7 +112,7 @@ public class AdRutenLog extends ACategoryLogData {
 					
 					//比對爬蟲回來的分類，由最底層分類開始比對Ruten分類表
 					String[] breadcrumbAry = breadcrumbResult.split(">");
-					List<CategoryRutenCodeBean> categoryRutenList = CategoryLogMapper.categoryRutenBeanList;
+					List<CategoryRutenCodeBean> categoryRutenList = DmpLogMapper.categoryRutenBeanList;
 					boolean hasCategory = false;
 					
 					for(int i = breadcrumbAry.length-1; i >=0; i--){

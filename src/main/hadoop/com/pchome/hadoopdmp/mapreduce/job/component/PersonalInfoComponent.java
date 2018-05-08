@@ -22,16 +22,16 @@ import com.jayway.jsonpath.JsonPath;
 import com.pchome.akbdmp.api.data.enumeration.ClassCountMongoDBEnum;
 import com.pchome.hadoopdmp.data.mongo.pojo.UserDetailMongoBean;
 import com.pchome.hadoopdmp.data.mongo.pojo.UserDetailMongoBeanForHadoop;
-import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper;
-import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper.combinedValue;
-import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryLogBean;
+import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper;
+import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper.combinedValue;
+import com.pchome.hadoopdmp.mapreduce.job.factory.DmpLogBean;
 
 public class PersonalInfoComponent {
 	
 	Log log = LogFactory.getLog("PersonalInfoComponent");
 
 	// 處理個資元件
-	public CategoryLogBean processPersonalInfo(CategoryLogBean dmpDataBean ,MongoOperations mongoOperations) throws Exception {
+	public DmpLogBean processPersonalInfo(DmpLogBean dmpDataBean ,MongoOperations mongoOperations) throws Exception {
 		String memid = dmpDataBean.getMemid();
 		String adClass = dmpDataBean.getAdClass();
 
@@ -122,7 +122,7 @@ public class PersonalInfoComponent {
 	
 	
 	public Map<String, String> forecastPersonalInfo(String adClass) throws Exception {
-		combinedValue combineObj = CategoryLogMapper.clsfyCraspMap.get(adClass);
+		combinedValue combineObj = DmpLogMapper.clsfyCraspMap.get(adClass);
 		String sex = (combineObj != null) ? combineObj.gender : "";
 		String age = (combineObj != null) ? combineObj.age : "";
 

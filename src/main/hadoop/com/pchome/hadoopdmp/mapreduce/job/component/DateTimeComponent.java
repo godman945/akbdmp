@@ -6,13 +6,13 @@ import java.text.SimpleDateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryLogBean;
+import com.pchome.hadoopdmp.mapreduce.job.factory.DmpLogBean;
 
 public class DateTimeComponent {
 
 	Log log = LogFactory.getLog("DateTimeComponent");
 
-	public CategoryLogBean datetimeTransformHour(CategoryLogBean dmpDataBean) throws Exception {
+	public DmpLogBean datetimeTransformHour(DmpLogBean dmpDataBean) throws Exception {
 		String dateTime = dmpDataBean.getDateTime();
 		boolean date = isValidDate(dateTime);
 		

@@ -11,12 +11,12 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
 import com.pchome.hadoopdmp.data.mongo.pojo.ClassUrlMongoBean;
-import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper;
+import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper;
 
 
 public class Ad24HLog extends ACategoryLogData {
 
-	public Object processCategory(CategoryLogBean dmpDataBean, MongoOperations mongoOperations) throws Exception {
+	public Object processCategory(DmpLogBean dmpDataBean, MongoOperations mongoOperations) throws Exception {
 		
 		String memid = dmpDataBean.getMemid();
 		String uuid = dmpDataBean.getUuid();
@@ -32,7 +32,7 @@ public class Ad24HLog extends ACategoryLogData {
 			return dmpDataBean;
 		}
 		
-		List<CategoryCodeBean> list = CategoryLogMapper.category24hBeanList;
+		List<CategoryCodeBean> list = DmpLogMapper.category24hBeanList;
 		for (CategoryCodeBean categoryBean : list) {
 			if(sourceUrl.indexOf(categoryBean.getEnglishCode()) != -1){
 				adClass = categoryBean.getNumberCode();
@@ -104,8 +104,6 @@ public class Ad24HLog extends ACategoryLogData {
 		}
 		
 		
-//		dmpDataBean.setMemid(memid);
-//		dmpDataBean.setUuid(uuid);
 		dmpDataBean.setAdClass(adClass);
 		dmpDataBean.setClass24hUrl(class24hUrl);
 		dmpDataBean.setSource("24h");

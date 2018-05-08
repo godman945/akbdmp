@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 @SuppressWarnings({ "unchecked", "deprecation" ,"static-access","resource"})
 public class AdClickLog extends ACategoryLogData {
 
-	public Object processCategory(CategoryLogBean dmpDataBean, MongoOperations mongoOperations) throws Exception {
+	public Object processCategory(DmpLogBean dmpDataBean, MongoOperations mongoOperations) throws Exception {
 		
 		String adClass = dmpDataBean.getAdClass();
 		
@@ -15,9 +15,6 @@ public class AdClickLog extends ACategoryLogData {
 		
 		dmpDataBean.setAdClass(adClass);
 		dmpDataBean.setClassAdClick("Y");
-//		dmpDataBean.setMemid(memid);
-//		dmpDataBean.setUuid(uuid);
-//		dmpDataBean.setSource(dmpDataBean.getSource());
 		
 		return dmpDataBean;
 	}
