@@ -207,51 +207,53 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			}
 			
 
-			DmpLogBean categoryLogBeanResult = null;
+			DmpLogBean dmpLogBeanResult = null;
 			
 			//地區處理元件(ip 轉國家、城市)
-			categoryLogBeanResult = geoIpComponent.ipTransformGEO(dmpDataBean);
+			dmpLogBeanResult = geoIpComponent.ipTransformGEO(dmpDataBean);
 			
 			//時間處理元件(日期時間字串轉成小時)			
-			categoryLogBeanResult = dateTimeComponent.datetimeTransformHour(categoryLogBeanResult);
+			dmpLogBeanResult = dateTimeComponent.datetimeTransformHour(dmpLogBeanResult);
 			
 			//裝置處理元件
-			categoryLogBeanResult = deviceComponent.parseUserAgentToDevice(categoryLogBeanResult);
+			dmpLogBeanResult = deviceComponent.parseUserAgentToDevice(dmpLogBeanResult);
 			
 			
 			//分析click、24H、Ruten、campaign分類 
-			if ( (categoryLogBeanResult.getSource().equals("ck")||categoryLogBeanResult.getSource().equals("campaign")) && StringUtils.isNotBlank(categoryLogBeanResult.getAdClass())) {	// kdcl log的ad_click 或 campaign log的adclass 
+			if ( (dmpLogBeanResult.getSource().equals("ck")||dmpLogBeanResult.getSource().equals("campaign")) && StringUtils.isNotBlank(dmpLogBeanResult.getAdClass())) {	// kdcl log的ad_click 或 campaign log的adclass 
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
-				categoryLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(categoryLogBeanResult, mongoOperations);
-			}else if (categoryLogBeanResult.getSource().equals("pv") && StringUtils.isNotBlank(categoryLogBeanResult.getUrl()) && categoryLogBeanResult.getUrl().contains("ruten")) {	// 露天
+				dmpLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(dmpLogBeanResult, mongoOperations);
+			}else if (dmpLogBeanResult.getSource().equals("pv") && StringUtils.isNotBlank(dmpLogBeanResult.getUrl()) && dmpLogBeanResult.getUrl().contains("ruten")) {	// 露天
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
-				categoryLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(categoryLogBeanResult, mongoOperations);
-			}else if (categoryLogBeanResult.getSource().equals("pv") && StringUtils.isNotBlank(categoryLogBeanResult.getUrl()) && categoryLogBeanResult.getUrl().contains("24h")) {		// 24h
+				dmpLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(dmpLogBeanResult, mongoOperations);
+			}else if (dmpLogBeanResult.getSource().equals("pv") && StringUtils.isNotBlank(dmpLogBeanResult.getUrl()) && dmpLogBeanResult.getUrl().contains("24h")) {		// 24h
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
-				categoryLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(categoryLogBeanResult, mongoOperations);
+				dmpLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(dmpLogBeanResult, mongoOperations);
 			}else{
 				return;
 			}
 			
 			//處理個資
-			categoryLogBeanResult = personalInfoComponent.processPersonalInfo(categoryLogBeanResult, mongoOperations);
+			dmpLogBeanResult = personalInfoComponent.processPersonalInfo(dmpLogBeanResult, mongoOperations);
 			
 			
 			
-			categoryLogBeanResult.setRecodeDate(record_date);
-			// 0:Memid + 1:Uuid + 2:AdClass + 3.URL +
-			// 4.Source + 5.MSex(會員中心性別) + 6.MAge(會員中心年齡) 
-			// 7.PersonalInfoMemberApiClassify(打會員api是否有完整個資 Y/N) + 8.Sex(推估性別) + 9.Age(推估年齡) +
-			// 10.PersonalInfoClassify(依adClass比對分類年齡性別對應表ClsfyGndAgeCrspTable，是否有完整的推估個資 Y/N)
-			String memid = StringUtils.isBlank(categoryLogBeanResult.getMemid()) ? "null" : categoryLogBeanResult.getMemid();
-			String result = memid + SYMBOL + categoryLogBeanResult.getUuid() + SYMBOL + categoryLogBeanResult.getAdClass() + SYMBOL  + categoryLogBeanResult.getUrl() 
-			+ SYMBOL + categoryLogBeanResult.getClass24hUrl() + SYMBOL + categoryLogBeanResult.getClassRutenUrl()
-			+ SYMBOL + categoryLogBeanResult.getSource() + SYMBOL + categoryLogBeanResult.getSex() + SYMBOL + categoryLogBeanResult.getAge()
-			+ SYMBOL + categoryLogBeanResult.getMsex() + SYMBOL + categoryLogBeanResult.getMage()
-			+ SYMBOL + categoryLogBeanResult.getAreaInfo() + SYMBOL + categoryLogBeanResult.getCountry() + SYMBOL + categoryLogBeanResult.getCity()
-			+ SYMBOL + categoryLogBeanResult.getDateTime()
-			+ SYMBOL + categoryLogBeanResult.getDeviceInfo()+ SYMBOL + categoryLogBeanResult.getDevicePhoneInfo()+ SYMBOL + categoryLogBeanResult.getDeviceOsInfo()+ SYMBOL + categoryLogBeanResult.getDeviceBrowserInfo();
+			dmpLogBeanResult.setRecodeDate(record_date);
 			
+			// 0:memid + 1:uuid + 2:adClass + 3.adClassSource 
+			// 4.sex + 5.sexSource + 6.age + 7.ageSource 
+			// 8.country + 9.city + 10.areaInfoSource
+			//11.device_info_source + 12.device_info 
+			//13.device_phone_info + 14.device_os_info + 15.device_browser_info 
+			//16.time_info + 17.time_info_source + 18.url
+			
+			String memid = StringUtils.isBlank(dmpLogBeanResult.getMemid()) ? "null" : dmpLogBeanResult.getMemid();
+			String result = memid + SYMBOL + dmpLogBeanResult.getUuid() + SYMBOL + dmpLogBeanResult.getAdClass() + SYMBOL  + dmpLogBeanResult.getSource()
+			+ SYMBOL + dmpLogBeanResult.getSex() + SYMBOL + dmpLogBeanResult.getSexSource() + SYMBOL + dmpLogBeanResult.getAge() + SYMBOL + dmpLogBeanResult.getAgeSource()
+			+ SYMBOL + dmpLogBeanResult.getCountry() + SYMBOL + dmpLogBeanResult.getCity() + SYMBOL + dmpLogBeanResult.getAreaInfoSource()
+			+ SYMBOL + dmpLogBeanResult.getDeviceInfoSource() + SYMBOL + dmpLogBeanResult.getDeviceInfo()
+			+ SYMBOL + dmpLogBeanResult.getDevicePhoneInfo() + SYMBOL + dmpLogBeanResult.getDeviceOsInfo() + SYMBOL + dmpLogBeanResult.getDeviceBrowserInfo()
+			+ SYMBOL + dmpLogBeanResult.getTimeInfo() + SYMBOL + dmpLogBeanResult.getTimeInfoSource() + SYMBOL + dmpLogBeanResult.getUrl();
 			
 			log.info(">>>>>> Mapper write key:" + result);
 			

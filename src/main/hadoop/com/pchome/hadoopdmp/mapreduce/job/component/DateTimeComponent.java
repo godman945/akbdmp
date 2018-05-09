@@ -18,12 +18,13 @@ public class DateTimeComponent {
 		
 		if (!date){
 			dmpDataBean.setDateTime("null");
+			dmpDataBean.setDateTimeSource("null");
 			return dmpDataBean;
 		}
 		
 		String hour = dateTime.split(" ")[1].split(":")[0];
 		dmpDataBean.setDateTime(hour);
-
+		dmpDataBean.setDateTimeSource("datetime");
 		return dmpDataBean;
 	}
 	

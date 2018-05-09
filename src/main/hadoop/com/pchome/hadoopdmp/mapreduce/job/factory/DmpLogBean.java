@@ -6,34 +6,49 @@ import java.util.Map;
 import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper.combinedValue;
 
 public class DmpLogBean {
+	private Map<String, combinedValue> clsfyCraspMap;
+	private ArrayList<Map<String, String>> list;
+	
+	//send kafka dada的key
 	private String memid ;
 	private String uuid ;
+
+	//send kafka dada的data
 	private String adClass ;
+	private String adClassSource ;
 	private String sex ;
+	private String sexSource ;
 	private String age ;
+	private String ageSource ;
+	private String areaInfoSource ;
+	private String deviceInfoSource ;
+	private String timeInfoSource ;
 	private String recodeDate ;
 	private String source ;
 	private String type ;
 	private String country ;
 	private String city ;
-	private Map<String, combinedValue> clsfyCraspMap;
-	private ArrayList<Map<String, String>> list;
 	private String msex ;
 	private String mage ;
 	private String url ;
 	private String ip ;
 	private String userAgent ;
 	private String dateTime ;
+	private String dateTimeSource ;
+	
+	//send kafka dada的classify
 	private String personalInfoApi ;
 	private String personalInfo ;
 	private String classAdClick ;
 	private String class24hUrl ;
 	private String classRutenUrl ;
 	private String areaInfo ;
-	private String deviceInfo ;
+	private String deviceInfo ; 
 	private String devicePhoneInfo ;
 	private String deviceOsInfo ;
 	private String deviceBrowserInfo;
+	private String timeInfo ;
+	private String deviceInfoClassify ;
 
 	public String getType() {
 		return type;
@@ -257,6 +272,78 @@ public class DmpLogBean {
 
 	public void setDeviceBrowserInfo(String deviceBrowserInfo) {
 		this.deviceBrowserInfo = deviceBrowserInfo;
+	}
+
+	public String getTimeInfo() {
+		return timeInfo;
+	}
+
+	public void setTimeInfo(String timeInfo) {
+		this.timeInfo = timeInfo;
+	}
+
+	public String getAdClassSource() {
+		return adClassSource;
+	}
+
+	public void setAdClassSource(String adClassSource) {
+		this.adClassSource = adClassSource;
+	}
+
+	public String getSexSource() {
+		return sexSource;
+	}
+
+	public void setSexSource(String sexSource) {
+		this.sexSource = sexSource;
+	}
+
+	public String getAgeSource() {
+		return ageSource;
+	}
+
+	public void setAgeSource(String ageSource) {
+		this.ageSource = ageSource;
+	}
+
+	public String getAreaInfoSource() {
+		return areaInfoSource;
+	}
+
+	public void setAreaInfoSource(String areaInfoSource) {
+		this.areaInfoSource = areaInfoSource;
+	}
+
+	public String getDeviceInfoSource() {
+		return deviceInfoSource;
+	}
+
+	public void setDeviceInfoSource(String deviceInfoSource) {
+		this.deviceInfoSource = deviceInfoSource;
+	}
+
+	public String getTimeInfoSource() {
+		return timeInfoSource;
+	}
+
+	public void setTimeInfoSource(String timeInfoSource) {
+		this.timeInfoSource = timeInfoSource;
+	}
+
+	public String getDeviceInfoClassify() {
+		return deviceInfoClassify;
+	}
+
+	public void setDeviceInfoClassify(String deviceInfoClassify) {
+		this.deviceInfoClassify = deviceInfoClassify;
+	}
+
+	public String getDateTimeSource() {
+		return dateTimeSource;
+	}
+
+	public void setDateTimeSource(String dateTimeSource) {
+		this.dateTimeSource = dateTimeSource;
 	}
 	
 }

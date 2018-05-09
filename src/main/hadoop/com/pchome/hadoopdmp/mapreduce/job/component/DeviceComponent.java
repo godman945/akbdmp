@@ -21,6 +21,8 @@ public class DeviceComponent {
 			dmpDataBean.setDevicePhoneInfo("null");
 			dmpDataBean.setDeviceOsInfo("null");
 			dmpDataBean.setDeviceBrowserInfo("null");
+			dmpDataBean.setDeviceInfoClassify("null");
+			dmpDataBean.setDeviceInfoSource("null");
 			return dmpDataBean;
 		}
 		
@@ -32,6 +34,15 @@ public class DeviceComponent {
 		dmpDataBean.setDevicePhoneInfo(operatingSystem.getManufacturer().toString());
 		dmpDataBean.setDeviceOsInfo(operatingSystem.getGroup().toString());
 		dmpDataBean.setDeviceBrowserInfo(browser.getName());
+		dmpDataBean.setDeviceInfoSource("user-agent");
+		
+		if ( (!StringUtils.equals(operatingSystem.getDeviceType().toString(),"UNKNOWN")) && (!StringUtils.equals(operatingSystem.getManufacturer().toString(),"UNKNOWN"))
+			 &&	(!StringUtils.equals(operatingSystem.getGroup().toString(),"UNKNOWN")) && (!StringUtils.equals(browser.getName(),"UNKNOWN")) ){
+			dmpDataBean.setDeviceInfoClassify("Y");
+		}else{
+			dmpDataBean.setDeviceInfoClassify("N");
+		}
+	
 		
 		
 //		System.out.println("访问设备类型:"+operatingSystem.getDeviceType());// “device_info”:{ //enum DeviceType

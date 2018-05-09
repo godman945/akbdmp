@@ -109,7 +109,9 @@ public class PersonalInfoComponent {
 		String age = StringUtils.isNotBlank(forecastInfoMap.get("age")) ? forecastInfoMap.get("age") : "null";
 		
 		dmpDataBean.setSex(sex);
+		dmpDataBean.setSexSource( StringUtils.equals(sex, "null") ? "null" : "excel" ); 
 		dmpDataBean.setAge(age);
+		dmpDataBean.setAgeSource( StringUtils.equals(age, "null") ? "null" : "excel" );
 		
 		if ( (!StringUtils.equals(age, "null")) && (!StringUtils.equals(sex, "null")) ) {
 			dmpDataBean.setPersonalInfo("Y");

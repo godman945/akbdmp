@@ -3,7 +3,9 @@ package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Future;
 
@@ -17,6 +19,7 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.codehaus.jettison.json.JSONObject;
+import org.json.JSONArray;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
@@ -76,70 +79,64 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	Producer<String, String> producer = null;
 
 	public void setup(Context context) {
-//		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>>>>>>>>>>>>>");
-//		try {
-//			this.sdf = new SimpleDateFormat("yyyy-MM-dd");
-//			if(StringUtils.isNotBlank(context.getConfiguration().get("spring.profiles.active"))){
-//				System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
-//				this.environment = "prd";
-//			}else{
-//				System.setProperty("spring.profiles.active", "stg");
-//				this.environment = "stg";
-//			}
-//			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-//			this.kdclStatisticsSourceService = ctx.getBean(KdclStatisticsSourceService.class);
-//			this.kafkaMetadataBrokerlist = ctx.getEnvironment().getProperty("kafka.metadata.broker.list");
-//			this.kafkaAcks = ctx.getEnvironment().getProperty("kafka.acks");
-//			this.kafkaRetries = ctx.getEnvironment().getProperty("kafka.retries");
-//			this.kafkaBatchSize = ctx.getEnvironment().getProperty("kafka.batch.size");
-//			this.kafkaLingerMs = ctx.getEnvironment().getProperty("kafka.linger.ms");
-//			this.kafkaBufferMemory = ctx.getEnvironment().getProperty("kafka.buffer.memory");
-//			this.kafkaSerializerClass = ctx.getEnvironment().getProperty("kafka.serializer.class");
-//			this.kafkaKeySerializer = ctx.getEnvironment().getProperty("kafka.key.serializer");
-//			this.kafkaValueSerializer = ctx.getEnvironment().getProperty("kafka.value.serializer");
-//			
-//			Properties props = new Properties();
-//			props.put("bootstrap.servers", kafkaMetadataBrokerlist);
-//			props.put("acks", kafkaAcks);
-//			props.put("retries", kafkaRetries);
-//			props.put("batch.size", kafkaBatchSize);
-//			props.put("linger.ms", kafkaLingerMs);
-//			props.put("buffer.memory", kafkaBufferMemory);
-//			props.put("serializer.class", kafkaSerializerClass);
-//			props.put("key.serializer", kafkaKeySerializer);
-//			props.put("value.serializer", kafkaValueSerializer);
-//			producer = new KafkaProducer<String, String>(props);
-//
-//		} catch (Exception e) {
-//			log.error(e.getMessage());
-//		}
+		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>>>>>>>>>>>>>");
+		try {
+			this.sdf = new SimpleDateFormat("yyyy-MM-dd");
+			if(StringUtils.isNotBlank(context.getConfiguration().get("spring.profiles.active"))){
+				System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
+				this.environment = "prd";
+			}else{
+				System.setProperty("spring.profiles.active", "stg");
+				this.environment = "stg";
+			}
+			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+			this.kdclStatisticsSourceService = ctx.getBean(KdclStatisticsSourceService.class);
+			this.kafkaMetadataBrokerlist = ctx.getEnvironment().getProperty("kafka.metadata.broker.list");
+			this.kafkaAcks = ctx.getEnvironment().getProperty("kafka.acks");
+			this.kafkaRetries = ctx.getEnvironment().getProperty("kafka.retries");
+			this.kafkaBatchSize = ctx.getEnvironment().getProperty("kafka.batch.size");
+			this.kafkaLingerMs = ctx.getEnvironment().getProperty("kafka.linger.ms");
+			this.kafkaBufferMemory = ctx.getEnvironment().getProperty("kafka.buffer.memory");
+			this.kafkaSerializerClass = ctx.getEnvironment().getProperty("kafka.serializer.class");
+			this.kafkaKeySerializer = ctx.getEnvironment().getProperty("kafka.key.serializer");
+			this.kafkaValueSerializer = ctx.getEnvironment().getProperty("kafka.value.serializer");
+			
+			Properties props = new Properties();
+			props.put("bootstrap.servers", kafkaMetadataBrokerlist);
+			props.put("acks", kafkaAcks);
+			props.put("retries", kafkaRetries);
+			props.put("batch.size", kafkaBatchSize);
+			props.put("linger.ms", kafkaLingerMs);
+			props.put("buffer.memory", kafkaBufferMemory);
+			props.put("serializer.class", kafkaSerializerClass);
+			props.put("key.serializer", kafkaKeySerializer);
+			props.put("value.serializer", kafkaValueSerializer);
+			producer = new KafkaProducer<String, String>(props);
+
+		} catch (Exception e) {
+			log.error(e.getMessage());
+		}
 	}
 
 	@Override
 	public void reduce(Text key, Iterable<Text> value, Context context) {
-		// 0 : Memid
-		// 1 : Uuid
-		// 2 : AdClass
-		// 3 : Age
-		// 4 : Sex
-		// 5 : Source (ad_click、24h、ruten)
-		// 6 : RecodeDate
-		// 7 : Type(memid or uuid)
+		// 0:memid + 1:uuid + 2:adClass + 3.adClassSource
+		// 4.sex + 5.sexSource + 6.age + 7.ageSource
+		// 8.country + 9.city + 10.areaInfoSource
+		// 11.device_info_source + 12.device_info
+		// 13.device_phone_info + 14.device_os_info + 15.device_browser_info
+		// 16.time_info + 17.time_info_source + 18.url
 		try {
 			log.info(">>>>>> reduce start : " + key);
 
-			
 			//新版
 			keyOut.set(key);
 			context.write(keyOut, valueOut);
 			
 			
-			
-			
-			
-//			//舊版送kafka
-//			String data[] = key.toString().split(SYMBOL);
-//
+			//舊版送kafka
+			String data[] = key.toString().split(SYMBOL);
+
 //			JSONObject json = new JSONObject();
 //			json.put("memid", data[0]);
 //			json.put("uuid", data[1]);
@@ -148,23 +145,116 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //			json.put("sex", data[4]);
 //			json.put("source", data[5]);
 //			json.put("recordDate", data[6]);
-//
-//			//發送給kafka
-//			if(this.environment.equals("prd")){
-//				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_prd", "", json.toString()));
-//				 while (!f.isDone()) {
-//				 }
-//			}else{
-//				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("akb_category_log_stg", "", json.toString()));
-//				 while (!f.isDone()) {
-//				 }
-//			}
-//			//舊版送kafka
+
+			//發送kafka
+			//send kafka key
+			JSONObject keyJson = new JSONObject();
+			keyJson.put("memid", data[0]);
+			keyJson.put("uuid", data[1]);
+
+			//send kafka data
+			//category_info
+			Map categoryInfoMap = new HashMap();
+			categoryInfoMap.put("value", data[2]);
+			categoryInfoMap.put("source", data[3]);
+
+			//sex_info
+			Map sexInfoMap = new HashMap();
+			sexInfoMap.put("value", data[4]);
+			sexInfoMap.put("source", data[5]);
+
+			//age_info
+			Map ageInfoMap = new HashMap();
+			ageInfoMap.put("value", data[6]);
+			ageInfoMap.put("source", data[7]);
+
+			//area_country_info
+			Map areaCountryInfoMap = new HashMap();
+			areaCountryInfoMap.put("value", data[8]);
+			areaCountryInfoMap.put("source", data[10]);
+			
+			//area_city_info
+			Map areaCityInfoMap = new HashMap();
+			areaCityInfoMap.put("value", data[9]);
+			areaCityInfoMap.put("source", data[10]);
+			
+			//device_info
+			Map deviceInfoMap = new HashMap();
+			deviceInfoMap.put("value", data[12]);
+			deviceInfoMap.put("source", data[11]);
+
+			//device_phone_info
+			Map devicePhoneInfoMap = new HashMap();
+			devicePhoneInfoMap.put("value", data[13]);
+			devicePhoneInfoMap.put("source", data[11]);
+
+			//device_os_info
+			Map deviceOsInfoMap = new HashMap();
+			deviceOsInfoMap.put("value", data[14]);
+			deviceOsInfoMap.put("source", data[11]);
+
+			//device_browser_info
+			Map deviceBrowserInfoMap = new HashMap();
+			deviceBrowserInfoMap.put("value", data[15]);
+			deviceBrowserInfoMap.put("source", data[11]);
+
+			//time_info
+			Map timeInfoMap = new HashMap();
+			timeInfoMap.put("value", data[16]);
+			timeInfoMap.put("source", data[17]);
+
+			
+			//classify Array
+			JSONArray classifyArray = new JSONArray();
+			
+			Map all_kdcl_log_class_ad_click_map = new HashMap();
+			all_kdcl_log_class_ad_click_map.put("all_kdcl_log_class_ad_click", "Y");
+			classifyArray.put(all_kdcl_log_class_ad_click_map);
+
+			Map memid_member_api_personal_info_api_map = new HashMap();
+			memid_member_api_personal_info_api_map.put("memid_member_api_personal_info_api", "N");
+			classifyArray.put(memid_member_api_personal_info_api_map);
+			
+			Map memid_kdcl_log_personal_info_map = new HashMap();
+			memid_kdcl_log_personal_info_map.put("memid_kdcl_log_personal_info_map", "N");
+			classifyArray.put(memid_kdcl_log_personal_info_map);
 			
 			
-//			
-//
-//			log.info(">>>>>>reduce write key:" + key);
+			//dataJson
+			JSONObject dataJson = new JSONObject();
+			dataJson.put("category_info", categoryInfoMap);
+			dataJson.put("sex_info", sexInfoMap);
+			dataJson.put("age_info", ageInfoMap);
+			dataJson.put("area_country_info", areaCountryInfoMap );
+			dataJson.put("area_city_info", areaCityInfoMap );
+			dataJson.put("device_info", deviceInfoMap );
+			dataJson.put("device_phone_info", devicePhoneInfoMap );
+			dataJson.put("device_os_info", deviceOsInfoMap);
+			dataJson.put("device_browser_info", deviceBrowserInfoMap);
+			dataJson.put("time_info", timeInfoMap);
+			dataJson.put("classify", classifyArray);
+
+			
+			//send Kafka Json
+			JSONObject sendKafkaJson = new JSONObject();
+			sendKafkaJson.put("key", keyJson);
+			sendKafkaJson.put("data", dataJson);
+
+//			System.out.println(sendKafkaJson.toString());
+			
+			if(this.environment.equals("prd")){
+				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("dmp_log_prd", "", sendKafkaJson.toString()));
+				 while (!f.isDone()) {
+				 }
+			}else{
+				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("dmp_log_stg", "", sendKafkaJson.toString()));
+				 while (!f.isDone()) {
+				 }
+			}
+			
+			log.info(">>>>>>reduce write key:" + sendKafkaJson.toString());
+			
+			
 //			keyOut.set(key);
 //			context.write(keyOut, valueOut);
 			
