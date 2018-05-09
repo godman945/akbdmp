@@ -236,16 +236,17 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			//處理個資
 			dmpLogBeanResult = personalInfoComponent.processPersonalInfo(dmpLogBeanResult, mongoOperations);
 			
+			//紀錄日期
+			dmpLogBeanResult.setRecordDate(record_date);
 			
-			
-			dmpLogBeanResult.setRecodeDate(record_date);
 			
 			// 0:memid + 1:uuid + 2:adClass + 3.adClassSource 
 			// 4.sex + 5.sexSource + 6.age + 7.ageSource 
 			// 8.country + 9.city + 10.areaInfoSource
 			//11.device_info_source + 12.device_info 
 			//13.device_phone_info + 14.device_os_info + 15.device_browser_info 
-			//16.time_info + 17.time_info_source + 18.url
+			//16.time_info + 17.time_info_source 
+			//18.url + 19.ip + 20.record_date
 			
 			String memid = StringUtils.isBlank(dmpLogBeanResult.getMemid()) ? "null" : dmpLogBeanResult.getMemid();
 			String result = memid + SYMBOL + dmpLogBeanResult.getUuid() + SYMBOL + dmpLogBeanResult.getAdClass() + SYMBOL  + dmpLogBeanResult.getSource()
@@ -253,7 +254,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			+ SYMBOL + dmpLogBeanResult.getCountry() + SYMBOL + dmpLogBeanResult.getCity() + SYMBOL + dmpLogBeanResult.getAreaInfoSource()
 			+ SYMBOL + dmpLogBeanResult.getDeviceInfoSource() + SYMBOL + dmpLogBeanResult.getDeviceInfo()
 			+ SYMBOL + dmpLogBeanResult.getDevicePhoneInfo() + SYMBOL + dmpLogBeanResult.getDeviceOsInfo() + SYMBOL + dmpLogBeanResult.getDeviceBrowserInfo()
-			+ SYMBOL + dmpLogBeanResult.getTimeInfo() + SYMBOL + dmpLogBeanResult.getTimeInfoSource() + SYMBOL + dmpLogBeanResult.getUrl();
+			+ SYMBOL + dmpLogBeanResult.getTimeInfo() + SYMBOL + dmpLogBeanResult.getTimeInfoSource() 
+			+ SYMBOL + dmpLogBeanResult.getUrl() + SYMBOL + dmpLogBeanResult.getIp() + SYMBOL + dmpLogBeanResult.getRecordDate();
 			
 			log.info(">>>>>> Mapper write key:" + result);
 			

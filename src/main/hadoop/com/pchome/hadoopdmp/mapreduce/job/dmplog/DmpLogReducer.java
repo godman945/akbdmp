@@ -105,12 +105,13 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	@Override
 	public void reduce(Text key, Iterable<Text> value, Context context) {
-		// 0:memid + 1:uuid + 2:adClass + 3.adClassSource
-		// 4.sex + 5.sexSource + 6.age + 7.ageSource
+		// 0:memid + 1:uuid + 2:adClass + 3.adClassSource 
+		// 4.sex + 5.sexSource + 6.age + 7.ageSource 
 		// 8.country + 9.city + 10.areaInfoSource
-		// 11.device_info_source + 12.device_info
-		// 13.device_phone_info + 14.device_os_info + 15.device_browser_info
-		// 16.time_info + 17.time_info_source + 18.url
+		//11.device_info_source + 12.device_info 
+		//13.device_phone_info + 14.device_os_info + 15.device_browser_info 
+		//16.time_info + 17.time_info_source 
+		//18.url + 19.ip + 20.record_date
 		try {
 			log.info(">>>>>> reduce start : " + key);
 
@@ -208,6 +209,10 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			JSONObject sendKafkaJson = new JSONObject();
 			sendKafkaJson.put("key", keyJson);
 			sendKafkaJson.put("data", dataJson);
+			sendKafkaJson.put("url", data[18]);
+			sendKafkaJson.put("ip", data[19]);
+			sendKafkaJson.put("record_date", data[20]);
+			
 
 //			System.out.println(sendKafkaJson.toString());
 			

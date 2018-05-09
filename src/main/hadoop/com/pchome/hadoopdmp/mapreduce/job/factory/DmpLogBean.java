@@ -23,7 +23,7 @@ public class DmpLogBean {
 	private String areaInfoSource ;
 	private String deviceInfoSource ;
 	private String timeInfoSource ;
-	private String recodeDate ;
+	private String recordDate ;
 	private String source ;
 	private String type ;
 	private String country ;
@@ -114,12 +114,12 @@ public class DmpLogBean {
 		this.age = age;
 	}
 
-	public String getRecodeDate() {
-		return recodeDate;
+	public String getRecordDate() {
+		return recordDate;
 	}
 
-	public void setRecodeDate(String recodeDate) {
-		this.recodeDate = recodeDate;
+	public void setRecordDate(String recordDate) {
+		this.recordDate = recordDate;
 	}
 
 	public Map<String, combinedValue> getClsfyCraspMap() {
