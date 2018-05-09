@@ -228,7 +228,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			
 			log.info(">>>>>>reduce write key:" + sendKafkaJson.toString());
 			
-			keyOut.set(key);
+			keyOut.set(sendKafkaJson.toString());
 			context.write(keyOut, valueOut);
 			
 		} catch (Exception e) {

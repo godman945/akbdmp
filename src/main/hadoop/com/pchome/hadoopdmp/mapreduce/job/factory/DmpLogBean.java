@@ -36,7 +36,6 @@ public class DmpLogBean {
 	private String dateTime ;
 	private String dateTimeSource ;
 	
-	//send kafka dada的classify
 	private String personalInfoApi ;
 	private String personalInfo ;
 	private String classAdClick ;
@@ -49,6 +48,7 @@ public class DmpLogBean {
 	private String deviceBrowserInfo;
 	private String timeInfo ;
 	private String deviceInfoClassify ;
+	
 
 	public String getType() {
 		return type;
