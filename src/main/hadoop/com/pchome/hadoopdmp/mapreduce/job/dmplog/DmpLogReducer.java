@@ -276,9 +276,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			JSONObject sendKafkaJson = new JSONObject();
 			sendKafkaJson.put("key", keyJson);
 			sendKafkaJson.put("data", dataJson);
-			sendKafkaJson.put("url", data[18]);
-			sendKafkaJson.put("ip", data[19]);
-			sendKafkaJson.put("record_date", data[20]);
+			sendKafkaJson.put("url", data[26]);
+			sendKafkaJson.put("ip", data[27]);
+			sendKafkaJson.put("record_date", data[28]);
 			
 
 //			System.out.println(sendKafkaJson.toString());
