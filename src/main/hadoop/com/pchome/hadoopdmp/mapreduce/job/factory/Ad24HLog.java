@@ -18,30 +18,30 @@ public class Ad24HLog extends ACategoryLogData {
 
 	public Object processCategory(DmpLogBean dmpDataBean, MongoOperations mongoOperations) throws Exception {
 		
-		String memid = dmpDataBean.getMemid();
-		String uuid = dmpDataBean.getUuid();
 		String sourceUrl = dmpDataBean.getUrl();
-		String adClass = "";
-		String class24hUrl = "";
+		String category = "";
+		String categorySource = "";
+		String class24hUrlClassify = "";
 		
 		if (StringUtils.isBlank(sourceUrl)) {
-			dmpDataBean.setAdClass(adClass);
-			dmpDataBean.setUrl("");
-			dmpDataBean.setClass24hUrl("N");
-			dmpDataBean.setSource("24h");
+			dmpDataBean.setUrl("null");
+			dmpDataBean.setCategory("null");
+			dmpDataBean.setCategorySource("null");
+			dmpDataBean.setClass24hUrlClassify("null");
 			return dmpDataBean;
 		}
 		
 		List<CategoryCodeBean> list = DmpLogMapper.category24hBeanList;
 		for (CategoryCodeBean categoryBean : list) {
 			if(sourceUrl.indexOf(categoryBean.getEnglishCode()) != -1){
-				adClass = categoryBean.getNumberCode();
-				class24hUrl = "Y";
+				category = categoryBean.getNumberCode();
+				categorySource = "24h";
+				class24hUrlClassify = "Y";
 				break;
 			}
 		}
 		
-		if (StringUtils.isBlank(adClass)){
+		if (StringUtils.isBlank(category)){
 			ClassUrlMongoBean classUrlMongoBean = null;
 			Query query = new Query(Criteria.where("url").is(sourceUrl.trim()));
 			classUrlMongoBean = mongoOperations.findOne(query, ClassUrlMongoBean.class);
@@ -49,8 +49,9 @@ public class Ad24HLog extends ACategoryLogData {
 			if(classUrlMongoBean != null){
 				if(classUrlMongoBean.getStatus().equals("0")){
 					// url 存在 status = 0  , mongo update_date 更新(一天一次) query_time+1 如大於 2000 不再加 
-					adClass ="";
-					class24hUrl = "N";
+					category ="null";
+					categorySource = "null";
+					class24hUrlClassify = "N";
 					
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 					Date today = new Date();
@@ -71,8 +72,9 @@ public class Ad24HLog extends ACategoryLogData {
 					}
 				}else if( (classUrlMongoBean.getStatus().equals("1")) && (!classUrlMongoBean.getAd_class().equals("")) ){
 					//url 存在 status = 1 取分類代號回傳 mongodn update_date 更新(一天一次) behaviorClassify = "Y"
-					adClass = classUrlMongoBean.getAd_class();
-					class24hUrl = "Y"; 
+					category = classUrlMongoBean.getAd_class();
+					categorySource = "24h";
+					class24hUrlClassify = "Y"; 
 					
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 					Date today = new Date();
@@ -88,8 +90,9 @@ public class Ad24HLog extends ACategoryLogData {
 				}
 			}else{
 				// url 不存在  ,寫入 mongo url代號 status=0 
-				adClass ="";
-				class24hUrl = "N";
+				category = "null";
+				categorySource = "null";
+				class24hUrlClassify = "N";
 				
 				Date date = new Date();
 				ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
@@ -104,9 +107,10 @@ public class Ad24HLog extends ACategoryLogData {
 		}
 		
 		
-		dmpDataBean.setAdClass(adClass);
-		dmpDataBean.setClass24hUrl(class24hUrl);
-		dmpDataBean.setSource("24h");
+		dmpDataBean.setCategory(category);
+		dmpDataBean.setCategorySource(categorySource);
+		dmpDataBean.setClass24hUrlClassify(class24hUrlClassify);
+	
 		
 		return dmpDataBean;
 	}

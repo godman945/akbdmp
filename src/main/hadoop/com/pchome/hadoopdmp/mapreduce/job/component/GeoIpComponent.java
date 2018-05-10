@@ -26,7 +26,7 @@ public class GeoIpComponent {
 			dmpDataBean.setCountry("null");
 			dmpDataBean.setCity("null");
 			dmpDataBean.setAreaInfoSource("null");
-			dmpDataBean.setAreaInfo("null");
+			dmpDataBean.setAreaInfoClassify("null");
 			return dmpDataBean;
 		}
 
@@ -43,7 +43,7 @@ public class GeoIpComponent {
 			dmpDataBean.setCountry("null");
 			dmpDataBean.setCity("null");
 			dmpDataBean.setAreaInfoSource("ip");
-			dmpDataBean.setAreaInfo("N");
+			dmpDataBean.setAreaInfoClassify("N");
 			return dmpDataBean;
 		}
 
@@ -56,9 +56,9 @@ public class GeoIpComponent {
 		
 		if( (StringUtils.isNotBlank(countryStr)) && (!StringUtils.equals(countryStr, "null"))
 			&& (StringUtils.isNotBlank(cityStr)) && (!StringUtils.equals(cityStr, "null")) ){
-			dmpDataBean.setAreaInfo("Y");
+			dmpDataBean.setAreaInfoClassify("Y");
 		}else{
-			dmpDataBean.setAreaInfo("N");
+			dmpDataBean.setAreaInfoClassify("N");
 		}
 
 		return dmpDataBean;

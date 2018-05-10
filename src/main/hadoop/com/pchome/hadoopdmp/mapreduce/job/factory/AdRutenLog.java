@@ -24,17 +24,16 @@ public class AdRutenLog extends ACategoryLogData {
 
 	public Object processCategory(DmpLogBean dmpDataBean, MongoOperations mongoOperations) throws Exception {
 		
-		String memid = dmpDataBean.getMemid();
-		String uuid = dmpDataBean.getUuid();
 		String sourceUrl = dmpDataBean.getUrl();
-		String adClass = "";
-		String classRutenUrl = "" ;
+		String category = "";
+		String categorySource = "";
+		String classRutenUrlClassify = "" ;
 		
 		if (StringUtils.isBlank(sourceUrl)) {
-			dmpDataBean.setAdClass(adClass);
-			dmpDataBean.setUrl("");
-			dmpDataBean.setClassRutenUrl("N");
-			dmpDataBean.setSource("ruten");
+			dmpDataBean.setUrl("null");
+			dmpDataBean.setCategory("null");
+			dmpDataBean.setCategorySource("null");
+			dmpDataBean.setClassRutenUrlClassify("null");
 			return dmpDataBean;
 		}
 		
@@ -46,7 +45,9 @@ public class AdRutenLog extends ACategoryLogData {
 			
 			if(classUrlMongoBean.getStatus().equals("0")){
 				// url 存在 status = 0 跳過回傳空值 , mongo update_date 更新(一天一次) mongo,query_time+1 如大於 2000 不再加  classRutenUrl = "N"
-				classRutenUrl = "N"; 
+				category = "null";
+				categorySource = "null";
+				classRutenUrlClassify = "N"; 
 
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 				Date today = new Date();
@@ -69,8 +70,9 @@ public class AdRutenLog extends ACategoryLogData {
 				
 			}else if( (classUrlMongoBean.getStatus().equals("1")) && (!classUrlMongoBean.getAd_class().equals("")) ){
 				//url 存在 status = 1 取分類代號回傳 mongodn update_date 更新(一天一次) classRutenUrl = "Y";
-				adClass = classUrlMongoBean.getAd_class();
-				classRutenUrl = "Y"; 
+				category = classUrlMongoBean.getAd_class();
+				categorySource = "ruten";
+				classRutenUrlClassify = "Y"; 
 				
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 				Date today = new Date();
@@ -121,7 +123,7 @@ public class AdRutenLog extends ACategoryLogData {
 						}
 						for (CategoryRutenCodeBean categoryRutenBean : categoryRutenList) {
 							if (categoryRutenBean.getChineseDesc().trim().equals(breadcrumbAry[i].trim())){
-								adClass = categoryRutenBean.getNumberCode();
+								category = categoryRutenBean.getNumberCode();
 								hasCategory = true;
 								break;
 							}
@@ -129,21 +131,24 @@ public class AdRutenLog extends ACategoryLogData {
 					}
 					
 				
-					if (StringUtils.isNotBlank(adClass)){
+					if (StringUtils.isNotBlank(category)){
 						//爬蟲有比對到Ruten分類
-						classRutenUrl = "Y";
+						categorySource = "ruten";
+						classRutenUrlClassify = "Y"; 
 						
 						Date date = new Date();
 						ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
 						classUrlMongoBeanCreate.setUrl(sourceUrl);
-						classUrlMongoBeanCreate.setAd_class(adClass);
+						classUrlMongoBeanCreate.setAd_class(category);
 						classUrlMongoBeanCreate.setStatus("1");
 						classUrlMongoBeanCreate.setCreate_date(date);
 						classUrlMongoBeanCreate.setUpdate_date(date);
 						mongoOperations.save(classUrlMongoBeanCreate);
 					}else{
 						//爬蟲沒有比對到Ruten分類
-						classRutenUrl = "N";
+						category = "null";
+						categorySource = "null";
+						classRutenUrlClassify = "N";
 						
 						Date date = new Date();
 						ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
@@ -158,6 +163,10 @@ public class AdRutenLog extends ACategoryLogData {
 				}
 			} else {
 				//url不是Ruten商品頁，寫入mongo
+				category = "null";
+				categorySource = "null";
+				classRutenUrlClassify = "null";
+				
 				Date date = new Date();
 				ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
 				classUrlMongoBeanCreate.setUrl(sourceUrl);
@@ -170,11 +179,10 @@ public class AdRutenLog extends ACategoryLogData {
 			}
 		}
 		
-		dmpDataBean.setAdClass(adClass);
-		dmpDataBean.setClassRutenUrl(classRutenUrl);
-		dmpDataBean.setSource("ruten");
-//		dmpDataBean.setMemid(memid);
-//		dmpDataBean.setUuid(uuid);
+		dmpDataBean.setCategory(category);
+		dmpDataBean.setCategorySource(categorySource);
+		dmpDataBean.setClassRutenUrlClassify(classRutenUrlClassify);
+		
 		return dmpDataBean;
 	}
 }

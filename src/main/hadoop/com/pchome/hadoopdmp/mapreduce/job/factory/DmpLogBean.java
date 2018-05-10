@@ -6,57 +6,59 @@ import java.util.Map;
 import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper.combinedValue;
 
 public class DmpLogBean {
-	private Map<String, combinedValue> clsfyCraspMap;
-	private ArrayList<Map<String, String>> list;
-	
-	//send kafka dada的key
+	//raw data 
 	private String memid ;
 	private String uuid ;
-
-	//send kafka dada的data
-	private String adClass ;
-	private String adClassSource ;
-	private String sex ;
-	private String sexSource ;
-	private String age ;
-	private String ageSource ;
-	private String areaInfoSource ;
-	private String deviceInfoSource ;
-	private String timeInfoSource ;
-	private String recordDate ;
-	private String source ;
-	private String type ;
-	private String country ;
-	private String city ;
-	private String msex ;
-	private String mage ;
 	private String url ;
 	private String ip ;
 	private String userAgent ;
+	private String adClass ;
+	private String source ;		//ck,pv,campaign
 	private String dateTime ;
-	private String dateTimeSource ;
+	private Map<String, combinedValue> clsfyCraspMap;
+	private ArrayList<Map<String, String>> list;
 	
-	private String personalInfoApi ;
-	private String personalInfo ;
-	private String classAdClick ;
-	private String class24hUrl ;
-	private String classRutenUrl ;
-	private String areaInfo ;
+	//地區處理元件(ip 轉國家、城市)
+	private String country ;
+	private String city ;
+	private String areaInfoSource ;
+	
+	//時間處理元件(日期時間字串轉成小時)
+	private String hour;
+	private String timeInfoSource ;
+	
+	//裝置處理元件
 	private String deviceInfo ; 
 	private String devicePhoneInfo ;
 	private String deviceOsInfo ;
 	private String deviceBrowserInfo;
-	private String timeInfo ;
-	private String deviceInfoClassify ;
+	private String deviceInfoSource ;
 	
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
+	//分類處理元件
+	private String category ;
+	private String categorySource ;			//adclick,24h,ruten,campaign
+	
+	//個資處理元件
+	private String msex ;	//會員中心真實sex
+	private String mage ;	//會員中心真實age
+	private String sex ;
+	private String sexSource ;
+	private String age ;
+	private String ageSource ;
+	
+	//紀錄日期
+	private String recordDate ;
+	
+	//有無Classify
+	private String areaInfoClassify = "null";
+	private String timeInfoClassify = "null";
+	private String deviceInfoClassify = "null";
+	private String classAdClickClassify = "null";
+	private String class24hUrlClassify = "null";
+	private String classRutenUrlClassify = "null";
+	private String personalInfoApiClassify = "null";
+	private String personalInfoClassify = "null";
+	
 	
 	public String getCountry() {
 		return country;
@@ -194,52 +196,20 @@ public class DmpLogBean {
 		this.dateTime = dateTime;
 	}
 
-	public String getPersonalInfoApi() {
-		return personalInfoApi;
+	public String getPersonalInfoApiClassify() {
+		return personalInfoApiClassify;
 	}
 
-	public void setPersonalInfoApi(String personalInfoApi) {
-		this.personalInfoApi = personalInfoApi;
+	public void setPersonalInfoApiClassify(String personalInfoApiClassify) {
+		this.personalInfoApiClassify = personalInfoApiClassify;
 	}
 
-	public String getPersonalInfo() {
-		return personalInfo;
+	public String getPersonalInfoClassify() {
+		return personalInfoClassify;
 	}
 
-	public void setPersonalInfo(String personalInfo) {
-		this.personalInfo = personalInfo;
-	}
-
-	public String getClassAdClick() {
-		return classAdClick;
-	}
-
-	public void setClassAdClick(String classAdClick) {
-		this.classAdClick = classAdClick;
-	}
-
-	public String getClass24hUrl() {
-		return class24hUrl;
-	}
-
-	public void setClass24hUrl(String class24hUrl) {
-		this.class24hUrl = class24hUrl;
-	}
-
-	public String getClassRutenUrl() {
-		return classRutenUrl;
-	}
-
-	public void setClassRutenUrl(String classRutenUrl) {
-		this.classRutenUrl = classRutenUrl;
-	}
-
-	public String getAreaInfo() {
-		return areaInfo;
-	}
-
-	public void setAreaInfo(String areaInfo) {
-		this.areaInfo = areaInfo;
+	public void setPersonalInfoClassify(String personalInfoClassify) {
+		this.personalInfoClassify = personalInfoClassify;
 	}
 
 	public String getDeviceInfo() {
@@ -272,22 +242,6 @@ public class DmpLogBean {
 
 	public void setDeviceBrowserInfo(String deviceBrowserInfo) {
 		this.deviceBrowserInfo = deviceBrowserInfo;
-	}
-
-	public String getTimeInfo() {
-		return timeInfo;
-	}
-
-	public void setTimeInfo(String timeInfo) {
-		this.timeInfo = timeInfo;
-	}
-
-	public String getAdClassSource() {
-		return adClassSource;
-	}
-
-	public void setAdClassSource(String adClassSource) {
-		this.adClassSource = adClassSource;
 	}
 
 	public String getSexSource() {
@@ -338,12 +292,68 @@ public class DmpLogBean {
 		this.deviceInfoClassify = deviceInfoClassify;
 	}
 
-	public String getDateTimeSource() {
-		return dateTimeSource;
+	public String getAreaInfoClassify() {
+		return areaInfoClassify;
 	}
 
-	public void setDateTimeSource(String dateTimeSource) {
-		this.dateTimeSource = dateTimeSource;
+	public void setAreaInfoClassify(String areaInfoClassify) {
+		this.areaInfoClassify = areaInfoClassify;
+	}
+
+	public String getTimeInfoClassify() {
+		return timeInfoClassify;
+	}
+
+	public void setTimeInfoClassify(String timeInfoClassify) {
+		this.timeInfoClassify = timeInfoClassify;
+	}
+
+	public String getClassAdClickClassify() {
+		return classAdClickClassify;
+	}
+
+	public void setClassAdClickClassify(String classAdClickClassify) {
+		this.classAdClickClassify = classAdClickClassify;
+	}
+
+	public String getClass24hUrlClassify() {
+		return class24hUrlClassify;
+	}
+
+	public void setClass24hUrlClassify(String class24hUrlClassify) {
+		this.class24hUrlClassify = class24hUrlClassify;
+	}
+
+	public String getClassRutenUrlClassify() {
+		return classRutenUrlClassify;
+	}
+
+	public void setClassRutenUrlClassify(String classRutenUrlClassify) {
+		this.classRutenUrlClassify = classRutenUrlClassify;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	public String getCategorySource() {
+		return categorySource;
+	}
+
+	public void setCategorySource(String categorySource) {
+		this.categorySource = categorySource;
+	}
+
+	public String getHour() {
+		return hour;
+	}
+
+	public void setHour(String hour) {
+		this.hour = hour;
 	}
 	
 }

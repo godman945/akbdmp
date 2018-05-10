@@ -17,14 +17,16 @@ public class DateTimeComponent {
 		boolean date = isValidDate(dateTime);
 		
 		if (!date){
-			dmpDataBean.setDateTime("null");
-			dmpDataBean.setDateTimeSource("null");
+			dmpDataBean.setHour("null");
+			dmpDataBean.setTimeInfoSource("null");
+			dmpDataBean.setTimeInfoClassify("null");
 			return dmpDataBean;
 		}
 		
 		String hour = dateTime.split(" ")[1].split(":")[0];
-		dmpDataBean.setDateTime(hour);
-		dmpDataBean.setDateTimeSource("datetime");
+		dmpDataBean.setHour(hour);
+		dmpDataBean.setTimeInfoSource("datetime");
+		dmpDataBean.setTimeInfoClassify("Y");
 		return dmpDataBean;
 	}
 	

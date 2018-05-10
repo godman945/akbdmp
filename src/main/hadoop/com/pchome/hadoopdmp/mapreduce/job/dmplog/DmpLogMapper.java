@@ -32,9 +32,9 @@ import com.pchome.hadoopdmp.mapreduce.job.component.GeoIpComponent;
 import com.pchome.hadoopdmp.mapreduce.job.component.PersonalInfoComponent;
 import com.pchome.hadoopdmp.mapreduce.job.factory.ACategoryLogData;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryCodeBean;
-import com.pchome.hadoopdmp.mapreduce.job.factory.DmpLogBean;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryLogFactory;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryRutenCodeBean;
+import com.pchome.hadoopdmp.mapreduce.job.factory.DmpLogBean;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 import com.pchome.hadoopdmp.spring.config.bean.mongodb.MongodbHadoopConfig;
 
@@ -219,7 +219,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			dmpLogBeanResult = deviceComponent.parseUserAgentToDevice(dmpLogBeanResult);
 			
 			
-			//分析click、24H、Ruten、campaign分類 
+			//分類處理元件(分析click、24H、Ruten、campaign分類) 
 			if ( (dmpLogBeanResult.getSource().equals("ck")||dmpLogBeanResult.getSource().equals("campaign")) && StringUtils.isNotBlank(dmpLogBeanResult.getAdClass())) {	// kdcl log的ad_click 或 campaign log的adclass 
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
 				dmpLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(dmpLogBeanResult, mongoOperations);
@@ -233,29 +233,37 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				return;
 			}
 			
-			//處理個資
+			//個資處理元件
 			dmpLogBeanResult = personalInfoComponent.processPersonalInfo(dmpLogBeanResult, mongoOperations);
 			
 			//紀錄日期
 			dmpLogBeanResult.setRecordDate(record_date);
 			
 			
-			// 0:memid + 1:uuid + 2:adClass + 3.adClassSource 
+			// 0:memid + 1:uuid + 2:category + 3.categorySource 
 			// 4.sex + 5.sexSource + 6.age + 7.ageSource 
 			// 8.country + 9.city + 10.areaInfoSource
 			//11.device_info_source + 12.device_info 
 			//13.device_phone_info + 14.device_os_info + 15.device_browser_info 
-			//16.time_info + 17.time_info_source 
-			//18.url + 19.ip + 20.record_date
+			//16.time_info_hour + 17.time_info_source 
+			
+			//classify
+			//18.personal_info_api + 19.personal_info 
+			//20.class_ad_click + 21.class_24h_url + 22.class_ruten_url
+			//23.area_info + 24.device_info + 25.time_info
+			//26.url + 27.ip + 28.record_date + 29.original_source
 			
 			String memid = StringUtils.isBlank(dmpLogBeanResult.getMemid()) ? "null" : dmpLogBeanResult.getMemid();
-			String result = memid + SYMBOL + dmpLogBeanResult.getUuid() + SYMBOL + dmpLogBeanResult.getAdClass() + SYMBOL  + dmpLogBeanResult.getSource()
+			String result = memid + SYMBOL + dmpLogBeanResult.getUuid() + SYMBOL + dmpLogBeanResult.getCategory() + SYMBOL  + dmpLogBeanResult.getCategorySource()
 			+ SYMBOL + dmpLogBeanResult.getSex() + SYMBOL + dmpLogBeanResult.getSexSource() + SYMBOL + dmpLogBeanResult.getAge() + SYMBOL + dmpLogBeanResult.getAgeSource()
 			+ SYMBOL + dmpLogBeanResult.getCountry() + SYMBOL + dmpLogBeanResult.getCity() + SYMBOL + dmpLogBeanResult.getAreaInfoSource()
 			+ SYMBOL + dmpLogBeanResult.getDeviceInfoSource() + SYMBOL + dmpLogBeanResult.getDeviceInfo()
 			+ SYMBOL + dmpLogBeanResult.getDevicePhoneInfo() + SYMBOL + dmpLogBeanResult.getDeviceOsInfo() + SYMBOL + dmpLogBeanResult.getDeviceBrowserInfo()
-			+ SYMBOL + dmpLogBeanResult.getTimeInfo() + SYMBOL + dmpLogBeanResult.getTimeInfoSource() 
-			+ SYMBOL + dmpLogBeanResult.getUrl() + SYMBOL + dmpLogBeanResult.getIp() + SYMBOL + dmpLogBeanResult.getRecordDate();
+			+ SYMBOL + dmpLogBeanResult.getHour() + SYMBOL + dmpLogBeanResult.getTimeInfoSource() 
+			+ SYMBOL +dmpLogBeanResult.getPersonalInfoApiClassify()+ SYMBOL +dmpLogBeanResult.getPersonalInfoClassify()
+			+ SYMBOL +dmpLogBeanResult.getClassAdClickClassify() + SYMBOL +dmpLogBeanResult.getClass24hUrlClassify()+ SYMBOL +dmpLogBeanResult.getClassRutenUrlClassify()
+			+ SYMBOL +dmpLogBeanResult.getAreaInfoClassify()+ SYMBOL +dmpLogBeanResult.getDeviceInfoClassify()+ SYMBOL +dmpLogBeanResult.getTimeInfoClassify()
+			+ SYMBOL + dmpLogBeanResult.getUrl() + SYMBOL + dmpLogBeanResult.getIp() + SYMBOL + dmpLogBeanResult.getRecordDate()+ SYMBOL + dmpLogBeanResult.getSource();
 			
 			log.info(">>>>>> Mapper write key:" + result);
 			

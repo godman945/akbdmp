@@ -1,5 +1,6 @@
 package com.pchome.hadoopdmp.mapreduce.job.factory;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.mongodb.core.MongoOperations;
 
 @SuppressWarnings({ "unchecked", "deprecation" ,"static-access","resource"})
@@ -10,11 +11,21 @@ public class AdClickLog extends ACategoryLogData {
 		String adClass = dmpDataBean.getAdClass();
 		
 		if (!adClass.matches("\\d{16}")) {
-			dmpDataBean.setClassAdClick("N");
+			dmpDataBean.setCategory("null");
+			dmpDataBean.setCategorySource("null");
+			dmpDataBean.setClassAdClickClassify("null");
 		}
 		
-		dmpDataBean.setAdClass(adClass);
-		dmpDataBean.setClassAdClick("Y");
+		dmpDataBean.setCategory(adClass);
+		dmpDataBean.setClassAdClickClassify("Y");
+		
+		if ( StringUtils.equals(dmpDataBean.getSource(),"ck") ){
+			dmpDataBean.setCategorySource("adclick");
+		}
+		
+		if ( StringUtils.equals(dmpDataBean.getSource(),"campaign") ){
+			dmpDataBean.setCategorySource("campaign");
+		}
 		
 		return dmpDataBean;
 	}

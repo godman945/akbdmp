@@ -2,7 +2,6 @@ package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,8 +23,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.pchome.hadoopdmp.mysql.db.service.kdclSatisticsSource.IKdclStatisticsSourceService;
-import com.pchome.hadoopdmp.mysql.db.service.kdclSatisticsSource.KdclStatisticsSourceService;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 
 @Component
@@ -105,13 +102,17 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	@Override
 	public void reduce(Text key, Iterable<Text> value, Context context) {
-		// 0:memid + 1:uuid + 2:adClass + 3.adClassSource 
-		// 4.sex + 5.sexSource + 6.age + 7.ageSource 
+		// 0:memid + 1:uuid + 2:category + 3.categorySource
+		// 4.sex + 5.sexSource + 6.age + 7.ageSource
 		// 8.country + 9.city + 10.areaInfoSource
-		//11.device_info_source + 12.device_info 
-		//13.device_phone_info + 14.device_os_info + 15.device_browser_info 
-		//16.time_info + 17.time_info_source 
-		//18.url + 19.ip + 20.record_date
+		// 11.device_info_source + 12.device_info
+		// 13.device_phone_info + 14.device_os_info + 15.device_browser_info
+		// 16.time_info_hour + 17.time_info_source
+		// classify 分類
+		// 18.personal_info_api + 19.personal_info
+		// 20.class_ad_click + 21.class_24h_url + 22.class_ruten_url
+		// 23.area_info + 24.device_info + 25.time_info
+		// 26.url + 27.ip + 28.record_date + 29.original_source
 		try {
 			log.info(">>>>>> reduce start : " + key);
 
@@ -174,21 +175,87 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			timeInfoMap.put("source", data[17]);
 
 			
-			//classify Array
+			//put classify Array
 			JSONArray classifyArray = new JSONArray();
 			
-			Map all_kdcl_log_class_ad_click_map = new HashMap();
-			all_kdcl_log_class_ad_click_map.put("all_kdcl_log_class_ad_click", "Y");
-			classifyArray.put(all_kdcl_log_class_ad_click_map);
+			//kdcl classify 
+			if ( (StringUtils.equals(data[29], "ck")) || (StringUtils.equals(data[29], "pv")) ){
+				//memid_kdcl_log_personal_info_api
+				Map memid_kdcl_log_personal_info_api = new HashMap();
+				memid_kdcl_log_personal_info_api.put("memid_kdcl_log_personal_info_api", data[18]);
+				classifyArray.put(memid_kdcl_log_personal_info_api);
+				
+				//all_kdcl_log_personal_info
+				Map all_kdcl_log_personal_info = new HashMap();
+				all_kdcl_log_personal_info.put("all_kdcl_log_personal_info", data[19]);
+				classifyArray.put(all_kdcl_log_personal_info);
+				
+				//all_kdcl_log_class_ad_click
+				Map all_kdcl_log_class_ad_click = new HashMap();
+				all_kdcl_log_class_ad_click.put("all_kdcl_log_class_ad_click", data[20]);
+				classifyArray.put(all_kdcl_log_class_ad_click);
+				
+				//all_kdcl_log_class_24h_url
+				Map all_kdcl_log_class_24h_url = new HashMap();
+				all_kdcl_log_class_24h_url.put("all_kdcl_log_class_24h_url", data[21]);
+				classifyArray.put(all_kdcl_log_class_24h_url);
+				
+				//all_kdcl_log_class_ruten_url
+				Map all_kdcl_log_class_ruten_url = new HashMap();
+				all_kdcl_log_class_ruten_url.put("all_kdcl_log_class_ruten_url", data[22]);
+				classifyArray.put(all_kdcl_log_class_ruten_url);
+				
+				//all_kdcl_log_area_info
+				Map all_kdcl_log_area_info = new HashMap();
+				all_kdcl_log_area_info.put("all_kdcl_log_area_info", data[23]);
+				classifyArray.put(all_kdcl_log_area_info);
+				
+				//all_kdcl_log_device_info
+				Map all_kdcl_log_device_info = new HashMap();
+				all_kdcl_log_device_info.put("all_kdcl_log_device_info", data[24]);
+				classifyArray.put(all_kdcl_log_device_info);
+				
+				//all_kdcl_log_time_info
+				Map all_kdcl_log_time_info = new HashMap();
+				all_kdcl_log_time_info.put("all_kdcl_log_time_info", data[25]);
+				classifyArray.put(all_kdcl_log_time_info);
+				
+			}
+			
+			//campaign classify
+			if ( (StringUtils.equals(data[29], "campaign")) ){
+				
+				//memid_camp_log_personal_info_api
+				Map memid_camp_log_personal_info_api = new HashMap();
+				memid_camp_log_personal_info_api.put("memid_camp_log_personal_info_api", data[18]);
+				classifyArray.put(memid_camp_log_personal_info_api);
+				
+				//all_camp_log_personal_info
+				Map all_camp_log_personal_info = new HashMap();
+				all_camp_log_personal_info.put("all_camp_log_personal_info", data[19]);
+				classifyArray.put(all_camp_log_personal_info);
+				
+				//all_camp_log_class_ad_click
+				Map all_camp_log_class_ad_click = new HashMap();
+				all_camp_log_class_ad_click.put("all_camp_log_class_ad_click", data[20]);
+				classifyArray.put(all_camp_log_class_ad_click);
+				
+				//all_camp_log_area_info
+				Map all_camp_log_area_info = new HashMap();
+				all_camp_log_area_info.put("all_camp_log_area_info", data[23]);
+				classifyArray.put(all_camp_log_area_info);
+				
+				//all_camp_log_device_info
+				Map all_camp_log_device_info = new HashMap();
+				all_camp_log_device_info.put("all_camp_log_device_info", data[24]);
+				classifyArray.put(all_camp_log_device_info);
 
-			Map memid_member_api_personal_info_api_map = new HashMap();
-			memid_member_api_personal_info_api_map.put("memid_member_api_personal_info_api", "N");
-			classifyArray.put(memid_member_api_personal_info_api_map);
-			
-			Map memid_kdcl_log_personal_info_map = new HashMap();
-			memid_kdcl_log_personal_info_map.put("memid_kdcl_log_personal_info_map", "N");
-			classifyArray.put(memid_kdcl_log_personal_info_map);
-			
+				//all_camp_log_time_info
+				Map all_camp_log_time_info = new HashMap();
+				all_camp_log_time_info.put("all_camp_log_time_info", data[25]);
+				classifyArray.put(all_camp_log_time_info);
+			}
+
 			
 			//dataJson
 			JSONObject dataJson = new JSONObject();

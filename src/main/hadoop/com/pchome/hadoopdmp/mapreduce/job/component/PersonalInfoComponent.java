@@ -63,15 +63,15 @@ public class PersonalInfoComponent {
 					dmpDataBean.setMage("null");
 					
 					if ( (!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA")) ) {
-						dmpDataBean.setPersonalInfoApi("Y");
+						dmpDataBean.setPersonalInfoApiClassify("Y");
 					} else {
-						dmpDataBean.setPersonalInfoApi("N");
+						dmpDataBean.setPersonalInfoApiClassify("N");
 					}
 				}else{
 					// mongodb已有資料就跳過,包括NA (mongo user_detail結構中已有mage和msex)
 					dmpDataBean.setMsex("null");
 					dmpDataBean.setMage("null");
-					dmpDataBean.setPersonalInfoApi("Y");
+					dmpDataBean.setPersonalInfoApiClassify("Y");
 				}
 			} else {
 				// mongo尚未新增user_detail，直接新增一筆mongo資料，塞會員中心打回來的性別、年齡(空的轉成NA寫入)
@@ -96,9 +96,9 @@ public class PersonalInfoComponent {
 				mongoOperations.save(hadoopUserDetailBean);
 				
 				if ( (!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA")) ) {
-					dmpDataBean.setPersonalInfoApi("Y");
+					dmpDataBean.setPersonalInfoApiClassify("Y");
 				} else {
-					dmpDataBean.setPersonalInfoApi("N");
+					dmpDataBean.setPersonalInfoApiClassify("N");
 				}
 			}
 		}
@@ -114,9 +114,9 @@ public class PersonalInfoComponent {
 		dmpDataBean.setAgeSource( StringUtils.equals(age, "null") ? "null" : "excel" );
 		
 		if ( (!StringUtils.equals(age, "null")) && (!StringUtils.equals(sex, "null")) ) {
-			dmpDataBean.setPersonalInfo("Y");
+			dmpDataBean.setPersonalInfoClassify("Y");
 		} else {
-			dmpDataBean.setPersonalInfo("N");
+			dmpDataBean.setPersonalInfoClassify("N");
 		}
 		return dmpDataBean;
 	}
