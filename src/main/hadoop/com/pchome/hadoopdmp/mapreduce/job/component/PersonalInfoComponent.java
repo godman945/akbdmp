@@ -33,10 +33,6 @@ public class PersonalInfoComponent {
 	// 處理個資元件
 	public DmpLogBean processPersonalInfo(DmpLogBean dmpDataBean ,MongoOperations mongoOperations) throws Exception {
 		
-		log.info(">>>>>> debug  rawdata  Category >>>>>>> "+ dmpDataBean.getCategory());
-		log.info(">>>>>> debug  rawdata  adclass >>>>>>> "+ dmpDataBean.getAdClass());
-		log.info(">>>>>> debug  rawdata  url >>>>>>> "+ dmpDataBean.getUrl());
-		
 		String memid = dmpDataBean.getMemid();
 		String category = dmpDataBean.getCategory();
 
@@ -130,14 +126,9 @@ public class PersonalInfoComponent {
 	
 	public Map<String, String> forecastPersonalInfo(String adClass) throws Exception {
 		
-		log.info(">>>>>> debug  forecastPersonalInfo  adClass >>>>>>> "+ adClass);
-		
 		combinedValue combineObj = DmpLogMapper.clsfyCraspMap.get(adClass);
 		String sex = (combineObj != null) ? combineObj.gender : "";
 		String age = (combineObj != null) ? combineObj.age : "";
-		
-		log.info(">>>>>> debug  forecastPersonalInfo  sex >>>>>>> "+ sex);
-		log.info(">>>>>> debug  forecastPersonalInfo  age >>>>>>> "+ age);
 
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("sex", sex);
