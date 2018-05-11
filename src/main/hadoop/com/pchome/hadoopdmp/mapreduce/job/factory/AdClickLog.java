@@ -21,10 +21,12 @@ public class AdClickLog extends ACategoryLogData {
 		
 		if ( StringUtils.equals(dmpDataBean.getSource(),"ck") ){
 			dmpDataBean.setCategorySource("adclick");
+			dmpDataBean.setSource("kdcl");
 		}
 		
 		if ( StringUtils.equals(dmpDataBean.getSource(),"campaign") ){
 			dmpDataBean.setCategorySource("campaign");
+			dmpDataBean.setSource("campaign");
 		}
 		
 		return dmpDataBean;

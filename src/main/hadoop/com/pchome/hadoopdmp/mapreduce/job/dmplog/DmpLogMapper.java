@@ -207,7 +207,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			}
 			
 
-			DmpLogBean dmpLogBeanResult = null;
+			DmpLogBean dmpLogBeanResult = new DmpLogBean();
 			
 			//地區處理元件(ip 轉國家、城市)
 			dmpLogBeanResult = geoIpComponent.ipTransformGEO(dmpDataBean);

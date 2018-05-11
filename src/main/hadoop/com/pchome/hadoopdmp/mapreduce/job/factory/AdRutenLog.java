@@ -24,6 +24,8 @@ public class AdRutenLog extends ACategoryLogData {
 
 	public Object processCategory(DmpLogBean dmpDataBean, MongoOperations mongoOperations) throws Exception {
 		
+		dmpDataBean.setSource("kdcl");
+		
 		String sourceUrl = dmpDataBean.getUrl();
 		String category = "";
 		String categorySource = "";
