@@ -38,7 +38,7 @@ public class PersonalInfoComponent {
 		log.info(">>>>>> debug  rawdata  url >>>>>>> "+ dmpDataBean.getUrl());
 		
 		String memid = dmpDataBean.getMemid();
-		String adClass = dmpDataBean.getAdClass();
+		String category = dmpDataBean.getCategory();
 
 		// 如有memid資料，先查mongo，再撈會員中心查個資
 		// 撈回mongo為NA也算已打過會員中心API，不再重打會員中心api
@@ -109,7 +109,7 @@ public class PersonalInfoComponent {
 		}
 		
 		// 讀取ClsfyGndAgeCrspTable.txt做age、sex個資推估
-		Map<String, String> forecastInfoMap = forecastPersonalInfo(adClass);
+		Map<String, String> forecastInfoMap = forecastPersonalInfo(category);
 		String sex = StringUtils.isNotBlank(forecastInfoMap.get("sex")) ? forecastInfoMap.get("sex") : "null";
 		String age = StringUtils.isNotBlank(forecastInfoMap.get("age")) ? forecastInfoMap.get("age") : "null";
 		
