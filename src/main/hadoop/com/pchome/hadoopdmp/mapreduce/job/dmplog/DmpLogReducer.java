@@ -112,7 +112,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		// 18.personal_info_api + 19.personal_info
 		// 20.class_ad_click + 21.class_24h_url + 22.class_ruten_url
 		// 23.area_info + 24.device_info + 25.time_info
-		// 26.url + 27.ip + 28.record_date + 29.original_source
+		// 26.url + 27.ip + 28.record_date + 29.source(kdcl、campaign)
 		try {
 			log.info(">>>>>> reduce start : " + key);
 
@@ -179,7 +179,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			JSONArray classifyArray = new JSONArray();
 			
 			//kdcl classify 
-			if ( (StringUtils.equals(data[29], "ck")) || (StringUtils.equals(data[29], "pv")) ){
+			if ( (StringUtils.equals(data[29], "kdcl")) ){
 				//memid_kdcl_log_personal_info_api
 				Map memid_kdcl_log_personal_info_api = new HashMap();
 				memid_kdcl_log_personal_info_api.put("memid_kdcl_log_personal_info_api", data[18]);
