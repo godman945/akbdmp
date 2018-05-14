@@ -28,8 +28,8 @@ import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig
 @Component
 public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 
-	Log log = LogFactory.getLog("DmpLogReducer");
-
+	private static Log log = LogFactory.getLog("DmpLogReducer");
+	
 	SimpleDateFormat sdf = null;
 	private final static String SYMBOL = String.valueOf(new char[] { 9, 31 });
 	
