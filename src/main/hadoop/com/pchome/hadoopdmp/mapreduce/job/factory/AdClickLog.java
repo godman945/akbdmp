@@ -16,6 +16,7 @@ public class AdClickLog extends ACategoryLogData {
 			dmpDataBean.setClassAdClickClassify("null");
 		}
 		
+		
 		dmpDataBean.setCategory(adClass);
 		dmpDataBean.setClassAdClickClassify("Y");
 		

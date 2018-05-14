@@ -39,12 +39,12 @@ public class DmpLogBean {
 	private String categorySource ;			//adclick,24h,ruten,campaign
 	
 	//個資處理元件
-	private String msex ;	//會員中心真實sex
-	private String mage ;	//會員中心真實age
-	private String sex ;
-	private String sexSource ;
-	private String age ;
-	private String ageSource ;
+	private String msex ;		//會員中心真實sex
+	private String mage ;		//會員中心真實age
+	private String sex ;		//推估性別
+	private String sexSource ;	//推估性別來源
+	private String age ;		//推估年齡
+	private String ageSource ;	//推估年齡來源
 	
 	//紀錄日期
 	private String recordDate ;

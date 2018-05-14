@@ -43,14 +43,6 @@ public class DeviceComponent {
 			dmpDataBean.setDeviceInfoClassify("N");
 		}
 	
-		
-//		System.out.println("访问设备类型:"+operatingSystem.getDeviceType());// “device_info”:{ //enum DeviceType
-////		System.out.println("浏览器生产厂商:"+browser.getManufacturer());
-//		System.out.println("操作系统生产厂商:"+operatingSystem.getManufacturer());//“device_phone_info”:{ //enum Manufacturer
-//		System.out.println("操作系统家族:"+operatingSystem.getGroup());//“device_os_info”:{ //enum OperatingSystem
-//		System.out.println("浏览器名稱:"+browser.getName());//“device_browser_info”:{ //enum Browser
-		
 		return dmpDataBean;
 	}
-	
 }

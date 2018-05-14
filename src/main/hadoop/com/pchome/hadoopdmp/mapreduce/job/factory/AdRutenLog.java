@@ -70,7 +70,7 @@ public class AdRutenLog extends ACategoryLogData {
 					mongoOperations.updateFirst(new Query(Criteria.where( "url" ).is(sourceUrl.trim())), querytime, "class_url");
 				}
 				
-			}else if( (classUrlMongoBean.getStatus().equals("1")) && (!classUrlMongoBean.getAd_class().equals("")) ){
+			}else if( (classUrlMongoBean.getStatus().equals("1")) && (StringUtils.isNotBlank(classUrlMongoBean.getAd_class())) ){
 				//url 存在 status = 1 取分類代號回傳 mongodn update_date 更新(一天一次) classRutenUrl = "Y";
 				category = classUrlMongoBean.getAd_class();
 				categorySource = "ruten";
@@ -140,9 +140,10 @@ public class AdRutenLog extends ACategoryLogData {
 						
 						Date date = new Date();
 						ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
-						classUrlMongoBeanCreate.setUrl(sourceUrl);
+						classUrlMongoBeanCreate.setUrl(sourceUrl.trim());
 						classUrlMongoBeanCreate.setAd_class(category);
 						classUrlMongoBeanCreate.setStatus("1");
+						classUrlMongoBeanCreate.setRuten_bread(breadcrumbResult);
 						classUrlMongoBeanCreate.setCreate_date(date);
 						classUrlMongoBeanCreate.setUpdate_date(date);
 						mongoOperations.save(classUrlMongoBeanCreate);
@@ -154,10 +155,12 @@ public class AdRutenLog extends ACategoryLogData {
 						
 						Date date = new Date();
 						ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
-						classUrlMongoBeanCreate.setUrl(sourceUrl);
+						classUrlMongoBeanCreate.setUrl(sourceUrl.trim());
 						classUrlMongoBeanCreate.setAd_class("");
 						classUrlMongoBeanCreate.setStatus("0");
 						classUrlMongoBeanCreate.setQuery_time(1);
+						classUrlMongoBeanCreate.setRuten_bread(breadcrumbResult);
+						classUrlMongoBeanCreate.setErr_msg("爬不到麵包屑的訊息");
 						classUrlMongoBeanCreate.setCreate_date(date);
 						classUrlMongoBeanCreate.setUpdate_date(date);
 						mongoOperations.save(classUrlMongoBeanCreate);
@@ -171,7 +174,7 @@ public class AdRutenLog extends ACategoryLogData {
 				
 				Date date = new Date();
 				ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
-				classUrlMongoBeanCreate.setUrl(sourceUrl);
+				classUrlMongoBeanCreate.setUrl(sourceUrl.trim());
 				classUrlMongoBeanCreate.setAd_class("");
 				classUrlMongoBeanCreate.setStatus("0");
 				classUrlMongoBeanCreate.setQuery_time(1);

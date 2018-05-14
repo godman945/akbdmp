@@ -42,7 +42,7 @@ public class GeoIpComponent {
 		if (response == null) {
 			dmpDataBean.setCountry("null");
 			dmpDataBean.setCity("null");
-			dmpDataBean.setAreaInfoSource("ip");
+			dmpDataBean.setAreaInfoSource("null");
 			dmpDataBean.setAreaInfoClassify("N");
 			return dmpDataBean;
 		}
@@ -63,5 +63,4 @@ public class GeoIpComponent {
 
 		return dmpDataBean;
 	}
-
 }
