@@ -42,8 +42,10 @@ import com.pchome.hadoopdmp.spring.config.bean.mongodb.MongodbHadoopConfig;
 public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	Log log = LogFactory.getLog("DmpLogMapper");
 	
-	private static int LOG_LENGTH = 30;
-	private static String SYMBOL = String.valueOf(new char[] { 9, 31 });
+	private static int kdclLogLength = 30;
+	private static int campaignLogLength = 9;
+	private static String kdclSymbol = String.valueOf(new char[] { 9, 31 });
+	private static String campaignSymbol = ",";
 
 	private Text keyOut = new Text();
 	private Text valueOut = new Text();
@@ -155,7 +157,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			
 			DmpLogBean dmpDataBean = new DmpLogBean();
 			String valueStr = value.toString();
-			if ( valueStr.indexOf(SYMBOL) > -1 ){	//kdcl log
+			if ( valueStr.indexOf(kdclSymbol) > -1 ){	//kdcl log
 				//kdcl log	raw data格式
 				// values[0]  date time (2018-01-04 04:57:12)
 				// values[1]  memid
@@ -164,9 +166,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				// values[4]  url
 				// values[13] ck,pv
 				// values[15] ad_class
-				String[] values = valueStr.toString().split(SYMBOL);
-				if (values.length < LOG_LENGTH) {
-					log.info("values.length < " + LOG_LENGTH);
+				String[] values = valueStr.toString().split(kdclSymbol);
+				if (values.length < kdclLogLength) {
+					log.info("values.length < " + kdclLogLength);
 					return;
 				}
 				dmpDataBean.setMemid(values[1]);
@@ -177,8 +179,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				dmpDataBean.setUserAgent(values[5]);
 				dmpDataBean.setDateTime(values[0]);
 				dmpDataBean.setSource(values[13]);
+				dmpDataBean.setAge("null");
+				dmpDataBean.setSex("null");
 				log.info(">>>>>> kdcl rawdata:" + valueStr);
-			}else if( valueStr.indexOf(",") > -1 ){	//campaign log
+			}else if( valueStr.indexOf(campaignSymbol) > -1 ){	//campaign log
 				//Campaign log raw data格式
 				// values[0] memid			會員帳號
 				// values[1] uuid			通用唯一識別碼	
@@ -190,7 +194,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				// values[7] record_date	紀錄日期(2018-04-27)
 				// values[8] Over_write		是否覆寫(true|false)
 				String[] values = valueStr.toString().split(",");
-				 if (values.length < 9) {
+				 if (values.length < campaignLogLength) {
 					 return;
                  }
 				 dmpDataBean.setMemid(StringUtils.isBlank(values[0])? "null" :values[0]);
@@ -201,6 +205,18 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				 dmpDataBean.setUserAgent("");
 				 dmpDataBean.setDateTime(values[7]);
 				 dmpDataBean.setSource("campaign");
+				 
+				 if (StringUtils.equals(values[4], "0")){
+					 dmpDataBean.setAge("null");
+				 }else{
+					 dmpDataBean.setAge(values[4]);
+				 }
+				 
+				 if (StringUtils.isBlank(values[5])){
+					 dmpDataBean.setSex("null");
+				 }else{
+					 dmpDataBean.setSex(values[5]);
+				 }
 				 log.info(">>>>>> campaige rawdata:" + valueStr);
 			}else{
 				 return;
@@ -254,16 +270,16 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			//26.url + 27.ip + 28.record_date + 29.original_source
 			
 			String memid = StringUtils.isBlank(dmpLogBeanResult.getMemid()) ? "null" : dmpLogBeanResult.getMemid();
-			String result = memid + SYMBOL + dmpLogBeanResult.getUuid() + SYMBOL + dmpLogBeanResult.getCategory() + SYMBOL  + dmpLogBeanResult.getCategorySource()
-			+ SYMBOL + dmpLogBeanResult.getSex() + SYMBOL + dmpLogBeanResult.getSexSource() + SYMBOL + dmpLogBeanResult.getAge() + SYMBOL + dmpLogBeanResult.getAgeSource()
-			+ SYMBOL + dmpLogBeanResult.getCountry() + SYMBOL + dmpLogBeanResult.getCity() + SYMBOL + dmpLogBeanResult.getAreaInfoSource()
-			+ SYMBOL + dmpLogBeanResult.getDeviceInfoSource() + SYMBOL + dmpLogBeanResult.getDeviceInfo()
-			+ SYMBOL + dmpLogBeanResult.getDevicePhoneInfo() + SYMBOL + dmpLogBeanResult.getDeviceOsInfo() + SYMBOL + dmpLogBeanResult.getDeviceBrowserInfo()
-			+ SYMBOL + dmpLogBeanResult.getHour() + SYMBOL + dmpLogBeanResult.getTimeInfoSource() 
-			+ SYMBOL +dmpLogBeanResult.getPersonalInfoApiClassify()+ SYMBOL +dmpLogBeanResult.getPersonalInfoClassify()
-			+ SYMBOL +dmpLogBeanResult.getClassAdClickClassify() + SYMBOL +dmpLogBeanResult.getClass24hUrlClassify()+ SYMBOL +dmpLogBeanResult.getClassRutenUrlClassify()
-			+ SYMBOL +dmpLogBeanResult.getAreaInfoClassify()+ SYMBOL +dmpLogBeanResult.getDeviceInfoClassify()+ SYMBOL +dmpLogBeanResult.getTimeInfoClassify()
-			+ SYMBOL + dmpLogBeanResult.getUrl() + SYMBOL + dmpLogBeanResult.getIp() + SYMBOL + dmpLogBeanResult.getRecordDate()+ SYMBOL + dmpLogBeanResult.getSource();
+			String result = memid + kdclSymbol + dmpLogBeanResult.getUuid() + kdclSymbol + dmpLogBeanResult.getCategory() + kdclSymbol  + dmpLogBeanResult.getCategorySource()
+			+ kdclSymbol + dmpLogBeanResult.getSex() + kdclSymbol + dmpLogBeanResult.getSexSource() + kdclSymbol + dmpLogBeanResult.getAge() + kdclSymbol + dmpLogBeanResult.getAgeSource()
+			+ kdclSymbol + dmpLogBeanResult.getCountry() + kdclSymbol + dmpLogBeanResult.getCity() + kdclSymbol + dmpLogBeanResult.getAreaInfoSource()
+			+ kdclSymbol + dmpLogBeanResult.getDeviceInfoSource() + kdclSymbol + dmpLogBeanResult.getDeviceInfo()
+			+ kdclSymbol + dmpLogBeanResult.getDevicePhoneInfo() + kdclSymbol + dmpLogBeanResult.getDeviceOsInfo() + kdclSymbol + dmpLogBeanResult.getDeviceBrowserInfo()
+			+ kdclSymbol + dmpLogBeanResult.getHour() + kdclSymbol + dmpLogBeanResult.getTimeInfoSource() 
+			+ kdclSymbol +dmpLogBeanResult.getPersonalInfoApiClassify()+ kdclSymbol +dmpLogBeanResult.getPersonalInfoClassify()
+			+ kdclSymbol +dmpLogBeanResult.getClassAdClickClassify() + kdclSymbol +dmpLogBeanResult.getClass24hUrlClassify()+ kdclSymbol +dmpLogBeanResult.getClassRutenUrlClassify()
+			+ kdclSymbol +dmpLogBeanResult.getAreaInfoClassify()+ kdclSymbol +dmpLogBeanResult.getDeviceInfoClassify()+ kdclSymbol +dmpLogBeanResult.getTimeInfoClassify()
+			+ kdclSymbol + dmpLogBeanResult.getUrl() + kdclSymbol + dmpLogBeanResult.getIp() + kdclSymbol + dmpLogBeanResult.getRecordDate()+ kdclSymbol + dmpLogBeanResult.getSource();
 			
 			log.info(">>>>>> Mapper write key:" + result);
 			

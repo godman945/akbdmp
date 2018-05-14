@@ -104,6 +104,15 @@ public class PersonalInfoComponent {
 			}
 		}
 		
+		
+		//如果raw data就有推估的age、sex，即PersonalInfo已被分類
+		if ( (!StringUtils.equals(dmpDataBean.getSex(), "null")) && (!StringUtils.equals(dmpDataBean.getAge(), "null")) ){
+			dmpDataBean.setPersonalInfoClassify("Y");
+			dmpDataBean.setSexSource(dmpDataBean.getSource());
+			dmpDataBean.setAgeSource(dmpDataBean.getSource());
+			return dmpDataBean;
+		}
+		
 		// 讀取ClsfyGndAgeCrspTable.txt做age、sex個資推估
 		Map<String, String> forecastInfoMap = forecastPersonalInfo(category);
 		String sex = StringUtils.isNotBlank(forecastInfoMap.get("sex")) ? forecastInfoMap.get("sex") : "null";
