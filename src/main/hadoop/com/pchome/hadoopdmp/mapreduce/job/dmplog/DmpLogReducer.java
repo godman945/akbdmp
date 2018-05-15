@@ -108,7 +108,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		// 11.device_info_source + 12.device_info
 		// 13.device_phone_info + 14.device_os_info + 15.device_browser_info
 		// 16.time_info_hour + 17.time_info_source
-		// classify 分類
+
+		// classify
 		// 18.personal_info_api + 19.personal_info
 		// 20.class_ad_click + 21.class_24h_url + 22.class_ruten_url
 		// 23.area_info + 24.device_info + 25.time_info
@@ -180,6 +181,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			
 			//kdcl classify 
 			if ( (StringUtils.equals(data[29], "kdcl")) ){
+				
 				//memid_kdcl_log_personal_info_api
 				Map memid_kdcl_log_personal_info_api = new HashMap();
 				memid_kdcl_log_personal_info_api.put("memid_kdcl_log_personal_info_api", data[18]);
@@ -224,7 +226,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			
 			//campaign classify
 			if ( (StringUtils.equals(data[29], "campaign")) ){
-				
 				//memid_camp_log_personal_info_api
 				Map memid_camp_log_personal_info_api = new HashMap();
 				memid_camp_log_personal_info_api.put("memid_camp_log_personal_info_api", data[18]);
@@ -281,8 +282,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			sendKafkaJson.put("record_date", data[28]);
 			
 
-//			System.out.println(sendKafkaJson.toString());
-			
 			if(this.environment.equals("prd")){
 				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("dmp_log_prd", "", sendKafkaJson.toString()));
 				 while (!f.isDone()) {
@@ -319,71 +318,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //		System.setProperty("spring.profiles.active", "local");
 //		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 //		IKdclStatisticsSourceService kdclStatisticsSourceService = (KdclStatisticsSourceService) ctx.getBean(KdclStatisticsSourceService.class);
-//		Date date = new Date();
-//		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//		
-//		
-////		int a = 0;
-////		Calendar calendar = Calendar.getInstance();  
-////		if(calendar.get(Calendar.HOUR_OF_DAY) == 16){
-////			calendar.add(Calendar.DAY_OF_MONTH, -1); 
-////			System.out.println(sdf.format(calendar.getTime()));;
-////		}
-////		KdclStatisticsSource kdclStatisticsSource = kdclStatisticsSourceService.findKdclStatisticsSourceByBehaviorAndRecordDate("7", sdf.format(calendar.getTime()));
-////		a = a + kdclStatisticsSource.getCounter();
-////		
-////		System.out.println(a);
-////		
-////		kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("7", sdf.format(calendar.getTime()));
-////		
-////		
-////		a = a + 10;
-////		
-//		
-//		
-////		String recodeDate = sdf.format(date);
-////		System.out.println(recodeDate);
-////		kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("ad_click", recodeDate);
-////		kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("24h", recodeDate);
-////		kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("ruten", recodeDate);
-////		kdclStatisticsSourceService.deleteByBehaviorAndRecordDate("personal_info", recodeDate);
-//		
-//		
-////		UserDetailService userDetailService = (UserDetailService) ctx.getBean(UserDetailService.class);
-////		UserDetailMongoBean userDetailMongoBean = userDetailService.findUserId("zxc910615");
-////		
-////		System.out.println(userDetailMongoBean.get_id());
-////		System.out.println((String)userDetailMongoBean.getUser_info().get("sex"));
-//		
-//		
-//		
-//		
-//		
-//		
-//		
-////		Query query = new Query(Criteria.where(ClassCountMongoDBEnum.USER_ID.getKey()).is(uuid));
-////		UserDetailMongoBean userDetailMongoBean =  mongoOperations.findOne(query, UserDetailMongoBean.class);
-////		userDetailMongoBean.getUser_info().get("sex")
-////		userDetailMongoBean.getUser_info().get("age")
-//		
-//		
-//		
-//		
-////		System.out.println(userDetailMongoBean.getCategory_info().get(0).get("category"));
-//		
-//		
-////		KdclStatisticsSource kdclStatisticsSource = new KdclStatisticsSource();
-////		kdclStatisticsSource.setClassify("A");
-////		kdclStatisticsSource.setIdType("alex");
-////		kdclStatisticsSource.setServiceType("9");
-////		kdclStatisticsSource.setBehavior("GGG");
-////		kdclStatisticsSource.setCounter(0);
-////		kdclStatisticsSource.setRecordDate("2018-01-25");
-////		kdclStatisticsSource.setUpdateDate(new Date());
-////		kdclStatisticsSource.setCreateDate(new Date());
-////		kdclStatisticsSourceService.save(kdclStatisticsSource);
-//	}
-
+//}
 
 	
 }

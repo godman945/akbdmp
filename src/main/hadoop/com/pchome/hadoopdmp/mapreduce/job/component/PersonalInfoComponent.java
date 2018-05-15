@@ -48,7 +48,7 @@ public class PersonalInfoComponent {
 				Map<String, Object> userInfoMap = new HashMap<String, Object>();
 				userInfoMap = userDetailMongoBean.getUser_info();
 				if ((userInfoMap.get("mage") == null) || (userInfoMap.get("msex") == null)) {
-					// 沒有資料空的打會員中心 API
+					// Mongo沒有mage、msex資料空的打會員中心 API
 					// 會員中心有資料寫回 mogodb msex mage 
 					// 會員中心沒有資料寫入 NA
 					Map<String, Object> memberInfoMap = findMemberInfoAPI(memid);
@@ -56,9 +56,11 @@ public class PersonalInfoComponent {
 					mage = (String) memberInfoMap.get("mage");
 
 					Update realPersonalData = new Update();
+					realPersonalData.set("user_info.type", "memid");
+					realPersonalData.set("user_info.memid", "");
 					realPersonalData.set("user_info.msex", msex);
 					realPersonalData.set("user_info.mage", mage);
-					mongoOperations.updateFirst(new Query(Criteria.where("user_id").is(memid)), realPersonalData,"user_detail");
+					mongoOperations.updateFirst(new Query(Criteria.where(ClassCountMongoDBEnum.USER_ID.getKey()).is(memid)), realPersonalData,"user_detail");
 					
 					dmpDataBean.setMsex("null");
 					dmpDataBean.setMage("null");
@@ -81,6 +83,8 @@ public class PersonalInfoComponent {
 				mage = (String) memberInfoMap.get("mage");
 				
 				Map<String, String> map = new HashMap<String, String>();
+				map.put("type", "memid");
+				map.put("memid", "");
 				map.put("mage", mage);
 				map.put("msex", msex);
 				
@@ -89,11 +93,10 @@ public class PersonalInfoComponent {
 				String todayStr = sdf.format(today);
 
 				UserDetailMongoBeanForHadoop hadoopUserDetailBean = new UserDetailMongoBeanForHadoop();
-				hadoopUserDetailBean.setUser_info(map);
 				hadoopUserDetailBean.setUser_id(memid);
 				hadoopUserDetailBean.setCreate_date(todayStr);
 				hadoopUserDetailBean.setUpdate_date(todayStr);
-				
+				hadoopUserDetailBean.setUser_info(map);
 				mongoOperations.save(hadoopUserDetailBean);
 				
 				if ( (!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA")) ) {
@@ -115,8 +118,8 @@ public class PersonalInfoComponent {
 		
 		// 讀取ClsfyGndAgeCrspTable.txt做age、sex個資推估
 		Map<String, String> forecastInfoMap = forecastPersonalInfo(category);
-		String sex = StringUtils.isNotBlank(forecastInfoMap.get("sex")) ? forecastInfoMap.get("sex") : "null";
-		String age = StringUtils.isNotBlank(forecastInfoMap.get("age")) ? forecastInfoMap.get("age") : "null";
+		String sex = forecastInfoMap.get("sex");
+		String age = forecastInfoMap.get("age");
 		
 		dmpDataBean.setSex(sex);
 		dmpDataBean.setSexSource( StringUtils.equals(sex, "null") ? "null" : "excel" ); 
@@ -128,16 +131,17 @@ public class PersonalInfoComponent {
 		} else {
 			dmpDataBean.setPersonalInfoClassify("N");
 		}
+		
 		return dmpDataBean;
 	}
 	
 	
 	
-	public Map<String, String> forecastPersonalInfo(String adClass) throws Exception {
+	public Map<String, String> forecastPersonalInfo(String category) throws Exception {
 		
-		combinedValue combineObj = DmpLogMapper.clsfyCraspMap.get(adClass);
-		String sex = (combineObj != null) ? combineObj.gender : "";
-		String age = (combineObj != null) ? combineObj.age : "";
+		combinedValue combineObj = DmpLogMapper.clsfyCraspMap.get(category);
+		String sex = (combineObj != null) ? combineObj.gender : "null";
+		String age = (combineObj != null) ? combineObj.age : "null";
 
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("sex", sex);
@@ -147,7 +151,6 @@ public class PersonalInfoComponent {
 	
 
 	public Map<String, Object> findMemberInfoAPI(String memid) throws Exception {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		StringBuffer url = new StringBuffer();
 		url.append("http://member.pchome.com.tw/findMemberInfo4ADAPI.html?ad_user_id=");
 		url.append(memid);
