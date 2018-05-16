@@ -73,11 +73,11 @@ public class DmpLogDriver {
 	private SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMddHHmmss");
 	
 	public void drive(String env,String timeType) throws Exception {
-		String alllog = analyzerPathAlllog;
-		log.info("alllog " + alllog);
-		if (StringUtils.isBlank(alllog)) {
-			return;
-		}
+//		String alllog = analyzerPathAlllog;
+//		log.info("alllog " + alllog);
+//		if (StringUtils.isBlank(alllog)) {
+//			return;
+//		}
 		Calendar calendar = Calendar.getInstance();
 		
 		JobConf jobConf = new JobConf();
@@ -235,9 +235,6 @@ public class DmpLogDriver {
 		for (String filePath : filePaths) {
 			DistributedCache.addCacheFile(new URI(filePath), job.getConfiguration());
 		}
-
-		// //delete old doc for specific date
-		// deleteMongoOldDoc(dateStr.substring(0, 10));
 
 		if (job.waitForCompletion(true)) {
 			log.info("Job is OK");

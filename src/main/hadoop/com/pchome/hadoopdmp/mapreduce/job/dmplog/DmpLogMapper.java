@@ -77,7 +77,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			record_date = context.getConfiguration().get("job.date");
 			Configuration conf = context.getConfiguration();
 			
-			//load 分類個資表(ClsfyGndAgeCrspTable.txt)
+			//load 推估分類個資表(ClsfyGndAgeCrspTable.txt)
 			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
 			Path clsfyTable = Paths.get(path[1].toString());
 			Charset charset = Charset.forName("UTF-8");
