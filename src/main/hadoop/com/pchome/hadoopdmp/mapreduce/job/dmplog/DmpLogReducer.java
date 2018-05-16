@@ -1,6 +1,5 @@
 package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +29,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	private static Log log = LogFactory.getLog("DmpLogReducer");
 	
-	SimpleDateFormat sdf = null;
 	private final static String SYMBOL = String.valueOf(new char[] { 9, 31 });
 	
 	private Text keyOut = new Text();
@@ -55,23 +53,14 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	private String kafkaValueSerializer;
 
-	private String environment;
-	
 	List<JSONObject> kafkaList = new ArrayList<>();
 
 	Producer<String, String> producer = null;
 
 	public void setup(Context context) {
-		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>>>>>>>>>>>>>");
+		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
 		try {
-			this.sdf = new SimpleDateFormat("yyyy-MM-dd");
-			if(StringUtils.isNotBlank(context.getConfiguration().get("spring.profiles.active"))){
-				System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
-				this.environment = "prd";
-			}else{
-				System.setProperty("spring.profiles.active", "stg");
-				this.environment = "stg";
-			}
+			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			this.kafkaMetadataBrokerlist = ctx.getEnvironment().getProperty("kafka.metadata.broker.list");
 			this.kafkaAcks = ctx.getEnvironment().getProperty("kafka.acks");
@@ -281,15 +270,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			sendKafkaJson.put("ip", data[27]);
 			sendKafkaJson.put("record_date", data[28]);
 			
-
-			if(this.environment.equals("prd")){
-				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("dmp_log_prd", "", sendKafkaJson.toString()));
-				 while (!f.isDone()) {
-				 }
-			}else{
-				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("dmp_log_stg", "", sendKafkaJson.toString()));
-				 while (!f.isDone()) {
-				 }
+			Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("dmp_log_prd", "", sendKafkaJson.toString()));
+			while (!f.isDone()) {
 			}
 			
 			log.info(">>>>>>reduce write key:" + sendKafkaJson.toString());

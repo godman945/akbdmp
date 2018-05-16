@@ -6,7 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -14,6 +13,7 @@ import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
-import org.apache.hadoop.mapred.JobConf;
+
 import com.hadoop.mapreduce.LzoTextInputFormat;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 
@@ -73,11 +73,6 @@ public class DmpLogDriver {
 	private SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMddHHmmss");
 	
 	public void drive(String env,String timeType) throws Exception {
-//		String alllog = analyzerPathAlllog;
-//		log.info("alllog " + alllog);
-//		if (StringUtils.isBlank(alllog)) {
-//			return;
-//		}
 		Calendar calendar = Calendar.getInstance();
 		
 		JobConf jobConf = new JobConf();
@@ -124,7 +119,7 @@ public class DmpLogDriver {
 		// job
 		log.info("----job start----");
 
-		Job job = new Job(jobConf, "dmp_log_STG " + sdf.format(date));
+		Job job = new Job(jobConf, "dmp_log_"+ env + sdf.format(date));
 		job.setJarByClass(DmpLogDriver.class);
 		job.setMapperClass(DmpLogMapper.class);
 		job.setMapOutputKeyClass(Text.class);
@@ -153,11 +148,8 @@ public class DmpLogDriver {
 			String bessieTempPath = analyzerPathAlllog+sdf1.format(date);
 			FileInputFormat.addInputPaths(job, bessieTempPath);
 			log.info("file Input Path : " + alllogOpRange);
+			
 		} else if (timeType.equals("hour")) {
-			StringBuffer alllogOpRange = new StringBuffer();
-			alllogOpRange.append(analyzerPathAlllog);
-			alllogOpRange.append(sdf1.format(date));
-//			/home/webuser/akb/storedata/alllog/2017-10-01/00
 			String timePath  = "";
 			Calendar calendar2 = Calendar.getInstance();
 			if(calendar2.get(calendar2.HOUR_OF_DAY) == 0){
@@ -170,32 +162,24 @@ public class DmpLogDriver {
 					timePath = sdf1.format(calendar2.getTime()) +"/"+ (calendar.get(calendar2.HOUR_OF_DAY) - 1);
 				}
 			}
-//			//輸入
-//			String adLogClassPpath = "/home/webuser/analyzer/storedata/alllog/2018-03-20";
-//			//輸出
-//			String bessieTempPath = "/home/webuser/dmp/adLogClassStg/2018-03-20/day";
-			//輸入
-//			String adLogClassPpath = "/home/webuser/akb/storedata/alllog/"+timePath;
-//			String adLogClassPpath = "/home/webuser/akb/storedata/alllog/2018-04-16/06";		//有24h
-			String adLogClassPpath = "/home/webuser/dmp/testData/category";						//有ruten
-			//輸出
+//			String adLogClassPpath = "/home/webuser/dmp/testData/category";						//測試path有ruten
 //			String bessieTempPath = "/home/webuser/dmp/adLogClassPrd/categorylog/"+timePath;
+			//輸入
+			String logInputPath = akbPathAllLog + timePath; //  /home/webuser/akb/storedata/alllog/2018-05-15/05
+			//輸出
 			String bessieTempPath = "/home/webuser/bessie/output";
-			
 			//hdfs存在則刪除
 			deleteExistedDir(fs, new Path(bessieTempPath), true);
 			
-			log.info(">>>>>>INPUT PATH:"+adLogClassPpath);
+			log.info(">>>>>>INPUT PATH:"+logInputPath);
 			log.info(">>>>>>OUTPUT PATH:"+bessieTempPath);
 			
+			FileInputFormat.addInputPaths(job, logInputPath);
 			FileOutputFormat.setOutputPath(job, new Path(bessieTempPath));
-			FileInputFormat.addInputPaths(job, adLogClassPpath);
 		} else {
 			log.info("date = null");
 			return;
 		}
-
-//		log.info("alllogPath=" + alllogPath);
 
 		//load jar path
 		String[] jarPaths = {
@@ -223,7 +207,6 @@ public class DmpLogDriver {
 			DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fs);
 		}
 
-		//load 分類表、分類個資表、log4j檔
 		String[] filePaths = {
 				hdfsPath + "/home/webuser/dmp/crawlBreadCrumb/data/pfp_ad_category_new.csv",
 				hdfsPath + "/home/webuser/dmp/readingdata/ClsfyGndAgeCrspTable.txt",
@@ -245,10 +228,10 @@ public class DmpLogDriver {
 	}
 
 	public static void printUsage() {
-		System.out.println("Usage(hour): [DATE] [HOUR]");
+		System.out.println("Usage(hour): [ENV] [HOUR]");
 		System.out.println("Usage(day): [DATE]");
 		System.out.println();
-		System.out.println("[DATE] format: yyyy-MM-dd");
+		System.out.println("[ENV] format: prd or stg");
 	}
 	
 	public static boolean deleteExistedDir(FileSystem fs, Path path, boolean recursive) throws IOException {
@@ -285,7 +268,6 @@ public class DmpLogDriver {
 //		System.out.println(timePath);
 		
 		log.info("====driver start====");
-		String date = "";
 		boolean jobFlag = false;
 		if(args.length != 2){
 			jobFlag = true;

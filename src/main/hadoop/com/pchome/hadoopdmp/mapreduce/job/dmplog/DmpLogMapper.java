@@ -67,11 +67,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public void setup(Context context) {
 		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
 		try {
-			if(StringUtils.isNotBlank(context.getConfiguration().get("spring.profiles.active"))){
-				System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
-			}else{
-				System.setProperty("spring.profiles.active", "stg");
-			}
+			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			this.mongoOperations = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
 			record_date = context.getConfiguration().get("job.date");
