@@ -33,6 +33,7 @@ public class Ad24HLog extends ACategoryLogData {
 			return dmpDataBean;
 		}
 		
+		//用url比對24h對照表找出分類代號
 		List<CategoryCodeBean> list = DmpLogMapper.category24hBeanList;
 		for (CategoryCodeBean categoryBean : list) {
 			if(sourceUrl.indexOf(categoryBean.getEnglishCode()) != -1){
@@ -72,8 +73,8 @@ public class Ad24HLog extends ACategoryLogData {
 						querytime.inc( "query_time" , 1 );
 						mongoOperations.updateFirst(new Query(Criteria.where( "url" ).is(sourceUrl.trim())), querytime, "class_url");
 					}
-				}else if( (classUrlMongoBean.getStatus().equals("1")) && (!classUrlMongoBean.getAd_class().equals("")) ){
-					//url 存在 status = 1 取分類代號回傳 mongodn update_date 更新(一天一次) behaviorClassify = "Y"
+				}else if( (classUrlMongoBean.getStatus().equals("1")) && (StringUtils.isNotBlank(classUrlMongoBean.getAd_class())) ){
+					//url 存在 status = 1 取分類代號回傳 mongo update_date 更新(一天一次) class24hUrlClassify = "Y"
 					category = classUrlMongoBean.getAd_class();
 					categorySource = "24h";
 					class24hUrlClassify = "Y"; 
@@ -98,7 +99,7 @@ public class Ad24HLog extends ACategoryLogData {
 				
 				Date date = new Date();
 				ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
-				classUrlMongoBeanCreate.setUrl(sourceUrl);
+				classUrlMongoBeanCreate.setUrl(sourceUrl.trim());
 				classUrlMongoBeanCreate.setAd_class("");
 				classUrlMongoBeanCreate.setStatus("0");
 				classUrlMongoBeanCreate.setQuery_time(1);
@@ -112,7 +113,6 @@ public class Ad24HLog extends ACategoryLogData {
 		dmpDataBean.setCategory(category);
 		dmpDataBean.setCategorySource(categorySource);
 		dmpDataBean.setClass24hUrlClassify(class24hUrlClassify);
-	
 		
 		return dmpDataBean;
 	}

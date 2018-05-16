@@ -152,18 +152,19 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public void map(LongWritable offset, Text value, Context context) {
 		
 		try {
-//			//讀取kdcl、Campaign資料
+			//讀取kdcl、Campaign資料
 			log.info("raw_data : " + value);
 			
 			DmpLogBean dmpDataBean = new DmpLogBean();
 			String valueStr = value.toString();
-			if ( valueStr.indexOf(kdclSymbol) > -1 ){	//kdcl log
-				//kdcl log	raw data格式
+			
+			if ( valueStr.indexOf(kdclSymbol) > -1 ){	//kdcl log	raw data格式
 				// values[0]  date time (2018-01-04 04:57:12)
 				// values[1]  memid
 				// values[2]  uuid
 				// values[3]  ip
 				// values[4]  url
+				// values[5]  UserAgent
 				// values[13] ck,pv
 				// values[15] ad_class
 				String[] values = valueStr.toString().split(kdclSymbol);
@@ -171,24 +172,23 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					log.info("values.length < " + kdclLogLength);
 					return;
 				}
+				dmpDataBean.setDateTime(values[0]);
 				dmpDataBean.setMemid(values[1]);
 				dmpDataBean.setUuid(values[2]);
-				dmpDataBean.setAdClass(values[15]);
-				dmpDataBean.setUrl(values[4]);
 				dmpDataBean.setIp(values[3]);
+				dmpDataBean.setUrl(values[4]);
 				dmpDataBean.setUserAgent(values[5]);
-				dmpDataBean.setDateTime(values[0]);
 				dmpDataBean.setSource(values[13]);
+				dmpDataBean.setAdClass(values[15]);
 				dmpDataBean.setAge("null");
 				dmpDataBean.setSex("null");
 				log.info(">>>>>> kdcl rawdata:" + valueStr);
-			}else if( valueStr.indexOf(campaignSymbol) > -1 ){	//campaign log
-				//Campaign log raw data格式
+			}else if( valueStr.indexOf(campaignSymbol) > -1 ){	//Campaign log raw data格式
 				// values[0] memid			會員帳號
 				// values[1] uuid			通用唯一識別碼	
 				// values[2] ad_class		分類
 				// values[3] Count			數量
-				// values[4] age			年齡
+				// values[4] age			年齡 (0或空字串)
 				// values[5] sex			性別(F|M)
 				// values[6] ip_area		地區(台北市 or 空字串)
 				// values[7] record_date	紀錄日期(2018-04-27)
@@ -197,14 +197,15 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				 if (values.length < campaignLogLength) {
 					 return;
                  }
+				 
+				 dmpDataBean.setDateTime(values[7]);
 				 dmpDataBean.setMemid(StringUtils.isBlank(values[0])? "null" :values[0]);
 				 dmpDataBean.setUuid(values[1]);
-				 dmpDataBean.setAdClass(values[2]);
-				 dmpDataBean.setUrl("");
 				 dmpDataBean.setIp(values[6]);
+				 dmpDataBean.setUrl("");
 				 dmpDataBean.setUserAgent("");
-				 dmpDataBean.setDateTime(values[7]);
 				 dmpDataBean.setSource("campaign");
+				 dmpDataBean.setAdClass(values[2]);
 				 
 				 if (StringUtils.equals(values[4], "0")){
 					 dmpDataBean.setAge("null");
@@ -231,12 +232,12 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			//時間處理元件(日期時間字串轉成小時)			
 			dmpLogBeanResult = dateTimeComponent.datetimeTransformHour(dmpLogBeanResult);
 			
-			//裝置處理元件
+			//裝置處理元件(UserAgent轉成裝置資訊)
 			dmpLogBeanResult = deviceComponent.parseUserAgentToDevice(dmpLogBeanResult);
 			
 			
 			//分類處理元件(分析click、24H、Ruten、campaign分類) 
-			if ( (dmpLogBeanResult.getSource().equals("ck")||dmpLogBeanResult.getSource().equals("campaign")) && StringUtils.isNotBlank(dmpLogBeanResult.getAdClass())) {	// kdcl log的ad_click 或 campaign log的adclass 
+			if ( (dmpLogBeanResult.getSource().equals("ck")||dmpLogBeanResult.getSource().equals("campaign")) && StringUtils.isNotBlank(dmpLogBeanResult.getAdClass())) {	// kdcl ad_click的adclass  或   campaign log的adclass 
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
 				dmpLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(dmpLogBeanResult, mongoOperations);
 			}else if (dmpLogBeanResult.getSource().equals("pv") && StringUtils.isNotBlank(dmpLogBeanResult.getUrl()) && dmpLogBeanResult.getUrl().contains("ruten")) {	// 露天
@@ -267,7 +268,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			//18.personal_info_api + 19.personal_info 
 			//20.class_ad_click + 21.class_24h_url + 22.class_ruten_url
 			//23.area_info + 24.device_info + 25.time_info
-			//26.url + 27.ip + 28.record_date + 29.original_source
+			//26.url + 27.ip + 28.record_date + 29.source(kdcl、campaign)
 			
 			String memid = StringUtils.isBlank(dmpLogBeanResult.getMemid()) ? "null" : dmpLogBeanResult.getMemid();
 			String result = memid + kdclSymbol + dmpLogBeanResult.getUuid() + kdclSymbol + dmpLogBeanResult.getCategory() + kdclSymbol  + dmpLogBeanResult.getCategorySource()
