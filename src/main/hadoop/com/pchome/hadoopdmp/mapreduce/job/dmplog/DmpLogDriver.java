@@ -162,10 +162,10 @@ public class DmpLogDriver {
 					timePath = sdf1.format(calendar2.getTime()) +"/"+ (calendar.get(calendar2.HOUR_OF_DAY) - 1);
 				}
 			}
-//			String adLogClassPpath = "/home/webuser/dmp/testData/category";						//測試path有ruten
 //			String bessieTempPath = "/home/webuser/dmp/adLogClassPrd/categorylog/"+timePath;
 			//輸入
-			String logInputPath = akbPathAllLog + timePath; //  /home/webuser/akb/storedata/alllog/2018-05-15/05
+			String logInputPath = "/home/webuser/dmp/testData/category";						//測試path有ruten
+//			String logInputPath = akbPathAllLog + timePath; //  /home/webuser/akb/storedata/alllog/2018-05-15/05
 			//輸出
 			String bessieTempPath = "/home/webuser/bessie/output";
 			//hdfs存在則刪除
