@@ -27,8 +27,7 @@ import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig
 
 @Component
 public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
-
-	private static Log log = LogFactory.getLog("DmpLogReducer");
+	Log log = null;
 	
 	SimpleDateFormat sdf = null;
 	private final static String SYMBOL = String.valueOf(new char[] { 9, 31 });
@@ -62,6 +61,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	Producer<String, String> producer = null;
 
 	public void setup(Context context) {
+		log = LogFactory.getLog("DmpLogReducer");
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		try {
 			this.sdf = new SimpleDateFormat("yyyy-MM-dd");
