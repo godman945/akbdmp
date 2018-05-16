@@ -119,7 +119,7 @@ public class DmpLogDriver {
 		// job
 		log.info("----job start----");
 
-		Job job = new Job(jobConf, "dmp_log_"+ env + sdf.format(date));
+		Job job = new Job(jobConf, "dmp_log_"+ env + "_" + sdf.format(date));
 		job.setJarByClass(DmpLogDriver.class);
 		job.setMapperClass(DmpLogMapper.class);
 		job.setMapOutputKeyClass(Text.class);
