@@ -58,7 +58,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	Producer<String, String> producer = null;
 
 	public void setup(Context context) {
-		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
+		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
 		try {
 			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
@@ -85,7 +85,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			producer = new KafkaProducer<String, String>(props);
 
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("reduce setup error>>>>>> " +e);
 		}
 	}
 
@@ -102,7 +102,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		// 18.personal_info_api + 19.personal_info
 		// 20.class_ad_click + 21.class_24h_url + 22.class_ruten_url
 		// 23.area_info + 24.device_info + 25.time_info
-		// 26.url + 27.ip + 28.record_date + 29.source(kdcl、campaign)
+		//26.url + 27.ip + 28.record_date + 29.org_source(kdcl、campaign) 
+		//30.date_time + 31.user_agent +32.ad_class + 33.record_count
 		try {
 			log.info(">>>>>> reduce start : " + key);
 
@@ -269,6 +270,11 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			sendKafkaJson.put("url", data[26]);
 			sendKafkaJson.put("ip", data[27]);
 			sendKafkaJson.put("record_date", data[28]);
+			sendKafkaJson.put("org_source", data[29]);
+			sendKafkaJson.put("date_time", data[30]);
+			sendKafkaJson.put("user_agent", data[31]);
+			sendKafkaJson.put("ad_class", data[32]);
+			sendKafkaJson.put("record_count", data[33]);
 			
 			Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("dmp_log_prd", "", sendKafkaJson.toString()));
 			while (!f.isDone()) {
@@ -280,8 +286,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			context.write(keyOut, valueOut);
 			
 		} catch (Exception e) {
-			log.info("reduce error"+e.getMessage());
-			log.error(key, e);
+			log.error("reduce error>>>>>> " +e);
 		}
 
 	}
@@ -289,9 +294,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	public void cleanup(Context context) {
 		try {
 			producer.close();
-
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("reduce cleanup error>>>>>> " +e);
 		}
 	}
 
@@ -302,5 +306,5 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //		IKdclStatisticsSourceService kdclStatisticsSourceService = (KdclStatisticsSourceService) ctx.getBean(KdclStatisticsSourceService.class);
 //}
 
-	
+//	
 }
