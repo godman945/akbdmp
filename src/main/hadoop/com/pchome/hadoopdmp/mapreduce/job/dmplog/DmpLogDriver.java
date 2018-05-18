@@ -164,7 +164,7 @@ public class DmpLogDriver {
 				}
 				//輸入
 //				String logInputPath = "/home/webuser/dmp/testData/category";						//測試path有ruten
-				String logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-18/05";
+				String logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-18/06";
 	//			String logInputPath = akbPathAllLog + timePath; //正式path  /home/webuser/akb/storedata/alllog/2018-05-15/05    
 				//輸出
 				String outputTempPath = "/home/webuser/bessie/output";
