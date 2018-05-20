@@ -42,6 +42,7 @@ import com.pchome.hadoopdmp.spring.config.bean.mongodb.MongodbHadoopConfig;
 public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	Log log = LogFactory.getLog("DmpLogMapper");
 	
+	private static int recordCount = 0;
 	private static int kdclLogLength = 30;
 	private static int campaignLogLength = 9;
 	private static String kdclSymbol = String.valueOf(new char[] { 9, 31 });
@@ -65,13 +66,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 
 	@Override
 	public void setup(Context context) {
-		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
+		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
 		try {
-			if(StringUtils.isNotBlank(context.getConfiguration().get("spring.profiles.active"))){
-				System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
-			}else{
-				System.setProperty("spring.profiles.active", "stg");
-			}
+			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			this.mongoOperations = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
 			record_date = context.getConfiguration().get("job.date");
@@ -142,9 +139,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			File database = new File(path[5].toString());
 			reader = new DatabaseReader.Builder(database).build();  
 			
-			
 		} catch (Exception e) {
-			log.info("Mapper  setup Exception: "+e.getMessage());
+			log.error("Mapper setup error>>>>>> " +e);
 		}
 	}
 
@@ -193,8 +189,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				// values[6] ip_area		地區(台北市 or 空字串)
 				// values[7] record_date	紀錄日期(2018-04-27)
 				// values[8] Over_write		是否覆寫(true|false)
-				String[] values = valueStr.toString().split(",");
+				String[] values = valueStr.toString().split(campaignSymbol);
 				 if (values.length < campaignLogLength) {
+					 log.info("values.length < " + campaignLogLength);
 					 return;
                  }
 				 
@@ -268,8 +265,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			//18.personal_info_api + 19.personal_info 
 			//20.class_ad_click + 21.class_24h_url + 22.class_ruten_url
 			//23.area_info + 24.device_info + 25.time_info
-			//26.url + 27.ip + 28.record_date + 29.source(kdcl、campaign)
+			//26.url + 27.ip + 28.record_date + 29.org_source(kdcl、campaign) 
+			//30.date_time + 31.user_agent +32.ad_class + 33.record_count
 			
+			recordCount = recordCount + 1;
 			String memid = StringUtils.isBlank(dmpLogBeanResult.getMemid()) ? "null" : dmpLogBeanResult.getMemid();
 			String result = memid + kdclSymbol + dmpLogBeanResult.getUuid() + kdclSymbol + dmpLogBeanResult.getCategory() + kdclSymbol  + dmpLogBeanResult.getCategorySource()
 			+ kdclSymbol + dmpLogBeanResult.getSex() + kdclSymbol + dmpLogBeanResult.getSexSource() + kdclSymbol + dmpLogBeanResult.getAge() + kdclSymbol + dmpLogBeanResult.getAgeSource()
@@ -280,7 +279,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			+ kdclSymbol +dmpLogBeanResult.getPersonalInfoApiClassify()+ kdclSymbol +dmpLogBeanResult.getPersonalInfoClassify()
 			+ kdclSymbol +dmpLogBeanResult.getClassAdClickClassify() + kdclSymbol +dmpLogBeanResult.getClass24hUrlClassify()+ kdclSymbol +dmpLogBeanResult.getClassRutenUrlClassify()
 			+ kdclSymbol +dmpLogBeanResult.getAreaInfoClassify()+ kdclSymbol +dmpLogBeanResult.getDeviceInfoClassify()+ kdclSymbol +dmpLogBeanResult.getTimeInfoClassify()
-			+ kdclSymbol + dmpLogBeanResult.getUrl() + kdclSymbol + dmpLogBeanResult.getIp() + kdclSymbol + dmpLogBeanResult.getRecordDate()+ kdclSymbol + dmpLogBeanResult.getSource();
+			+ kdclSymbol + dmpLogBeanResult.getUrl() + kdclSymbol + dmpLogBeanResult.getIp() + kdclSymbol + dmpLogBeanResult.getRecordDate()+ kdclSymbol + dmpLogBeanResult.getSource()
+			+ kdclSymbol + dmpLogBeanResult.getDateTime() + kdclSymbol + dmpLogBeanResult.getUserAgent() + kdclSymbol + dmpLogBeanResult.getAdClass() 
+			+ kdclSymbol + recordCount;
 			
 			log.info(">>>>>> Mapper write key:" + result);
 			
@@ -288,7 +289,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			context.write(keyOut, valueOut);
 			
 		} catch (Exception e) {
-			log.error(">>>>>> " + e.getMessage());
+			log.error("Mapper error>>>>>> " +e);
 		}
 	}
 	
@@ -328,5 +329,5 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //		dmpLogMapper1.map(null, null, null);
 
 	}
-
+//
 }
