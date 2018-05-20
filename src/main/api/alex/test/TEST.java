@@ -27,7 +27,7 @@ public class TEST {
 //		System.setProperty("spring.profiles.active", "prd");
 //		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
 //		MongoOperations mongoOperations = (MongoOperations) ctx.getBean(MongoOperations.class);
-		
+		 
 		long time1, time2;
 		time1 = System.currentTimeMillis();
 		Mongo m = new Mongo("mongodb.mypchome.com.tw");  
