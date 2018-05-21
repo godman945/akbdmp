@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.stereotype.Component;
 
-import com.pchome.akbdmp.api.call.ad.controller.AdClassSendKafkaMapJob;
+import com.pchome.akbdmp.adm.job.quartz.KdclStatisticsSourceJob;
 
 @Component
 @EnableScheduling
@@ -18,10 +18,10 @@ public class QuartzConfig implements SchedulingConfigurer {
 
 	final static Logger log = Logger.getLogger(QuartzConfig.class);
 
-//	@Bean
-//	public AdClassSendKafkaMapJob bean() {
-//		return new AdClassSendKafkaMapJob();
-//	}
+	@Bean
+	public KdclStatisticsSourceJob bean() {
+		return new KdclStatisticsSourceJob();
+	}
 
 	@Override
 	public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {

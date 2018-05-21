@@ -2,7 +2,18 @@
 <!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd" >
 
 <hibernate-reverse-engineering>
-	<table-filter match-name="dmp_transfer_data_log"
-		match-catalog="dmp">
-	</table-filter>
+	<table-filter match-name="adm_ad_class"></table-filter>
+	<table-filter match-name="adm_ad_group"></table-filter>
+	<table-filter match-name="adm_category"></table-filter>
+	<table-filter match-name="adm_category_audience_analyze"></table-filter>
+	<table-filter match-name="adm_category_group"></table-filter>
+	<table-filter match-name="adm_department"></table-filter>
+	<table-filter match-name="adm_menu"></table-filter>
+	<table-filter match-name="adm_privilege_model"></table-filter>
+	<table-filter match-name="adm_privilege_model_menu_ref"></table-filter>
+	<table-filter match-name="adm_user"></table-filter>
+	<table-filter match-name="dmp_transfer_data_log"></table-filter>
+	<table-filter match-name="kdcl_statistics_behavior"></table-filter>
+	<table-filter match-name="kdcl_statistics_report"></table-filter>
+	<table-filter match-name="kdcl_statistics_source"></table-filter>
 </hibernate-reverse-engineering>

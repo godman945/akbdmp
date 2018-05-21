@@ -39,11 +39,4 @@ public class MultipartConfig extends WebMvcConfigurerAdapter{
     	return configuration;
     }
     
-    @Bean(name= "sendKafkaMap")
-    public HashMap<String,Object> sendKafkaMap(){
-    	HashMap<String,Object> map = new HashMap<String,Object>();
-    	return map;
-    }
-    
-    
 }
