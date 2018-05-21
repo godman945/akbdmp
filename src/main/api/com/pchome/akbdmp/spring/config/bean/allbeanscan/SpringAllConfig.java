@@ -41,7 +41,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 // + "com.pchome.soft.depot.utils,"
 // + "com.pchome.pcbapi.api.data.check,"
 )
-@PropertySource({ 
+@PropertySource({
 	"classpath:config/prop/${spring.profiles.active}/mongo.properties",
 	"classpath:config/prop/${spring.profiles.active}/job.properties",
 	"classpath:config/prop/${spring.profiles.active}/jdbc.properties",
