@@ -25,7 +25,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 	+ "com.pchome.akbdmp.job,"
 	+ "com.pchome.akbdmp.mongo,"
 	+ "com.pchome.akbdmp.spring.config.bean,"
-	+ "com.pchome.akbdmp.mysql.db,"
+	+ "com.pchome.akbdmp.mysql.db.*,"
 	+ "com.pchome.dmp.mapreduce.crawlbreadcrumb,"
 	+ "alex.test,"
 	+ "com.pchome.akbdmp.spring.config.bean.quartz"
@@ -45,6 +45,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 	"classpath:config/prop/${spring.profiles.active}/mongo.properties",
 	"classpath:config/prop/${spring.profiles.active}/job.properties",
 	"classpath:config/prop/${spring.profiles.active}/jdbc.properties",
+	"classpath:config/prop/${spring.profiles.active}/dmpRadisKey.properties",
 	"classpath:config/prop/${spring.profiles.active}/redis.properties" })
 public class SpringAllConfig extends WebMvcConfigurerAdapter {
 
