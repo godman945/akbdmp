@@ -150,56 +150,62 @@ public class DmpLogDriver {
 				log.info("file Input Path : " + alllogOpRange);
 				
 			} else if (timeType.equals("hour")) {
-//				//測試機前4小時版本
-//				String timePath  = "";
-//				Calendar calendar2 = Calendar.getInstance();
-//				if( (calendar2.get(calendar2.HOUR_OF_DAY) >= 0) &&  (calendar2.get(calendar2.HOUR_OF_DAY) <= 3) ){
-//					calendar2.add(calendar2.DAY_OF_MONTH, -1); 
-//					
-//					if (calendar2.get(calendar2.HOUR_OF_DAY) == 0){
-//						timePath = sdf1.format(calendar2.getTime())+"/20";
-//					}
-//					
-//					if (calendar2.get(calendar2.HOUR_OF_DAY) == 1){
-//						timePath = sdf1.format(calendar2.getTime())+"/21";
-//					}
-//					
-//					if (calendar2.get(calendar2.HOUR_OF_DAY) == 2){
-//						timePath = sdf1.format(calendar2.getTime())+"/22";
-//					}
-//					
-//					if (calendar2.get(calendar2.HOUR_OF_DAY) == 3){
-//						timePath = sdf1.format(calendar2.getTime())+"/23";
-//					}
-//				}else {
-//					if(String.valueOf(calendar2.get(calendar2.HOUR_OF_DAY) - 4).length() < 2){
-//						timePath = sdf1.format(calendar2.getTime()) +"/"+ "0"+(calendar.get(calendar2.HOUR_OF_DAY) - 4);
-//					}else{
-//						timePath = sdf1.format(calendar2.getTime()) +"/"+ (calendar.get(calendar2.HOUR_OF_DAY) - 4);
-//					}
-//				}
-//				//測試機前4小時版本
-				
-				
-				
+				//測試機前4小時版本
 				String timePath  = "";
 				Calendar calendar2 = Calendar.getInstance();
-				if(calendar2.get(calendar2.HOUR_OF_DAY) == 0){
+				if( (calendar2.get(calendar2.HOUR_OF_DAY) >= 0) &&  (calendar2.get(calendar2.HOUR_OF_DAY) <= 3) ){
 					calendar2.add(calendar2.DAY_OF_MONTH, -1); 
-					timePath = sdf1.format(calendar2.getTime())+"/23";
+					
+					if (calendar2.get(calendar2.HOUR_OF_DAY) == 0){
+						timePath = sdf1.format(calendar2.getTime())+"/20";
+					}
+					
+					if (calendar2.get(calendar2.HOUR_OF_DAY) == 1){
+						timePath = sdf1.format(calendar2.getTime())+"/21";
+					}
+					
+					if (calendar2.get(calendar2.HOUR_OF_DAY) == 2){
+						timePath = sdf1.format(calendar2.getTime())+"/22";
+					}
+					
+					if (calendar2.get(calendar2.HOUR_OF_DAY) == 3){
+						timePath = sdf1.format(calendar2.getTime())+"/23";
+					}
 				}else {
-					if(String.valueOf(calendar2.get(calendar2.HOUR_OF_DAY) - 1).length() < 2){
-						timePath = sdf1.format(calendar2.getTime()) +"/"+ "0"+(calendar.get(calendar2.HOUR_OF_DAY) - 1);
+					if(String.valueOf(calendar2.get(calendar2.HOUR_OF_DAY) - 4).length() < 2){
+						timePath = sdf1.format(calendar2.getTime()) +"/"+ "0"+(calendar.get(calendar2.HOUR_OF_DAY) - 4);
 					}else{
-						timePath = sdf1.format(calendar2.getTime()) +"/"+ (calendar.get(calendar2.HOUR_OF_DAY) - 1);
+						timePath = sdf1.format(calendar2.getTime()) +"/"+ (calendar.get(calendar2.HOUR_OF_DAY) - 4);
 					}
 				}
+				//測試機前4小時版本
+				
+				
+				
+				
+				
+//				//正式機前1小時版本
+//				String timePath  = "";
+//				Calendar calendar2 = Calendar.getInstance();
+//				if(calendar2.get(calendar2.HOUR_OF_DAY) == 0){
+//					calendar2.add(calendar2.DAY_OF_MONTH, -1); 
+//					timePath = sdf1.format(calendar2.getTime())+"/23";
+//				}else {
+//					if(String.valueOf(calendar2.get(calendar2.HOUR_OF_DAY) - 1).length() < 2){
+//						timePath = sdf1.format(calendar2.getTime()) +"/"+ "0"+(calendar.get(calendar2.HOUR_OF_DAY) - 1);
+//					}else{
+//						timePath = sdf1.format(calendar2.getTime()) +"/"+ (calendar.get(calendar2.HOUR_OF_DAY) - 1);
+//					}
+//				}
+//				//正式機前1小時版本
+				
+				
 				
 				//輸入
 //				String logInputPath = "/home/webuser/dmp/testData/category";						//測試path有ruten
 //				String logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-18/06";			//測試path
-				String logInputPath = "/home/webuser/analyzer/storedata/alllog/2018-05-21";			//測試path
-	//			String logInputPath = akbPathAllLog + timePath; //正式path  /home/webuser/akb/storedata/alllog/2018-05-15/05    	//正式path
+//				String logInputPath = "/home/webuser/analyzer/storedata/alllog/2018-05-21";			//測試path整天log
+				String logInputPath = akbPathAllLog + timePath; //正式path  /home/webuser/akb/storedata/alllog/2018-05-15/05    	//正式path
 				//輸出
 				String outputTempPath = "/home/webuser/bessie/output";
 				//hdfs存在則刪除
