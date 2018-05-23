@@ -223,32 +223,32 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 
 			DmpLogBean dmpLogBeanResult = new DmpLogBean();
 			
-			//地區處理元件(ip 轉國家、城市)
-			dmpLogBeanResult = geoIpComponent.ipTransformGEO(dmpDataBean);
+//			//地區處理元件(ip 轉國家、城市)
+//			dmpLogBeanResult = geoIpComponent.ipTransformGEO(dmpDataBean);
 			
 			//時間處理元件(日期時間字串轉成小時)			
-			dmpLogBeanResult = dateTimeComponent.datetimeTransformHour(dmpLogBeanResult);
+			dmpLogBeanResult = dateTimeComponent.datetimeTransformHour(dmpDataBean);  //dmpLogBeanResult
 			
-			//裝置處理元件(UserAgent轉成裝置資訊)
-			dmpLogBeanResult = deviceComponent.parseUserAgentToDevice(dmpLogBeanResult);
+//			//裝置處理元件(UserAgent轉成裝置資訊)
+//			dmpLogBeanResult = deviceComponent.parseUserAgentToDevice(dmpLogBeanResult);
 			
 			
-			//分類處理元件(分析click、24H、Ruten、campaign分類) 
-			if ( (dmpLogBeanResult.getSource().equals("ck")||dmpLogBeanResult.getSource().equals("campaign")) && StringUtils.isNotBlank(dmpLogBeanResult.getAdClass())) {	// kdcl ad_click的adclass  或   campaign log的adclass 
-				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
-				dmpLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(dmpLogBeanResult, mongoOperations);
-			}else if (dmpLogBeanResult.getSource().equals("pv") && StringUtils.isNotBlank(dmpLogBeanResult.getUrl()) && dmpLogBeanResult.getUrl().contains("ruten")) {	// 露天
-				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
-				dmpLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(dmpLogBeanResult, mongoOperations);
-			}else if (dmpLogBeanResult.getSource().equals("pv") && StringUtils.isNotBlank(dmpLogBeanResult.getUrl()) && dmpLogBeanResult.getUrl().contains("24h")) {		// 24h
-				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
-				dmpLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(dmpLogBeanResult, mongoOperations);
-			}else{
-				return;
-			}
-			
-			//個資處理元件
-			dmpLogBeanResult = personalInfoComponent.processPersonalInfo(dmpLogBeanResult, mongoOperations);
+//			//分類處理元件(分析click、24H、Ruten、campaign分類) 
+//			if ( (dmpLogBeanResult.getSource().equals("ck")||dmpLogBeanResult.getSource().equals("campaign")) && StringUtils.isNotBlank(dmpLogBeanResult.getAdClass())) {	// kdcl ad_click的adclass  或   campaign log的adclass 
+//				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
+//				dmpLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(dmpLogBeanResult, mongoOperations);
+//			}else if (dmpLogBeanResult.getSource().equals("pv") && StringUtils.isNotBlank(dmpLogBeanResult.getUrl()) && dmpLogBeanResult.getUrl().contains("ruten")) {	// 露天
+//				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
+//				dmpLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(dmpLogBeanResult, mongoOperations);
+//			}else if (dmpLogBeanResult.getSource().equals("pv") && StringUtils.isNotBlank(dmpLogBeanResult.getUrl()) && dmpLogBeanResult.getUrl().contains("24h")) {		// 24h
+//				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
+//				dmpLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(dmpLogBeanResult, mongoOperations);
+//			}else{
+//				return;
+//			}
+//			
+//			//個資處理元件
+//			dmpLogBeanResult = personalInfoComponent.processPersonalInfo(dmpLogBeanResult, mongoOperations);
 			
 			//紀錄日期
 			dmpLogBeanResult.setRecordDate(record_date);
