@@ -18,7 +18,7 @@ public class MySqlTestJob {
 	@Autowired
 	IKdclStatisticsSourceService kdclStatisticsSourceService; 
 	
-	@Scheduled(fixedDelay = 60000)
+//	@Scheduled(fixedDelay = 60000)
 	public void execute() {
 		try{
 			Log.info("kdclStatisticsSource size:"+kdclStatisticsSourceService.loadAll().size());
