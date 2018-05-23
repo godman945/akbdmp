@@ -29,13 +29,13 @@ public class KdclStatisticsSourceJob {
 	
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	
-	@Scheduled(cron="0 0 4 * * *")
+//	@Scheduled(cron="0 0 4 * * *")
 //	@Scheduled(fixedDelay = 180000)
     public void execute() {
 		try{
 			log.info("****************** WRITE HADOOP DMP JOB START ******************");
 			Calendar calendar = Calendar.getInstance();
-			calendar.add(Calendar.DAY_OF_MONTH, -1);
+//			calendar.add(Calendar.DAY_OF_MONTH, -1);
 			String radisRecodeDate = sdf.format(calendar.getTime());
 			
 			kdclStatisticsSourceService.deleteDmpCountByDate(radisRecodeDate);
@@ -64,7 +64,7 @@ public class KdclStatisticsSourceJob {
 	private void saveDmpLog(int count,String idType,String serviceType,String behavior,String classify,String radisRecodeDate,Date date) throws Exception{
 		KdclStatisticsSource KdclStatisticsSource = new KdclStatisticsSource();
 		KdclStatisticsSource.setIdType(idType);
-		KdclStatisticsSource.setServiceType(behavior);
+		KdclStatisticsSource.setServiceType(serviceType);
 		KdclStatisticsSource.setBehavior(behavior);
 		KdclStatisticsSource.setClassify(classify);
 		KdclStatisticsSource.setCounter(count);
