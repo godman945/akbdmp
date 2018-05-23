@@ -11,6 +11,7 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.stereotype.Component;
 
 import com.pchome.akbdmp.adm.job.quartz.KdclStatisticsSourceJob;
+import com.pchome.akbdmp.adm.job.quartz.MySqlTestJob;
 
 @Component
 @EnableScheduling
@@ -23,6 +24,12 @@ public class QuartzConfig implements SchedulingConfigurer {
 		return new KdclStatisticsSourceJob();
 	}
 
+	@Bean
+	public MySqlTestJob execute() {
+		return new MySqlTestJob();
+	}
+	
+	
 	@Override
 	public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
 		taskRegistrar.setScheduler(taskExecutor());
