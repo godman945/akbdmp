@@ -1,382 +1,120 @@
 package com.pchome.hadoopdmp.mapreduce.job.factory;
 
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.util.EntityUtils;
-import org.mortbay.log.Log;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 
-import com.pchome.akbdmp.api.data.enumeration.ClassCountMongoDBEnum;
-import com.pchome.hadoopdmp.data.mongo.pojo.ClassCountMongoBean;
 import com.pchome.hadoopdmp.data.mongo.pojo.ClassUrlMongoBean;
-import com.pchome.hadoopdmp.data.mongo.pojo.UserDetailMongoBean;
-import com.pchome.hadoopdmp.enumerate.EnumBreadCrumbDirectlyMatch;
-import com.pchome.hadoopdmp.mapreduce.job.categorylog.CategoryLogMapper;
+import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper;
 
 
 public class Ad24HLog extends ACategoryLogData {
 
-	public Object processCategory(String[] values, CategoryLogBean categoryLogBean,MongoOperations mongoOperations) throws Exception {
+	public Object processCategory(DmpLogBean dmpDataBean, MongoOperations mongoOperations) throws Exception {
 		
-		String memid = values[1];
-		String uuid = values[2];
-		String sourceUrl = values[4];
-		String adClass = "";
-		String behaviorClassify = "N";
+		dmpDataBean.setSource("kdcl");
 		
-		if ((StringUtils.isBlank(memid) || memid.equals("null")) && (StringUtils.isBlank(uuid) || uuid.equals("null"))) {
-			return null;
-		}
-
+		String sourceUrl = dmpDataBean.getUrl();
+		String category = "";
+		String categorySource = "";
+		String class24hUrlClassify = "";
+		
 		if (StringUtils.isBlank(sourceUrl)) {
-			return null;
+			dmpDataBean.setUrl("null");
+			dmpDataBean.setCategory("null");
+			dmpDataBean.setCategorySource("null");
+			dmpDataBean.setClass24hUrlClassify("null");
+			return dmpDataBean;
 		}
 		
-		Pattern p = Pattern.compile("(http|https)://24h.pchome.com.tw/(store|region)/([a-zA-Z0-9]+)([&|\\?|\\.]\\S*)?");
-		Matcher m = p.matcher(sourceUrl);
-		if (!m.find()) {
-			return null;
-		}
-		ClassUrlMongoBean classUrlMongoBean = null;
-		Query query = new Query(Criteria.where("url").is(sourceUrl.trim()));
-		classUrlMongoBean = mongoOperations.findOne(query, ClassUrlMongoBean.class);
-		
-		if(classUrlMongoBean != null){
-			//爬蟲
-			if(classUrlMongoBean.getStatus().equals("0")){
-				adClass = crawlerGetAdclass(sourceUrl);
-				if(adClass.matches("\\d{16}")){
-					Date date = new Date();
-					classUrlMongoBean.setStatus("1");
-					classUrlMongoBean.setAd_class(adClass);
-					classUrlMongoBean.setUpdate_date(date);
-					mongoOperations.save(classUrlMongoBean);
-					behaviorClassify = "Y";
-				}
-			}
-			
-			//取得ad_class
-			if(classUrlMongoBean.getStatus().equals("1")){
-				adClass = classUrlMongoBean.getAd_class();
-				behaviorClassify = "Y";
-			}
-		}
-		
-		if (classUrlMongoBean == null){
-			adClass = crawlerGetAdclass(sourceUrl);
-			Date date = new Date();
-			ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
-			classUrlMongoBeanCreate.setAd_class(adClass.matches("\\d{16}") ?  adClass : "");
-			classUrlMongoBeanCreate.setStatus(adClass.matches("\\d{16}") ? "1" : "0");
-			classUrlMongoBeanCreate.setUrl(sourceUrl); 
-			classUrlMongoBeanCreate.setCreate_date(date);
-			classUrlMongoBeanCreate.setUpdate_date(date);
-			mongoOperations.save(classUrlMongoBeanCreate);
-		}
-		
-		//enum比對不到且爬蟲也沒有
-		if(!adClass.matches("\\d{16}")){
-			return null;
-		}
-		
-		//取個資
-		if(StringUtils.isNotBlank(memid) && (!memid.equals("null"))){
-//			Log.info(">>>>>24h memid:"+memid);
-			Query queryUserInfo = new Query(Criteria.where(ClassCountMongoDBEnum.USER_ID.getKey()).is(uuid));
-			UserDetailMongoBean userDetailMongoBean =  mongoOperations.findOne(queryUserInfo, UserDetailMongoBean.class);
-			String sex = "";
-			String age = "";
-			if(userDetailMongoBean != null){
-				sex = (String)userDetailMongoBean.getUser_info().get("sex");
-				age = (String)userDetailMongoBean.getUser_info().get("age");
-				categoryLogBean.setPersonalInfoClassify("Y");
-			}else{
-				categoryLogBean.setPersonalInfoClassify("N");
-			}
-			categoryLogBean.setSex(StringUtils.isNotBlank(sex) ? sex : "null");
-			categoryLogBean.setAge(StringUtils.isNotBlank(age) ? age : "null");
-			categoryLogBean.setAdClass(adClass);
-			categoryLogBean.setMemid(values[1]);
-			categoryLogBean.setUuid(values[2]);
-			categoryLogBean.setSource("24h");
-			categoryLogBean.setType("memid");
-			categoryLogBean.setBehaviorClassify(behaviorClassify);
-			return categoryLogBean;
-		}else if(StringUtils.isNotBlank(uuid) && (!uuid.equals("null"))){
-			Query queryUserInfo = new Query(Criteria.where(ClassCountMongoDBEnum.USER_ID.getKey()).is(uuid));
-			UserDetailMongoBean userDetailMongoBean =  mongoOperations.findOne(queryUserInfo, UserDetailMongoBean.class);
-			
-			String sex = "";
-			String age = "";
-			if(userDetailMongoBean != null){
-				sex = (String)userDetailMongoBean.getUser_info().get("sex");
-				age = (String)userDetailMongoBean.getUser_info().get("age");
-				categoryLogBean.setPersonalInfoClassify("Y");
-			}else{
-				categoryLogBean.setPersonalInfoClassify("N");
-			}
-			categoryLogBean.setSex(StringUtils.isNotBlank(sex) ? sex : "null");
-			categoryLogBean.setAge(StringUtils.isNotBlank(age) ? age : "null");
-			categoryLogBean.setAdClass(adClass);
-			categoryLogBean.setMemid(values[1]);
-			categoryLogBean.setUuid(values[2]);
-			categoryLogBean.setSource("24h");
-			categoryLogBean.setType("uuid");
-			categoryLogBean.setBehaviorClassify(behaviorClassify);
-			return categoryLogBean;
-		}
-		return null;
-	}
-	
-	public boolean memberInfoIsExist(String memid,MongoOperations mongoOperations) throws Exception{
-		ClassCountMongoBean classCountMongoBean = null;
-		Query query = new Query(Criteria.where("user_id").is(memid.trim()));
-		classCountMongoBean = mongoOperations.findOne(query, ClassCountMongoBean.class);
-		return classCountMongoBean == null ? false : true;
-	}
-	
-	
-	public static NameValuePair requestGetAPI42(String uri) throws Exception {
-		Log.info(">>>>>>24h call http:"+uri);
-		HttpParams httpparameters = new BasicHttpParams();
-		HttpConnectionParams.setConnectionTimeout(httpparameters, 3000);
-		HttpConnectionParams.setSoTimeout(httpparameters, 5000);
-
-		HttpClient client = new DefaultHttpClient(httpparameters);
-		// HttpClient client = new DefaultHttpClient();
-		HttpResponse response;
-		try {
-			// get
-			HttpGet request = new HttpGet(uri);
-
-			// execute request => response
-			response = client.execute(request);
-
-			HttpEntity entity = response.getEntity();
-			String resp = EntityUtils.toString(entity, "UTF-8");
-			EntityUtils.consume(entity);
-
-			NameValuePair result = new BasicNameValuePair(String.valueOf(response.getStatusLine().getStatusCode()),	resp);
-			return result;
-		} finally {
-		
-		}
-	}
-	
-	public String crawlerGetAdclass(String sourceUrl) throws Exception{
-		String adClass="";
-		Map<String, String> map = new LinkedHashMap<String, String>();
-		Map<String, String> oriMatchMap = new HashMap<String, String>();
-		ArrayList<Map<String, String>> matchList = CategoryLogMapper.categoryList;
-		for (int i = 0; i < matchList.size(); i++) {
-			map.putAll(matchList.get(i));
-			oriMatchMap.putAll(matchList.get(i));
-		}
-
-		// delete adult
-		map.remove("0025000000000000");
-		oriMatchMap.remove("0025000000000000");
-
-		// modify for matching
-		for (Map.Entry<String, String> entry : map.entrySet()) {
-			entry.setValue(entry.getValue().replaceAll("/", "\u3001").replaceAll(" ", "\u3001")).replaceAll("\u3001\u3001\u3001", "\u3001").replaceAll("\u3001\u3001", "\u3001");
-		}
-		String url = sourceUrl.trim();
-
-		String type;
-		Pattern p = Pattern.compile("(http|https)://24h.pchome.com.tw/(store|region)/([a-zA-Z0-9]+)([&|\\?|\\.]\\S*)?");
-		Matcher m = p.matcher(url);
-		if (m.find()) {
-			String mGrp3 = m.group(3);
-			if (StringUtils.isNotBlank(m.group(3))) {
-				type = mGrp3;
-			} else {
-				return null;
-			}
-		} else {
-			return null;
-		}
-
-		StringBuffer urlTarget = new StringBuffer();
-		urlTarget.append("http://ecapi.pchome.com.tw/cdn/ecshop/cateapi/v1.5/region&region=");
-		urlTarget.append(type);
-		urlTarget.append("&_callback=cb_ecshopCategoryRegion");
-		NameValuePair result = requestGetAPI42(urlTarget.toString());
-		String content;
-		if (result != null && StringUtils.isNotBlank(result.getValue())) {
-			content = result.getValue();
-		} else {
-			return null;
-		}
-
-		Pattern p2 = Pattern.compile("\"Name\"[ :]+((?=\\[)\\[[^]]*\\]|(?=\\{)\\{[^\\}]*\\}|\\\"[^\"]*\\\")");
-		Matcher m2 = p2.matcher(content);
-		String breadCrumb;
-		String orig_breadCrumb;
-		if (m2.find()) {
-			orig_breadCrumb = m2.group(1).replaceAll("\"", "");
-			breadCrumb = m2.group(0).replaceAll("\"", "").replaceAll("@", "").replaceAll(" ", "").replaceAll("\u3000", "").replace("Name:", "").trim();
-		} else {
-			return null;
-		}
-
-		orig_breadCrumb = StringEscapeUtils.unescapeJava(orig_breadCrumb);
-		breadCrumb = StringEscapeUtils.unescapeJava(breadCrumb);
-		breadCrumb = breadCrumb.replaceAll("\"", "").replaceAll("@", "").replaceAll(" ", "").replaceAll("\u3000", "");
-
-		adClass = "";
-		// BreadCrumb Directly Match
-		for (EnumBreadCrumbDirectlyMatch item : EnumBreadCrumbDirectlyMatch.values()) {
-			if (orig_breadCrumb.matches(item.getMatchPattern())) {
-				adClass = item.getAdClass();
+		//用url比對24h對照表找出分類代號
+		List<CategoryCodeBean> list = DmpLogMapper.category24hBeanList;
+		for (CategoryCodeBean categoryBean : list) {
+			if(sourceUrl.indexOf(categoryBean.getEnglishCode()) != -1){
+				category = categoryBean.getNumberCode();
+				categorySource = "24h";
+				class24hUrlClassify = "Y";
 				break;
 			}
 		}
-
-		if (StringUtils.isBlank(adClass)) {
-			// step1
-			String normalizeBreadCrumb = breadCrumb.replaceAll("\u5176\u4ed6", "").replaceAll("\u5176\u5b83", "").replaceAll("\u7528\u54c1", "").replaceAll("\u5de5\u5177", "").replaceAll("\u9031\u908a", "");
-			// step2
-			normalizeBreadCrumb = normalizeBreadCrumb.replaceAll("/", ",").replaceAll("\\.", ",").replaceAll(",,,,", ",").replaceAll(",,,", ",").replaceAll(",,", ",");
-			if (normalizeBreadCrumb.endsWith(",")) {
-				normalizeBreadCrumb = normalizeBreadCrumb.substring(0, normalizeBreadCrumb.length() - 1);
-			}
-			StringBuffer rdyToSplit = new StringBuffer().append(normalizeBreadCrumb);
-			// Split breadcrumb into keywords
-			// 全英數不補切
-			if (normalizeBreadCrumb.matches("[a-zA-Z0-9|,]*")) {
-				// log.info("normalizeBreadCrumb is all alphanumeric ,
-			}
-			// 含中英，補切中，英
-			else if (normalizeBreadCrumb.matches(".*[\u4E00-\u9FFF]+.*")
-					&& normalizeBreadCrumb.matches(".*[a-zA-Z0-9]+.*")) {
-				String commaed = ChiEngComma(normalizeBreadCrumb);
-				if (commaed.matches("\\S+,\\S+")) {
-					rdyToSplit.append(",");
-					rdyToSplit.append(commaed);
-				} else {
-					// log.warn("commaed error occured, normalizeBreadCrumb:" +
-					// normalizeBreadCrumb);
-				}
-			}
-			// 其餘照這補切
-			else {
-				String nmlzDeCommaStr = normalizeBreadCrumb.replaceAll(",", "");
-				if (nmlzDeCommaStr.length() == 3) {
-					rdyToSplit.append(",");
-					rdyToSplit.append(nmlzDeCommaStr.substring(0, 2));
-				}
-				if (nmlzDeCommaStr.length() == 4) {
-					rdyToSplit.append(",");
-					rdyToSplit.append(nmlzDeCommaStr.substring(0, 2));
-					rdyToSplit.append(",");
-					rdyToSplit.append(nmlzDeCommaStr.substring(2, 4));
-				}
-				if (nmlzDeCommaStr.length() == 5) {
-					rdyToSplit.append(",");
-					rdyToSplit.append(nmlzDeCommaStr.substring(0, 2));
-					rdyToSplit.append(",");
-					rdyToSplit.append(nmlzDeCommaStr.substring(2, 5));
-				}
-			}
-
-			String[] kwStrArray = rdyToSplit.toString().split(",");
-
-			adClass = likeStringSearchV2(map, kwStrArray);
-			adClass = StringUtils.isBlank(adClass) ? "unclassed" : adClass;
-
-			// second time (Broden&Extreme)
-			// 之前寫法,暫不異動但看似條件這樣下永遠不會進入以下判斷式
-			Boolean extremeWay = false;
-			String urlCated2nd = "";
-			if (extremeWay && adClass.equals("unclassed")) {
-				kwStrArray = normalizeBreadCrumb.replaceAll(",", "").split("");
-				urlCated2nd = likeStringSearchV2(map, kwStrArray);
-				urlCated2nd = StringUtils.isBlank(urlCated2nd) ? "unclassed" : urlCated2nd;
-			}
-		}
 		
-		map = null;
-		oriMatchMap = null;
-		
-		return adClass;
-	}
-	
-	
-	
-	public String ChiEngComma(String str) {
-		String[] strArray = str.split("");
-		List<String> chi = new ArrayList<String>();
-		List<String> eng = new ArrayList<String>();
-		for (String s : strArray) {
-			if (s.matches("[\u4E00-\u9FFF]{1}")) {
-				chi.add(s);
-			} else if (s.matches("[a-zA-Z0-9]{1}")) {
-				eng.add(s);
-			}
-		}
-		StringBuffer strBuf = new StringBuffer();
-		for (String s : chi) {
-			strBuf.append(s);
-		}
-		strBuf.append(",");
-		for (String s : eng) {
-			strBuf.append(s);
-		}
-		return strBuf.toString();
-	}
-	
-
-	public String likeStringSearchV2(Map<String, String> map, String[] kwCombi) throws Exception {
-		float maxScore = 0;
-		String maxScoreAdClass = "";
-		float score = 0;
-		for (Map.Entry<String, String> entry : map.entrySet()) {
-			score = 0;
-			String[] highHit = null;
-			if (entry.getValue().contains("\u3001")) {
-				highHit = entry.getValue().split("\u3001");
-			}
-
-			for (String str : kwCombi) {
-				if (highHit != null) {
-					for (String strH : highHit) {
-						if (strH.equals(str)) {
-							return entry.getKey();
-						}
+		if (StringUtils.isBlank(category)){
+			ClassUrlMongoBean classUrlMongoBean = null;
+			Query query = new Query(Criteria.where("url").is(sourceUrl.trim()));
+			classUrlMongoBean = mongoOperations.findOne(query, ClassUrlMongoBean.class);
+			
+			if(classUrlMongoBean != null){
+				if(classUrlMongoBean.getStatus().equals("0")){
+					// url 存在 status = 0  , mongo update_date 更新(一天一次) query_time+1 如大於 2000 不再加 
+					category ="null";
+					categorySource = "null";
+					class24hUrlClassify = "N";
+					
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					Date today = new Date();
+					String todayStr = sdf.format(today);
+					
+					Date updateDate = classUrlMongoBean.getUpdate_date();
+					String updateDateStr = sdf.format(updateDate);
+					
+					if ( (!todayStr.equals(updateDateStr)) ){
+						Date date = new Date();
+						classUrlMongoBean.setUpdate_date(date);
+						mongoOperations.save(classUrlMongoBean);
+					}
+					if ( (classUrlMongoBean.getQuery_time()<2000) ){
+						Update querytime = new Update();
+						querytime.inc( "query_time" , 1 );
+						mongoOperations.updateFirst(new Query(Criteria.where( "url" ).is(sourceUrl.trim())), querytime, "class_url");
+					}
+				}else if( (classUrlMongoBean.getStatus().equals("1")) && (StringUtils.isNotBlank(classUrlMongoBean.getAd_class())) ){
+					//url 存在 status = 1 取分類代號回傳 mongo update_date 更新(一天一次) class24hUrlClassify = "Y"
+					category = classUrlMongoBean.getAd_class();
+					categorySource = "24h";
+					class24hUrlClassify = "Y"; 
+					
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					Date today = new Date();
+					String todayStr = sdf.format(today);
+					
+					Date updateDate = classUrlMongoBean.getUpdate_date();
+					String updateDateStr = sdf.format(updateDate);
+					
+					if ( (!todayStr.equals(updateDateStr)) ){
+						classUrlMongoBean.setUpdate_date(today);
+						mongoOperations.save(classUrlMongoBean);
 					}
 				}
-				if (entry.getValue().contains(str)) {
-					score = score + 1;
-					score = score + (1 - java.lang.Math.abs((float) (entry.getValue().length() - str.length()) / 10));
-				}
-			}
-			if (score > maxScore) {
-				maxScore = score;
-				maxScoreAdClass = entry.getKey();
+			}else{
+				// url 不存在  ,寫入 mongo url代號 status=0 
+				category = "null";
+				categorySource = "null";
+				class24hUrlClassify = "N";
+				
+				Date date = new Date();
+				ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
+				classUrlMongoBeanCreate.setUrl(sourceUrl.trim());
+				classUrlMongoBeanCreate.setAd_class("");
+				classUrlMongoBeanCreate.setStatus("0");
+				classUrlMongoBeanCreate.setQuery_time(1);
+				classUrlMongoBeanCreate.setCreate_date(date);
+				classUrlMongoBeanCreate.setUpdate_date(date);
+				mongoOperations.save(classUrlMongoBeanCreate);
 			}
 		}
-		return maxScoreAdClass;
+		
+		
+		dmpDataBean.setCategory(category);
+		dmpDataBean.setCategorySource(categorySource);
+		dmpDataBean.setClass24hUrlClassify(class24hUrlClassify);
+		
+		return dmpDataBean;
 	}
+	
 }

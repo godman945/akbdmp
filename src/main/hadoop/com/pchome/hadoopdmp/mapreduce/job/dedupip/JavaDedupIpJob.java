@@ -73,9 +73,9 @@ public class JavaDedupIpJob {
 		job.setInputFormatClass(LzoTextInputFormat.class);
 		job.setOutputFormatClass(TextOutputFormat.class);
 		/* 輸入資料的HDFS路徑 */
-		FileInputFormat.addInputPath(job, new Path("/home/webuser/analyzer/storedata/alllog/2017-05-01"));//home/webuser/dmp/testData/category為測試資料
+		FileInputFormat.addInputPath(job, new Path("/home/webuser/akb/storedata/alllog/2018-04-16/06"));//home/webuser/dmp/testData/category為測試資料
 		/* 輸出資料的HDFS路徑 */
-		FileOutputFormat.setOutputPath(job, new Path("/home/webuser/bessie/output/dedupIp0501.txt"));
+		FileOutputFormat.setOutputPath(job, new Path("/home/webuser/bessie/output/new/dedupIp0501.txt"));
 
 		job.waitForCompletion(true);
 	}

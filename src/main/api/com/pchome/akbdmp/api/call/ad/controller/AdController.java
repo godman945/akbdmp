@@ -1,5 +1,6 @@
 package com.pchome.akbdmp.api.call.ad.controller;
 
+import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pchome.akbdmp.api.call.base.controller.BaseController;
 import com.pchome.akbdmp.api.data.enumeration.DmpApiReturnCodeEnum;
+import com.pchome.akbdmp.api.data.enumeration.DmpLogInfoKeyEnum;
 import com.pchome.akbdmp.api.data.returndata.ReturnData;
 import com.pchome.akbdmp.spring.config.bean.allbeanscan.SpringAllConfig;
 import com.pchome.soft.depot.utils.KafkaUtil;
@@ -54,6 +56,10 @@ public class AdController extends BaseController {
 	
 	@Value("${redis.frequency}")
 	private long redisFrequency;
+	
+	@Value("${radis.dmpinfo}")
+	private String radisDmpinfoKey;
+	
 	
 	/**
 	 * 1.REDIS PRD MAP:prd:dmp:callmap:[uuid | pcid]
@@ -129,44 +135,52 @@ public class AdController extends BaseController {
 	}
 	
 	
-	
-	@RequestMapping(value = "/api/alex", method = RequestMethod.GET, headers = "Accept=application/json;charset=UTF-8")
+	/**
+	 * Dmp info api
+	 * */
+	@RequestMapping(value = "/api/dmpInfoApi", method = RequestMethod.GET, headers = "Accept=application/json;charset=UTF-8")
 	@ResponseBody
-	public Object alex9(
-			HttpServletRequest request
+	public Object dmpInfoApi(
+			HttpServletRequest request,
+			@RequestParam(defaultValue = "", required = false) String memid,
+			@RequestParam(defaultValue = "", required = false) String uuid
 			) throws Exception {
-		ReturnData returnData = new ReturnData();
 		try {
-			returnData.setResult("SSSS");
-			kafkaUtil.sendMessage("TEST", "", "FFFF");
-			return getReturnData(returnData);
-		}catch(Exception e){
+			
+			JSONObject resultJson = new JSONObject();
+			String result = "";
+			String key = "";
+			for (DmpLogInfoKeyEnum infoKeyEnum : DmpLogInfoKeyEnum.values()) {
+				resultJson.put(infoKeyEnum.getMongoKey(),new HashSet());
+			}
+			result = resultJson.toString();
+			if(StringUtils.isBlank(memid) && StringUtils.isBlank(uuid)){
+				return result;
+			}
+			
+			if(StringUtils.isNotBlank(memid)){
+				key = memid;
+			}else if(StringUtils.isNotBlank(uuid)){
+				key = uuid;
+			}
+			
+			String radisKey = radisDmpinfoKey + key;
+			Object obj = redisTemplate.opsForValue().get(radisKey);
+			if(obj == null){
+				kafkaUtil.sendMessage(dmpApiTopic, "", "<PCHOME_API>"+key);
+				return result;
+			}else{
+				result =  (String) obj;
+			}
+			return result;
+		} catch (Exception e) {
+			log.error(">>>>" + e.getMessage());
 			e.printStackTrace();
+			ReturnData returnData = new ReturnData();
+			returnData.setCode(DmpApiReturnCodeEnum.API_CODE_E002.getCode());
+			returnData.setResult(e.getMessage());
+			returnData.setStatus(DmpApiReturnCodeEnum.API_CODE_E002.isStatus());
+			return getReturnData(returnData);
 		}
-		return getReturnData(returnData);
 	}
-	
-	public void a(){
-		kafkaUtil.sendMessage("TEST", "", "CC");
-	}
-	
-	public static void main(String args[]){
-		System.setProperty("spring.profiles.active", "prd");
-		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
-		RedisTemplate redisTemplate = (RedisTemplate) ctx.getBean(RedisTemplate.class);
-		
-		
-		redisTemplate.delete("stg:dmp:class:zzz1929");
-		redisTemplate.delete("stg:dmp:class:zzz1929");
-		redisTemplate.delete("stg:dmp:class:zzz1929");
-		
-		
-		
-		
-		
-		
-		
-//		redisTemplate.delete("adclass_api_nico19732001");
-	}
-	
 }

@@ -291,7 +291,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+		<!--  -->
 		<dependency>
 		    <groupId>com.hadoop.gplcompression</groupId>
 		    <artifactId>hadoop-lzo</artifactId>
@@ -414,6 +414,7 @@
 			<version>1.5.8</version>
 		</dependency>
 		-->
+		
 		<!-- -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -427,6 +428,26 @@
 			<version>1.6.0</version>
 		</dependency>
 		
+		<dependency>
+    		<groupId>org.apache.poi</groupId>
+    		<artifactId>poi</artifactId>
+    		<version>3.17</version>
+		</dependency>
+		
+		<!-- IP轉國家、城市-->
+		<dependency>
+        	<groupId>com.maxmind.geoip2</groupId>
+        	<artifactId>geoip2</artifactId>
+        	<version>2.1.0</version>
+    	</dependency>
+    
+   		<!-- UserAgent-->
+    	<dependency>
+    		<groupId>eu.bitwalker</groupId>
+    		<artifactId>UserAgentUtils</artifactId>
+	    	<version>1.21</version>
+		</dependency>
+    
 		<!--  
 		<dependency> 
  			<groupId>jdk.tools</groupId>
@@ -436,7 +457,6 @@
 			<systemPath>D:\java\lib\tools.jar</systemPath> 
  		</dependency> 
  		-->
- 		
  		
 	</dependencies>
 </project>

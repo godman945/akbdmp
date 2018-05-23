@@ -98,15 +98,15 @@
 		<appender-ref ref="AkbDmpJob" />
 	</logger>
 	
-	<logger name="CategoryLogDriver" additivity="true">
+	<logger name="DmpLogDriver" additivity="true">
 		<level value="info" />
 		<appender-ref ref="AkbDmpJob" />
 	</logger>
-	<logger name="CategoryLogMapper" additivity="true">
+	<logger name="DmpLogMapper" additivity="true">
 		<level value="info" />
 		<appender-ref ref="AkbDmpJob" />
 	</logger>
-	<logger name="CategoryLogReducer" additivity="true">
+	<logger name="DmpLogReducer" additivity="true">
 		<level value="info" />
 		<appender-ref ref="AkbDmpJob" />
 	</logger>

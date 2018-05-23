@@ -3,7 +3,9 @@ package com.pchome.akbdmp.api.data.enumeration;
 	public enum DmpApiPermissionsEnum {
 		API_01("adShowLimit", true),
 		API_02("LifeCheck", true),
-		API_03("adclassApi", true);
+		API_03("adclassApi", true),
+		API_04("dmpInfoApi", true);
+		
 
 		private final String method;
 		private final boolean approve;

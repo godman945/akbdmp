@@ -15,6 +15,9 @@ public class ClassUrlMongoBean {
 	private String ad_class = "";
 	private Date create_date;
 	private Date update_date;
+	private int query_time;
+	private String ruten_bread = "";
+	private String err_msg ="";
 
 	public String getUrl() {
 		return url;
@@ -60,4 +63,28 @@ public class ClassUrlMongoBean {
 		return _id;
 	}
 
+	public int getQuery_time() {
+		return query_time;
+	}
+
+	public void setQuery_time(int query_time) {
+		this.query_time = query_time;
+	}
+
+	public String getRuten_bread() {
+		return ruten_bread;
+	}
+
+	public void setRuten_bread(String ruten_bread) {
+		this.ruten_bread = ruten_bread;
+	}
+
+	public String getErr_msg() {
+		return err_msg;
+	}
+
+	public void setErr_msg(String err_msg) {
+		this.err_msg = err_msg;
+	}
+	
 }

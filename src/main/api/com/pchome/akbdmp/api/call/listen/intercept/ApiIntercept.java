@@ -15,7 +15,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.pchome.akbdmp.api.data.check.AInterceptCheckData;
 import com.pchome.akbdmp.api.data.check.CheckInterceptFactory;
-import com.pchome.akbdmp.api.data.enumeration.DmpApiPermissionsEnum;
 import com.pchome.akbdmp.api.data.enumeration.DmpCheckObjNameEnum;
 
 

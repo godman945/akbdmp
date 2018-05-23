@@ -103,7 +103,7 @@ public class DedupIpJob {
 		job.setOutputValueClass(Text.class);
 		job.setOutputFormatClass(TextOutputFormat.class);
 		
-		FileInputFormat.addInputPaths(job, "/home/webuser/dmp/testData/category");
+		FileInputFormat.addInputPaths(job, "/home/webuser/dmp/testData/category/kdcl1-05.lzo");
 		FileOutputFormat.setOutputPath(job, new Path("/home/webuser/bessie/output/dedupIp.txt"));
 		
 		job.setNumReduceTasks(1);
