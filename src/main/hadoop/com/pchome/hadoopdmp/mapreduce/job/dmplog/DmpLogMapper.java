@@ -244,9 +244,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
 				dmpLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(dmpLogBeanResult, mongoOperations);
 			}
-//			else{
-//				return;
-//			}
 			
 			//個資處理元件
 			dmpLogBeanResult = personalInfoComponent.processPersonalInfo(dmpLogBeanResult, mongoOperations);
