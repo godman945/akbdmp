@@ -20,12 +20,12 @@ public class QuartzConfig implements SchedulingConfigurer {
 	final static Logger log = Logger.getLogger(QuartzConfig.class);
 
 	@Bean
-	public KdclStatisticsSourceJob bean() {
+	public KdclStatisticsSourceJob kdclStatisticsSourceJob() {
 		return new KdclStatisticsSourceJob();
 	}
 
 	@Bean
-	public MySqlTestJob execute() {
+	public MySqlTestJob mySqlTestJob() {
 		return new MySqlTestJob();
 	}
 	
