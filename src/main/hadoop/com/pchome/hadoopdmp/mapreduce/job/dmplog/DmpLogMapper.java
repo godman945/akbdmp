@@ -243,6 +243,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			}else if (dmpLogBeanResult.getSource().equals("pv") && StringUtils.isNotBlank(dmpLogBeanResult.getUrl()) && dmpLogBeanResult.getUrl().contains("24h")) {		// 24h
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
 				dmpLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(dmpLogBeanResult, mongoOperations);
+			}else if ( dmpLogBeanResult.getSource().equals("pv") ){
+				dmpDataBean.setSource("kdcl");
 			}
 			
 			//個資處理元件
