@@ -285,13 +285,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			
 			log.info(">>>>>> Mapper write key:" + result);
 			
-			
-			keyOut.set(valueStr);
-//			keyOut.set(result);
-//			context.write(keyOut, valueOut);
-			
-			
-			
+			keyOut.set(result);
+			context.write(keyOut, valueOut);
 			
 		} catch (Exception e) {
 			log.error("Mapper error>>>>>> " +e);
