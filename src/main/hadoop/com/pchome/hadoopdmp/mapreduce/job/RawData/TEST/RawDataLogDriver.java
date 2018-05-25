@@ -155,7 +155,7 @@ public class RawDataLogDriver {
 			log.info("file Input Path : " + alllogOpRange);
 		} else if (timeType.equals("hour")) {
 			//輸入
-			String adLogClassPpath = "/home/webuser/akb/storedata/alllog/2018-05-22/17";			//測試path整天log
+			String adLogClassPpath = "/home/webuser/dmp/testData/category";			//測試path整天log
 			//輸出
 			String bessieTempPath = "/home/webuser/bessie/output";
 			
