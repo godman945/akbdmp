@@ -64,12 +64,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public static DatabaseReader reader = null;
 	public static InetAddress ipAddress = null;
 
-	
-	
-	public long time = 0;
 	@Override
 	public void setup(Context context) {
-//		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
+		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
 		try {
 			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
@@ -149,11 +146,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 
 	@Override
 	public void map(LongWritable offset, Text value, Context context) {
-		time = time + 1;
-		log.info("process time:"+time);
+		
 		try {
 			//讀取kdcl、Campaign資料
-//			log.info("raw_data : " + value);
+			log.info("raw_data : " + value);
 			
 			DmpLogBean dmpDataBean = new DmpLogBean();
 			String valueStr = value.toString();
@@ -169,7 +165,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				// values[15] ad_class
 				String[] values = valueStr.toString().split(kdclSymbol);
 				if (values.length < kdclLogLength) {
-//					log.info("values.length < " + kdclLogLength);
+					log.info("values.length < " + kdclLogLength);
 					return;
 				}
 				dmpDataBean.setDateTime(values[0]);
@@ -182,7 +178,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				dmpDataBean.setAdClass(values[15]);
 				dmpDataBean.setAge("null");
 				dmpDataBean.setSex("null");
-//				log.info(">>>>>> kdcl rawdata:" + valueStr);
+				log.info(">>>>>> kdcl rawdata:" + valueStr);
 			}else if( valueStr.indexOf(campaignSymbol) > -1 ){	//Campaign log raw data格式
 				// values[0] memid			會員帳號
 				// values[1] uuid			通用唯一識別碼	
@@ -195,7 +191,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				// values[8] Over_write		是否覆寫(true|false)
 				String[] values = valueStr.toString().split(campaignSymbol);
 				 if (values.length < campaignLogLength) {
-//					 log.info("values.length < " + campaignLogLength);
+					 log.info("values.length < " + campaignLogLength);
 					 return;
                  }
 				 
@@ -219,7 +215,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				 }else{
 					 dmpDataBean.setSex(values[5]);
 				 }
-//				 log.info(">>>>>> campaige rawdata:" + valueStr);
+				 log.info(">>>>>> campaige rawdata:" + valueStr);
 			}else{
 				 return;
 			}
@@ -287,7 +283,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			+ kdclSymbol + dmpLogBeanResult.getDateTime() + kdclSymbol + dmpLogBeanResult.getUserAgent() + kdclSymbol + dmpLogBeanResult.getAdClass() 
 			+ kdclSymbol + recordCount;
 			
-//			log.info(">>>>>> Mapper write key:" + result);
+			log.info(">>>>>> Mapper write key:" + result);
 			
 			keyOut.set(result);
 			context.write(keyOut, valueOut);
