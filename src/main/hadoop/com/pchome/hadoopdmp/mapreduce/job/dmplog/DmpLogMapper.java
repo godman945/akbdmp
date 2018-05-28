@@ -150,7 +150,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	@Override
 	public void map(LongWritable offset, Text value, Context context) {
 		time = time + 1;
-		
+		log.info("process time:"+time);
 		try {
 			//讀取kdcl、Campaign資料
 //			log.info("raw_data : " + value);
