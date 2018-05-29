@@ -205,8 +205,8 @@ public class DmpLogDriver {
 //				String logInputPath = "/home/webuser/dmp/testData/category/tmp/ruten";	//自己做測試資料			  		
 //				String logInputPath = "/home/webuser/dmp/testData/category";	//測試資料			  		//測試path有ruten
 //				String logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-18/06";			//測試path
-//				String logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-22/19";			//測試path整天log
-				String logInputPath = "/home/webuser/dmp/testData/category/20180522";			//測試path整天log
+				String logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-22/17";			//測試path整天log
+//				String logInputPath = "/home/webuser/dmp/testData/category/20180522";			//測試path整天log
 //				String logInputPath = akbPathAllLog + timePath; //正式path  /home/webuser/akb/storedata/alllog/2018-05-15/05    	//正式path
 				//輸出
 				String outputTempPath = "/home/webuser/bessie/output";

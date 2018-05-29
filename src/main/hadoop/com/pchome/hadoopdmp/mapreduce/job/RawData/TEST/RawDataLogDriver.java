@@ -156,7 +156,7 @@ public class RawDataLogDriver {
 		} else if (timeType.equals("hour")) {
 			//輸入
 			String adLogClassPpath = "/home/webuser/dmp/testData/category";			//測試path整天log
-			//輸出
+			//輸出						
 			String bessieTempPath = "/home/webuser/bessie/output";
 			
 			//hdfs存在則刪除
