@@ -282,8 +282,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			sendKafkaJson.put("record_count", data[33]);
 			
 			Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("dmp_log_prd", "", sendKafkaJson.toString()));
-//			while (!f.isDone()) {
-//			}
+			while (!f.isDone()) {
+			}
 			
 			log.info(">>>>>>reduce write key:" + sendKafkaJson.toString());
 			
