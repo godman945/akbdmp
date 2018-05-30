@@ -281,7 +281,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			sendKafkaJson.put("ad_class", data[32]);
 			sendKafkaJson.put("record_count", data[33]);
 			
-			Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("dmp_log_prd", "", sendKafkaJson.toString()));
+			Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("dmp_log_prd", "alex", sendKafkaJson.toString()));
 			while (!f.isDone()) {
 			}
 			
