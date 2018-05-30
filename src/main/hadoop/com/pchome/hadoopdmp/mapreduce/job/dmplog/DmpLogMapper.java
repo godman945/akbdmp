@@ -149,7 +149,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		
 		try {
 			//讀取kdcl、Campaign資料
-			log.info("raw_data : " + value);
+//			log.info("raw_data : " + value);
 			
 			DmpLogBean dmpDataBean = new DmpLogBean();
 			String valueStr = value.toString();
