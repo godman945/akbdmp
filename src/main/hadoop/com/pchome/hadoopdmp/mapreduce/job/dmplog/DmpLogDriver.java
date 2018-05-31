@@ -209,7 +209,7 @@ public class DmpLogDriver {
 //				String logInputPath = "/home/webuser/dmp/testData/category/20180522";			//測試path整天log
 //				String logInputPath = akbPathAllLog + timePath; //正式path  /home/webuser/akb/storedata/alllog/2018-05-15/05    	//正式path
 				
-				String logInputPath = "/home/webuser/akbstg/storedata/alllog/2017-07-12/09";
+				String logInputPath = "/home/webuser/dmp/testData/category/20180522";
 				
 				//輸出
 				String outputTempPath = "/home/webuser/bessie/output";
