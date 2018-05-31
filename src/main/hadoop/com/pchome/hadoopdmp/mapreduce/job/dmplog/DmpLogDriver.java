@@ -78,8 +78,8 @@ public class DmpLogDriver {
 			
 			JobConf jobConf = new JobConf();
 			jobConf.setNumMapTasks(8);
-			jobConf.set("mapred.max.split.size","200388"); //200388608
-			jobConf.set("mapred.min.split.size","200388");//200388608
+			jobConf.set("mapred.max.split.size","2003886"); //200388608  10	//200388 645
+			jobConf.set("mapred.min.split.size","2003886"); //200388608  10  //200388 645
 			jobConf.set("mapred.child.java.opts", "-Xmx2g");
 			jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 			jobConf.set("mapred.compress.map.output", "true");
