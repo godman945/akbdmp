@@ -78,8 +78,8 @@ public class DmpLogDriver {
 			
 			JobConf jobConf = new JobConf();
 			jobConf.setNumMapTasks(8);
-			jobConf.set("mapred.max.split.size","200388608");
-			jobConf.set("mapred.min.split.size","200388608");
+			jobConf.set("mapred.max.split.size","20038860"); //200388608
+			jobConf.set("mapred.min.split.size","20038860");//200388608
 			jobConf.set("mapred.child.java.opts", "-Xmx2g");
 			jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 			jobConf.set("mapred.compress.map.output", "true");
@@ -205,14 +205,14 @@ public class DmpLogDriver {
 //				String logInputPath = "/home/webuser/dmp/testData/category/tmp/ruten";	//自己做測試資料			  		
 //				String logInputPath = "/home/webuser/dmp/testData/category";	//測試資料			  		//測試path有ruten
 //				String logInputPath = "/home/webuser/analyzer/storedata/alllog/2018-05-22";			//測試path
-				String logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-22/20";			//測試path整天log
+				String logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-22/11";			//測試path整天log
 //				String logInputPath = "/home/webuser/dmp/testData/category/20180522";			//測試path整天log
 //				String logInputPath = akbPathAllLog + timePath; //正式path  /home/webuser/akb/storedata/alllog/2018-05-15/05    	//正式path
 				
 //				String logInputPath = "/home/webuser/dmp/testData/category/20180522";
 				
 				//輸出
-				String outputTempPath = "/home/webuser/bessie/output/20";
+				String outputTempPath = "/home/webuser/bessie/output/11";
 				//hdfs存在則刪除
 				deleteExistedDir(fs, new Path(outputTempPath), true);
 				
