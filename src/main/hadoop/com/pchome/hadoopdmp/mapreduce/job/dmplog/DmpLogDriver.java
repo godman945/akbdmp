@@ -77,7 +77,7 @@ public class DmpLogDriver {
 			Calendar calendar = Calendar.getInstance();
 			
 			JobConf jobConf = new JobConf();
-			jobConf.setNumMapTasks(20);//8
+			jobConf.setNumMapTasks(8);
 			jobConf.set("mapred.max.split.size","200388608");
 			jobConf.set("mapred.min.split.size","200388608");
 			jobConf.set("mapred.child.java.opts", "-Xmx2g");
