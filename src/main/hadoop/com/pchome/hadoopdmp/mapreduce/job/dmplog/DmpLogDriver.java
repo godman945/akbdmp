@@ -205,9 +205,12 @@ public class DmpLogDriver {
 //				String logInputPath = "/home/webuser/dmp/testData/category/tmp/ruten";	//自己做測試資料			  		
 //				String logInputPath = "/home/webuser/dmp/testData/category";	//測試資料			  		//測試path有ruten
 //				String logInputPath = "/home/webuser/analyzer/storedata/alllog/2018-05-22";			//測試path
-				String logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-22/11";			//測試path整天log
+//				String logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-22/11";			//測試path整天log
 //				String logInputPath = "/home/webuser/dmp/testData/category/20180522";			//測試path整天log
 //				String logInputPath = akbPathAllLog + timePath; //正式path  /home/webuser/akb/storedata/alllog/2018-05-15/05    	//正式path
+				
+				String logInputPath = "/home/webuser/akbstg/storedata/alllog/2017-07-12/09";
+				
 				//輸出
 				String outputTempPath = "/home/webuser/bessie/output";
 				//hdfs存在則刪除
