@@ -110,7 +110,7 @@ public class CombinerReducer extends Reducer<Text, Text, Text, Text> {
 			String data = key.toString();
 			
 			
-			Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("dmp_log_prd", "", data));
+//			Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("dmp_log_prd", "", data));
 //			while (!f.isDone()) {
 //			}
 			
