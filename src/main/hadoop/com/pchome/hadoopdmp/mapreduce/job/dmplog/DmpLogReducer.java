@@ -105,7 +105,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		//26.url + 27.ip + 28.record_date + 29.org_source(kdcl、campaign) 
 		//30.date_time + 31.user_agent +32.ad_class + 33.record_count
 		try {
-			log.info(">>>>>> reduce start : " + key);
+//			log.info(">>>>>> reduce start : " + key);
 
 			String data[] = key.toString().split(SYMBOL);
 			

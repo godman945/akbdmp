@@ -165,7 +165,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				// values[15] ad_class
 				String[] values = valueStr.toString().split(kdclSymbol);
 				if (values.length < kdclLogLength) {
-					log.info("values.length < " + kdclLogLength);
+//					log.info("values.length < " + kdclLogLength);
 					return;
 				}
 				dmpDataBean.setDateTime(values[0]);
@@ -178,7 +178,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				dmpDataBean.setAdClass(values[15]);
 				dmpDataBean.setAge("null");
 				dmpDataBean.setSex("null");
-				log.info(">>>>>> kdcl rawdata:" + valueStr);
+//				log.info(">>>>>> kdcl rawdata:" + valueStr);
 			}else if( valueStr.indexOf(campaignSymbol) > -1 ){	//Campaign log raw data格式
 				// values[0] memid			會員帳號
 				// values[1] uuid			通用唯一識別碼	
@@ -191,7 +191,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				// values[8] Over_write		是否覆寫(true|false)
 				String[] values = valueStr.toString().split(campaignSymbol);
 				 if (values.length < campaignLogLength) {
-					 log.info("values.length < " + campaignLogLength);
+//					 log.info("values.length < " + campaignLogLength);
 					 return;
                  }
 				 
@@ -215,7 +215,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				 }else{
 					 dmpDataBean.setSex(values[5]);
 				 }
-				 log.info(">>>>>> campaige rawdata:" + valueStr);
+//				 log.info(">>>>>> campaige rawdata:" + valueStr);
 			}else{
 				 return;
 			}
