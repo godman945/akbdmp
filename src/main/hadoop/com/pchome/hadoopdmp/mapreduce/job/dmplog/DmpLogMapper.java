@@ -147,6 +147,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	@Override
 	public void map(LongWritable offset, Text value, Context context) {
 		
+		log.info(" >>>>>>>> map mongoOperations " +mongoOperations);	//test
+		
+		
 		try {
 			//讀取kdcl、Campaign資料
 //			log.info("raw_data : " + value);
