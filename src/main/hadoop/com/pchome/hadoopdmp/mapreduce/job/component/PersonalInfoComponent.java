@@ -50,7 +50,7 @@ public class PersonalInfoComponent {
 			UserDetailMongoBean userDetailMongoBean = mongoOperations.findOne(queryUserInfo, UserDetailMongoBean.class);
 			
 			mongo2 = System.currentTimeMillis();	//test
-			log.info(" >>>>>>>> query mongo userDetail cost " + (mongo2-mongo1)/1000 + " sec");	//test
+			log.info(" >>>>>>>> query mongo userDetail cost " + (mongo2-mongo1) + " ms");	//test
 			
 			
 			String msex = "";
@@ -71,7 +71,7 @@ public class PersonalInfoComponent {
 					Map<String, Object> memberInfoMap = findMemberInfoAPI(memid);
 					
 					member2 = System.currentTimeMillis();	//test
-					log.info(" >>>>>>>>User exist - query MemberApi cost " + (member2-member1)/1000 + " sec");	//test
+					log.info(" >>>>>>>>User exist - query MemberApi cost " + (member2-member1) + " ms");	//test
 					
 					
 					msex = (String) memberInfoMap.get("msex");
@@ -107,7 +107,7 @@ public class PersonalInfoComponent {
 				Map<String, Object> memberInfoMap = findMemberInfoAPI(memid);
 				
 				member22 = System.currentTimeMillis();	//test
-				log.info(" >>>>>>>>User Not Exist - query MemberApi cost " + (member22-member11)/1000 + " sec");	//test
+				log.info(" >>>>>>>>User Not Exist - query MemberApi cost " + (member22-member11) + " ms");	//test
 				
 				
 				
@@ -156,7 +156,7 @@ public class PersonalInfoComponent {
 		
 		forecast2 = System.currentTimeMillis();	//test
 		
-		log.info(" >>>>>>>>forecastPersonalInfo cost " + (forecast2-forecast1)/1000 + " sec");	//test
+		log.info(" >>>>>>>>forecastPersonalInfo cost " + (forecast2-forecast1) + " ms");	//test
 		
 		
 		String sex = forecastInfoMap.get("sex");
@@ -176,7 +176,7 @@ public class PersonalInfoComponent {
 		
 		endAll = System.currentTimeMillis();	//test
 		
-		log.info(" >>>>>>>> PersonalInfoComponent All cost " + (endAll-startAll)/1000 + " sec");	//test
+		log.info(" >>>>>>>> PersonalInfoComponent All cost " + (endAll-startAll) + " ms");	//test
 		
 		return dmpDataBean;
 	}
