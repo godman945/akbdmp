@@ -248,7 +248,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			}
 			
 //			//個資處理元件
-//			dmpLogBeanResult = personalInfoComponent.processPersonalInfo(dmpLogBeanResult, mongoOperations);
+			dmpLogBeanResult = personalInfoComponent.processPersonalInfo(dmpLogBeanResult, mongoOperations);
 			
 			//紀錄日期
 			dmpLogBeanResult.setRecordDate(record_date);

@@ -33,14 +33,26 @@ public class PersonalInfoComponent {
 	// 處理個資元件
 	public DmpLogBean processPersonalInfo(DmpLogBean dmpDataBean ,MongoOperations mongoOperations) throws Exception {
 		
+		long startAll, endAll;	//test
+		startAll = System.currentTimeMillis();//test
+		
 		String memid = dmpDataBean.getMemid();
 		String category = dmpDataBean.getCategory();
 
 		// 如有memid資料，先查mongo，再撈會員中心查個資
 		// 撈回mongo為NA也算已打過會員中心API，不再重打會員中心api
 		if ((StringUtils.isNotBlank(memid)) && (!memid.equals("null"))) {
+			
+			long mongo1, mongo2;	//test
+			mongo1 = System.currentTimeMillis();	//test
+			
 			Query queryUserInfo = new Query(Criteria.where(ClassCountMongoDBEnum.USER_ID.getKey()).is(memid));
 			UserDetailMongoBean userDetailMongoBean = mongoOperations.findOne(queryUserInfo, UserDetailMongoBean.class);
+			
+			mongo2 = System.currentTimeMillis();	//test
+			log.info(" >>>>>>>> query mongo userDetail cost " + (mongo2-mongo1)/1000 + " sec");	//test
+			
+			
 			String msex = "";
 			String mage = "";
 			if (userDetailMongoBean != null) {
@@ -51,10 +63,20 @@ public class PersonalInfoComponent {
 					// Mongo沒有mage、msex資料空的打會員中心 API
 					// 會員中心有資料寫回 mogodb msex mage 
 					// 會員中心沒有資料寫入 NA
+					
+					
+					long member1, member2;	//test
+					member1 = System.currentTimeMillis();	//test
+					
 					Map<String, Object> memberInfoMap = findMemberInfoAPI(memid);
+					
+					member2 = System.currentTimeMillis();	//test
+					log.info(" >>>>>>>>User exist - query MemberApi cost " + (member2-member1)/1000 + " sec");	//test
+					
+					
 					msex = (String) memberInfoMap.get("msex");
 					mage = (String) memberInfoMap.get("mage");
-
+					
 					Update realPersonalData = new Update();
 					realPersonalData.set("user_info.type", "memid");
 					realPersonalData.set("user_info.memid", "");
@@ -78,7 +100,17 @@ public class PersonalInfoComponent {
 				}
 			} else {
 				// mongo尚未新增user_detail，直接新增一筆mongo資料，塞會員中心打回來的性別、年齡(空的轉成NA寫入)
+				
+				long member11, member22;	//test
+				member11 = System.currentTimeMillis();	//test
+				
 				Map<String, Object> memberInfoMap = findMemberInfoAPI(memid);
+				
+				member22 = System.currentTimeMillis();	//test
+				log.info(" >>>>>>>>User Not Exist - query MemberApi cost " + (member22-member11)/1000 + " sec");	//test
+				
+				
+				
 				msex = (String) memberInfoMap.get("msex");
 				mage = (String) memberInfoMap.get("mage");
 				
@@ -117,7 +149,16 @@ public class PersonalInfoComponent {
 		}
 		
 		// 讀取ClsfyGndAgeCrspTable.txt做age、sex個資推估
+		long forecast1, forecast2;	//test
+		forecast1 = System.currentTimeMillis();	//test
+		
 		Map<String, String> forecastInfoMap = forecastPersonalInfo(category);
+		
+		forecast2 = System.currentTimeMillis();	//test
+		
+		log.info(" >>>>>>>>forecastPersonalInfo cost " + (forecast2-forecast1)/1000 + " sec");	//test
+		
+		
 		String sex = forecastInfoMap.get("sex");
 		String age = forecastInfoMap.get("age");
 		
@@ -131,6 +172,11 @@ public class PersonalInfoComponent {
 		} else {
 			dmpDataBean.setPersonalInfoClassify("N");
 		}
+		
+		
+		endAll = System.currentTimeMillis();	//test
+		
+		log.info(" >>>>>>>> PersonalInfoComponent All cost " + (endAll-startAll)/1000 + " sec");	//test
 		
 		return dmpDataBean;
 	}
