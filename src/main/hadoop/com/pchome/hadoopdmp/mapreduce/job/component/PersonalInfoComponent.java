@@ -15,17 +15,12 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 
 import com.jayway.jsonpath.JsonPath;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import com.pchome.akbdmp.api.data.enumeration.ClassCountMongoDBEnum;
-import com.pchome.hadoopdmp.data.mongo.pojo.UserDetailMongoBeanForHadoop;
 import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper;
 import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper.combinedValue;
 import com.pchome.hadoopdmp.mapreduce.job.factory.DmpLogBean;
@@ -37,33 +32,38 @@ public class PersonalInfoComponent {
 	// 處理個資元件
 	public DmpLogBean processPersonalInfo(DmpLogBean dmpDataBean ,DB mongoOperations) throws Exception {
 		
-		log.info(" >>>>>>>> processPersonalInfo mongoOperations to String : " +mongoOperations.toString());	//test
+//		log.info(" >>>>>>>> processPersonalInfo mongoOperations to String : " +mongoOperations.getClass());	//test
 		
-		long startAll, endAll;	//test
-		startAll = System.currentTimeMillis();//test
+//		long startAll, endAll;	//test
+//		startAll = System.currentTimeMillis();//test
+		
 		
 		String memid = dmpDataBean.getMemid();
 		String category = dmpDataBean.getCategory();
+		
 
+//		//test
+//		if ((StringUtils.isNotBlank(memid)) && (!memid.equals("null"))) {
+//			long mongo1, mongo2;	//test
+//			mongo1 = System.currentTimeMillis();	//test
+//			
+//			DBCollection dBCollection = mongoOperations.getCollection("user_detail");
+//			BasicDBObject andQuery = new BasicDBObject();
+//			List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+//			obj.add(new BasicDBObject("user_id", memid));
+//			andQuery.put("$and", obj);
+//			DBObject dbObject =  dBCollection.findOne(andQuery);
+//			
+//			mongo2 = System.currentTimeMillis();	//test
+//			
+//			log.info(" >>>>>>>> org mongo userDetail : " +dbObject);	//test
+//			log.info(" >>>>>>>> org query mongo userDetail cost " + (mongo2-mongo1) + " ms");	//test
+//		}
+//		//test
 		
-		if ((StringUtils.isNotBlank(memid)) && (!memid.equals("null"))) {
-			long mongo1, mongo2;	//test
-			mongo1 = System.currentTimeMillis();	//test
-			
-			DBCollection dBCollection = mongoOperations.getCollection("user_detail");
-			BasicDBObject andQuery = new BasicDBObject();
-			List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
-			obj.add(new BasicDBObject("user_id", memid));
-			andQuery.put("$and", obj);
-			DBObject dbObject =  dBCollection.findOne(andQuery);
-			
-			mongo2 = System.currentTimeMillis();	//test
-			
-			log.info(" >>>>>>>> org mongo userDetail : " +dbObject);	//test
-			log.info(" >>>>>>>> org query mongo userDetail cost " + (mongo2-mongo1) + " ms");	//test
-		}
 		
-		/*
+		
+		
 		// 如有memid資料，先查mongo，再撈會員中心查個資
 		// 撈回mongo為NA也算已打過會員中心API，不再重打會員中心api
 		if ((StringUtils.isNotBlank(memid)) && (!memid.equals("null"))) {
@@ -71,9 +71,6 @@ public class PersonalInfoComponent {
 			long mongo1, mongo2;	//test
 			mongo1 = System.currentTimeMillis();	//test
 			
-//			Query queryUserInfo = new Query(Criteria.where(ClassCountMongoDBEnum.USER_ID.getKey()).is(memid));
-//			UserDetailMongoBean userDetailMongoBean = mongoOperations.findOne(queryUserInfo, UserDetailMongoBean.class);
-			
 			DBCollection dBCollection = mongoOperations.getCollection("user_detail");
 			BasicDBObject andQuery = new BasicDBObject();
 			List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
@@ -83,42 +80,55 @@ public class PersonalInfoComponent {
 			
 			mongo2 = System.currentTimeMillis();	//test
 			
-			log.info(" >>>>>>>> org mongo userDetail : " +dbObject);	//test
-			log.info(" >>>>>>>> org query mongo userDetail cost " + (mongo2-mongo1) + " ms");	//test
+//			log.info(" >>>>>>>> org mongo userDetail : " +dbObject);	//test
+//			log.info(" >>>>>>>> org query mongo userDetail cost " + (mongo2-mongo1) + " ms");	//test
 			
 			
 			
 			
 			String msex = "";
 			String mage = "";
-			if (userDetailMongoBean != null) {
+			if (dbObject != null) {
 				// 查看user_detail結構中有無mage和msex
-				Map<String, Object> userInfoMap = new HashMap<String, Object>();
-				userInfoMap = userDetailMongoBean.getUser_info();
-				if ((userInfoMap.get("mage") == null) || (userInfoMap.get("msex") == null)) {
+				String userInfoStr = dbObject.get("user_info").toString();
+				 if ( (!userInfoStr.contains("mage")) || (!userInfoStr.contains("msex")) ){
 					// Mongo沒有mage、msex資料空的打會員中心 API
 					// 會員中心有資料寫回 mogodb msex mage 
 					// 會員中心沒有資料寫入 NA
 					
-					
-					long member1, member2;	//test
-					member1 = System.currentTimeMillis();	//test
+//					long member1, member2;	//test
+//					member1 = System.currentTimeMillis();	//test
 					
 					Map<String, Object> memberInfoMap = findMemberInfoAPI(memid);
 					
-					member2 = System.currentTimeMillis();	//test
-					log.info(" >>>>>>>>User exist - query MemberApi cost " + (member2-member1) + " ms");	//test
+//					member2 = System.currentTimeMillis();	//test
+//					log.info(" >>>>>>>>User exist - query MemberApi cost " + (member2-member1) + " ms");	//test
 					
 					
 					msex = (String) memberInfoMap.get("msex");
 					mage = (String) memberInfoMap.get("mage");
 					
-					Update realPersonalData = new Update();
-					realPersonalData.set("user_info.type", "memid");
-					realPersonalData.set("user_info.memid", "");
-					realPersonalData.set("user_info.msex", msex);
-					realPersonalData.set("user_info.mage", mage);
-					mongoOperations.updateFirst(new Query(Criteria.where(ClassCountMongoDBEnum.USER_ID.getKey()).is(memid)), realPersonalData,"user_detail");
+					
+					
+//					Update realPersonalData = new Update();
+//					realPersonalData.set("user_info.type", "memid");
+//					realPersonalData.set("user_info.memid", "");
+//					realPersonalData.set("user_info.msex", msex);
+//					realPersonalData.set("user_info.mage", mage);
+//					mongoOperations.updateFirst(new Query(Criteria.where(ClassCountMongoDBEnum.USER_ID.getKey()).is(memid)), realPersonalData,"user_detail");
+//					
+					//new
+//					DBCollection authors = mongoOperations.getCollection("user_detail");
+					DBObject updateCondition = new BasicDBObject();
+					updateCondition.put("user_id", memid);
+					DBObject updatedValue = new BasicDBObject();
+					updatedValue.put("user_info", new BasicDBObject("msex", msex).append("mage", mage)
+							.append("type", "memid").append("memid", ""));
+					DBObject updateSetValue = new BasicDBObject("$set", updatedValue);
+					dBCollection.update(updateCondition, updateSetValue); 
+					//new
+					
+					
 					
 					dmpDataBean.setMsex("null");
 					dmpDataBean.setMage("null");
@@ -137,35 +147,43 @@ public class PersonalInfoComponent {
 			} else {
 				// mongo尚未新增user_detail，直接新增一筆mongo資料，塞會員中心打回來的性別、年齡(空的轉成NA寫入)
 				
-				long member11, member22;	//test
-				member11 = System.currentTimeMillis();	//test
+//				long member11, member22;	//test
+//				member11 = System.currentTimeMillis();	//test
 				
 				Map<String, Object> memberInfoMap = findMemberInfoAPI(memid);
 				
-				member22 = System.currentTimeMillis();	//test
-				log.info(" >>>>>>>>User Not Exist - query MemberApi cost " + (member22-member11) + " ms");	//test
+//				member22 = System.currentTimeMillis();	//test
+//				log.info(" >>>>>>>>User Not Exist - query MemberApi cost " + (member22-member11) + " ms");	//test
 				
 				
 				
 				msex = (String) memberInfoMap.get("msex");
 				mage = (String) memberInfoMap.get("mage");
 				
-				Map<String, String> map = new HashMap<String, String>();
-				map.put("type", "memid");
-				map.put("memid", "");
-				map.put("mage", mage);
-				map.put("msex", msex);
+//				//old
+//				Map<String, String> map = new HashMap<String, String>();
+//				map.put("type", "memid");
+//				map.put("memid", "");
+//				map.put("mage", mage);
+//				map.put("msex", msex);
+//				UserDetailMongoBeanForHadoop hadoopUserDetailBean = new UserDetailMongoBeanForHadoop();
+//				hadoopUserDetailBean.setUser_id(memid);
+//				hadoopUserDetailBean.setCreate_date(todayStr);
+//				hadoopUserDetailBean.setUpdate_date(todayStr);
+//				hadoopUserDetailBean.setUser_info(map);
+//				mongoOperations.save(hadoopUserDetailBean);
+//				//old
 				
+				//new
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 				Date today = new Date();
 				String todayStr = sdf.format(today);
-
-				UserDetailMongoBeanForHadoop hadoopUserDetailBean = new UserDetailMongoBeanForHadoop();
-				hadoopUserDetailBean.setUser_id(memid);
-				hadoopUserDetailBean.setCreate_date(todayStr);
-				hadoopUserDetailBean.setUpdate_date(todayStr);
-				hadoopUserDetailBean.setUser_info(map);
-				mongoOperations.save(hadoopUserDetailBean);
+				DBObject documents = new BasicDBObject("user_id",memid).append("create_date", todayStr).append("update_date", todayStr)
+						.append("user_info", new BasicDBObject("msex", msex).append("mage", mage).append("memid", "").append("type", "memid"));
+				dBCollection.insert(documents);
+				//new
+				
+				
 				
 				if ( (!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA")) ) {
 					dmpDataBean.setPersonalInfoApiClassify("Y");
@@ -185,14 +203,14 @@ public class PersonalInfoComponent {
 		}
 		
 		// 讀取ClsfyGndAgeCrspTable.txt做age、sex個資推估
-		long forecast1, forecast2;	//test
-		forecast1 = System.currentTimeMillis();	//test
+//		long forecast1, forecast2;	//test
+//		forecast1 = System.currentTimeMillis();	//test
 		
 		Map<String, String> forecastInfoMap = forecastPersonalInfo(category);
 		
-		forecast2 = System.currentTimeMillis();	//test
-		
-		log.info(" >>>>>>>>forecastPersonalInfo cost " + (forecast2-forecast1) + " ms");	//test
+//		forecast2 = System.currentTimeMillis();	//test
+//		
+//		log.info(" >>>>>>>>forecastPersonalInfo cost " + (forecast2-forecast1) + " ms");	//test
 		
 		
 		String sex = forecastInfoMap.get("sex");
@@ -210,12 +228,10 @@ public class PersonalInfoComponent {
 		}
 		
 		
-		endAll = System.currentTimeMillis();	//test
+//		endAll = System.currentTimeMillis();	//test
 		
-		log.info(" >>>>>>>> PersonalInfoComponent All cost " + (endAll-startAll) + " ms");	//test
+//		log.info(" >>>>>>>> PersonalInfoComponent All cost " + (endAll-startAll) + " ms");	//test
 		
-			
-		*/
 		return dmpDataBean;
 	}
 	
