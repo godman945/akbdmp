@@ -5,22 +5,26 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
 import com.jayway.jsonpath.JsonPath;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
 import com.pchome.akbdmp.api.data.enumeration.ClassCountMongoDBEnum;
-import com.pchome.hadoopdmp.data.mongo.pojo.UserDetailMongoBean;
 import com.pchome.hadoopdmp.data.mongo.pojo.UserDetailMongoBeanForHadoop;
 import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper;
 import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper.combinedValue;
@@ -31,7 +35,7 @@ public class PersonalInfoComponent {
 	Log log = LogFactory.getLog("PersonalInfoComponent");
 
 	// 處理個資元件
-	public DmpLogBean processPersonalInfo(DmpLogBean dmpDataBean ,MongoOperations mongoOperations) throws Exception {
+	public DmpLogBean processPersonalInfo(DmpLogBean dmpDataBean ,DB mongoOperations) throws Exception {
 		
 		log.info(" >>>>>>>> processPersonalInfo mongoOperations " +mongoOperations);	//test
 		
@@ -41,6 +45,25 @@ public class PersonalInfoComponent {
 		String memid = dmpDataBean.getMemid();
 		String category = dmpDataBean.getCategory();
 
+		
+		if ((StringUtils.isNotBlank(memid)) && (!memid.equals("null"))) {
+			long mongo1, mongo2;	//test
+			mongo1 = System.currentTimeMillis();	//test
+			
+			DBCollection dBCollection = mongoOperations.getCollection("user_detail");
+			BasicDBObject andQuery = new BasicDBObject();
+			List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+			obj.add(new BasicDBObject("user_id", memid));
+			andQuery.put("$and", obj);
+			DBObject dbObject =  dBCollection.findOne(andQuery);
+			
+			mongo2 = System.currentTimeMillis();	//test
+			
+			log.info(" >>>>>>>> org mongo userDetail : " +dbObject);	//test
+			log.info(" >>>>>>>> org query mongo userDetail cost " + (mongo2-mongo1) + " ms");	//test
+		}
+		
+		/*
 		// 如有memid資料，先查mongo，再撈會員中心查個資
 		// 撈回mongo為NA也算已打過會員中心API，不再重打會員中心api
 		if ((StringUtils.isNotBlank(memid)) && (!memid.equals("null"))) {
@@ -48,11 +71,22 @@ public class PersonalInfoComponent {
 			long mongo1, mongo2;	//test
 			mongo1 = System.currentTimeMillis();	//test
 			
-			Query queryUserInfo = new Query(Criteria.where(ClassCountMongoDBEnum.USER_ID.getKey()).is(memid));
-			UserDetailMongoBean userDetailMongoBean = mongoOperations.findOne(queryUserInfo, UserDetailMongoBean.class);
+//			Query queryUserInfo = new Query(Criteria.where(ClassCountMongoDBEnum.USER_ID.getKey()).is(memid));
+//			UserDetailMongoBean userDetailMongoBean = mongoOperations.findOne(queryUserInfo, UserDetailMongoBean.class);
+			
+			DBCollection dBCollection = mongoOperations.getCollection("user_detail");
+			BasicDBObject andQuery = new BasicDBObject();
+			List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+			obj.add(new BasicDBObject("user_id", memid));
+			andQuery.put("$and", obj);
+			DBObject dbObject =  dBCollection.findOne(andQuery);
 			
 			mongo2 = System.currentTimeMillis();	//test
-			log.info(" >>>>>>>> query mongo userDetail cost " + (mongo2-mongo1) + " ms");	//test
+			
+			log.info(" >>>>>>>> org mongo userDetail : " +dbObject);	//test
+			log.info(" >>>>>>>> org query mongo userDetail cost " + (mongo2-mongo1) + " ms");	//test
+			
+			
 			
 			
 			String msex = "";
@@ -180,6 +214,8 @@ public class PersonalInfoComponent {
 		
 		log.info(" >>>>>>>> PersonalInfoComponent All cost " + (endAll-startAll) + " ms");	//test
 		
+			
+		*/
 		return dmpDataBean;
 	}
 	

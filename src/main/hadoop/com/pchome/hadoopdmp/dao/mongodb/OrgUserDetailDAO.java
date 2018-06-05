@@ -8,19 +8,19 @@ import org.apache.commons.logging.LogFactory;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import com.pchome.hadoopdmp.dao.IClassUrlDAO;
+import com.pchome.hadoopdmp.dao.IOrgUserDetailDAO;
 
-public class ClassUrlDAO extends BaseDAO implements IClassUrlDAO {
+public class OrgUserDetailDAO extends BaseDAO implements IOrgUserDetailDAO {
 
 	protected Log log = LogFactory.getLog(this.getClass());
 
-	private static String COLLECTION = "class_url";
+	private static String COLLECTION = "user_detail";
 
-	private static ClassUrlDAO instance = new ClassUrlDAO();
+	private static OrgUserDetailDAO instance = new OrgUserDetailDAO();
 
-	private ClassUrlDAO() {};
+	private OrgUserDetailDAO() {};
 
-	public static IClassUrlDAO getInstance() {
+	public static IOrgUserDetailDAO getInstance() {
 		return instance;
 	}
 
@@ -70,7 +70,7 @@ public class ClassUrlDAO extends BaseDAO implements IClassUrlDAO {
 		DBObject result = findOneByCustomQuery(query, collection);
 		return result;
 	}
-
+	
 	@Override
 	public boolean checkUrlClassed(String url) throws Exception {
 //		int start = 0;
@@ -110,6 +110,15 @@ public class ClassUrlDAO extends BaseDAO implements IClassUrlDAO {
 
     	return result;
 
+	}
+	
+	
+	@Override
+	public DBObject findOneUserDetail(String userId) throws Exception {
+		DBObject query = new BasicDBObject("user_id", userId);
+		String collection = "user_detail";
+		DBObject result = findOneByCustomQuery(query, collection);
+		return result;
 	}
 
 }

@@ -21,22 +21,19 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Component;
 
 import com.maxmind.geoip2.DatabaseReader;
-import com.pchome.hadoopdmp.enumerate.CategoryLogEnum;
+import com.mongodb.DB;
 import com.pchome.hadoopdmp.mapreduce.job.component.DateTimeComponent;
 import com.pchome.hadoopdmp.mapreduce.job.component.DeviceComponent;
 import com.pchome.hadoopdmp.mapreduce.job.component.GeoIpComponent;
 import com.pchome.hadoopdmp.mapreduce.job.component.PersonalInfoComponent;
-import com.pchome.hadoopdmp.mapreduce.job.factory.ACategoryLogData;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryCodeBean;
-import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryLogFactory;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryRutenCodeBean;
 import com.pchome.hadoopdmp.mapreduce.job.factory.DmpLogBean;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
-import com.pchome.hadoopdmp.spring.config.bean.mongodb.MongodbHadoopConfig;
+import com.pchome.hadoopdmp.spring.config.bean.mongodborg.MongodbOrgHadoopConfig;
 
 @Component
 public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
@@ -60,7 +57,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public static GeoIpComponent geoIpComponent = new GeoIpComponent();
 	public static DateTimeComponent dateTimeComponent = new DateTimeComponent();
 	public static DeviceComponent deviceComponent = new DeviceComponent();
-	private MongoOperations mongoOperations;
+//	private mongoOrgOperations mongoOrgOperations;
+	private DB mongoOrgOperations;
 	public static DatabaseReader reader = null;
 	public static InetAddress ipAddress = null;
 
@@ -70,7 +68,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		try {
 			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-			this.mongoOperations = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
+			this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
 			record_date = context.getConfiguration().get("job.date");
 			Configuration conf = context.getConfiguration();
 			
@@ -147,7 +145,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	@Override
 	public void map(LongWritable offset, Text value, Context context) {
 		
-		log.info(" >>>>>>>> map mongoOperations " +mongoOperations);	//test
+		log.info(" >>>>>>>> map mongoOrgOperations " +mongoOrgOperations);	//test
 		
 		
 		try {
@@ -236,22 +234,22 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			dmpLogBeanResult = deviceComponent.parseUserAgentToDevice(dmpLogBeanResult);
 			
 			
-			//分類處理元件(分析click、24H、Ruten、campaign分類) 
-			if ( (dmpLogBeanResult.getSource().equals("ck")||dmpLogBeanResult.getSource().equals("campaign")) ) {	// kdcl ad_click的adclass  或   campaign log的adclass 	//&& StringUtils.isNotBlank(dmpLogBeanResult.getAdClass())
-				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
-				dmpLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(dmpLogBeanResult, mongoOperations);
-			}else if (dmpLogBeanResult.getSource().equals("pv") && StringUtils.isNotBlank(dmpLogBeanResult.getUrl()) && dmpLogBeanResult.getUrl().contains("ruten")) {	// 露天
-				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
-				dmpLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(dmpLogBeanResult, mongoOperations);
-			}else if (dmpLogBeanResult.getSource().equals("pv") && StringUtils.isNotBlank(dmpLogBeanResult.getUrl()) && dmpLogBeanResult.getUrl().contains("24h")) {		// 24h
-				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
-				dmpLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(dmpLogBeanResult, mongoOperations);
-			}else if ( dmpLogBeanResult.getSource().equals("pv") ){
-				dmpDataBean.setSource("kdcl");
-			}
+//			//分類處理元件(分析click、24H、Ruten、campaign分類) 
+//			if ( (dmpLogBeanResult.getSource().equals("ck")||dmpLogBeanResult.getSource().equals("campaign")) ) {	// kdcl ad_click的adclass  或   campaign log的adclass 	//&& StringUtils.isNotBlank(dmpLogBeanResult.getAdClass())
+//				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
+//				dmpLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(dmpLogBeanResult, mongoOrgOperations);
+//			}else if (dmpLogBeanResult.getSource().equals("pv") && StringUtils.isNotBlank(dmpLogBeanResult.getUrl()) && dmpLogBeanResult.getUrl().contains("ruten")) {	// 露天
+//				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
+//				dmpLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(dmpLogBeanResult, mongoOrgOperations);
+//			}else if (dmpLogBeanResult.getSource().equals("pv") && StringUtils.isNotBlank(dmpLogBeanResult.getUrl()) && dmpLogBeanResult.getUrl().contains("24h")) {		// 24h
+//				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
+//				dmpLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(dmpLogBeanResult, mongoOrgOperations);
+//			}else if ( dmpLogBeanResult.getSource().equals("pv") ){
+//				dmpDataBean.setSource("kdcl");
+//			}
 			
 //			//個資處理元件
-			dmpLogBeanResult = personalInfoComponent.processPersonalInfo(dmpLogBeanResult, mongoOperations);
+			dmpLogBeanResult = personalInfoComponent.processPersonalInfo(dmpLogBeanResult, mongoOrgOperations);
 			
 			//紀錄日期
 			dmpLogBeanResult.setRecordDate(record_date);
@@ -310,13 +308,13 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	
 
 //	 @Autowired
-//	 MongoOperations mongoOperations;
+//	 mongoOrgOperations mongoOrgOperations;
 //	 public void test() throws Exception{
 //	 System.out.println("BBB");
 //	 Query query = new
 //	 Query(Criteria.where("_id").is("59404c00e4b0ed734829caf4"));
 //	 ClassUrlMongoBean classUrlMongoBean = (ClassUrlMongoBean)
-//	 mongoOperations.findOne(query, ClassUrlMongoBean.class);
+//	 mongoOrgOperations.findOne(query, ClassUrlMongoBean.class);
 //	 System.out.println(classUrlMongoBean.getUrl());
 //	 System.out.println("AAA");
 //	 }

@@ -31,27 +31,37 @@ public class BaseDAO {
     protected Log log = LogFactory.getLog(this.getClass());
 
     static {
-    	Properties prop = new Properties();
-    	try {
-			prop.load( BaseDAO.class.getResourceAsStream("/config/hadoop/mongodb.properties") );
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+//    	Properties prop = new Properties();
+//    	try {
+//			prop.load( BaseDAO.class.getResourceAsStream("/config/hadoop/mongodb.properties") );
+//		} catch (IOException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//
+//    	host = prop.getProperty("mongodb.host");
+//    	port = Integer.valueOf(prop.getProperty("mongodb.port"));
+//    	dbname = prop.getProperty("mongodb.dbname");
+//    	user = prop.getProperty("mongodb.user");
+//    	password = prop.getProperty("mongodb.password");
+    	
+    	
+    	
+//    	//stg
+//      	host ="mgodev.mypchome.com.tw";
+//    	port = 27017;
+//    	dbname = "dmp";
+//    	user ="webuser";
+//    	password ="axw2mP1i";
 
-    	host = prop.getProperty("mongodb.host");
-    	port = Integer.valueOf(prop.getProperty("mongodb.port"));
-    	dbname = prop.getProperty("mongodb.dbname");
-    	user = prop.getProperty("mongodb.user");
-    	password = prop.getProperty("mongodb.password");
-
-
-    	//prd
-//        host = "mgocfgm.mypchome.com.tw";
-//        port = 27017;
-//        dbname = "dmp";
-//        user = "webuser";
-//        password = "MonG0Dmp";
+    	
+//    	prd
+        host = "mgocfgm.mypchome.com.tw";
+        port = 27017;
+        dbname = "dmp";
+        user = "webuser";
+        password = "MonG0Dmp";
+        
 
     	//stg
 //        host = "mgodev.mypchome.com.tw";
@@ -169,11 +179,12 @@ public class BaseDAO {
         DBCursor cursor = dbCollection.find(query);
         return cursor;
     }
-
+    
     protected DBObject findOneByCustomQuery(DBObject dbObj, String collection) throws UnknownHostException {
     	DBObject query = dbObj;
         DBCollection dbCollection = db.getCollection(collection);
         DBObject rztDBObj = dbCollection.findOne(query);
         return rztDBObj;
     }
+
 }
