@@ -37,7 +37,7 @@ public class PersonalInfoComponent {
 	// 處理個資元件
 	public DmpLogBean processPersonalInfo(DmpLogBean dmpDataBean ,DB mongoOperations) throws Exception {
 		
-		log.info(" >>>>>>>> processPersonalInfo mongoOperations " +mongoOperations);	//test
+		log.info(" >>>>>>>> processPersonalInfo mongoOperations to String : " +mongoOperations.toString());	//test
 		
 		long startAll, endAll;	//test
 		startAll = System.currentTimeMillis();//test
