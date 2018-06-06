@@ -87,10 +87,10 @@ public class DmpLogDriver {
 			jobConf.set("mapred.reduce.parallel.copies", "15");//5
 			jobConf.set("spring.profiles.active", env);
 			
-			jobConf.set("mapreduce.map.java.opts", "-Xmx600m");	//-Xmx200m 
-			jobConf.set("mapreduce.map.memory.mb", "3072MB");		//1024MB
-			jobConf.set("mapreduce.reduce.java.opts", "-Xmx600m");	//-Xmx200m
-			jobConf.set("mapreduce.reduce.memory.mb", "3072MB");	//1024MB
+//			jobConf.set("mapreduce.map.java.opts", "-Xmx600m");	//-Xmx200m 
+//			jobConf.set("mapreduce.map.memory.mb", "3072MB");		//1024MB
+//			jobConf.set("mapreduce.reduce.java.opts", "-Xmx600m");	//-Xmx200m
+//			jobConf.set("mapreduce.reduce.memory.mb", "3072MB");	//1024MB
 			
 			
 			// hdfs
@@ -113,10 +113,10 @@ public class DmpLogDriver {
 			conf.set("mapreduce.task.io.sort.factor", "25");//10
 			conf.set("mapred.reduce.parallel.copies", "15");//5
 			
-			conf.set("mapreduce.map.java.opts", "-Xmx600m");	//-Xmx200m 
-			conf.set("mapreduce.map.memory.mb", "3072MB");		//1024MB
-			conf.set("mapreduce.reduce.java.opts", "-Xmx600m");	//-Xmx200m
-			conf.set("mapreduce.reduce.memory.mb", "3072MB");	//1024MB
+//			conf.set("mapreduce.map.java.opts", "-Xmx600m");	//-Xmx200m 
+//			conf.set("mapreduce.map.memory.mb", "3072MB");		//1024MB
+//			conf.set("mapreduce.reduce.java.opts", "-Xmx600m");	//-Xmx200m
+//			conf.set("mapreduce.reduce.memory.mb", "3072MB");	//1024MB
 			
 			
 			if(calendar.get(Calendar.HOUR_OF_DAY) == 0){
