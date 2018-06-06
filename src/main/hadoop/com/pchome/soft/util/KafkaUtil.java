@@ -26,7 +26,8 @@ public class KafkaUtil {
 
 	public void sendMessage(String topicname, String partitionKey, String mesg) {
 		try {
-			Future<RecordMetadata> f = kafkaProducer.send(new ProducerRecord<String, String>(topicname, partitionKey, mesg));
+			kafkaProducer.send(new ProducerRecord<String, String>(topicname, partitionKey, mesg));
+//			Future<RecordMetadata> f = kafkaProducer.send(new ProducerRecord<String, String>(topicname, partitionKey, mesg));
 //			while (!f.isDone()) {
 //			}
 //			RecordMetadata recordMetadata = f.get();
