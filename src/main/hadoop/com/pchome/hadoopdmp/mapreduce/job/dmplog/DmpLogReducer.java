@@ -110,9 +110,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			String data[] = key.toString().split(SYMBOL);
 			
 			
-			if( StringUtils.equals(data[0], "null") && StringUtils.equals(data[1], "null")){
-				return;
-			}
+//			if( StringUtils.equals(data[0], "null") && StringUtils.equals(data[1], "null")){
+//				return;
+//			}
 
 			//send kafka key
 			JSONObject keyJson = new JSONObject();

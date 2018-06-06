@@ -172,6 +172,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //					log.info("values.length < " + kdclLogLength);
 					return;
 				}
+				
+				if ( (StringUtils.equals(values[1], "null")) && (StringUtils.equals(values[2], "null")) ){
+					return;
+				}
+				
 				dmpDataBean.setDateTime(values[0]);
 				dmpDataBean.setMemid(values[1]);
 				dmpDataBean.setUuid(values[2]);
@@ -198,6 +203,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //					 log.info("values.length < " + campaignLogLength);
 					 return;
                  }
+				 
+				if ( StringUtils.isBlank(values[0]) && StringUtils.isBlank(values[1])  ){
+					return;
+				}
 				 
 				 dmpDataBean.setDateTime(values[7]);
 				 dmpDataBean.setMemid(StringUtils.isBlank(values[0])? "null" :values[0]);
