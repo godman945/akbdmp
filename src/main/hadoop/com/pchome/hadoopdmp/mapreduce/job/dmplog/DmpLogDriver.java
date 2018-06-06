@@ -77,14 +77,21 @@ public class DmpLogDriver {
 			Calendar calendar = Calendar.getInstance();
 			
 			JobConf jobConf = new JobConf();
-			jobConf.setNumMapTasks(8);
+			jobConf.setNumMapTasks(10);
 			jobConf.set("mapred.max.split.size","200388608"); //200388608  10	//8015544 20     //1003886 135	//200388 645	//2003886	72	//4007772 36	//8015544 18	//200388608888 10
 			jobConf.set("mapred.min.split.size","200388608"); //200388608  10	//8015544 20	 //1003886 135 	//200388 645	//2003886	72  //4007772 36	//8015544 18	//200388608888 10
-			jobConf.set("mapred.child.java.opts", "-Xmx2g");
+//			jobConf.set("mapred.child.java.opts", "-Xmx2g");
 			jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 			jobConf.set("mapred.compress.map.output", "true");
-			jobConf.set("mapreduce.task.io.sort.factor", "25");
+			jobConf.set("mapreduce.task.io.sort.factor", "25");//10
+			jobConf.set("mapred.reduce.parallel.copies", "15");//5
 			jobConf.set("spring.profiles.active", env);
+			
+			jobConf.set("mapreduce.map.java.opts", "-Xmx600m");	//-Xmx200m 
+			jobConf.set("mapreduce.map.memory.mb", "3072MB");		//1024MB
+			jobConf.set("mapreduce.reduce.java.opts", "-Xmx600m");	//-Xmx200m
+			jobConf.set("mapreduce.reduce.memory.mb", "3072MB");	//1024MB
+			
 			
 			// hdfs
 			Configuration conf = new Configuration();
@@ -95,15 +102,23 @@ public class DmpLogDriver {
 			conf.set("mapreduce.map.speculative", mapredExecution);
 			conf.set("mapreduce.reduce.speculative", mapredReduceExecution);
 			conf.set("mapreduce.task.timeout", mapredTimeout);
-			conf.set("mapred.child.java.opts", "-Xmx4072m");
-			conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx4072m");
-			conf.set("mapred.max.split.size","128388608");
-			conf.set("mapred.min.split.size","128388608");
-			conf.set("mapreduce.min.split.size","128388608");
-			conf.set("mapreduce.max.split.size","128388608");
+//			conf.set("mapred.child.java.opts", "-Xmx2g");
+			conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
+			conf.set("mapred.max.split.size","200388608");
+			conf.set("mapred.min.split.size","200388608");
+			conf.set("mapreduce.min.split.size","200388608");
+			conf.set("mapreduce.max.split.size","200388608");
 			conf.set("dfs.namenode.fs-limits.min-block-size","1048576");
 			conf.set("dfs.namenode.fs-limits.max-blocks-per-file","1048576");
-			conf.set("mapreduce.task.io.sort.factor", "25");
+			conf.set("mapreduce.task.io.sort.factor", "25");//10
+			conf.set("mapred.reduce.parallel.copies", "15");//5
+			
+			conf.set("mapreduce.map.java.opts", "-Xmx600m");	//-Xmx200m 
+			conf.set("mapreduce.map.memory.mb", "3072MB");		//1024MB
+			conf.set("mapreduce.reduce.java.opts", "-Xmx600m");	//-Xmx200m
+			conf.set("mapreduce.reduce.memory.mb", "3072MB");	//1024MB
+			
+			
 			if(calendar.get(Calendar.HOUR_OF_DAY) == 0){
 				calendar.add(Calendar.DAY_OF_MONTH, -1);
 				conf.set("job.date",sdf1.format(calendar.getTime()));
