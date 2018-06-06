@@ -83,6 +83,7 @@ public class DmpLogDriver {
 			jobConf.set("mapred.child.java.opts", "-Xmx2g");
 			jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 			jobConf.set("mapred.compress.map.output", "true");
+			jobConf.set("mapreduce.task.io.sort.factor", "25");
 			jobConf.set("spring.profiles.active", env);
 			
 			// hdfs
@@ -102,6 +103,7 @@ public class DmpLogDriver {
 			conf.set("mapreduce.max.split.size","128388608");
 			conf.set("dfs.namenode.fs-limits.min-block-size","1048576");
 			conf.set("dfs.namenode.fs-limits.max-blocks-per-file","1048576");
+			conf.set("mapreduce.task.io.sort.factor", "25");
 			if(calendar.get(Calendar.HOUR_OF_DAY) == 0){
 				calendar.add(Calendar.DAY_OF_MONTH, -1);
 				conf.set("job.date",sdf1.format(calendar.getTime()));
