@@ -147,10 +147,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 
 	@Override
 	public void map(LongWritable offset, Text value, Context context) {
-		
-		log.info(" >>>>>>>> map mongoOrgOperations " +mongoOrgOperations);	//test
-		
-		
+//		log.info(" >>>>>>>> map mongoOrgOperations " +mongoOrgOperations);	//test
 		try {
 			//讀取kdcl、Campaign資料
 //			log.info("raw_data : " + value);
@@ -297,7 +294,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			+ kdclSymbol + dmpLogBeanResult.getDateTime() + kdclSymbol + dmpLogBeanResult.getUserAgent() + kdclSymbol + dmpLogBeanResult.getAdClass() 
 			+ kdclSymbol + recordCount;
 			
-			log.info(">>>>>> Mapper write key:" + result);
+//			log.info(">>>>>> Mapper write key:" + result);
 			
 			keyOut.set(result);
 			context.write(keyOut, valueOut);
