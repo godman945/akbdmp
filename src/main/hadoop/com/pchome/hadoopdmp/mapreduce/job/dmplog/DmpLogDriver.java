@@ -83,8 +83,8 @@ public class DmpLogDriver {
 //			jobConf.set("mapred.child.java.opts", "-Xmx2g");
 			jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 			jobConf.set("mapred.compress.map.output", "true");
-			jobConf.set("mapreduce.task.io.sort.factor", "25");//10
-			jobConf.set("mapred.reduce.parallel.copies", "15");//5
+//			jobConf.set("mapreduce.task.io.sort.factor", "25");//10
+//			jobConf.set("mapred.reduce.parallel.copies", "15");//5
 			jobConf.set("spring.profiles.active", env);
 			
 //			jobConf.set("mapreduce.map.java.opts", "-Xmx600m");	//-Xmx200m 
@@ -110,8 +110,8 @@ public class DmpLogDriver {
 			conf.set("mapreduce.max.split.size","200388608");
 			conf.set("dfs.namenode.fs-limits.min-block-size","1048576");
 			conf.set("dfs.namenode.fs-limits.max-blocks-per-file","1048576");
-			conf.set("mapreduce.task.io.sort.factor", "25");//10
-			conf.set("mapred.reduce.parallel.copies", "15");//5
+//			conf.set("mapreduce.task.io.sort.factor", "25");//10
+//			conf.set("mapred.reduce.parallel.copies", "15");//5
 			
 //			conf.set("mapreduce.map.java.opts", "-Xmx600m");	//-Xmx200m 
 //			conf.set("mapreduce.map.memory.mb", "3072MB");		//1024MB
