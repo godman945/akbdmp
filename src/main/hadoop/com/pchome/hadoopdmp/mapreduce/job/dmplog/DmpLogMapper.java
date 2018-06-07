@@ -155,76 +155,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		try {
 			//讀取kdcl、Campaign資料
 //			log.info("raw_data : " + value);
-			String valueStr = value.toString();
 			
-//			String[] values = null;
-			DmpLogBean dmpDataBean =  new DmpLogBean();;
-//			//1.切割符號判斷log來源 2.檢查是否符合列數
-//			if(valueStr.indexOf(kdclSymbol) > -1){ 
-//				 values = valueStr.toString().split(kdclSymbol);
-//				 if(values.length < kdclLogLength){
-//					 return; 
-//				 }
-//				 if ( (StringUtils.equals(values[1], "null")) && (StringUtils.equals(values[2], "null")) ){
-//					 return;
-//				 }
-//				 // values[0]  date time (2018-01-04 04:57:12)
-//				 // values[1]  memid
-//				 // values[2]  uuid
-//				 // values[3]  ip
-//				 // values[4]  url
-//				 // values[5]  UserAgent
-//				 // values[13] ck,pv
-//				 // values[15] ad_class
-//				 dmpDataBean = new DmpLogBean();
-//				 dmpDataBean.setDateTime(values[0]);
-//				 dmpDataBean.setMemid(values[1]);
-//				 dmpDataBean.setUuid(values[2]);
-//				 dmpDataBean.setIp(values[3]);
-//				 dmpDataBean.setUrl(values[4]);
-//				 dmpDataBean.setUserAgent(values[5]);
-//				 dmpDataBean.setSource(values[13]);
-//				 dmpDataBean.setAdClass(values[15]);
-//				 dmpDataBean.setAge("null");
-//				 dmpDataBean.setSex("null");
-//			}else if(valueStr.indexOf(campaignSymbol) > -1){
-//				 values = valueStr.toString().split(campaignSymbol);
-//				 if(values.length < campaignLogLength){
-//					 return; 
-//				 }
-//				 if ( (StringUtils.equals(values[1], "null")) && (StringUtils.equals(values[2], "null")) ){
-//					 return;
-//				 }
-//				 // values[0] memid			會員帳號
-//				 // values[1] uuid			通用唯一識別碼	
-//				 // values[2] ad_class		分類
-//				 // values[3] Count			數量
-//				 // values[4] age			年齡 (0或空字串)
-//				 // values[5] sex			性別(F|M)
-//				 // values[6] ip_area		地區(台北市 or 空字串)
-//				 // values[7] record_date	紀錄日期(2018-04-27)
-//				 // values[8] Over_write	是否覆寫(true|false)
-//				 dmpDataBean = new DmpLogBean();
-//				 dmpDataBean.setDateTime(values[7]);
-//				 dmpDataBean.setMemid(StringUtils.isBlank(values[0])? "null" :values[0]);
-//				 dmpDataBean.setUuid(values[1]);
-//				 dmpDataBean.setIp(values[6]);
-//				 dmpDataBean.setUrl("");
-//				 dmpDataBean.setUserAgent("");
-//				 dmpDataBean.setSource("campaign");
-//				 dmpDataBean.setAdClass(values[2]);
-//				 if (StringUtils.equals(values[4], "0")){
-//					 dmpDataBean.setAge("null");
-//				 }else{
-//					 dmpDataBean.setAge(values[4]);
-//				 }
-//				 
-//				 if (StringUtils.isBlank(values[5])){
-//					 dmpDataBean.setSex("null");
-//				 }else{
-//					 dmpDataBean.setSex(values[5]);
-//				 }
-//			}
+			DmpLogBean dmpDataBean =  new DmpLogBean();
+			String valueStr = value.toString();
 			
 			if ( valueStr.indexOf(kdclSymbol) > -1 ){	//kdcl log	raw data格式
 				// values[0]  date time (2018-01-04 04:57:12)
