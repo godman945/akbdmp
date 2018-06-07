@@ -19,6 +19,8 @@ import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.codehaus.jettison.json.JSONObject;
+import org.json.JSONArray;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
@@ -356,6 +358,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			result.append(kdclSymbol + dmpLogBeanResult.getDeviceInfoSource() + kdclSymbol + dmpLogBeanResult.getDeviceInfo());
 			result.append(kdclSymbol + dmpLogBeanResult.getDevicePhoneInfo() + kdclSymbol + dmpLogBeanResult.getDeviceOsInfo() + kdclSymbol + dmpLogBeanResult.getDeviceBrowserInfo());
 			result.append(kdclSymbol + dmpLogBeanResult.getHour() + kdclSymbol + dmpLogBeanResult.getTimeInfoSource());
+			
 			result.append(kdclSymbol +dmpLogBeanResult.getPersonalInfoApiClassify()+ kdclSymbol +dmpLogBeanResult.getPersonalInfoClassify());
 			result.append(kdclSymbol +dmpLogBeanResult.getClassAdClickClassify() + kdclSymbol +dmpLogBeanResult.getClass24hUrlClassify()+ kdclSymbol +dmpLogBeanResult.getClassRutenUrlClassify());
 			result.append(kdclSymbol +dmpLogBeanResult.getAreaInfoClassify()+ kdclSymbol +dmpLogBeanResult.getDeviceInfoClassify()+ kdclSymbol +dmpLogBeanResult.getTimeInfoClassify());
@@ -364,22 +367,172 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			result.append(kdclSymbol + recordCount);
 			
 			
-//			String result = memid + kdclSymbol + dmpLogBeanResult.getUuid() + kdclSymbol + dmpLogBeanResult.getCategory() + kdclSymbol  + dmpLogBeanResult.getCategorySource()
-//			+ kdclSymbol + dmpLogBeanResult.getSex() + kdclSymbol + dmpLogBeanResult.getSexSource() + kdclSymbol + dmpLogBeanResult.getAge() + kdclSymbol + dmpLogBeanResult.getAgeSource()
-//			+ kdclSymbol + dmpLogBeanResult.getCountry() + kdclSymbol + dmpLogBeanResult.getCity() + kdclSymbol + dmpLogBeanResult.getAreaInfoSource()
-//			+ kdclSymbol + dmpLogBeanResult.getDeviceInfoSource() + kdclSymbol + dmpLogBeanResult.getDeviceInfo()
-//			+ kdclSymbol + dmpLogBeanResult.getDevicePhoneInfo() + kdclSymbol + dmpLogBeanResult.getDeviceOsInfo() + kdclSymbol + dmpLogBeanResult.getDeviceBrowserInfo()
-//			+ kdclSymbol + dmpLogBeanResult.getHour() + kdclSymbol + dmpLogBeanResult.getTimeInfoSource() 
-//			+ kdclSymbol +dmpLogBeanResult.getPersonalInfoApiClassify()+ kdclSymbol +dmpLogBeanResult.getPersonalInfoClassify()
-//			+ kdclSymbol +dmpLogBeanResult.getClassAdClickClassify() + kdclSymbol +dmpLogBeanResult.getClass24hUrlClassify()+ kdclSymbol +dmpLogBeanResult.getClassRutenUrlClassify()
-//			+ kdclSymbol +dmpLogBeanResult.getAreaInfoClassify()+ kdclSymbol +dmpLogBeanResult.getDeviceInfoClassify()+ kdclSymbol +dmpLogBeanResult.getTimeInfoClassify()
-//			+ kdclSymbol + dmpLogBeanResult.getUrl() + kdclSymbol + dmpLogBeanResult.getIp() + kdclSymbol + dmpLogBeanResult.getRecordDate()+ kdclSymbol + dmpLogBeanResult.getSource()
-//			+ kdclSymbol + dmpLogBeanResult.getDateTime() + kdclSymbol + dmpLogBeanResult.getUserAgent() + kdclSymbol + dmpLogBeanResult.getAdClass() 
-//			+ kdclSymbol + recordCount;
+			
+			//send kafka key
+			JSONObject keyJson = new JSONObject();
+			keyJson.put("memid", memid);
+			keyJson.put("uuid", dmpLogBeanResult.getUuid());
+			
+			//send kafka data
+			//category_info
+			Map categoryInfoMap = new HashMap();
+			categoryInfoMap.put("value", dmpLogBeanResult.getCategory());
+			categoryInfoMap.put("source", dmpLogBeanResult.getCategorySource());
+			
+			//sex_info
+			Map sexInfoMap = new HashMap();
+			sexInfoMap.put("value", dmpLogBeanResult.getSex());
+			sexInfoMap.put("source", dmpLogBeanResult.getSexSource());
+			
+			//age_info
+			Map ageInfoMap = new HashMap();
+			ageInfoMap.put("value", dmpLogBeanResult.getAge());
+			ageInfoMap.put("source", dmpLogBeanResult.getAgeSource());
+			
+			//area_country_info
+			Map areaCountryInfoMap = new HashMap();
+			areaCountryInfoMap.put("value", dmpLogBeanResult.getCountry());
+			areaCountryInfoMap.put("source", dmpLogBeanResult.getAreaInfoSource());
+
+			//area_city_info
+			Map areaCityInfoMap = new HashMap();
+			areaCityInfoMap.put("value", dmpLogBeanResult.getCity());
+			areaCityInfoMap.put("source", dmpLogBeanResult.getAreaInfoSource());
+						
+			//device_info
+			Map deviceInfoMap = new HashMap();
+			deviceInfoMap.put("value", dmpLogBeanResult.getDeviceInfo());
+			deviceInfoMap.put("source", dmpLogBeanResult.getDeviceInfoSource());
+			
+			//device_phone_info
+			Map devicePhoneInfoMap = new HashMap();
+			devicePhoneInfoMap.put("value", dmpLogBeanResult.getDevicePhoneInfo());
+			devicePhoneInfoMap.put("source", dmpLogBeanResult.getDeviceInfoSource());
+			
+			//device_os_info
+			Map deviceOsInfoMap = new HashMap();
+			deviceOsInfoMap.put("value", dmpLogBeanResult.getDeviceOsInfo());
+			deviceOsInfoMap.put("source", dmpLogBeanResult.getDeviceInfoSource());
+			
+			//device_browser_info
+			Map deviceBrowserInfoMap = new HashMap();
+			deviceBrowserInfoMap.put("value", dmpLogBeanResult.getDeviceBrowserInfo());
+			deviceBrowserInfoMap.put("source", dmpLogBeanResult.getDeviceInfoSource());
+			
+			//time_info
+			Map timeInfoMap = new HashMap();
+			timeInfoMap.put("value", dmpLogBeanResult.getHour());
+			timeInfoMap.put("source", dmpLogBeanResult.getTimeInfoSource());
+
+			//put classify Array
+			JSONArray classifyArray = new JSONArray();
+			//kdcl classify 
+			if ( (StringUtils.equals(dmpLogBeanResult.getSource(), "kdcl")) ){
+				
+				//memid_kdcl_log_personal_info_api
+				Map memid_kdcl_log_personal_info_api = new HashMap();
+				memid_kdcl_log_personal_info_api.put("memid_kdcl_log_personal_info_api", dmpLogBeanResult.getPersonalInfoApiClassify());
+				classifyArray.put(memid_kdcl_log_personal_info_api);
+				
+				//all_kdcl_log_personal_info
+				Map all_kdcl_log_personal_info = new HashMap();
+				all_kdcl_log_personal_info.put("all_kdcl_log_personal_info", dmpLogBeanResult.getPersonalInfoClassify());
+				classifyArray.put(all_kdcl_log_personal_info);
+				
+				//all_kdcl_log_class_ad_click
+				Map all_kdcl_log_class_ad_click = new HashMap();
+				all_kdcl_log_class_ad_click.put("all_kdcl_log_class_ad_click", dmpLogBeanResult.getClassAdClickClassify());
+				classifyArray.put(all_kdcl_log_class_ad_click);
+				
+				//all_kdcl_log_class_24h_url
+				Map all_kdcl_log_class_24h_url = new HashMap();
+				all_kdcl_log_class_24h_url.put("all_kdcl_log_class_24h_url", dmpLogBeanResult.getClass24hUrlClassify());
+				classifyArray.put(all_kdcl_log_class_24h_url);
+				
+				//all_kdcl_log_class_ruten_url
+				Map all_kdcl_log_class_ruten_url = new HashMap();
+				all_kdcl_log_class_ruten_url.put("all_kdcl_log_class_ruten_url", dmpLogBeanResult.getClassRutenUrlClassify());
+				classifyArray.put(all_kdcl_log_class_ruten_url);
+				
+				//all_kdcl_log_area_info
+				Map all_kdcl_log_area_info = new HashMap();
+				all_kdcl_log_area_info.put("all_kdcl_log_area_info", dmpLogBeanResult.getAreaInfoClassify());
+				classifyArray.put(all_kdcl_log_area_info);
+				
+				//all_kdcl_log_device_info
+				Map all_kdcl_log_device_info = new HashMap();
+				all_kdcl_log_device_info.put("all_kdcl_log_device_info", dmpLogBeanResult.getDeviceInfoClassify());
+				classifyArray.put(all_kdcl_log_device_info);
+				
+				//all_kdcl_log_time_info
+				Map all_kdcl_log_time_info = new HashMap();
+				all_kdcl_log_time_info.put("all_kdcl_log_time_info", dmpLogBeanResult.getTimeInfoClassify());
+				classifyArray.put(all_kdcl_log_time_info);
+			}
+			
+			//campaign classify
+			if ( (StringUtils.equals(dmpLogBeanResult.getSource(), "campaign")) ){
+				//memid_camp_log_personal_info_api
+				Map memid_camp_log_personal_info_api = new HashMap();
+				memid_camp_log_personal_info_api.put("memid_camp_log_personal_info_api", dmpLogBeanResult.getPersonalInfoApiClassify());
+				classifyArray.put(memid_camp_log_personal_info_api);
+				
+				//all_camp_log_personal_info
+				Map all_camp_log_personal_info = new HashMap();
+				all_camp_log_personal_info.put("all_camp_log_personal_info", dmpLogBeanResult.getPersonalInfoClassify());
+				classifyArray.put(all_camp_log_personal_info);
+				
+				//all_camp_log_class_ad_click
+				Map all_camp_log_class_ad_click = new HashMap();
+				all_camp_log_class_ad_click.put("all_camp_log_class_ad_click", dmpLogBeanResult.getClassAdClickClassify());
+				classifyArray.put(all_camp_log_class_ad_click);
+				
+				//all_camp_log_area_info
+				Map all_camp_log_area_info = new HashMap();
+				all_camp_log_area_info.put("all_camp_log_area_info", dmpLogBeanResult.getAreaInfoClassify());
+				classifyArray.put(all_camp_log_area_info);
+				
+				//all_camp_log_device_info
+				Map all_camp_log_device_info = new HashMap();
+				all_camp_log_device_info.put("all_camp_log_device_info",dmpLogBeanResult.getDeviceInfoClassify());
+				classifyArray.put(all_camp_log_device_info);
+
+				//all_camp_log_time_info
+				Map all_camp_log_time_info = new HashMap();
+				all_camp_log_time_info.put("all_camp_log_time_info",  dmpLogBeanResult.getTimeInfoClassify());
+				classifyArray.put(all_camp_log_time_info);
+			}
+			
+			//dataJson
+			JSONObject dataJson = new JSONObject();
+			dataJson.put("category_info", categoryInfoMap);
+			dataJson.put("sex_info", sexInfoMap);
+			dataJson.put("age_info", ageInfoMap);
+			dataJson.put("area_country_info", areaCountryInfoMap );
+			dataJson.put("area_city_info", areaCityInfoMap );
+			dataJson.put("device_info", deviceInfoMap );
+			dataJson.put("device_phone_info", devicePhoneInfoMap );
+			dataJson.put("device_os_info", deviceOsInfoMap);
+			dataJson.put("device_browser_info", deviceBrowserInfoMap);
+			dataJson.put("time_info", timeInfoMap);
+			dataJson.put("classify", classifyArray);
+			
+			//send Kafka Json
+			JSONObject sendKafkaJson = new JSONObject();
+			sendKafkaJson.put("key", keyJson);
+			sendKafkaJson.put("data", dataJson);
+			sendKafkaJson.put("url",  dmpLogBeanResult.getUrl());
+			sendKafkaJson.put("ip", dmpLogBeanResult.getIp());
+			sendKafkaJson.put("record_date", dmpLogBeanResult.getRecordDate());
+			sendKafkaJson.put("org_source", dmpLogBeanResult.getSource());
+			sendKafkaJson.put("date_time", dmpLogBeanResult.getDateTime());
+			sendKafkaJson.put("user_agent", dmpLogBeanResult.getUserAgent() );
+			sendKafkaJson.put("ad_class", dmpLogBeanResult.getAdClass());
+			sendKafkaJson.put("record_count", recordCount);
 			
 //			log.info(">>>>>> Mapper write key:" + result);
 			
-			keyOut.set(result.toString());
+			keyOut.set(sendKafkaJson.toString());
 			context.write(keyOut, valueOut);
 			
 		} catch (Exception e) {
