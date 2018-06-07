@@ -261,7 +261,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				dmpDataBean.setSource("kdcl");
 			}
 			
-//			//個資處理元件
+			//個資處理元件
 			dmpLogBeanResult = personalInfoComponent.processPersonalInfo(dmpLogBeanResult, mongoOrgOperations, memberInfoMap);
 			
 			//紀錄日期
