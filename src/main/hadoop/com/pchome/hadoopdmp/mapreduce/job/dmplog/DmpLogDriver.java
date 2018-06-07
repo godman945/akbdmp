@@ -77,7 +77,7 @@ public class DmpLogDriver {
 			Calendar calendar = Calendar.getInstance();
 			
 			JobConf jobConf = new JobConf();
-			jobConf.setNumMapTasks(10);
+			jobConf.setNumMapTasks(8);
 			jobConf.set("mapred.max.split.size","200388608"); //200388608  10	//8015544 20     //1003886 135	//200388 645	//2003886	72	//4007772 36	//8015544 18	//200388608888 10
 			jobConf.set("mapred.min.split.size","200388608"); //200388608  10	//8015544 20	 //1003886 135 	//200388 645	//2003886	72  //4007772 36	//8015544 18	//200388608888 10
 			jobConf.set("mapred.child.java.opts", "-Xmx2g");
@@ -94,12 +94,12 @@ public class DmpLogDriver {
 			conf.set("mapreduce.map.speculative", mapredExecution);
 			conf.set("mapreduce.reduce.speculative", mapredReduceExecution);
 			conf.set("mapreduce.task.timeout", mapredTimeout);
-			conf.set("mapred.child.java.opts", "-Xmx2g");
-			conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
-			conf.set("mapred.max.split.size","200388608");
-			conf.set("mapred.min.split.size","200388608");
-			conf.set("mapreduce.min.split.size","200388608");
-			conf.set("mapreduce.max.split.size","200388608");
+			conf.set("mapred.child.java.opts", "-Xmx4072m");
+			conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx4072m");
+			conf.set("mapred.max.split.size","128388608");
+			conf.set("mapred.min.split.size","128388608");
+			conf.set("mapreduce.min.split.size","128388608");
+			conf.set("mapreduce.max.split.size","128388608");
 			conf.set("dfs.namenode.fs-limits.min-block-size","1048576");
 			conf.set("dfs.namenode.fs-limits.max-blocks-per-file","1048576");
 			
