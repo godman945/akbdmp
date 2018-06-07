@@ -108,13 +108,13 @@ public class PersonalInfoComponent {
 						memberInfoMap.put(memid, (HashMap<String, String>) ageSexMap);
 						ageSexMap = null;
 						
-						log.info(" >>>>>>>>  " + memid+" query findMemberInfoAPI : "+msex +" - "+mage);
+//						log.info(" >>>>>>>>  " + memid+" query findMemberInfoAPI : "+msex +" - "+mage);
 						
 					}else{
 						msex = memberInfoMap.get(memid).get("msex");
 						mage = memberInfoMap.get(memid).get("mage");
 						
-						log.info(" >>>>>>>>  " + memid+" get memberInfoMap : "+msex+" - "+mage);
+//						log.info(" >>>>>>>>  " + memid+" get memberInfoMap : "+msex+" - "+mage);
 					}
 					
 //					Update realPersonalData = new Update();
@@ -166,13 +166,13 @@ public class PersonalInfoComponent {
 					memberInfoMap.put(memid, (HashMap<String, String>) ageSexMap);
 					ageSexMap = null;
 					
-					log.info(" >>>>>>>>  " + memid+" query findMemberInfoAPI : "+msex +" - "+mage);
+//					log.info(" >>>>>>>>  " + memid+" query findMemberInfoAPI : "+msex +" - "+mage);
 					
 				}else{
 					msex = memberInfoMap.get(memid).get("msex");
 					mage = memberInfoMap.get(memid).get("mage");
 					
-					log.info(" >>>>>>>>  " + memid+" get memberInfoMap : "+msex+" - "+mage);
+//					log.info(" >>>>>>>>  " + memid+" get memberInfoMap : "+msex+" - "+mage);
 				}
 				
 //				//old
