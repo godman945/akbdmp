@@ -30,7 +30,7 @@ public class PersonalInfoComponent {
 	Log log = LogFactory.getLog("PersonalInfoComponent");
 
 	// 處理個資元件
-	public DmpLogBean processPersonalInfo(DmpLogBean dmpDataBean ,DB mongoOperations) throws Exception {
+	public DmpLogBean processPersonalInfo(DmpLogBean dmpDataBean ,DB mongoOperations, Map<String, HashMap<String, String>> memberInfoMap) throws Exception {
 		
 //		log.info(" >>>>>>>> processPersonalInfo mongoOperations to String : " +mongoOperations.getClass());	//test
 		
@@ -95,20 +95,27 @@ public class PersonalInfoComponent {
 					// Mongo沒有mage、msex資料空的打會員中心 API
 					// 會員中心有資料寫回 mogodb msex mage 
 					// 會員中心沒有資料寫入 NA
-					
-//					long member1, member2;	//test
-//					member1 = System.currentTimeMillis();	//test
-					
-					Map<String, Object> memberInfoMap = findMemberInfoAPI(memid);
-					
-//					member2 = System.currentTimeMillis();	//test
-//					log.info(" >>>>>>>>User exist - query MemberApi cost " + (member2-member1) + " ms");	//test
-					
-					
-					msex = (String) memberInfoMap.get("msex");
-					mage = (String) memberInfoMap.get("mage");
-					
-					
+					 
+					// 如果memberInfoMap沒有才去打memberAPI
+					if ( memberInfoMap.get(memid)==null ){
+						Map<String, Object> memberInfoMapApi = findMemberInfoAPI(memid);
+						msex = (String) memberInfoMapApi.get("msex");
+						mage = (String) memberInfoMapApi.get("mage");
+						
+						Map<String, String> ageSexMap = new HashMap<String, String>();
+						ageSexMap.put("msex", msex);
+						ageSexMap.put("mage", mage);
+						memberInfoMap.put(memid, (HashMap<String, String>) ageSexMap);
+						ageSexMap = null;
+						
+						log.info(" >>>>>>>>  " + memid+" query findMemberInfoAPI : "+msex +" - "+mage);
+						
+					}else{
+						msex = memberInfoMap.get(memid).get("msex");
+						mage = memberInfoMap.get(memid).get("mage");
+						
+						log.info(" >>>>>>>>  " + memid+" get memberInfoMap : "+msex+" - "+mage);
+					}
 					
 //					Update realPersonalData = new Update();
 //					realPersonalData.set("user_info.type", "memid");
@@ -147,18 +154,26 @@ public class PersonalInfoComponent {
 			} else {
 				// mongo尚未新增user_detail，直接新增一筆mongo資料，塞會員中心打回來的性別、年齡(空的轉成NA寫入)
 				
-//				long member11, member22;	//test
-//				member11 = System.currentTimeMillis();	//test
-				
-				Map<String, Object> memberInfoMap = findMemberInfoAPI(memid);
-				
-//				member22 = System.currentTimeMillis();	//test
-//				log.info(" >>>>>>>>User Not Exist - query MemberApi cost " + (member22-member11) + " ms");	//test
-				
-				
-				
-				msex = (String) memberInfoMap.get("msex");
-				mage = (String) memberInfoMap.get("mage");
+				// 如果memberInfoMap沒有才去打memberAPI
+				if ( memberInfoMap.get(memid)==null ){
+					Map<String, Object> memberInfoMapApi = findMemberInfoAPI(memid);
+					msex = (String) memberInfoMapApi.get("msex");
+					mage = (String) memberInfoMapApi.get("mage");
+					
+					Map<String, String> ageSexMap = new HashMap<String, String>();
+					ageSexMap.put("msex", msex);
+					ageSexMap.put("mage", mage);
+					memberInfoMap.put(memid, (HashMap<String, String>) ageSexMap);
+					ageSexMap = null;
+					
+					log.info(" >>>>>>>>  " + memid+" query findMemberInfoAPI : "+msex +" - "+mage);
+					
+				}else{
+					msex = memberInfoMap.get(memid).get("msex");
+					mage = memberInfoMap.get(memid).get("mage");
+					
+					log.info(" >>>>>>>>  " + memid+" get memberInfoMap : "+msex+" - "+mage);
+				}
 				
 //				//old
 //				Map<String, String> map = new HashMap<String, String>();
