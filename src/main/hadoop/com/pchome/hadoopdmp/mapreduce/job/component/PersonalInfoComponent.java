@@ -1,4 +1,3 @@
-//物件化版本
 package com.pchome.hadoopdmp.mapreduce.job.component;
 
 import java.io.BufferedReader;
@@ -30,8 +29,11 @@ public class PersonalInfoComponent {
 	
 	Log log = LogFactory.getLog("PersonalInfoComponent");
 	
+	private DBCollection dBCollection;
+	
 	// 處理個資元件
 	public DmpLogBean processPersonalInfo(DmpLogBean dmpDataBean ,DB mongoOperations, Map<String, HashMap<String, String>> memberInfoMap) throws Exception {
+		this.dBCollection= mongoOperations.getCollection("user_detail");
 		
 		String memid = dmpDataBean.getMemid();
 		String category = dmpDataBean.getCategory();
@@ -41,12 +43,11 @@ public class PersonalInfoComponent {
 		if ((StringUtils.isNotBlank(memid)) && (!memid.equals("null"))) {
 
 			DBObject dbObject = queryUserDetail(mongoOperations, memid);
-			
 			String msex = "";
 			String mage = "";
 			if (dbObject != null) {
 				String userInfoStr = dbObject.get("user_info").toString();
-				// mongo user_detail結構中無mage、msex
+				// mongo user_detail舊資料中有無mage、msex
 				 if ( (!userInfoStr.contains("mage")) || (!userInfoStr.contains("msex")) ){
 					if ( memberInfoMap.get(memid)==null ){//先撈map有無msex、mage資料，沒有就打Member API
 						Map<String, Object> memberInfoMapApi = findMemberInfoAPI(memid);
@@ -139,7 +140,6 @@ public class PersonalInfoComponent {
 	}
 	
 	public DBObject queryUserDetail(DB mongoOperations,String memid) throws Exception {
-		DBCollection dBCollection = mongoOperations.getCollection("user_detail");
 		BasicDBObject andQuery = new BasicDBObject();
 		List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
 		obj.add(new BasicDBObject("user_id", memid));
@@ -149,7 +149,6 @@ public class PersonalInfoComponent {
 	}
 	
 	public void updateUserDetail(DB mongoOperations,String memid,String msex,String mage) throws Exception {
-		DBCollection dBCollection = mongoOperations.getCollection("user_detail");
 		DBObject updateCondition = new BasicDBObject();
 		updateCondition.put("user_id", memid);
 		DBObject updatedValue = new BasicDBObject();
@@ -163,7 +162,6 @@ public class PersonalInfoComponent {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date today = new Date();
 		String todayStr = sdf.format(today);
-		DBCollection dBCollection = mongoOperations.getCollection("user_detail");
 		DBObject documents = new BasicDBObject("user_id",memid).append("create_date", todayStr).append("update_date", todayStr)
 				.append("user_info", new BasicDBObject("msex", msex).append("mage", mage).append("memid", "").append("type", "memid"));
 		dBCollection.insert(documents);

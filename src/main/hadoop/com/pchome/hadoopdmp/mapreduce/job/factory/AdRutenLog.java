@@ -14,24 +14,21 @@ import org.apache.commons.logging.LogFactory;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import com.pchome.hadoopdmp.data.mongo.pojo.ClassUrlMongoBean;
 import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper;
 
 @SuppressWarnings({ "unchecked"})
 public class AdRutenLog extends ACategoryLogData {
+	private DBCollection dBCollection;
 	
 	Log log = LogFactory.getLog("AdRutenLog");
 
 	public Object processCategory(DmpLogBean dmpDataBean, DB mongoOperations) throws Exception {
+		this.dBCollection= mongoOperations.getCollection("class_url");
 		
 		dmpDataBean.setSource("kdcl");
 		
@@ -48,85 +45,25 @@ public class AdRutenLog extends ACategoryLogData {
 			return dmpDataBean;
 		}
 		
-//		ClassUrlMongoBean classUrlMongoBean = null;
-//		Query query = new Query(Criteria.where("url").is(sourceUrl.trim()));
-//		classUrlMongoBean = mongoOperations.findOne(query, ClassUrlMongoBean.class);
-		
-		//new
-		DBCollection dBCollection = mongoOperations.getCollection("class_url");
-		BasicDBObject andQuery = new BasicDBObject();
-		List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
-		obj.add(new BasicDBObject("url", sourceUrl.trim()));
-		andQuery.put("$and", obj);
-		DBObject dbObject =  dBCollection.findOne(andQuery);
-		//new
+		//查詢url
+		DBObject dbObject =queryClassUrl( mongoOperations, sourceUrl.trim()) ;
 		
 		if(dbObject != null){
 			if(dbObject.get("status").equals("0")){
-				// url 存在 status = 0 跳過回傳空值 , mongo update_date 更新(一天一次) mongo,query_time+1 如大於 2000 不再加  classRutenUrl = "N"
 				category = "null";
 				categorySource = "null";
 				classRutenUrlClassify = "N"; 
-
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-				Date today = new Date();
-				String todayStr = sdf.format(today);
-				
-//				Date updateDate = classUrlMongoBean.getUpdate_date();
-//				String updateDateStr = sdf.format(updateDate);
-				String updateDateStr = sdf.format(dbObject.get("update_date"));
-				
-				if ( (!todayStr.equals(updateDateStr)) ){
-					Date date = new Date();
-					dbObject.put("update_date", date);
-
-				    DBObject olddbObject = new BasicDBObject();
-				    olddbObject.put("url", sourceUrl.trim());
-				    dBCollection.update(olddbObject, dbObject);
-				    
-//					classUrlMongoBean.setUpdate_date(date);					
-//					mongoOperations.save(classUrlMongoBean);
-				}
-				
-				if ( ((Integer.parseInt( dbObject.get("query_time").toString()) <2000) )){
-//					Update querytime = new Update();
-//					querytime.inc( "query_time" , 1 );
-//					mongoOperations.updateFirst(new Query(Criteria.where( "url" ).is(sourceUrl.trim())), querytime, "class_url");
-					BasicDBObject newDocument = new BasicDBObject();
-					newDocument.append("$inc", new BasicDBObject().append("query_time", 1));
-					DBObject filter = new BasicDBObject(); 
-					filter.put("url", sourceUrl.trim());
-					dBCollection.update(filter,newDocument);
-					
-				}
+				// url 存在 status = 0 跳過回傳空值 , mongo update_date 更新(一天一次) mongo,query_time+1 如大於 2000 不再加  classRutenUrl = "N"
+				updateClassUrlUpdateDate(mongoOperations, sourceUrl.trim(),dbObject) ;
+				updateClassUrlQueryTime(mongoOperations, sourceUrl.trim(),dbObject) ;
 				
 			}else if( (dbObject.get("status").equals("1")) && (StringUtils.isNotBlank(dbObject.get("ad_class").toString())) ){
-				//url 存在 status = 1 取分類代號回傳 mongodn update_date 更新(一天一次) classRutenUrl = "Y";
 				category = dbObject.get("ad_class").toString();
 				categorySource = "ruten";
 				classRutenUrlClassify = "Y"; 
-				
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-				Date today = new Date();
-				String todayStr = sdf.format(today);
-				
-//				Date updateDate = classUrlMongoBean.getUpdate_date();
-//				String updateDateStr = sdf.format(updateDate);
-				String updateDateStr = sdf.format(dbObject.get("update_date"));
-				
-				if ( (!todayStr.equals(updateDateStr)) ){
-					Date date = new Date();
-					dbObject.put("update_date", date);
-
-				    DBObject olddbObject = new BasicDBObject();
-				    olddbObject.put("url", sourceUrl.trim());
-				    dBCollection.update(olddbObject, dbObject);
-				    
-//					classUrlMongoBean.setUpdate_date(today);
-//					mongoOperations.save(classUrlMongoBean);
-				}
+				//url 存在 status = 1 取分類代號回傳 mongodn update_date 更新(一天一次) classRutenUrl = "Y";
+				updateClassUrlUpdateDate(mongoOperations, sourceUrl.trim(),dbObject) ;
 			}
-			
 		} else {
 			try {
 				// url 不存在
@@ -178,7 +115,8 @@ public class AdRutenLog extends ACategoryLogData {
 							// 爬蟲有比對到Ruten分類
 							categorySource = "ruten";
 							classRutenUrlClassify = "Y";
-
+							//新增url
+							insertClassUrl(sourceUrl.trim(),"1",category,breadcrumbResult,"",0) ;
 //							Date date = new Date();
 //							ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
 //							classUrlMongoBeanCreate.setUrl(sourceUrl.trim());
@@ -189,21 +127,12 @@ public class AdRutenLog extends ACategoryLogData {
 //							classUrlMongoBeanCreate.setUpdate_date(date);
 //							mongoOperations.save(classUrlMongoBeanCreate);
 							
-							Date today = new Date();
-							DBObject documents = new BasicDBObject("url", sourceUrl.trim())
-									.append("status", "1")
-									.append("ad_class", category)
-									.append("ruten_bread", breadcrumbResult)
-									.append("create_date", today)
-									.append("update_date", today);
-							dBCollection.insert(documents);
-							
 						} else {
 							// 麵包屑沒有比對到Ruten分類
 							category = "null";
 							categorySource = "null";
 							classRutenUrlClassify = "N";
-
+							insertClassUrl(sourceUrl.trim(),"0","",breadcrumbResult,"爬不到麵包屑的訊息",1) ;
 //							Date date = new Date();
 //							ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
 //							classUrlMongoBeanCreate.setUrl(sourceUrl.trim());
@@ -215,26 +144,13 @@ public class AdRutenLog extends ACategoryLogData {
 //							classUrlMongoBeanCreate.setCreate_date(date);
 //							classUrlMongoBeanCreate.setUpdate_date(date);
 //							mongoOperations.save(classUrlMongoBeanCreate);
-							
-							
-							Date today = new Date();
-							DBObject documents = new BasicDBObject("url", sourceUrl.trim())
-									.append("status", "0")
-									.append("ad_class", "")
-									.append("ruten_bread", breadcrumbResult)
-									.append("err_msg", "爬不到麵包屑的訊息")
-									.append("query_time", 1)
-									.append("create_date", today)
-									.append("update_date", today);
-							dBCollection.insert(documents);
-							
 						}
 					} else {
 						// 沒有麵包屑
 						category = "null";
 						categorySource = "null";
 						classRutenUrlClassify = "null";
-
+						insertClassUrl(sourceUrl.trim(),"0","","","",1) ;
 //						Date date = new Date();
 //						ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
 //						classUrlMongoBeanCreate.setUrl(sourceUrl.trim());
@@ -244,22 +160,13 @@ public class AdRutenLog extends ACategoryLogData {
 //						classUrlMongoBeanCreate.setCreate_date(date);
 //						classUrlMongoBeanCreate.setUpdate_date(date);
 //						mongoOperations.save(classUrlMongoBeanCreate);
-						
-						Date today = new Date();
-						DBObject documents = new BasicDBObject("url", sourceUrl.trim())
-								.append("status", "0")
-								.append("ad_class", "")
-								.append("query_time", 1)
-								.append("create_date", today)
-								.append("update_date", today);
-						dBCollection.insert(documents);
 					}
 				} else {
 					// url不是Ruten商品頁，寫入mongo
 					category = "null";
 					categorySource = "null";
 					classRutenUrlClassify = "null";
-
+					insertClassUrl(sourceUrl.trim(),"0","","","",1) ;
 //					Date date = new Date();
 //					ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
 //					classUrlMongoBeanCreate.setUrl(sourceUrl.trim());
@@ -269,22 +176,13 @@ public class AdRutenLog extends ACategoryLogData {
 //					classUrlMongoBeanCreate.setCreate_date(date);
 //					classUrlMongoBeanCreate.setUpdate_date(date);
 //					mongoOperations.save(classUrlMongoBeanCreate);
-					
-					Date today = new Date();
-					DBObject documents = new BasicDBObject("url", sourceUrl.trim())
-							.append("status", "0")
-							.append("ad_class", "")
-							.append("query_time", 1)
-							.append("create_date", today)
-							.append("update_date", today);
-					dBCollection.insert(documents);
 				}
 
 			} catch (Exception e) {
 				category = "null";
 				categorySource = "null";
 				classRutenUrlClassify = "null";
-
+				insertClassUrl(sourceUrl.trim(),"0","","","",1) ;
 //				Date date = new Date();
 //				ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
 //				classUrlMongoBeanCreate.setUrl(sourceUrl.trim());
@@ -294,16 +192,6 @@ public class AdRutenLog extends ACategoryLogData {
 //				classUrlMongoBeanCreate.setCreate_date(date);
 //				classUrlMongoBeanCreate.setUpdate_date(date);
 //				mongoOperations.save(classUrlMongoBeanCreate);
-				
-				Date today = new Date();
-				DBObject documents = new BasicDBObject("url", sourceUrl.trim())
-						.append("status", "0")
-						.append("ad_class", "")
-						.append("query_time", 1)
-						.append("create_date", today)
-						.append("update_date", today);
-				dBCollection.insert(documents);
-				
 				log.error(">>>>>>"+ e.getMessage());
 			}
 		}
@@ -314,4 +202,55 @@ public class AdRutenLog extends ACategoryLogData {
 		
 		return dmpDataBean;
 	}
+	
+	
+	public DBObject queryClassUrl(DB mongoOperations, String url) throws Exception {
+		DBCollection dBCollection = mongoOperations.getCollection("class_url");
+		BasicDBObject andQuery = new BasicDBObject();
+		List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+		obj.add(new BasicDBObject("url", url));
+		andQuery.put("$and", obj);
+		DBObject dbObject = dBCollection.findOne(andQuery);
+		return dbObject;
+	}
+	
+	public void updateClassUrlUpdateDate(DB mongoOperations, String url, DBObject dbObject) throws Exception {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date today = new Date();
+		String todayStr = sdf.format(today);
+		String updateDateStr = sdf.format(dbObject.get("update_date"));
+		if ((!todayStr.equals(updateDateStr))) {
+			Date date = new Date();
+			dbObject.put("update_date", date);
+
+			DBObject olddbObject = new BasicDBObject();
+			olddbObject.put("url", url);
+			dBCollection.update(olddbObject, dbObject);
+		}
+	}
+	
+	public void updateClassUrlQueryTime(DB mongoOperations, String url, DBObject dbObject) throws Exception {
+		if (((Integer.parseInt(dbObject.get("query_time").toString()) < 2000))) {
+			BasicDBObject newDocument = new BasicDBObject();
+			newDocument.append("$inc", new BasicDBObject().append("query_time", 1));
+			DBObject filter = new BasicDBObject();
+			filter.put("url", url);
+			dBCollection.update(filter, newDocument);
+		}
+	}
+	
+	public void insertClassUrl(String url,String status,String adClass,String rutenBread,String errMsg,int queryTime) throws Exception {
+		Date today = new Date();
+		DBObject documents = new BasicDBObject("url", url)
+				.append("status", status)
+				.append("ad_class", adClass)
+				.append("ruten_bread", rutenBread)
+				.append("err_msg", errMsg)
+				.append("query_time", queryTime)
+				.append("create_date", today)
+				.append("update_date", today);
+		dBCollection.insert(documents);
+	}
+	
+	
 }

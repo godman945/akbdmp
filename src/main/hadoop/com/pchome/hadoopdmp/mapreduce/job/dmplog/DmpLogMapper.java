@@ -63,7 +63,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public static DateTimeComponent dateTimeComponent = new DateTimeComponent();
 	public static DeviceComponent deviceComponent = new DeviceComponent();
 	private Map<String, HashMap<String, String>> memberInfoMap; 
-//	private mongoOrgOperations mongoOrgOperations;
 	private DB mongoOrgOperations;
 	public static DatabaseReader reader = null;
 	public static InetAddress ipAddress = null;
