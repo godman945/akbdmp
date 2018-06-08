@@ -279,20 +279,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	}
 	
 	public String dmpBeanToKafkaJson(DmpLogBean dmpLogBeanResult) throws Exception {
-		
-		// 0:memid + 1:uuid + 2:category + 3.categorySource 
-		// 4.sex + 5.sexSource + 6.age + 7.ageSource 
-		// 8.country + 9.city + 10.areaInfoSource
-		//11.device_info_source + 12.device_info 
-		//13.device_phone_info + 14.device_os_info + 15.device_browser_info 
-		//16.time_info_hour + 17.time_info_source 
-		
-		//classify
-		//18.personal_info_api + 19.personal_info 
-		//20.class_ad_click + 21.class_24h_url + 22.class_ruten_url
-		//23.area_info + 24.device_info + 25.time_info
-		//26.url + 27.ip + 28.record_date + 29.org_source(kdcl、campaign) 
-		//30.date_time + 31.user_agent +32.ad_class + 33.record_count
 		recordCount = recordCount + 1;
 		//send kafka key
 		JSONObject keyJson = new JSONObject();
@@ -450,7 +436,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		sendKafkaJson.put("url",  dmpLogBeanResult.getUrl());
 		sendKafkaJson.put("ip", dmpLogBeanResult.getIp());
 		sendKafkaJson.put("record_date", dmpLogBeanResult.getRecordDate());
-		sendKafkaJson.put("org_source", dmpLogBeanResult.getSource());
+		sendKafkaJson.put("org_source", dmpLogBeanResult.getSource());	//(kdcl、campaign)
 		sendKafkaJson.put("date_time", dmpLogBeanResult.getDateTime());
 		sendKafkaJson.put("user_agent", dmpLogBeanResult.getUserAgent() );
 		sendKafkaJson.put("ad_class", dmpLogBeanResult.getAdClass());
