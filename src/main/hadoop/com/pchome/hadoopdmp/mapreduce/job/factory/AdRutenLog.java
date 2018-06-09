@@ -23,10 +23,9 @@ import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper;
 
 @SuppressWarnings({ "unchecked"})
 public class AdRutenLog extends ACategoryLogData {
+	Log log = LogFactory.getLog("AdRutenLog");
 	private DBCollection dBCollection;
 	
-	Log log = LogFactory.getLog("AdRutenLog");
-
 	public Object processCategory(DmpLogBean dmpDataBean, DB mongoOperations) throws Exception {
 		this.dBCollection= mongoOperations.getCollection("class_url");
 		
@@ -46,7 +45,7 @@ public class AdRutenLog extends ACategoryLogData {
 		}
 		
 		//查詢url
-		DBObject dbObject =queryClassUrl( mongoOperations, sourceUrl.trim()) ;
+		DBObject dbObject =queryClassUrl(sourceUrl.trim()) ;
 		
 		if(dbObject != null){
 			if(dbObject.get("status").equals("0")){
@@ -54,15 +53,14 @@ public class AdRutenLog extends ACategoryLogData {
 				categorySource = "null";
 				classRutenUrlClassify = "N"; 
 				// url 存在 status = 0 跳過回傳空值 , mongo update_date 更新(一天一次) mongo,query_time+1 如大於 2000 不再加  classRutenUrl = "N"
-				updateClassUrlUpdateDate(mongoOperations, sourceUrl.trim(),dbObject) ;
-				updateClassUrlQueryTime(mongoOperations, sourceUrl.trim(),dbObject) ;
-				
+				updateClassUrlUpdateDate(sourceUrl.trim(),dbObject) ;
+				updateClassUrlQueryTime( sourceUrl.trim(),dbObject) ;
 			}else if( (dbObject.get("status").equals("1")) && (StringUtils.isNotBlank(dbObject.get("ad_class").toString())) ){
 				category = dbObject.get("ad_class").toString();
 				categorySource = "ruten";
 				classRutenUrlClassify = "Y"; 
 				//url 存在 status = 1 取分類代號回傳 mongodn update_date 更新(一天一次) classRutenUrl = "Y";
-				updateClassUrlUpdateDate(mongoOperations, sourceUrl.trim(),dbObject) ;
+				updateClassUrlUpdateDate(sourceUrl.trim(),dbObject) ;
 			}
 		} else {
 			try {
@@ -117,65 +115,26 @@ public class AdRutenLog extends ACategoryLogData {
 							classRutenUrlClassify = "Y";
 							//新增url
 							insertClassUrl(sourceUrl.trim(),"1",category,breadcrumbResult,"",0) ;
-//							Date date = new Date();
-//							ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
-//							classUrlMongoBeanCreate.setUrl(sourceUrl.trim());
-//							classUrlMongoBeanCreate.setStatus("1");
-//							classUrlMongoBeanCreate.setAd_class(category);
-//							classUrlMongoBeanCreate.setRuten_bread(breadcrumbResult);
-//							classUrlMongoBeanCreate.setCreate_date(date);
-//							classUrlMongoBeanCreate.setUpdate_date(date);
-//							mongoOperations.save(classUrlMongoBeanCreate);
-							
 						} else {
 							// 麵包屑沒有比對到Ruten分類
 							category = "null";
 							categorySource = "null";
 							classRutenUrlClassify = "N";
 							insertClassUrl(sourceUrl.trim(),"0","",breadcrumbResult,"爬不到麵包屑的訊息",1) ;
-//							Date date = new Date();
-//							ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
-//							classUrlMongoBeanCreate.setUrl(sourceUrl.trim());
-//							classUrlMongoBeanCreate.setStatus("0");
-//							classUrlMongoBeanCreate.setAd_class("");
-//							classUrlMongoBeanCreate.setRuten_bread(breadcrumbResult);
-//							classUrlMongoBeanCreate.setErr_msg("爬不到麵包屑的訊息");
-//							classUrlMongoBeanCreate.setQuery_time(1);
-//							classUrlMongoBeanCreate.setCreate_date(date);
-//							classUrlMongoBeanCreate.setUpdate_date(date);
-//							mongoOperations.save(classUrlMongoBeanCreate);
 						}
 					} else {
 						// 沒有麵包屑
 						category = "null";
 						categorySource = "null";
 						classRutenUrlClassify = "null";
-						insertClassUrl(sourceUrl.trim(),"0","","","",1) ;
-//						Date date = new Date();
-//						ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
-//						classUrlMongoBeanCreate.setUrl(sourceUrl.trim());
-//						classUrlMongoBeanCreate.setStatus("0");
-//						classUrlMongoBeanCreate.setAd_class("");
-//						classUrlMongoBeanCreate.setQuery_time(1);
-//						classUrlMongoBeanCreate.setCreate_date(date);
-//						classUrlMongoBeanCreate.setUpdate_date(date);
-//						mongoOperations.save(classUrlMongoBeanCreate);
+						insertClassUrl(sourceUrl.trim(),"0","","","沒有麵包屑的訊息",1) ;
 					}
 				} else {
 					// url不是Ruten商品頁，寫入mongo
 					category = "null";
 					categorySource = "null";
 					classRutenUrlClassify = "null";
-					insertClassUrl(sourceUrl.trim(),"0","","","",1) ;
-//					Date date = new Date();
-//					ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
-//					classUrlMongoBeanCreate.setUrl(sourceUrl.trim());
-//					classUrlMongoBeanCreate.setStatus("0");
-//					classUrlMongoBeanCreate.setAd_class("");
-//					classUrlMongoBeanCreate.setQuery_time(1);
-//					classUrlMongoBeanCreate.setCreate_date(date);
-//					classUrlMongoBeanCreate.setUpdate_date(date);
-//					mongoOperations.save(classUrlMongoBeanCreate);
+					insertClassUrl(sourceUrl.trim(),"0","","","url不符合Ruten商品頁",1) ;
 				}
 
 			} catch (Exception e) {
@@ -183,15 +142,6 @@ public class AdRutenLog extends ACategoryLogData {
 				categorySource = "null";
 				classRutenUrlClassify = "null";
 				insertClassUrl(sourceUrl.trim(),"0","","","",1) ;
-//				Date date = new Date();
-//				ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
-//				classUrlMongoBeanCreate.setUrl(sourceUrl.trim());
-//				classUrlMongoBeanCreate.setStatus("0");
-//				classUrlMongoBeanCreate.setAd_class("");
-//				classUrlMongoBeanCreate.setQuery_time(1);
-//				classUrlMongoBeanCreate.setCreate_date(date);
-//				classUrlMongoBeanCreate.setUpdate_date(date);
-//				mongoOperations.save(classUrlMongoBeanCreate);
 				log.error(">>>>>>"+ e.getMessage());
 			}
 		}
@@ -204,38 +154,37 @@ public class AdRutenLog extends ACategoryLogData {
 	}
 	
 	
-	public DBObject queryClassUrl(DB mongoOperations, String url) throws Exception {
-		DBCollection dBCollection = mongoOperations.getCollection("class_url");
+	public DBObject queryClassUrl(String url) throws Exception {
 		BasicDBObject andQuery = new BasicDBObject();
 		List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
-		obj.add(new BasicDBObject("url", url));
+		obj.add(new BasicDBObject("url",url));
 		andQuery.put("$and", obj);
-		DBObject dbObject = dBCollection.findOne(andQuery);
+		DBObject dbObject =  dBCollection.findOne(andQuery);
 		return dbObject;
 	}
 	
-	public void updateClassUrlUpdateDate(DB mongoOperations, String url, DBObject dbObject) throws Exception {
+	public void updateClassUrlUpdateDate(String url,DBObject dbObject) throws Exception {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date today = new Date();
 		String todayStr = sdf.format(today);
 		String updateDateStr = sdf.format(dbObject.get("update_date"));
-		if ((!todayStr.equals(updateDateStr))) {
+		if ( (!todayStr.equals(updateDateStr)) ){
 			Date date = new Date();
 			dbObject.put("update_date", date);
 
-			DBObject olddbObject = new BasicDBObject();
-			olddbObject.put("url", url);
-			dBCollection.update(olddbObject, dbObject);
+		    DBObject olddbObject = new BasicDBObject();
+		    olddbObject.put("url", url);
+		    dBCollection.update(olddbObject, dbObject);
 		}
 	}
 	
-	public void updateClassUrlQueryTime(DB mongoOperations, String url, DBObject dbObject) throws Exception {
-		if (((Integer.parseInt(dbObject.get("query_time").toString()) < 2000))) {
+	public void updateClassUrlQueryTime(String url,DBObject dbObject) throws Exception {
+		if ( (Integer.parseInt( dbObject.get("query_time").toString()) <2000) ){
 			BasicDBObject newDocument = new BasicDBObject();
 			newDocument.append("$inc", new BasicDBObject().append("query_time", 1));
-			DBObject filter = new BasicDBObject();
+			DBObject filter = new BasicDBObject(); 
 			filter.put("url", url);
-			dBCollection.update(filter, newDocument);
+			dBCollection.update(filter,newDocument);
 		}
 	}
 	
@@ -251,6 +200,4 @@ public class AdRutenLog extends ACategoryLogData {
 				.append("update_date", today);
 		dBCollection.insert(documents);
 	}
-	
-	
 }

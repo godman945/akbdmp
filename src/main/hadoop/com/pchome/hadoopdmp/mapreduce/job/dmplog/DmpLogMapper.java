@@ -62,7 +62,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public static GeoIpComponent geoIpComponent = new GeoIpComponent();
 	public static DateTimeComponent dateTimeComponent = new DateTimeComponent();
 	public static DeviceComponent deviceComponent = new DeviceComponent();
-	private Map<String, HashMap<String, String>> memberInfoMap; 
 	private DB mongoOrgOperations;
 	public static DatabaseReader reader = null;
 	public static InetAddress ipAddress = null;
@@ -74,7 +73,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
-			this.memberInfoMap = new HashMap<String,HashMap<String,String>>();
 			record_date = context.getConfiguration().get("job.date");
 			Configuration conf = context.getConfiguration();
 			
@@ -261,7 +259,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			}
 			
 			//個資處理元件
-			dmpLogBeanResult = personalInfoComponent.processPersonalInfo(dmpLogBeanResult, mongoOrgOperations, memberInfoMap);
+			dmpLogBeanResult = personalInfoComponent.processPersonalInfo(dmpLogBeanResult, mongoOrgOperations);
 			
 			//紀錄日期
 			dmpLogBeanResult.setRecordDate(record_date);

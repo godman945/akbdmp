@@ -48,7 +48,7 @@ public class Ad24HLog extends ACategoryLogData {
 		
 		if (StringUtils.isBlank(category)){
 			//查詢url
-			DBObject dbObject =queryClassUrl( mongoOperations, sourceUrl.trim()) ;
+			DBObject dbObject =queryClassUrl(sourceUrl.trim()) ;
 			
 			if(dbObject != null){
 				if(dbObject.get("status").equals("0")){
@@ -56,21 +56,21 @@ public class Ad24HLog extends ACategoryLogData {
 					categorySource = "null";
 					class24hUrlClassify = "N";
 					// url 存在 status = 0  , mongo update_date 更新(一天一次) query_time+1 如大於 2000 不再加 
-					updateClassUrlUpdateDate(mongoOperations, sourceUrl.trim(),dbObject) ;
-					updateClassUrlQueryTime(mongoOperations, sourceUrl.trim(),dbObject) ;
+					updateClassUrlUpdateDate(sourceUrl.trim(),dbObject) ;
+					updateClassUrlQueryTime( sourceUrl.trim(),dbObject) ;
 				}else if( (dbObject.get("status").equals("1")) && (StringUtils.isNotBlank(dbObject.get("ad_class").toString())) ){
 					category = dbObject.get("ad_class").toString();
 					categorySource = "24h";
 					class24hUrlClassify = "Y"; 
 					//url 存在 status = 1 取分類代號回傳 mongo update_date 更新(一天一次) class24hUrlClassify = "Y"
-					updateClassUrlUpdateDate(mongoOperations, sourceUrl.trim(),dbObject) ;
+					updateClassUrlUpdateDate(sourceUrl.trim(),dbObject) ;
 				}
 			}else{
 				category = "null";
 				categorySource = "null";
 				class24hUrlClassify = "N";
 				// url 不存在  ,寫入 mongo url代號 status=0 
-				insertClassUrl(sourceUrl.trim());
+				insertClassUrl(sourceUrl.trim(),"","0",1);
 			}
 		}
 		
@@ -83,7 +83,7 @@ public class Ad24HLog extends ACategoryLogData {
 	
 	
 
-	public DBObject queryClassUrl(DB mongoOperations,String url) throws Exception {
+	public DBObject queryClassUrl(String url) throws Exception {
 		BasicDBObject andQuery = new BasicDBObject();
 		List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
 		obj.add(new BasicDBObject("url",url));
@@ -92,7 +92,7 @@ public class Ad24HLog extends ACategoryLogData {
 		return dbObject;
 	}
 	
-	public void updateClassUrlUpdateDate(DB mongoOperations,String url,DBObject dbObject) throws Exception {
+	public void updateClassUrlUpdateDate(String url,DBObject dbObject) throws Exception {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date today = new Date();
 		String todayStr = sdf.format(today);
@@ -104,44 +104,25 @@ public class Ad24HLog extends ACategoryLogData {
 		    DBObject olddbObject = new BasicDBObject();
 		    olddbObject.put("url", url);
 		    dBCollection.update(olddbObject, dbObject);
-//			classUrlMongoBean.setUpdate_date(date);		//old
-//			mongoOperations.save(classUrlMongoBean);	//old
 		}
-		
 	}
 	
-	public void updateClassUrlQueryTime(DB mongoOperations,String url,DBObject dbObject) throws Exception {
+	public void updateClassUrlQueryTime(String url,DBObject dbObject) throws Exception {
 		if ( (Integer.parseInt( dbObject.get("query_time").toString()) <2000) ){
-//			Update querytime = new Update();
-//			querytime.inc( "query_time" , 1 );
-//			mongoOperations.updateFirst(new Query(Criteria.where( "url" ).is(sourceUrl.trim())), querytime, "class_url");
-			
 			BasicDBObject newDocument = new BasicDBObject();
 			newDocument.append("$inc", new BasicDBObject().append("query_time", 1));
 			DBObject filter = new BasicDBObject(); 
 			filter.put("url", url);
 			dBCollection.update(filter,newDocument);
 		}
-		
 	}
 	
-	public void insertClassUrl(String url) throws Exception {
-//		Date date = new Date();
-//		ClassUrlMongoBean classUrlMongoBeanCreate = new ClassUrlMongoBean();
-//		classUrlMongoBeanCreate.setUrl(sourceUrl.trim());
-//		classUrlMongoBeanCreate.setAd_class("");
-//		classUrlMongoBeanCreate.setStatus("0");
-//		classUrlMongoBeanCreate.setQuery_time(1);
-//		classUrlMongoBeanCreate.setCreate_date(date);
-//		classUrlMongoBeanCreate.setUpdate_date(date);
-//		mongoOperations.save(classUrlMongoBeanCreate);
-		
-		
+	public void insertClassUrl(String url, String ad_class, String status,int query_time) throws Exception {
 		Date today = new Date();
 		DBObject documents = new BasicDBObject("url", url)
-				.append("ad_class", "")
-				.append("status", "0")
-				.append("query_time", 1)
+				.append("ad_class", ad_class)
+				.append("status", status)
+				.append("query_time", query_time)
 				.append("create_date", today)
 				.append("update_date", today);
 		dBCollection.insert(documents);
