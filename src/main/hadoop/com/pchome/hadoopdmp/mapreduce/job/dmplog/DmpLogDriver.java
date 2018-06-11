@@ -166,7 +166,7 @@ public class DmpLogDriver {
 			job.setInputFormatClass(LzoTextInputFormat.class);
 			job.setOutputKeyClass(Text.class);
 			job.setOutputValueClass(Text.class);
-			job.setNumReduceTasks(1);
+			job.setNumReduceTasks(5);
 			job.setMapSpeculativeExecution(false);
 			// job.setOutputFormatClass(NullOutputFormat.class);
 			
@@ -241,17 +241,17 @@ public class DmpLogDriver {
 				
 				//輸入
 //				String logInputPath = "/home/webuser/dmp/testData/category/tmp/ruten";	//自己做測試資料			  		
-				String logInputPath = "/home/webuser/dmp/testData/category";	//測試資料(有ruten、24h的資料)
+//				String logInputPath = "/home/webuser/dmp/testData/category";				//測試資料(有ruten、24h的資料)
 //				String logInputPath = "/home/webuser/analyzer/storedata/alllog/2018-05-22";			//測試path
-//				String logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-22/17";			//11點200萬筆資料
+				String logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-22/11";			//11點200萬筆資料
 //				String logInputPath = "/home/webuser/dmp/testData/category/20180522";			//測試path整天log
 //				String logInputPath = akbPathAllLog + timePath; //正式path  /home/webuser/akb/storedata/alllog/2018-05-15/05    	//正式path
 				
 //				String logInputPath = "/home/webuser/dmp/testData/category/20180522";
 				
 				//輸出
-				String outputTempPath = "/home/webuser/bessie/output/category";	//測試資料(有ruten、24h的資料)
-//				String outputTempPath = "/home/webuser/bessie/output/17";
+//				String outputTempPath = "/home/webuser/bessie/output/category";			//測試資料(有ruten、24h的資料)
+				String outputTempPath = "/home/webuser/bessie/output/11";
 				//hdfs存在則刪除
 				deleteExistedDir(fs, new Path(outputTempPath), true);
 				
