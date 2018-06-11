@@ -243,7 +243,7 @@ public class DmpLogDriver {
 //				String logInputPath = "/home/webuser/dmp/testData/category/tmp/ruten";	//自己做測試資料			  		
 //				String logInputPath = "/home/webuser/dmp/testData/category";				//測試資料(有ruten、24h的資料)
 //				String logInputPath = "/home/webuser/analyzer/storedata/alllog/2018-05-22";			//測試path
-				String logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-22/11";			//11點200萬筆資料
+				String logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-22/06";			//11點200萬筆資料
 //				String logInputPath = "/home/webuser/dmp/testData/category/20180522";			//測試path整天log
 //				String logInputPath = akbPathAllLog + timePath; //正式path  /home/webuser/akb/storedata/alllog/2018-05-15/05    	//正式path
 				
@@ -251,7 +251,7 @@ public class DmpLogDriver {
 				
 				//輸出
 //				String outputTempPath = "/home/webuser/bessie/output/category";			//測試資料(有ruten、24h的資料)
-				String outputTempPath = "/home/webuser/bessie/output/11";
+				String outputTempPath = "/home/webuser/bessie/output/06";
 				//hdfs存在則刪除
 				deleteExistedDir(fs, new Path(outputTempPath), true);
 				

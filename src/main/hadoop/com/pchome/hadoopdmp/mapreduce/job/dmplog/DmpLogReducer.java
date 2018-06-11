@@ -50,12 +50,12 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		//26.url + 27.ip + 28.record_date + 29.org_source(kdcl、campaign) 
 		//30.date_time + 31.user_agent +32.ad_class + 33.record_count
 		try {
-			log.info(">>>>>> reduce start : " + key.toString());
+//			log.info(">>>>>> reduce start : " + key.toString());
 
 			String data = key.toString();
 			kafkaUtil.sendMessage("dmp_log_prd", "", data);
 			
-			log.info(">>>>>>reduce write key:" + data);
+//			log.info(">>>>>>reduce write key:" + data);
 			keyOut.set(data);
 			context.write(keyOut, valueOut);
 		} catch (Exception e) {
