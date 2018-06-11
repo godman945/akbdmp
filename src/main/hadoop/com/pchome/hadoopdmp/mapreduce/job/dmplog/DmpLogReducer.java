@@ -1,21 +1,9 @@
 package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.codehaus.jettison.json.JSONObject;
-import org.json.JSONArray;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
@@ -62,12 +50,12 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		//26.url + 27.ip + 28.record_date + 29.org_source(kdcl、campaign) 
 		//30.date_time + 31.user_agent +32.ad_class + 33.record_count
 		try {
-//			log.info(">>>>>> reduce start : " + key);
+			log.info(">>>>>> reduce start : " + key.toString());
 
 			String data = key.toString();
 			kafkaUtil.sendMessage("dmp_log_prd", "", data);
 			
-//			log.info(">>>>>>reduce write key:" + sendKafkaJson.toString());
+			log.info(">>>>>>reduce write key:" + data);
 			keyOut.set(data);
 			context.write(keyOut, valueOut);
 		} catch (Exception e) {
