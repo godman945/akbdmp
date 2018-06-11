@@ -35,7 +35,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 	"classpath:config/hadoop/prop/${spring.profiles.active}/merge.properties",
 	"classpath:config/hadoop/prop/${spring.profiles.active}/mongodb.properties",
 	"classpath:config/hadoop/prop/${spring.profiles.active}/path.properties",
-	"classpath:config/hadoop/prop/${spring.profiles.active}/jdbc.properties",
+//	"classpath:config/hadoop/prop/${spring.profiles.active}/jdbc.properties",
 	"classpath:config/hadoop/prop/${spring.profiles.active}/kafka.properties"})
 public class SpringAllHadoopConfig extends WebMvcConfigurerAdapter {
 
