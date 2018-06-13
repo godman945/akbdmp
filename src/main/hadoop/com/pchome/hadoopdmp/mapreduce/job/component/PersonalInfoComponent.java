@@ -75,6 +75,8 @@ public class PersonalInfoComponent {
 				mage = (String) memberInfoMapApi.get("mage");
 				//新增user
 				insertUserDetail(memid,msex,mage);
+				dmpDataBean.setMsex("null");
+				dmpDataBean.setMage("null");
 				if ( (!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA")) ) {
 					dmpDataBean.setPersonalInfoApiClassify("Y");
 				} else {
