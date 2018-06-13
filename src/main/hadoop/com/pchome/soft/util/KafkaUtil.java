@@ -37,6 +37,14 @@ public class KafkaUtil {
 		}
 
 	}
+	
+	public void close() {
+		try {
+			kafkaProducer.close();
+		} catch (Exception e) {
+			log.error(">>>>" + e.getMessage());
+		}
+	}
 
 	public static void main(String[] args) {
 
