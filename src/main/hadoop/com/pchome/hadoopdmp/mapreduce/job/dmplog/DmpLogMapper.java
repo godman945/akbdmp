@@ -327,54 +327,54 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		
 		//send kafka data
 		//category_info
-		Map categoryInfoMap = new HashMap();
-		categoryInfoMap.put("value", dmpLogBeanResult.getCategory());
-		categoryInfoMap.put("source", dmpLogBeanResult.getCategorySource());
+		JSONObject categoryInfoJson = new JSONObject();
+		categoryInfoJson.put("value", dmpLogBeanResult.getCategory());
+		categoryInfoJson.put("source", dmpLogBeanResult.getCategorySource());
 		
 		//sex_info
-		Map sexInfoMap = new HashMap();
-		sexInfoMap.put("value", dmpLogBeanResult.getSex());
-		sexInfoMap.put("source", dmpLogBeanResult.getSexSource());
+		JSONObject sexInfoJson = new JSONObject();
+		sexInfoJson.put("value", dmpLogBeanResult.getSex());
+		sexInfoJson.put("source", dmpLogBeanResult.getSexSource());
 		
 		//age_info
-		Map ageInfoMap = new HashMap();
-		ageInfoMap.put("value", dmpLogBeanResult.getAge());
-		ageInfoMap.put("source", dmpLogBeanResult.getAgeSource());
+		JSONObject ageInfoJson = new JSONObject();
+		ageInfoJson.put("value", dmpLogBeanResult.getAge());
+		ageInfoJson.put("source", dmpLogBeanResult.getAgeSource());
 		
 		//area_country_info
-		Map areaCountryInfoMap = new HashMap();
-		areaCountryInfoMap.put("value", dmpLogBeanResult.getCountry());
-		areaCountryInfoMap.put("source", dmpLogBeanResult.getAreaInfoSource());
+		JSONObject areaCountryInfoJson = new JSONObject();
+		areaCountryInfoJson.put("value", dmpLogBeanResult.getCountry());
+		areaCountryInfoJson.put("source", dmpLogBeanResult.getAreaInfoSource());
 
 		//area_city_info
-		Map areaCityInfoMap = new HashMap();
-		areaCityInfoMap.put("value", dmpLogBeanResult.getCity());
-		areaCityInfoMap.put("source", dmpLogBeanResult.getAreaInfoSource());
+		JSONObject areaCityInfoJson = new JSONObject();
+		areaCityInfoJson.put("value", dmpLogBeanResult.getCity());
+		areaCityInfoJson.put("source", dmpLogBeanResult.getAreaInfoSource());
 					
 		//device_info
-		Map deviceInfoMap = new HashMap();
-		deviceInfoMap.put("value", dmpLogBeanResult.getDeviceInfo());
-		deviceInfoMap.put("source", dmpLogBeanResult.getDeviceInfoSource());
+		JSONObject deviceInfoJson = new JSONObject();
+		deviceInfoJson.put("value", dmpLogBeanResult.getDeviceInfo());
+		deviceInfoJson.put("source", dmpLogBeanResult.getDeviceInfoSource());
 		
 		//device_phone_info
-		Map devicePhoneInfoMap = new HashMap();
-		devicePhoneInfoMap.put("value", dmpLogBeanResult.getDevicePhoneInfo());
-		devicePhoneInfoMap.put("source", dmpLogBeanResult.getDeviceInfoSource());
+		JSONObject devicePhoneInfoJson = new JSONObject();
+		devicePhoneInfoJson.put("value", dmpLogBeanResult.getDevicePhoneInfo());
+		devicePhoneInfoJson.put("source", dmpLogBeanResult.getDeviceInfoSource());
 		
 		//device_os_info
-		Map deviceOsInfoMap = new HashMap();
-		deviceOsInfoMap.put("value", dmpLogBeanResult.getDeviceOsInfo());
-		deviceOsInfoMap.put("source", dmpLogBeanResult.getDeviceInfoSource());
+		JSONObject deviceOsInfoJson = new JSONObject();
+		deviceOsInfoJson.put("value", dmpLogBeanResult.getDeviceOsInfo());
+		deviceOsInfoJson.put("source", dmpLogBeanResult.getDeviceInfoSource());
 		
 		//device_browser_info
-		Map deviceBrowserInfoMap = new HashMap();
-		deviceBrowserInfoMap.put("value", dmpLogBeanResult.getDeviceBrowserInfo());
-		deviceBrowserInfoMap.put("source", dmpLogBeanResult.getDeviceInfoSource());
+		JSONObject deviceBrowserInfoJson = new JSONObject();
+		deviceBrowserInfoJson.put("value", dmpLogBeanResult.getDeviceBrowserInfo());
+		deviceBrowserInfoJson.put("source", dmpLogBeanResult.getDeviceInfoSource());
 		
 		//time_info
-		Map timeInfoMap = new HashMap();
-		timeInfoMap.put("value", dmpLogBeanResult.getHour());
-		timeInfoMap.put("source", dmpLogBeanResult.getTimeInfoSource());
+		JSONObject timeInfoJson = new JSONObject();
+		timeInfoJson.put("value", dmpLogBeanResult.getHour());
+		timeInfoJson.put("source", dmpLogBeanResult.getTimeInfoSource());
 
 		//put classify Array
 		JSONArray classifyArray = new JSONArray();
@@ -382,42 +382,42 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		if ( (StringUtils.equals(dmpLogBeanResult.getSource(), "kdcl")) ){
 			
 			//memid_kdcl_log_personal_info_api
-			Map memid_kdcl_log_personal_info_api = new HashMap();
+			JSONObject memid_kdcl_log_personal_info_api = new JSONObject();
 			memid_kdcl_log_personal_info_api.put("memid_kdcl_log_personal_info_api", dmpLogBeanResult.getPersonalInfoApiClassify());
 			classifyArray.put(memid_kdcl_log_personal_info_api);
 			
 			//all_kdcl_log_personal_info
-			Map all_kdcl_log_personal_info = new HashMap();
+			JSONObject all_kdcl_log_personal_info = new JSONObject();
 			all_kdcl_log_personal_info.put("all_kdcl_log_personal_info", dmpLogBeanResult.getPersonalInfoClassify());
 			classifyArray.put(all_kdcl_log_personal_info);
 			
 			//all_kdcl_log_class_ad_click
-			Map all_kdcl_log_class_ad_click = new HashMap();
+			JSONObject all_kdcl_log_class_ad_click = new JSONObject();
 			all_kdcl_log_class_ad_click.put("all_kdcl_log_class_ad_click", dmpLogBeanResult.getClassAdClickClassify());
 			classifyArray.put(all_kdcl_log_class_ad_click);
 			
 			//all_kdcl_log_class_24h_url
-			Map all_kdcl_log_class_24h_url = new HashMap();
+			JSONObject all_kdcl_log_class_24h_url = new JSONObject();
 			all_kdcl_log_class_24h_url.put("all_kdcl_log_class_24h_url", dmpLogBeanResult.getClass24hUrlClassify());
 			classifyArray.put(all_kdcl_log_class_24h_url);
 			
 			//all_kdcl_log_class_ruten_url
-			Map all_kdcl_log_class_ruten_url = new HashMap();
+			JSONObject all_kdcl_log_class_ruten_url = new JSONObject();
 			all_kdcl_log_class_ruten_url.put("all_kdcl_log_class_ruten_url", dmpLogBeanResult.getClassRutenUrlClassify());
 			classifyArray.put(all_kdcl_log_class_ruten_url);
 			
 			//all_kdcl_log_area_info
-			Map all_kdcl_log_area_info = new HashMap();
+			JSONObject all_kdcl_log_area_info = new JSONObject();
 			all_kdcl_log_area_info.put("all_kdcl_log_area_info", dmpLogBeanResult.getAreaInfoClassify());
 			classifyArray.put(all_kdcl_log_area_info);
 			
 			//all_kdcl_log_device_info
-			Map all_kdcl_log_device_info = new HashMap();
+			JSONObject all_kdcl_log_device_info = new JSONObject();
 			all_kdcl_log_device_info.put("all_kdcl_log_device_info", dmpLogBeanResult.getDeviceInfoClassify());
 			classifyArray.put(all_kdcl_log_device_info);
 			
 			//all_kdcl_log_time_info
-			Map all_kdcl_log_time_info = new HashMap();
+			JSONObject all_kdcl_log_time_info = new JSONObject();
 			all_kdcl_log_time_info.put("all_kdcl_log_time_info", dmpLogBeanResult.getTimeInfoClassify());
 			classifyArray.put(all_kdcl_log_time_info);
 		}
@@ -425,48 +425,48 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		//campaign classify
 		if ( (StringUtils.equals(dmpLogBeanResult.getSource(), "campaign")) ){
 			//memid_camp_log_personal_info_api
-			Map memid_camp_log_personal_info_api = new HashMap();
+			JSONObject memid_camp_log_personal_info_api = new JSONObject();
 			memid_camp_log_personal_info_api.put("memid_camp_log_personal_info_api", dmpLogBeanResult.getPersonalInfoApiClassify());
 			classifyArray.put(memid_camp_log_personal_info_api);
 			
 			//all_camp_log_personal_info
-			Map all_camp_log_personal_info = new HashMap();
+			JSONObject all_camp_log_personal_info = new JSONObject();
 			all_camp_log_personal_info.put("all_camp_log_personal_info", dmpLogBeanResult.getPersonalInfoClassify());
 			classifyArray.put(all_camp_log_personal_info);
 			
 			//all_camp_log_class_ad_click
-			Map all_camp_log_class_ad_click = new HashMap();
+			JSONObject all_camp_log_class_ad_click = new JSONObject();
 			all_camp_log_class_ad_click.put("all_camp_log_class_ad_click", dmpLogBeanResult.getClassAdClickClassify());
 			classifyArray.put(all_camp_log_class_ad_click);
 			
 			//all_camp_log_area_info
-			Map all_camp_log_area_info = new HashMap();
+			JSONObject all_camp_log_area_info = new JSONObject();
 			all_camp_log_area_info.put("all_camp_log_area_info", dmpLogBeanResult.getAreaInfoClassify());
 			classifyArray.put(all_camp_log_area_info);
 			
 			//all_camp_log_device_info
-			Map all_camp_log_device_info = new HashMap();
+			JSONObject all_camp_log_device_info = new JSONObject();
 			all_camp_log_device_info.put("all_camp_log_device_info",dmpLogBeanResult.getDeviceInfoClassify());
 			classifyArray.put(all_camp_log_device_info);
 
 			//all_camp_log_time_info
-			Map all_camp_log_time_info = new HashMap();
+			JSONObject all_camp_log_time_info = new JSONObject();
 			all_camp_log_time_info.put("all_camp_log_time_info",  dmpLogBeanResult.getTimeInfoClassify());
 			classifyArray.put(all_camp_log_time_info);
 		}
 		
 		//dataJson
 		JSONObject dataJson = new JSONObject();
-		dataJson.put("category_info", categoryInfoMap);
-		dataJson.put("sex_info", sexInfoMap);
-		dataJson.put("age_info", ageInfoMap);
-		dataJson.put("area_country_info", areaCountryInfoMap );
-		dataJson.put("area_city_info", areaCityInfoMap );
-		dataJson.put("device_info", deviceInfoMap );
-		dataJson.put("device_phone_info", devicePhoneInfoMap );
-		dataJson.put("device_os_info", deviceOsInfoMap);
-		dataJson.put("device_browser_info", deviceBrowserInfoMap);
-		dataJson.put("time_info", timeInfoMap);
+		dataJson.put("category_info", categoryInfoJson);
+		dataJson.put("sex_info", sexInfoJson);
+		dataJson.put("age_info", ageInfoJson);
+		dataJson.put("area_country_info", areaCountryInfoJson );
+		dataJson.put("area_city_info", areaCityInfoJson );
+		dataJson.put("device_info", deviceInfoJson );
+		dataJson.put("device_phone_info", devicePhoneInfoJson );
+		dataJson.put("device_os_info", deviceOsInfoJson);
+		dataJson.put("device_browser_info", deviceBrowserInfoJson);
+		dataJson.put("time_info", timeInfoJson);
 		dataJson.put("classify", classifyArray);
 		
 		//send Kafka Json
