@@ -17,8 +17,8 @@ public class GeoIpComponent {
 
 	public DmpLogBean ipTransformGEO(DmpLogBean dmpDataBean) throws Exception {
 		String ip = dmpDataBean.getIp();
-		String countryStr = "";
-		String cityStr = "";
+		String countryStr = "null";
+		String cityStr = "null";
 
 		// 判斷是否為正確ip格式
 		IpAdd ipAdd = new IpAdd();
