@@ -66,7 +66,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	public void cleanup(Context context) {
 		try {
-//			kafkaUtil.close(); 
+//			kafkaUtil.close();     
 		} catch (Exception e) {
 			log.error("reduce cleanup error>>>>>> " +e);
 		}
