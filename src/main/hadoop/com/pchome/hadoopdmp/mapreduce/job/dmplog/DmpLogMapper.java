@@ -256,6 +256,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				dmpLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(dmpLogBeanResult, mongoOrgOperations);
 			}else if ( dmpLogBeanResult.getSource().equals("pv") ){
 				dmpDataBean.setSource("kdcl");
+				dmpDataBean.setCategory("null");
+				dmpDataBean.setCategorySource("null");
+				dmpDataBean.setClassAdClickClassify("null");
+				dmpDataBean.setClass24hUrlClassify("null");
+				dmpDataBean.setClassRutenUrlClassify("null");
 			}
 			
 			//個資處理元件

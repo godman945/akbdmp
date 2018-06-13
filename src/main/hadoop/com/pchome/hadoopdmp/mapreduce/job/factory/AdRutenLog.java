@@ -32,9 +32,9 @@ public class AdRutenLog extends ACategoryLogData {
 		dmpDataBean.setSource("kdcl");
 		
 		String sourceUrl = dmpDataBean.getUrl();
-		String category = "";
-		String categorySource = "";
-		String classRutenUrlClassify = "" ;
+		String category = "null";
+		String categorySource = "null";
+		String classRutenUrlClassify = "null" ;
 		
 		if (StringUtils.isBlank(sourceUrl)) {
 			dmpDataBean.setUrl("null");

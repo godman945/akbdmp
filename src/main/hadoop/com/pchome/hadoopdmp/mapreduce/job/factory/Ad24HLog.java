@@ -23,9 +23,9 @@ public class Ad24HLog extends ACategoryLogData {
 		dmpDataBean.setSource("kdcl");
 		
 		String sourceUrl = dmpDataBean.getUrl();
-		String category = "";
-		String categorySource = "";
-		String class24hUrlClassify = "";
+		String category = "null";
+		String categorySource = "null";
+		String class24hUrlClassify = "null";
 		
 		if (StringUtils.isBlank(sourceUrl)) {
 			dmpDataBean.setUrl("null");
