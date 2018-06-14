@@ -148,7 +148,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 
 	@Override
 	public void map(LongWritable offset, Text value, Context context) {
-//		log.info(" >>>>>>>> map mongoOrgOperations " +mongoOrgOperations);	//test
 		try {
 			//讀取kdcl、Campaign資料
 //			log.info("raw_data : " + value);
@@ -185,7 +184,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				dmpDataBean.setAdClass(values[15]);
 				dmpDataBean.setAge("null");
 				dmpDataBean.setSex("null");
-//				log.info(">>>>>> kdcl rawdata:" + valueStr);
+				log.info(">>>>>> kdcl rawdata:" + valueStr);
 			}else if( valueStr.indexOf(campaignSymbol) > -1 ){	//Campaign log raw data格式
 				// values[0] memid			會員帳號
 				// values[1] uuid			通用唯一識別碼	
@@ -226,7 +225,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				 }else{
 					 dmpDataBean.setSex(values[5]);
 				 }
-//				 log.info(">>>>>> campaige rawdata:" + valueStr);
+				 log.info(">>>>>> campaige rawdata:" + valueStr);
 			}else{
 				 return;
 			}
@@ -255,12 +254,12 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
 				dmpLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(dmpLogBeanResult, mongoOrgOperations);
 			}else if ( dmpLogBeanResult.getSource().equals("pv") ){
-				dmpDataBean.setSource("kdcl");
-				dmpDataBean.setCategory("null");
-				dmpDataBean.setCategorySource("null");
-				dmpDataBean.setClassAdClickClassify("null");
-				dmpDataBean.setClass24hUrlClassify("null");
-				dmpDataBean.setClassRutenUrlClassify("null");
+				dmpLogBeanResult.setSource("kdcl");
+				dmpLogBeanResult.setCategory("null");
+				dmpLogBeanResult.setCategorySource("null");
+				dmpLogBeanResult.setClassAdClickClassify("null");
+				dmpLogBeanResult.setClass24hUrlClassify("null");
+				dmpLogBeanResult.setClassRutenUrlClassify("null");
 			}
 			
 			//個資處理元件
@@ -275,7 +274,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			//轉成發kafka字串
 			String sendKafkaJson = dmpBeanToKafkaJson(dmpLogBeanResult);
 			
-//			log.info(">>>>>> Mapper write key:" + sendKafkaJson.toString());
+			log.info(">>>>>> Mapper write key:" + sendKafkaJson.toString());
 			
 			keyOut.set(sendKafkaJson.toString());
 			context.write(keyOut, valueOut);
