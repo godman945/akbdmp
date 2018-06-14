@@ -29,7 +29,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			this.kafkaUtil = ctx.getBean(KafkaUtil.class);
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			log.error("reduce setup error>>>>>> " +e);
 		}
 	}
@@ -58,7 +58,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //			log.info(">>>>>>reduce write key:" + data);
 			keyOut.set(data);
 			context.write(keyOut, valueOut);
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			log.error("reduce error>>>>>> " +e);
 		}
 
@@ -67,7 +67,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	public void cleanup(Context context) {
 		try {
 			kafkaUtil.close();     
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			log.error("reduce cleanup error>>>>>> " +e);
 		}
 	}
