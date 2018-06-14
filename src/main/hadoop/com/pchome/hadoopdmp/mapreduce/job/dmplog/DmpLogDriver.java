@@ -129,7 +129,7 @@ public class DmpLogDriver {
 			job.setInputFormatClass(LzoTextInputFormat.class);
 			job.setOutputKeyClass(Text.class);
 			job.setOutputValueClass(Text.class);
-			job.setNumReduceTasks(5);//3個reduce
+			job.setNumReduceTasks(3);//3個reduce
 			job.setMapSpeculativeExecution(false);
 			// job.setOutputFormatClass(NullOutputFormat.class);
 			
