@@ -76,36 +76,15 @@ public class DmpLogDriver {
 		try {
 			Calendar calendar = Calendar.getInstance();
 			
-			
-			
 			JobConf jobConf = new JobConf();
 //			jobConf.setNumMapTasks(8);
-			//4.78mb
-			jobConf.set("mapred.max.split.size","3045728"); //3045728
-			jobConf.set("mapred.min.split.size","1015544"); //1015544
+			
+			jobConf.set("mapred.max.split.size","3045728"); //3.04mb
+			jobConf.set("mapred.min.split.size","1015544"); //1.01mb
 			
 			//ask推测执行
 			jobConf.set("mapred.map.tasks.speculative.execution","true");
 			jobConf.set("mapred.reduce.tasks.speculative.execution","true");
-			
-			
-			
-			//指定DataNode用於balancer的帶寬
-//			jobConf.set("dfs.datanode.balance.bandwidthPerSec", "1048576");
-//			//默认是1，表示一个JVM上最多可以顺序执行的task数目
-//			jobConf.set("mapred.job.reuse.jvm.num.tasks", "10");
-//			//工作線程池用來處理客户端的遠程過程調用及集羣守護進程的調用
-//			jobConf.set("dfs.namenode.handler.count", "80");
-//			jobConf.set("dfs.datanode.max.transfer.threads", "8192");
-			
-			//配置每个map或reduce使用的内存数量，默认是200m，一般情况下，该值设置为 总内存/并发数量(=核数)
-			
-//			jobConf.set("yarn.app.mapreduce.am.command-opts","Xmx5734m");
-
-			
-//			jobConf.set("mapred.child.java.opts", "-Xmx2g");
-//			jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
-//			jobConf.set("mapred.compress.map.output", "true");
 			jobConf.set("spring.profiles.active", env);
 			
 			// hdfs
@@ -120,24 +99,8 @@ public class DmpLogDriver {
 			conf.set("mapreduce.reduce.speculative", mapredReduceExecution);
 			conf.set("mapreduce.task.timeout", mapredTimeout);
 			
-			
 			conf.set("mapred.map.tasks.speculative.execution","true");
 			conf.set("mapred.reduce.tasks.speculative.execution","true");
-			
-//			conf.set("dfs.datanode.balance.bandwidthPerSec", "1048576");
-//			conf.set("mapred.job.reuse.jvm.num.tasks", "10");
-//			conf.set("dfs.namenode.handler.count", "80");
-//			conf.set("dfs.datanode.max.transfer.threads", "8192");
-//			conf.set("mapred.child.java.opts", "-Xmx4072m");
-//			conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx4072m");
-//			conf.set("mapred.max.split.size","128388608");
-//			conf.set("mapred.min.split.size","128388608");
-//			conf.set("mapreduce.min.split.size","128388608");
-//			conf.set("mapreduce.max.split.size","128388608");
-//			conf.set("dfs.namenode.fs-limits.min-block-size","1048576");
-//			conf.set("dfs.namenode.fs-limits.max-blocks-per-file","1048576");
-			
-			
 			
 			
 			if(calendar.get(Calendar.HOUR_OF_DAY) == 0){
@@ -166,7 +129,7 @@ public class DmpLogDriver {
 			job.setInputFormatClass(LzoTextInputFormat.class);
 			job.setOutputKeyClass(Text.class);
 			job.setOutputValueClass(Text.class);
-			job.setNumReduceTasks(3);//1個reduce
+			job.setNumReduceTasks(10);//3個reduce
 			job.setMapSpeculativeExecution(false);
 			// job.setOutputFormatClass(NullOutputFormat.class);
 			
