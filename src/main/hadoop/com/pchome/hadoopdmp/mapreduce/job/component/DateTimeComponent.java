@@ -19,7 +19,7 @@ public class DateTimeComponent {
 		if (!date){
 			dmpDataBean.setHour("null");
 			dmpDataBean.setTimeInfoSource("null");
-			dmpDataBean.setTimeInfoClassify("null");
+			dmpDataBean.setTimeInfoClassify("N");
 			return dmpDataBean;
 		}
 		
