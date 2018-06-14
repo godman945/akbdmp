@@ -81,8 +81,8 @@ public class DmpLogDriver {
 			JobConf jobConf = new JobConf();
 //			jobConf.setNumMapTasks(8);
 			//4.78mb
-			jobConf.set("mapred.max.split.size","304572"); //3045728
-			jobConf.set("mapred.min.split.size","101554"); //1015544
+			jobConf.set("mapred.max.split.size","3045728"); //3045728
+			jobConf.set("mapred.min.split.size","1015544"); //1015544
 			
 			//ask推测执行
 			jobConf.set("mapred.map.tasks.speculative.execution","true");
@@ -240,18 +240,18 @@ public class DmpLogDriver {
 				
 				
 				//輸入
-				String logInputPath = "/home/webuser/dmp/testData/category/tmp";	//自己做測試資料			  		
+//				String logInputPath = "/home/webuser/dmp/testData/category/tmp";	//自己做測試資料			  		
 //				String logInputPath = "/home/webuser/dmp/testData/category";				//測試資料(有ruten、24h的資料)
 //				String logInputPath = "/home/webuser/analyzer/storedata/alllog/2018-05-22";			//測試path
-//				String logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-22/06/tmp";			//11點200萬筆資料
+				String logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-22/11";			//11點200萬筆資料
 //				String logInputPath = "/home/webuser/dmp/testData/category/20180522";			//測試path整天log
 //				String logInputPath = akbPathAllLog + timePath; //正式path  /home/webuser/akb/storedata/alllog/2018-05-15/05    	//正式path
 				
 //				String logInputPath = "/home/webuser/dmp/testData/category/20180522";
 				
 				//輸出
-				String outputTempPath = "/home/webuser/bessie/output/category/tmp";			//測試資料(有ruten、24h的資料)
-//				String outputTempPath = "/home/webuser/bessie/output/06";
+//				String outputTempPath = "/home/webuser/bessie/output/category/tmp";			//測試資料(有ruten、24h的資料)
+				String outputTempPath = "/home/webuser/bessie/output/11";
 				//hdfs存在則刪除
 				deleteExistedDir(fs, new Path(outputTempPath), true);
 				
