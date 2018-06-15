@@ -79,15 +79,15 @@ public class DmpLogDriver {
 			JobConf jobConf = new JobConf();
 //			jobConf.setNumMapTasks(8);
 			
-			jobConf.set("mapred.max.split.size","3045728"); //3.04mb
-			jobConf.set("mapred.min.split.size","1015544"); //1.01mb
+			jobConf.set("mapred.max.split.size","3045728000"); //3045728
+			jobConf.set("mapred.min.split.size","1015544000"); //1015544
 			
 			//ask推测执行
 			jobConf.set("mapred.map.tasks.speculative.execution","true");
 			jobConf.set("mapred.reduce.tasks.speculative.execution","true");
-			//JVM
-			jobConf.set("mapred.child.java.opts", "-Xmx2g");
-		    jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
+//			//JVM
+//			jobConf.set("mapred.child.java.opts", "-Xmx2g");
+//		    jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 			
 			jobConf.set("spring.profiles.active", env);
 			
@@ -107,8 +107,8 @@ public class DmpLogDriver {
 			conf.set("mapred.reduce.tasks.speculative.execution","true");
 			
 			//JVM
-			conf.set("mapred.child.java.opts", "-Xmx2g");
-			conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
+//			conf.set("mapred.child.java.opts", "-Xmx2g");
+//			conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 			
 			
 			if(calendar.get(Calendar.HOUR_OF_DAY) == 0){
