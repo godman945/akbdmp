@@ -85,6 +85,10 @@ public class DmpLogDriver {
 			//ask推测执行
 			jobConf.set("mapred.map.tasks.speculative.execution","true");
 			jobConf.set("mapred.reduce.tasks.speculative.execution","true");
+			//JVM
+			jobConf.set("mapred.child.java.opts", "-Xmx2g");
+		    jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
+			
 			jobConf.set("spring.profiles.active", env);
 			
 			// hdfs
@@ -101,6 +105,10 @@ public class DmpLogDriver {
 			
 			conf.set("mapred.map.tasks.speculative.execution","true");
 			conf.set("mapred.reduce.tasks.speculative.execution","true");
+			
+			//JVM
+			conf.set("mapred.child.java.opts", "-Xmx2g");
+			conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 			
 			
 			if(calendar.get(Calendar.HOUR_OF_DAY) == 0){
