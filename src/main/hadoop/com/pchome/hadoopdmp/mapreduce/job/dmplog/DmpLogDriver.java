@@ -79,8 +79,8 @@ public class DmpLogDriver {
 			JobConf jobConf = new JobConf();
 //			jobConf.setNumMapTasks(8);
 			
-			jobConf.set("mapred.max.split.size","30457280"); //3045728 49 //3045728000 7
-			jobConf.set("mapred.min.split.size","10155440"); //1015544 49 //1015544000 7
+			jobConf.set("mapred.max.split.size","3045728"); //3045728 49 //3045728000 7
+			jobConf.set("mapred.min.split.size","1015544"); //1015544 49 //1015544000 7
 			
 			//ask推测执行
 			jobConf.set("mapred.map.tasks.speculative.execution","true");
@@ -111,7 +111,8 @@ public class DmpLogDriver {
 //			conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 			
 			
-			if(calendar.get(Calendar.HOUR_OF_DAY) == 0){
+			//測試前2小時-上線拿掉
+			if( (calendar.get(Calendar.HOUR_OF_DAY) == 0) || (calendar.get(Calendar.HOUR_OF_DAY) == 1) ){
 				calendar.add(Calendar.DAY_OF_MONTH, -1);
 				conf.set("job.date",sdf1.format(calendar.getTime()));
 				jobConf.set("job.date",sdf1.format(calendar.getTime()));
@@ -119,6 +120,19 @@ public class DmpLogDriver {
 				conf.set("job.date",sdf1.format(calendar.getTime()));
 				jobConf.set("job.date",sdf1.format(calendar.getTime()));
 			}
+			//測試前2小時-上線拿掉
+			
+//			//上線打開
+//			if(calendar.get(Calendar.HOUR_OF_DAY) == 0){
+//				calendar.add(Calendar.DAY_OF_MONTH, -1);
+//				conf.set("job.date",sdf1.format(calendar.getTime()));
+//				jobConf.set("job.date",sdf1.format(calendar.getTime()));
+//			}else{
+//				conf.set("job.date",sdf1.format(calendar.getTime()));
+//				jobConf.set("job.date",sdf1.format(calendar.getTime()));
+//			}
+//			//上線打開
+			
 			// file system
 			conf.set("spring.profiles.active", env);
 			FileSystem fs = FileSystem.get(conf);
@@ -159,35 +173,27 @@ public class DmpLogDriver {
 				log.info("file Input Path : " + alllogOpRange);
 				
 			} else if (timeType.equals("hour")) {
-				//測試機前4小時版本
+				//測試機前2小時版本--上線前拿掉
 				String timePath  = "";
 				Calendar calendar2 = Calendar.getInstance();
-				if( (calendar2.get(calendar2.HOUR_OF_DAY) >= 0) &&  (calendar2.get(calendar2.HOUR_OF_DAY) <= 3) ){
+				if( (calendar2.get(calendar2.HOUR_OF_DAY) >= 0) &&  (calendar2.get(calendar2.HOUR_OF_DAY) <= 1) ){
 					calendar2.add(calendar2.DAY_OF_MONTH, -1); 
 					
 					if (calendar2.get(calendar2.HOUR_OF_DAY) == 0){
-						timePath = sdf1.format(calendar2.getTime())+"/20";
-					}
-					
-					if (calendar2.get(calendar2.HOUR_OF_DAY) == 1){
-						timePath = sdf1.format(calendar2.getTime())+"/21";
-					}
-					
-					if (calendar2.get(calendar2.HOUR_OF_DAY) == 2){
 						timePath = sdf1.format(calendar2.getTime())+"/22";
 					}
 					
-					if (calendar2.get(calendar2.HOUR_OF_DAY) == 3){
+					if (calendar2.get(calendar2.HOUR_OF_DAY) == 1){
 						timePath = sdf1.format(calendar2.getTime())+"/23";
 					}
 				}else {
-					if(String.valueOf(calendar2.get(calendar2.HOUR_OF_DAY) - 4).length() < 2){
-						timePath = sdf1.format(calendar2.getTime()) +"/"+ "0"+(calendar.get(calendar2.HOUR_OF_DAY) - 4);
+					if(String.valueOf(calendar2.get(calendar2.HOUR_OF_DAY) - 2).length() < 2){
+						timePath = sdf1.format(calendar2.getTime()) +"/"+ "0"+(calendar.get(calendar2.HOUR_OF_DAY) - 2);
 					}else{
-						timePath = sdf1.format(calendar2.getTime()) +"/"+ (calendar.get(calendar2.HOUR_OF_DAY) - 4);
+						timePath = sdf1.format(calendar2.getTime()) +"/"+ (calendar.get(calendar2.HOUR_OF_DAY) - 2);
 					}
 				}
-				//測試機前4小時版本
+				//測試機前2小時版本--上線前拿掉
 				
 				
 				
@@ -213,17 +219,18 @@ public class DmpLogDriver {
 				//輸入
 //				String logInputPath = "/home/webuser/dmp/testData/category/tmp";	//自己做測試資料			  		
 //				String logInputPath = "/home/webuser/dmp/testData/category";				//測試資料(有ruten、24h的資料)
-				String logInputPath = "/home/webuser/analyzer/storedata/alllog/2018-05-22";			//測試path
+//				String logInputPath = "/home/webuser/analyzer/storedata/alllog/2018-05-22";			//測試path
 //				String logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-22/11";			//11點200萬筆資料
 //				String logInputPath = "/home/webuser/dmp/testData/category/20180522";			//測試path整天log
-//				String logInputPath = akbPathAllLog + timePath; //正式path  /home/webuser/akb/storedata/alllog/2018-05-15/05    	//正式path
+				String logInputPath = akbPathAllLog + timePath; //正式path  /home/webuser/akb/storedata/alllog/2018-05-15/05    	//正式path
 				
 //				String logInputPath = "/home/webuser/dmp/testData/category/20180522";
 				
 				//輸出
 //				String outputTempPath = "/home/webuser/bessie/output/category";			//測試資料(有ruten、24h的資料)
 //				String outputTempPath = "/home/webuser/bessie/output/11";
-				String outputTempPath = "/home/webuser/bessie/output/20180522";
+//				String outputTempPath = "/home/webuser/bessie/output/20180522";
+				String outputTempPath = "/home/webuser/bessie/output";
 				//hdfs存在則刪除
 				deleteExistedDir(fs, new Path(outputTempPath), true);
 				
