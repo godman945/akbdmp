@@ -1,5 +1,7 @@
 package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
@@ -21,6 +23,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	private static Log log = LogFactory.getLog("DmpLogReducer");
 	
 	private final static String SYMBOL = String.valueOf(new char[] { 9, 31 });
+	
+	public static Map<String, Object> dmpLogMap = new HashMap<String, Object>();
 	
 	private Text keyOut = new Text();
 	private Text valueOut = new Text();
@@ -83,6 +87,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		try {
 //			log.info(">>>>>> reduce start : " + key);
 			String data = key.toString();
+			
+//			dmpLogMap.put(key, value)
+			
 			producer.send(new ProducerRecord<String, String>("dmp_log_prd", "", data));
 //			log.info(">>>>>>reduce write key:" + sendKafkaJson.toString());
 			
