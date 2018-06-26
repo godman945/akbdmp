@@ -269,10 +269,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				Map.Entry mapEntry = (Map.Entry) iterator.next();
 				producer.send(new ProducerRecord<String, String>("dmp_log_prd", "", mapEntry.getValue().toString()));
 				
-				keyOut.set(mapEntry.getValue().toString());
-				context.write(keyOut, valueOut);
-				
-				log.info(">>>>>>reduce Map send kafka:" + mapEntry.getValue().toString());
+//				keyOut.set(mapEntry.getValue().toString());
+//				context.write(keyOut, valueOut);
+//				log.info(">>>>>>reduce Map send kafka:" + mapEntry.getValue().toString());
 			}
 			producer.close();
 
