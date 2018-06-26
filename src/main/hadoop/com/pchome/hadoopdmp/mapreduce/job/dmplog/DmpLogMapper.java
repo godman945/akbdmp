@@ -438,6 +438,16 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			all_camp_log_class_ad_click.put("all_camp_log_class_ad_click", dmpLogBeanResult.getClassAdClickClassify());
 			classifyArray.put(all_camp_log_class_ad_click);
 			
+			//all_camp_log_class_24h_url
+			JSONObject all_camp_log_class_24h_url = new JSONObject();
+			all_camp_log_class_24h_url.put("all_camp_log_class_24h_url", dmpLogBeanResult.getClass24hUrlClassify());
+			classifyArray.put(all_camp_log_class_24h_url);
+			
+			//all_camp_log_class_ruten_url
+			JSONObject all_camp_log_class_ruten_url = new JSONObject();
+			all_camp_log_class_ruten_url.put("all_camp_log_class_ruten_url", dmpLogBeanResult.getClassRutenUrlClassify());
+			classifyArray.put(all_camp_log_class_ruten_url);
+			
 			//all_camp_log_area_info
 			JSONObject all_camp_log_area_info = new JSONObject();
 			all_camp_log_area_info.put("all_camp_log_area_info", dmpLogBeanResult.getAreaInfoClassify());
