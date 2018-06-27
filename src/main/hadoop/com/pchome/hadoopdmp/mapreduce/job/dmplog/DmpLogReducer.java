@@ -261,7 +261,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		try {
 			for(Iterator<String> iterator = redisKeyList.iterator(); iterator.hasNext();) {
 			    String redisKey = iterator.next();
-			    String dmpData = (String) redisTemplate.opsForValue().get(redisKey);
+			    String dmpData = ((JSONObject) redisTemplate.opsForValue().get(redisKey)).toString();
 			    producer.send(new ProducerRecord<String, String>("dmp_log_prd", "", dmpData));
 			    redisTemplate.delete(redisKey);
 				keyOut.set(redisKey);
