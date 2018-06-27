@@ -75,14 +75,15 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	
 	JSONParser jsonParser = null;
 	
-	@Autowired
 	public RedisTemplate<String, Object> redisTemplate;
 	
+	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
 		try {
 			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+			this.redisTemplate = (RedisTemplate<String, Object>) ctx.getBean("redisTemplate");
 			this.kafkaMetadataBrokerlist = ctx.getEnvironment().getProperty("kafka.metadata.broker.list");
 			this.kafkaAcks = ctx.getEnvironment().getProperty("kafka.acks");
 			this.kafkaRetries = ctx.getEnvironment().getProperty("kafka.retries");
@@ -130,7 +131,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		try {
 			long tim1 = System.currentTimeMillis();
 			String data = mapperKey.toString();
-			log.info(">>>>>> reduce start : " + data);
+//			log.info(">>>>>> reduce start : " + data);
 			JSONObject jsonObjOrg = (net.minidev.json.JSONObject)jsonParser.parse(data);
 			
 			String dmpSource = (String) jsonObjOrg.get("org_source");
