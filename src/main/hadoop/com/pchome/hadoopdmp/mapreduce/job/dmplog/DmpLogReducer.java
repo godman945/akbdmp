@@ -73,7 +73,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	
 	public long start;
 	
-	JSONParser jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
+	JSONParser jsonParser = null;
 	
 	@Autowired
 	public RedisTemplate<String, Object> redisTemplate;
@@ -106,6 +106,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			producer = new KafkaProducer<String, String>(props);
 			redisKeyList = new ArrayList<>();
 			start = System.currentTimeMillis();
+			jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
 		} catch (Throwable e) {
 			log.error("reduce setup error>>>>>> " +e);
 		}
@@ -128,8 +129,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
 		try {
 			long tim1 = System.currentTimeMillis();
-//			log.info(">>>>>> reduce start : " + key);
 			String data = mapperKey.toString();
+			log.info(">>>>>> reduce start : " + data);
 			JSONObject jsonObjOrg = (net.minidev.json.JSONObject)jsonParser.parse(data);
 			
 			String dmpSource = (String) jsonObjOrg.get("org_source");
