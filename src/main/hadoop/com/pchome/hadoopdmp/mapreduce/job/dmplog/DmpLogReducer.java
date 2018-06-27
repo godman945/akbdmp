@@ -140,6 +140,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				// 整理classify
 				JSONArray classifyAryOrg = new JSONArray();
 				classifyAryOrg = dataOrg.getJSONArray("classify");
+				
 				JSONObject classifyYjson = null;
 				JSONObject classifyNjson = null;
 				JSONArray classifyAryAll = new JSONArray();
@@ -166,8 +167,12 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 						classifyAryAll.put(classifyNjson);
 					}
 				}
-				jsonObjAll.put("classify", classifyAryAll);
-				jsonObjAll.put("record_date", jsonObjOrg.get("record_date"));
+				jsonObjInfo.put("classify", classifyAryAll);
+				jsonObjAll.put("data", jsonObjInfo);
+				
+				jsonObjInfo.put("record_date", jsonObjOrg.get("record_date"));
+				jsonObjAll.put("data", jsonObjInfo);
+				
 				dmpLogMap.put(reducerMapKey.toString(), jsonObjAll.toString());
 //				System.out.println("第1次dmpLogMap---: " + dmpLogMap);
 				
@@ -232,7 +237,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				}
 				
 				// classify加總
-				JSONArray mapClassifyAry = mapJsonObj.getJSONArray("classify");
+				JSONArray mapClassifyAry = ((JSONObject) mapJsonObj.get("data")).getJSONArray("classify");
 				JSONArray classifyAryOrg = new JSONArray();
 				classifyAryOrg = dataOrg.getJSONArray("classify");
 				Map<String, Integer> classifyOrgMap = new HashMap<String, Integer>();
