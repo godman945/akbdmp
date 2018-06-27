@@ -131,8 +131,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					dataInfoArray.put(sexInfoObj);
 					jsonObjInfo.put(dataInfoStr, dataInfoArray);
 					
-					sexInfoObj = null;
-					dataInfoArray = null;
+//					sexInfoObj = null;
+//					dataInfoArray = null;
 				}
 				// 放全將data info
 				jsonObjAll.put("data", jsonObjInfo);
@@ -171,16 +171,16 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				dmpLogMap.put(reducerMapKey.toString(), jsonObjAll.toString());
 //				System.out.println("第1次dmpLogMap---: " + dmpLogMap);
 				
-				jsonObjAll = null;
-				jsonObjInfo = null;
-				keyJson = null;
+//				jsonObjAll = null;
+//				jsonObjInfo = null;
+//				keyJson = null;
+//				
+//				classifyYjson =null;
+//				classifyNjson = null;
+//				
+//				classifyAryAll = null;
 				
-				classifyYjson =null;
-				classifyNjson = null;
-				
-				classifyAryAll = null;
-				
-				System.gc();
+//				System.gc();
 				
 			}
 
@@ -226,7 +226,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 							dataJsonAry.put(sexInfoData);
 							dmpLogMap.put(reducerMapKey.toString(), mapJsonObj.toString());
 //							System.out.println("get 222222 MAPPPPP---: " + dmpLogMap.get(reducerMapKey.toString()));
-							sexInfoData = null;
+//							sexInfoData = null;
 						}
 					}
 				}
@@ -267,20 +267,20 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				dmpLogMap.put(reducerMapKey.toString(), mapJsonObj.toString());
 //				System.out.println("0626-dmpLogMap : " + dmpLogMap.get(reducerMapKey.toString()).toString());
 				
-				mapJsonObj =null;
-				classifyAryOrg = null;
-				classifyAryOrg =null;
-				classifyOrgMap =null;
+//				mapJsonObj =null;
+//				classifyAryOrg = null;
+//				classifyAryOrg =null;
+//				classifyOrgMap =null;
 				
-				System.gc();
+//				System.gc();
 			}
 			
 //			log.info(">>>>>>reduce write key:" + sendKafkaJson.toString());
-			jsonObjOrg = null;
-			reducerMapKey = null;
+//			jsonObjOrg = null;
+//			reducerMapKey = null;
 		
 			
-			System.gc();
+//			System.gc();
 			
 		} catch (Throwable e) {
 			log.error("reduce error>>>>>> " +e);
