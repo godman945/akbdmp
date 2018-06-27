@@ -92,7 +92,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //			log.info(">>>>>> reduce start : " + key);
 			String data = mapperKey.toString();
 			
-			
 			JSONObject jsonObjOrg = new JSONObject(data);
 			String orgSource = (String) jsonObjOrg.get("org_source");
 			JSONObject keyOrg = (JSONObject) jsonObjOrg.get("key");
@@ -275,12 +274,12 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				Map.Entry mapEntry = (Map.Entry) iterator.next();
 				producer.send(new ProducerRecord<String, String>("dmp_log_prd", "", mapEntry.getValue().toString()));
 				
-//				keyOut.set(mapEntry.getValue().toString());
-//				context.write(keyOut, valueOut);
+				keyOut.set(mapEntry.getValue().toString());
+				context.write(keyOut, valueOut);
 //				log.info(">>>>>>reduce Map send kafka:" + mapEntry.getValue().toString());
 			}
+			dmpLogMap.clear();
 			producer.close();
-
 		} catch (Throwable e) {
 			log.error("reduce cleanup error>>>>>> " + e);
 		}
