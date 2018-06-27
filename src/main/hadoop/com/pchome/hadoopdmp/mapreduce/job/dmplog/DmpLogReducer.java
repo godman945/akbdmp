@@ -178,6 +178,10 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				classifyYjson =null;
 				classifyNjson = null;
 				
+				classifyAryAll = null;
+				
+				System.gc();
+				
 			}
 
 			// dmpLogMap.get(reducerMapKey.toString()) != null
@@ -267,15 +271,16 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				classifyAryOrg = null;
 				classifyAryOrg =null;
 				classifyOrgMap =null;
+				
+				System.gc();
 			}
 			
 //			log.info(">>>>>>reduce write key:" + sendKafkaJson.toString());
 			jsonObjOrg = null;
 			reducerMapKey = null;
-			JSONArray classifyAryAll = null;
+		
 			
-			
-			 
+			System.gc();
 			
 		} catch (Throwable e) {
 			log.error("reduce error>>>>>> " +e);
