@@ -1,9 +1,14 @@
 package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -13,13 +18,18 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import org.mvel2.optimizers.impl.refl.nodes.ArrayLength;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
+
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
+import net.minidev.json.parser.JSONParser;
 
 @Component
 public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
@@ -54,6 +64,20 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	public static Producer<String, String> producer = null;
 
+//	public JSONObject jsonObjAll = new JSONObject();
+	
+	public StringBuffer reducerMapKey = new StringBuffer();
+	
+//	public List<String> redisKeyList = new ArrayList<>();
+	public List<String> redisKeyList = null;
+	
+	public long start;
+	
+	JSONParser jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
+	
+	@Autowired
+	public RedisTemplate<String, Object> redisTemplate;
+	
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
 		try {
@@ -80,182 +104,151 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			props.put("key.serializer", kafkaKeySerializer);
 			props.put("value.serializer", kafkaValueSerializer);
 			producer = new KafkaProducer<String, String>(props);
-
+			redisKeyList = new ArrayList<>();
+			start = System.currentTimeMillis();
 		} catch (Throwable e) {
 			log.error("reduce setup error>>>>>> " +e);
 		}
 	}
 
+	//更新redis中classify數字
+	public void resetCountClassify(String key,JSONArray redisClassify){
+		for (Object object : redisClassify) {
+			JSONObject classifyJson = (JSONObject) object;
+			Integer count = (Integer) classifyJson.get(key);
+			if(count != null){
+				count = count + 1;
+				classifyJson.put(key, count);
+				break;
+			}
+		}
+	}
+	
 	@Override
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
 		try {
+			long tim1 = System.currentTimeMillis();
 //			log.info(">>>>>> reduce start : " + key);
 			String data = mapperKey.toString();
+			JSONObject jsonObjOrg = (net.minidev.json.JSONObject)jsonParser.parse(data);
 			
+			String dmpSource = (String) jsonObjOrg.get("org_source");
+			String dmpMemid =  (String) ((JSONObject) jsonObjOrg.get("key")).get("memid");
+			String dmpUuid = (String) ((JSONObject) jsonObjOrg.get("key")).get("uuid");
 			
-			JSONObject jsonObjOrg = new JSONObject(data);
-			String orgSource = (String) jsonObjOrg.get("org_source");
-			JSONObject keyOrg = (JSONObject) jsonObjOrg.get("key");
-			String memidOrg = (String) keyOrg.get("memid");
-			String uuidOrg = (String) keyOrg.get("uuid");
-
-			StringBuffer reducerMapKey = new StringBuffer(orgSource);
+			//建立map key
+			reducerMapKey.append(dmpSource);
 			reducerMapKey.append("_");
-			reducerMapKey.append(memidOrg);
+			reducerMapKey.append(dmpMemid);
 			reducerMapKey.append("_");
-			reducerMapKey.append(uuidOrg);
-
-			JSONObject dataOrg = (JSONObject) jsonObjOrg.get("data");
-			// 組新json
-			if (dmpLogMap.get(reducerMapKey.toString()) == null) {// MAP沒資料，新建資料
-//				System.out.println("-------------------沒有------MAP--------------------------------: ");
-				// put data
-				JSONObject jsonObjAll = new JSONObject();
-				// put info array
-				JSONObject jsonObjInfo = new JSONObject();
-				// key
-				JSONObject keyJson = new JSONObject();
-				keyJson.put("memid", memidOrg);
-				keyJson.put("uuid", uuidOrg);
-				jsonObjAll.put("key", keyJson);
-
+			reducerMapKey.append(dmpUuid);
+			
+//			System.out.println(reducerMapKey.toString());
+//			redisTemplate.delete("kdcl_null_c014b82c-65c3-4e59-88ac-825152412307");
+			JSONObject dmpJson = (net.minidev.json.JSONObject) redisTemplate.opsForValue().get(reducerMapKey.toString());
+			if(dmpJson == null){
+				//處理info資訊
+				JSONObject hadoopData =  ((JSONObject)jsonObjOrg.get("data"));
 				for (EnumDataKeyInfo enumDataKeyInfo : EnumDataKeyInfo.values()) {
-					String dataInfoStr = enumDataKeyInfo.toString();
-					String dataInfoSource = (dataOrg.getJSONObject(dataInfoStr)).getString("source");
-					String dataInfoValue = (dataOrg.getJSONObject(dataInfoStr)).getString("value");
-					JSONObject sexInfoObj = new JSONObject();
-					sexInfoObj.put("source", dataInfoSource);
-					sexInfoObj.put("value", dataInfoValue);
-					sexInfoObj.put("day_count", StringUtils.equals(dataInfoValue, "null") ? 0 : 1);
-					JSONArray dataInfoArray = new JSONArray();
-					dataInfoArray.put(sexInfoObj);
-					jsonObjInfo.put(dataInfoStr, dataInfoArray);
+					JSONArray array = new JSONArray();
+					JSONObject infoJson = (JSONObject) hadoopData.get(enumDataKeyInfo.toString());
+					String source = infoJson.getAsString("source");
+					String value = infoJson.getAsString("value");
+					if((StringUtils.isNotBlank(source) && !source.equals("null")) && (StringUtils.isNotBlank(value) && !value.equals("null"))){
+						infoJson.put("day_count", 1);
+					}else{
+						infoJson.put("day_count", 0);	
+					}
+					array.add(infoJson);
+					hadoopData.put(enumDataKeyInfo.toString(), array);
 				}
-				// 放全將data info
-				jsonObjAll.put("data", jsonObjInfo);
-
-				// 整理classify
-				JSONArray classifyAryOrg = new JSONArray();
-				classifyAryOrg = dataOrg.getJSONArray("classify");
-				JSONObject classifyYjson = null;
-				JSONObject classifyNjson = null;
-				JSONArray classifyAryAll = new JSONArray();
-				for (Object object : classifyAryOrg) {
-					Iterator iterator = ((JSONObject) object).keys();
-					while (iterator.hasNext()) {
-						String key = (String) iterator.next();
-						String value = ((JSONObject) object).getString(key);
-						int day_count = 0;
-
-						classifyYjson = new JSONObject();
-						classifyYjson.put(key + "_Y", day_count);
-						classifyNjson = new JSONObject();
-						classifyNjson.put(key + "_N", day_count);
-
-						if (StringUtils.equals(value, "Y")) {
-							classifyYjson.put(key + "_Y", 1);
+				//處理classify資訊
+				JSONArray classifyArray = (JSONArray) hadoopData.get("classify");
+				JSONObject redisClassify = new JSONObject();
+				for (Object object : classifyArray) {
+					JSONObject classifyJson = (JSONObject) object;
+					for(Entry<String, Object> entry : classifyJson.entrySet()){
+						String key = (String) entry.getKey();
+						String nKey = key+"_"+"N";
+						String yKey = key+"_"+"Y";
+						String type = (String) entry.getValue();
+						if(type == null){
+							redisClassify.put(yKey, 0);
+							redisClassify.put(nKey, 0);
+						}else if(type.equals("Y")){
+							redisClassify.put(yKey, 1);
+							redisClassify.put(nKey, 0);
+						}else if(type.equals("N")){
+							redisClassify.put(yKey, 0);
+							redisClassify.put(nKey, 1);
 						}
-						classifyAryAll.put(classifyYjson);
-
-						if (StringUtils.equals(value, "N")) {
-							classifyNjson.put(key + "_N", 1);
-						}
-						classifyAryAll.put(classifyNjson);
 					}
 				}
-				jsonObjAll.put("classify", classifyAryAll);
-				jsonObjAll.put("record_date", jsonObjOrg.get("record_date"));
-				dmpLogMap.put(reducerMapKey.toString(), jsonObjAll.toString());
-//				System.out.println("第1次dmpLogMap---: " + dmpLogMap);
-			}
-
-			// dmpLogMap.get(reducerMapKey.toString()) != null
-			else {// MAP有資料
-//				System.out.println("---------------------有有有有有有MAP--------------------------------: ");
-
-				// data JsonArray
-				JSONObject mapJsonObj = new JSONObject(dmpLogMap.get(reducerMapKey.toString()).toString());
-				
+				classifyArray.clear();
+				classifyArray.add(redisClassify);
+				redisTemplate.opsForValue().set(reducerMapKey.toString(), jsonObjOrg);
+				redisTemplate.expire(reducerMapKey.toString(), 1, TimeUnit.HOURS);
+				redisKeyList.add(reducerMapKey.toString());
+			}else{
+				JSONObject hadoopDataOrg = ((JSONObject)jsonObjOrg.get("data"));
+				JSONObject hadoopDataRedis =  ((JSONObject)dmpJson.get("data"));
 				for (EnumDataKeyInfo enumDataKeyInfo : EnumDataKeyInfo.values()) {
-					String dataInfoStr = enumDataKeyInfo.toString();
-					String dataInfoValue = (dataOrg.getJSONObject(dataInfoStr)).getString("value");
-					boolean matchFlag = false;
-					// 如果raw data的值不是null
-					if (!StringUtils.equals(dataInfoValue, "null")) {
-						JSONArray dataJsonAry = ((JSONObject) mapJsonObj.get("data")).getJSONArray(dataInfoStr);
-						for (int i = 0; i < dataJsonAry.length(); i++) {
-							JSONObject obj = dataJsonAry.getJSONObject(i);
-							String value = obj.getString("value");
-							// 如果這次的姓別值在map已有資料，即day_coount加1
-							if (StringUtils.equals(dataInfoValue, value)) {
-								String source = obj.getString("source");
-								int day_count = obj.getInt("day_count");
-								day_count = day_count + 1;
-								obj.put("day_count", day_count);
-								dataJsonAry.remove(i);
-								dataJsonAry.put(obj);
-								dmpLogMap.put(reducerMapKey.toString(), mapJsonObj.toString());
-//								System.out.println("get 111111 MAPPPPP---: " + dmpLogMap.get(reducerMapKey.toString()));
-								matchFlag = true;
-								break;
+					String source =  ((JSONObject)hadoopDataOrg.get(enumDataKeyInfo.toString())).getAsString("source");
+					String value = ((JSONObject)hadoopDataOrg.get(enumDataKeyInfo.toString())).getAsString("value");
+					//此次log資訊來源及值都不為null才取出資料進行判斷是否加1邏輯
+					if((StringUtils.isNotBlank(source) && !source.equals("null")) && (StringUtils.isNotBlank(value) && !value.equals("null"))){
+						boolean newDetail = true;
+						JSONArray array = (JSONArray) hadoopDataRedis.get(enumDataKeyInfo.toString());
+						for (Object object : array) {
+							JSONObject infoJson = (JSONObject) object;
+							String redisSource = infoJson.getAsString("source");
+							String redisValue = infoJson.getAsString("value");
+							//判斷log與redis內容是否一致
+							if(source.equals(redisSource) && value.equals(redisValue)){
+								int dayCount = (int) infoJson.get("day_count");
+								dayCount = dayCount + 1;
+								infoJson.put("day_count", dayCount);
+								newDetail = false;
 							}
+							
 						}
-						// 如果raw data的值在map中找不到，即新增一筆sex資料
-						if (!matchFlag) {
-							String dataInfoSourceOrg = (dataOrg.getJSONObject(dataInfoStr)).getString("source");
-							String dataInfoValueOrg = (dataOrg.getJSONObject(dataInfoStr)).getString("value");
-							JSONObject sexInfoData = new JSONObject();
-							sexInfoData.put("source", dataInfoSourceOrg);
-							sexInfoData.put("value", dataInfoValueOrg);
-							sexInfoData.put("day_count", 1);
-							dataJsonAry.put(sexInfoData);
-							dmpLogMap.put(reducerMapKey.toString(), mapJsonObj.toString());
-//							System.out.println("get 222222 MAPPPPP---: " + dmpLogMap.get(reducerMapKey.toString()));
+						//比對不到加入info所屬陣列
+						if(newDetail){
+							JSONObject infoJson = new JSONObject();
+							infoJson.put("source", source);
+							infoJson.put("value", value);
+							infoJson.put("day_count", 1);
+							array.add(infoJson);
 						}
 					}
 				}
 				
-				// classify加總
-				JSONArray mapClassifyAry = mapJsonObj.getJSONArray("classify");
-				JSONArray classifyAryOrg = new JSONArray();
-				classifyAryOrg = dataOrg.getJSONArray("classify");
-				Map<String, Integer> classifyOrgMap = new HashMap<String, Integer>();
-				// raw data的classify
-				for (Object object : classifyAryOrg) {
-					Iterator iterator = ((JSONObject) object).keys();
-					while (iterator.hasNext()) {
-						String key = (String) iterator.next();
-						String value = ((JSONObject) object).getString(key);
-						if (StringUtils.equals(value, "null")) {
-							break;
-						}
-						String orgClassify = key + "_" + value;
-						classifyOrgMap.put(orgClassify, 1);
-					}
-				}
-				// System.out.println("classifyOrgMap : "+classifyOrgMap);
-
-				// 比對map的classify，有吻合就加1
-				for (Object mapObject : mapClassifyAry) {
-					JSONObject mapObj = (JSONObject) mapObject;
-					Iterator mapIterator = mapObj.keys();
-					while (mapIterator.hasNext()) {
-						String mapKey = (String) mapIterator.next();
-						int mapValue = mapObj.getInt(mapKey);
-						if (classifyOrgMap.get(mapKey) != null) {
-							mapObj.put(mapKey, mapValue + 1);
-							break;
+				//計算clssify
+				JSONArray redisClassifyArray = (JSONArray) hadoopDataRedis.get("classify");
+				JSONArray orgClassifyArray = (JSONArray) hadoopDataOrg.get("classify");
+				for (Object object : orgClassifyArray) {
+					JSONObject orgClassifyJson = (JSONObject) object;
+					for(Entry<String, Object> entry : orgClassifyJson.entrySet()){
+						String key = (String) entry.getKey();
+						String nKey = key+"_"+"N";
+						String yKey = key+"_"+"Y";
+						String type = (String) entry.getValue();
+						if(type.equals("Y")){
+							resetCountClassify(yKey,redisClassifyArray);
+						}else if(type.equals("N")){
+							resetCountClassify(nKey,redisClassifyArray);
 						}
 					}
 				}
-				dmpLogMap.put(reducerMapKey.toString(), mapJsonObj.toString());
-//				System.out.println("0626-dmpLogMap : " + dmpLogMap.get(reducerMapKey.toString()).toString());
+				redisTemplate.opsForValue().set(reducerMapKey.toString(), dmpJson);
+				
 			}
+//			System.out.println(redisTemplate.opsForValue().get(reducerMapKey.toString()));
 			
-//			log.info(">>>>>>reduce write key:" + sendKafkaJson.toString());
-			
-			
-			
+			//清空
+			reducerMapKey.setLength(0);
+			long tim2 = System.currentTimeMillis();
+			log.info("process reduce cost:"+(tim2 - tim1)+" ms");
 		} catch (Throwable e) {
 			log.error("reduce error>>>>>> " +e);
 		}
@@ -264,28 +257,73 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	public void cleanup(Context context) {
 		try {
-			Iterator iterator = dmpLogMap.entrySet().iterator();
-			while (iterator.hasNext()) {
-				Map.Entry mapEntry = (Map.Entry) iterator.next();
-				producer.send(new ProducerRecord<String, String>("dmp_log_prd", "", mapEntry.getValue().toString()));
-				
-//				keyOut.set(mapEntry.getValue().toString());
-//				context.write(keyOut, valueOut);
-//				log.info(">>>>>>reduce Map send kafka:" + mapEntry.getValue().toString());
+			for(Iterator<String> iterator = redisKeyList.iterator(); iterator.hasNext();) {
+			    String redisKey = iterator.next();
+			    String dmpData = (String) redisTemplate.opsForValue().get(redisKey);
+			    producer.send(new ProducerRecord<String, String>("dmp_log_prd", "", dmpData));
+			    redisTemplate.delete(redisKey);
+				keyOut.set(redisKey);
+				context.write(keyOut, valueOut);
+			    iterator.remove();
 			}
 			producer.close();
-
+			long end = System.currentTimeMillis();
+			log.info("total cost:"+(end - start) +" ms");
 		} catch (Throwable e) {
 			log.error("reduce cleanup error>>>>>> " + e);
 		}
 	}
 
 	
-//	public static void main(String[] args) throws Exception {
-//		System.setProperty("spring.profiles.active", "local");
-//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+	public static void main(String[] args) throws Exception {
+		System.setProperty("spring.profiles.active", "local");
+		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//		DmpLogReducer dmpLogReducer = ctx.getBean(DmpLogReducer.class);
+////		String a ="{'key':{'memid':'null','uuid':'c014b82c-65c3-4e59-88ac-825152412307'},'data':{'category_info':{'source':'null','value':'null'},'sex_info':{'source':'null','value':'null'},'age_info':{'source':'null','value':'null'},'area_country_info':{'source':'ip','value':'Taiwan'},'area_city_info':{'source':'ip','value':'Chengde'},'device_info':{'source':'user-agent','value':'MOBILE'},'device_phone_info':{'source':'user-agent','value':'APPLE'},'device_os_info':{'source':'user-agent','value':'IOS'},'device_browser_info':{'source':'user-agent','value':'Mobile Safari'},'time_info':{'source':'datetime','value':'17'},'classify':[{'memid_kdcl_log_personal_info_api':'null'},{'all_kdcl_log_personal_info':'N'},{'all_kdcl_log_class_ad_click':'null'},{'all_kdcl_log_class_24h_url':'null'},{'all_kdcl_log_class_ruten_url':'null'},{'all_kdcl_log_area_info':'Y'},{'all_kdcl_log_device_info':'Y'},{'all_kdcl_log_time_info':'Y'}]},'url':'','ip':'101.139.176.46','record_date':'2018-06-11','org_source':'kdcl','date_time':'2018-05-22 17:07:44','user_agent':'Mozilla\\5.0 (iPhone; CPU iPhone OS 11_3_1 like Mac OS X) AppleWebKit\\604.1.34 (KHTML, like Gecko) GSA\\37.1.171590344 Mobile\\15E302 Safari\\604.1','ad_class':'0017024822530000','record_count':658}";
+//		String a ="{'key':{'memid':'null','uuid':'c014b82c-65c3-4e59-88ac-825152412307'},'data':{'category_info':{'source':24h,'value':7997979979},'sex_info':{'source':'null','value':'null'},'age_info':{'source':'null','value':'null'},'area_country_info':{'source':'ip','value':'Taiwan'},'area_city_info':{'source':'ip','value':'Chengde'},'device_info':{'source':'user-agent','value':'MOBILE'},'device_phone_info':{'source':'user-agent','value':'APPLE'},'device_os_info':{'source':'user-agent','value':'IOS'},'device_browser_info':{'source':'user-agent','value':'Mobile Safari'},'time_info':{'source':'datetime','value':'17'},'classify':[{'memid_kdcl_log_personal_info_api':'null'},{'all_kdcl_log_personal_info':'N'},{'all_kdcl_log_class_ad_click':'null'},{'all_kdcl_log_class_24h_url':'null'},{'all_kdcl_log_class_ruten_url':'null'},{'all_kdcl_log_area_info':'Y'},{'all_kdcl_log_device_info':'Y'},{'all_kdcl_log_time_info':'Y'}]},'url':'http:\\\\www.gaomei.com.tw\\openhours\','ip':'101.139.176.46','record_date':'2018-06-11','org_source':'kdcl','date_time':'2018-05-22 17:05:53','user_agent':'Mozilla\\5.0 (iPhone; CPU iPhone OS 11_3_1 like Mac OS X) AppleWebKit\\604.1.34 (KHTML, like Gecko) GSA\\37.1.171590344 Mobile\\15E302 Safari\\604.1','ad_class':'0017024822530000','record_count':287}";
+//		JSONParser jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
+//		net.minidev.json.JSONObject json = (net.minidev.json.JSONObject) jsonParser.parse(a);
+//		for (int i = 0; i < 1; i++) {
+//			dmpLogReducer.reduce(new Text(json.toString()), null, null);
+//		}	
+		
+		
+		RedisTemplate<String, Object> redisTemplate = (RedisTemplate<String, Object>) ctx.getBean("redisTemplate");
+		
+		System.out.println(redisTemplate.opsForValue().get("kdcl_null_c014b82c-65c3-4e59-88ac-825152412307"));
+		
+		redisTemplate.delete("kdcl_null_c014b82c-65c3-4e59-88ac-825152412307");
+		
+		List<String> a = new ArrayList<>();
+		a.add("a");
+		a.add("b");
+		a.add("c");
+		
+		
+		
+		
+		System.out.println(a);
+		
+		
+		
+//		RedisTemplate<String, Object> redisTemplate = (RedisTemplate<String, Object>) ctx.getBean("redisTemplate");
+////		redisTemplate.opsForValue().set("alex", "123");
+//		redisTemplate.expire("alex", 60, TimeUnit.SECONDS);
+//		System.out.println(redisTemplate.opsForValue().get("alex"));
+		
+		
+//		String[] array = {"alex","TEST"};
+			
+		
+		
+		
+		
+//		System.out.println(json);
+//		JSONObject v = new JSONObject(a);
+//		System.out.println(v);
+
 //		IKdclStatisticsSourceService kdclStatisticsSourceService = (KdclStatisticsSourceService) ctx.getBean(KdclStatisticsSourceService.class);
-//}
+}
 
 //	
 }
