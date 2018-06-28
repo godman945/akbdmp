@@ -68,6 +68,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	
 	public long times;
 	
+	public int count;
+	
 	JSONParser jsonParser = null;
 	
 	public Map<String,JSONObject> kafkaDmpMap =null;
@@ -255,6 +257,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		try {
 			Iterator iterator = kafkaDmpMap.entrySet().iterator();
 			while (iterator.hasNext()) {
+				
+				count = count+1;
+				
 				Map.Entry mapEntry = (Map.Entry) iterator.next();
 				producer.send(new ProducerRecord<String, String>("dmp_log_prd", "", mapEntry.getValue().toString()));
 				
@@ -262,6 +267,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				context.write(keyOut, valueOut);
 //				log.info(">>>>>>reduce Map send kafka:" + mapEntry.getValue().toString());
 			}
+			log.info(">>>>>>reduce count:" + count);
 			producer.close();
 		} catch (Throwable e) {
 			log.error("reduce cleanup error>>>>>> " + e);
