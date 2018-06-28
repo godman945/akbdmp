@@ -193,6 +193,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				redisTemplate.expire(reducerMapKey.toString(), 1, TimeUnit.HOURS);
 				redisKeySet.add(reducerMapKey.toString());
 			}else{
+				redisKeySet.add(reducerMapKey.toString());
+				log.info("add key:"+reducerMapKey.toString());
 				JSONObject hadoopDataOrg = ((JSONObject)jsonObjOrg.get("data"));
 				JSONObject hadoopDataRedis =  ((JSONObject)dmpJson.get("data"));
 				for (EnumDataKeyInfo enumDataKeyInfo : EnumDataKeyInfo.values()) {
@@ -262,7 +264,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	public void cleanup(Context context) {
 		try {
-			log.info(">>>>>>>>>>>>>>>redisKeyList:"+redisKeySet.size());
+			log.info(">>>>>>>>>>>>>>>redisKeySet:"+redisKeySet.size());
 			for(Iterator<String> iterator = redisKeySet.iterator(); iterator.hasNext();) {
 			    String redisKey = iterator.next();
 			    String dmpData = ((JSONObject) redisTemplate.opsForValue().get(redisKey)).toString();
