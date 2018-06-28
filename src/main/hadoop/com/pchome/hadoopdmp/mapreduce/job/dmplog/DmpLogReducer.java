@@ -129,7 +129,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	@Override
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
 		try {
-//			long tim1 = System.currentTimeMillis();
+			long tim1 = System.currentTimeMillis();
 			String data = mapperKey.toString();
 //			log.info(">>>>>> reduce start : " + data);
 			JSONObject jsonObjOrg = (net.minidev.json.JSONObject)jsonParser.parse(data);
@@ -147,7 +147,12 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			
 //			System.out.println(reducerMapKey.toString());
 //			redisTemplate.delete("kdcl_null_c014b82c-65c3-4e59-88ac-825152412307");
+			
+			long time8 = System.currentTimeMillis();
 			JSONObject dmpJson = (net.minidev.json.JSONObject) redisTemplate.opsForValue().get(reducerMapKey.toString());
+			long time9 = System.currentTimeMillis();
+			log.info("process get redis cost:"+(time9- time8)+" ms");
+			
 			if(dmpJson == null){
 				//處理info資訊
 				JSONObject hadoopData =  ((JSONObject)jsonObjOrg.get("data"));
@@ -193,6 +198,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				redisTemplate.expire(reducerMapKey.toString(), 1, TimeUnit.HOURS);
 				redisKeySet.add(reducerMapKey.toString());
 			}else{
+				long time5 = System.currentTimeMillis();
 				redisKeySet.add(reducerMapKey.toString());
 				JSONObject hadoopDataOrg = ((JSONObject)jsonObjOrg.get("data"));
 				JSONObject hadoopDataRedis =  ((JSONObject)dmpJson.get("data"));
@@ -226,8 +232,12 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 						}
 					}
 				}
+				long time6 = System.currentTimeMillis();
+				log.info("process hadoopDataRedis cost:"+(time6- time5)+" ms");
+				
 				
 				//計算clssify
+				long time3 = System.currentTimeMillis();
 				JSONArray redisClassifyArray = (JSONArray) hadoopDataRedis.get("classify");
 				JSONArray orgClassifyArray = (JSONArray) hadoopDataOrg.get("classify");
 				for (Object object : orgClassifyArray) {
@@ -244,14 +254,17 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 						}
 					}
 				}
+				long time4 = System.currentTimeMillis();
+				log.info("process clssify cost:"+(time4- time3)+" ms");
+				
 				redisTemplate.opsForValue().set(reducerMapKey.toString(), dmpJson);
 				
 			}
 			//清空
 			reducerMapKey.setLength(0);
 //			times = times +1;
-//			long tim2 = System.currentTimeMillis();
-//			log.info("times:"+times+" process reduce cost:"+(tim2 - tim1)+" ms");
+			long tim2 = System.currentTimeMillis();
+			log.info("times:"+times+" process reduce cost:"+(tim2 - tim1)+" ms");
 		} catch (Throwable e) {
 			log.error(">>>>>> reduce error redis key:" +reducerMapKey.toString());
 //			redisTemplate.delete(reducerMapKey.toString());
