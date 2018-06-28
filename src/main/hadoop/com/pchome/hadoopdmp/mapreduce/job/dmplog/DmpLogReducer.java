@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -61,11 +60,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	public static Producer<String, String> producer = null;
 
-//	public JSONObject jsonObjAll = new JSONObject();
-	
 	public StringBuffer reducerMapKey = new StringBuffer();
 	
-//	public List<String> redisKeyList = new ArrayList<>();
 	public Set<String> redisKeySet = null;
 	
 	public long start;
@@ -73,8 +69,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	public long times;
 	
 	JSONParser jsonParser = null;
-	
-//	public RedisTemplate<String, Object> redisTemplate;
 	
 	public Map<String,JSONObject> kafkaDmpMap =null;
 	
@@ -116,25 +110,11 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		}
 	}
 
-	//更新redis中classify數字
-	public void resetCountClassify(String key,JSONArray redisClassify){
-		for (Object object : redisClassify) {
-			JSONObject classifyJson = (JSONObject) object;
-			Integer count = (Integer) classifyJson.get(key);
-			if(count != null){
-				count = count + 1;
-				classifyJson.put(key, count);
-				break;
-			}
-		}
-	}
-	
 	@Override
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
 		try {
-//			long tim1 = System.currentTimeMillis();
-			String data = mapperKey.toString();
 //			log.info(">>>>>> reduce start : " + data);
+			String data = mapperKey.toString();
 			JSONObject jsonObjOrg = (net.minidev.json.JSONObject)jsonParser.parse(data);
 			
 			String dmpSource = (String) jsonObjOrg.get("org_source");
@@ -148,18 +128,14 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			reducerMapKey.append("_");
 			reducerMapKey.append(dmpUuid);
 			
-//			System.out.println(reducerMapKey.toString());
-//			redisTemplate.delete("kdcl_null_c014b82c-65c3-4e59-88ac-825152412307");
-			
-//			long time8 = System.currentTimeMillis();
-//			JSONObject dmpJson = (net.minidev.json.JSONObject) redisTemplate.opsForValue().get(reducerMapKey.toString());
-			
 			JSONObject dmpJson = kafkaDmpMap.get(reducerMapKey.toString());
-//			long time9 = System.currentTimeMillis();
-//			log.info("process get redis cost:"+(time9- time8)+" ms");
 			
 			if(dmpJson == null){
 				//處理info資訊
+				
+				
+				
+				
 				JSONObject hadoopData =  ((JSONObject)jsonObjOrg.get("data"));
 				hadoopData.put("record_date", recordDate);
 				for (EnumDataKeyInfo enumDataKeyInfo : EnumDataKeyInfo.values()) {
@@ -200,11 +176,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				classifyArray.clear();
 				classifyArray.add(redisClassify);
 				kafkaDmpMap.put(reducerMapKey.toString(), jsonObjOrg);
-//				redisTemplate.opsForValue().set(reducerMapKey.toString(), jsonObjOrg);
-//				redisTemplate.expire(reducerMapKey.toString(), 1, TimeUnit.HOURS);
-//				redisKeySet.add(reducerMapKey.toString());
 			}else{
-//				long time5 = System.currentTimeMillis();
 				redisKeySet.add(reducerMapKey.toString());
 				JSONObject hadoopDataOrg = ((JSONObject)jsonObjOrg.get("data"));
 				JSONObject hadoopDataRedis =  ((JSONObject)dmpJson.get("data"));
@@ -238,11 +210,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 						}
 					}
 				}
-//				long time6 = System.currentTimeMillis();
-//				log.info("process hadoopDataRedis cost:"+(time6- time5)+" ms");
 				
 				//計算clssify
-//				long time3 = System.currentTimeMillis();
 				JSONArray redisClassifyArray = (JSONArray) hadoopDataRedis.get("classify");
 				JSONArray orgClassifyArray = (JSONArray) hadoopDataOrg.get("classify");
 				for (Object object : orgClassifyArray) {
@@ -259,22 +228,27 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 						}
 					}
 				}
-//				long time4 = System.currentTimeMillis();
-//				log.info("process clssify cost:"+(time4- time3)+" ms");
 				kafkaDmpMap.put(reducerMapKey.toString(), dmpJson);
-//				redisTemplate.opsForValue().set(reducerMapKey.toString(), dmpJson);
-				
 			}
 			//清空
 			reducerMapKey.setLength(0);
-//			times = times +1;
-//			long tim2 = System.currentTimeMillis();
-//			log.info("times:"+times+" process reduce cost:"+(tim2 - tim1)+" ms");
 		} catch (Throwable e) {
 			log.error(">>>>>> reduce error redis key:" +reducerMapKey.toString());
-//			redisTemplate.delete(reducerMapKey.toString());
 			reducerMapKey.setLength(0);
 			log.error("reduce error>>>>>> " +e);
+		}
+	}
+	
+	//更新redis中classify數字
+	public void resetCountClassify(String key,JSONArray redisClassify){
+		for (Object object : redisClassify) {
+			JSONObject classifyJson = (JSONObject) object;
+			Integer count = (Integer) classifyJson.get(key);
+			if(count != null){
+				count = count + 1;
+				classifyJson.put(key, count);
+				break;
+			}
 		}
 	}
 
@@ -289,24 +263,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				context.write(keyOut, valueOut);
 //				log.info(">>>>>>reduce Map send kafka:" + mapEntry.getValue().toString());
 			}
-//			for(Iterator<String> iterator = kafkaDmpMap.iterator(); iterator.hasNext();) {
-//				
-//			}
-//			for(Iterator<String> iterator = redisKeySet.iterator(); iterator.hasNext();) {
-//			    String redisKey = iterator.next();
-//			    String dmpData = ((JSONObject) redisTemplate.opsForValue().get(redisKey)).toString();
-//			    producer.send(new ProducerRecord<String, String>("dmp_log_prd", "", dmpData));
-//			    redisTemplate.delete(redisKey);
-//			    iterator.remove();
-//			}
 			producer.close();
-//			long end = System.currentTimeMillis();
-//			log.info("total cost:"+(end - start) +" ms");
 		} catch (Throwable e) {
-//			for(Iterator<String> iterator = redisKeySet.iterator(); iterator.hasNext();) {
-//				String redisKey = iterator.next(); 
-//				redisTemplate.delete(redisKey);
-//			}
 			log.error("reduce cleanup error>>>>>> " + e);
 		}
 	}
