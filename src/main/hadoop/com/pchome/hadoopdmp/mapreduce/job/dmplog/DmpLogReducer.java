@@ -129,7 +129,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	@Override
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
 		try {
-			long tim1 = System.currentTimeMillis();
+//			long tim1 = System.currentTimeMillis();
 			String data = mapperKey.toString();
 //			log.info(">>>>>> reduce start : " + data);
 			JSONObject jsonObjOrg = (net.minidev.json.JSONObject)jsonParser.parse(data);
@@ -249,9 +249,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			}
 			//清空
 			reducerMapKey.setLength(0);
-			times = times +1;
-			long tim2 = System.currentTimeMillis();
-			log.info("times:"+times+" process reduce cost:"+(tim2 - tim1)+" ms");
+//			times = times +1;
+//			long tim2 = System.currentTimeMillis();
+//			log.info("times:"+times+" process reduce cost:"+(tim2 - tim1)+" ms");
 		} catch (Throwable e) {
 			log.error(">>>>>> reduce error redis key:" +reducerMapKey.toString());
 //			redisTemplate.delete(reducerMapKey.toString());
@@ -270,8 +270,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			    iterator.remove();
 			}
 			producer.close();
-			long end = System.currentTimeMillis();
-			log.info("total cost:"+(end - start) +" ms");
+//			long end = System.currentTimeMillis();
+//			log.info("total cost:"+(end - start) +" ms");
 		} catch (Throwable e) {
 			for(Iterator<String> iterator = redisKeySet.iterator(); iterator.hasNext();) {
 				String redisKey = iterator.next(); 
