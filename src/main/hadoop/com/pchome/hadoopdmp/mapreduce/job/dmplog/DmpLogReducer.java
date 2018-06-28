@@ -1,14 +1,12 @@
 package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
@@ -19,8 +17,6 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.mvel2.optimizers.impl.refl.nodes.ArrayLength;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -74,6 +70,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	
 	public long start;
 	
+	public long times;
+	
 	JSONParser jsonParser = null;
 	
 	public RedisTemplate<String, Object> redisTemplate;
@@ -108,6 +106,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			producer = new KafkaProducer<String, String>(props);
 			redisKeySet = new HashSet<String>();
 			start = System.currentTimeMillis();
+			times = 0;
 			jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
 		} catch (Throwable e) {
 			log.error("reduce setup error>>>>>> " +e);
@@ -248,15 +247,14 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				redisTemplate.opsForValue().set(reducerMapKey.toString(), dmpJson);
 				
 			}
-//			System.out.println(redisTemplate.opsForValue().get(reducerMapKey.toString()));
-			
 			//清空
 			reducerMapKey.setLength(0);
+			times = times +1;
 			long tim2 = System.currentTimeMillis();
-			log.info("process reduce cost:"+(tim2 - tim1)+" ms");
+			log.info("times:"+times+" process reduce cost:"+(tim2 - tim1)+" ms");
 		} catch (Throwable e) {
-			log.error(">>>>>> reduce error delete redis key:" +reducerMapKey.toString());
-			redisTemplate.delete(reducerMapKey.toString());
+			log.error(">>>>>> reduce error redis key:" +reducerMapKey.toString());
+//			redisTemplate.delete(reducerMapKey.toString());
 			reducerMapKey.setLength(0);
 			log.error("reduce error>>>>>> " +e);
 		}
@@ -264,14 +262,11 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	public void cleanup(Context context) {
 		try {
-			log.info(">>>>>>>>>>>>>>>redisKeySet:"+redisKeySet.size());
 			for(Iterator<String> iterator = redisKeySet.iterator(); iterator.hasNext();) {
 			    String redisKey = iterator.next();
 			    String dmpData = ((JSONObject) redisTemplate.opsForValue().get(redisKey)).toString();
 			    producer.send(new ProducerRecord<String, String>("dmp_log_prd", "", dmpData));
 			    redisTemplate.delete(redisKey);
-//				keyOut.set(redisKey);
-//				context.write(keyOut, valueOut);
 			    iterator.remove();
 			}
 			producer.close();
@@ -301,22 +296,23 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		
 		
 		RedisTemplate<String, Object> redisTemplate = (RedisTemplate<String, Object>) ctx.getBean("redisTemplate");
+		System.out.println(redisTemplate.opsForValue().get("kdcl_null_d9228b87-bc6d-4e23-a4e6-0d7563380c7e"));
+//		redisTemplate.delete("kdcl_null_c014b82c-65c3-4e59-88ac-825152412307");
+//		List<String> a = new ArrayList<>();
+//		a.add("a");
+//		a.add("b");
+//		a.add("c");
+//		
 		
-		System.out.println(redisTemplate.opsForValue().get("kdcl_null_c014b82c-65c3-4e59-88ac-825152412307"));
-		
-		redisTemplate.delete("kdcl_null_c014b82c-65c3-4e59-88ac-825152412307");
-		
-		List<String> a = new ArrayList<>();
-		a.add("a");
-		a.add("b");
-		a.add("c");
-		
-		
-		
-		
-		System.out.println(a);
-		
-		
+//		StringBuffer f = new StringBuffer();
+//		f.append("ALEX");
+//		
+//		
+//		String c = f.toString();
+//		
+//		f.setLength(0);
+//		
+//		System.out.println(c);
 		
 //		RedisTemplate<String, Object> redisTemplate = (RedisTemplate<String, Object>) ctx.getBean("redisTemplate");
 ////		redisTemplate.opsForValue().set("alex", "123");
