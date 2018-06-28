@@ -204,7 +204,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //				redisTemplate.expire(reducerMapKey.toString(), 1, TimeUnit.HOURS);
 //				redisKeySet.add(reducerMapKey.toString());
 			}else{
-				long time5 = System.currentTimeMillis();
+//				long time5 = System.currentTimeMillis();
 				redisKeySet.add(reducerMapKey.toString());
 				JSONObject hadoopDataOrg = ((JSONObject)jsonObjOrg.get("data"));
 				JSONObject hadoopDataRedis =  ((JSONObject)dmpJson.get("data"));
