@@ -262,7 +262,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			}
 			//清空
 			reducerMapKey.setLength(0);
-//			times = times +1;
+			times = times +1;
 			long tim2 = System.currentTimeMillis();
 			log.info("times:"+times+" process reduce cost:"+(tim2 - tim1)+" ms");
 		} catch (Throwable e) {
