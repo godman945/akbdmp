@@ -130,12 +130,10 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			
 			JSONObject dmpJson = kafkaDmpMap.get(reducerMapKey.toString());
 			
+			
+			
 			if(dmpJson == null){
 				//處理info資訊
-				
-				
-				
-				
 				JSONObject hadoopData =  ((JSONObject)jsonObjOrg.get("data"));
 				hadoopData.put("record_date", recordDate);
 				for (EnumDataKeyInfo enumDataKeyInfo : EnumDataKeyInfo.values()) {
@@ -151,6 +149,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					array.add(infoJson);
 					hadoopData.put(enumDataKeyInfo.toString(), array);
 				}
+				
 				//處理classify資訊
 				JSONArray classifyArray = (JSONArray) hadoopData.get("classify");
 				JSONObject redisClassify = new JSONObject();
