@@ -96,9 +96,8 @@ public class AdController extends BaseController {
 			String mapKey = redisCallmapKey+key;
 			String fcKey = redisCallfcKey+key;
 			String classKey = redisClassKey+key;
-			
-			//map不存在key則呼叫kafka建立redis key反之只取redis key
-			redisTemplate.opsForValue().get(mapKey);
+//			map不存在key則呼叫kafka建立redis key反之只取redis key
+//			redisTemplate.opsForValue().get(mapKey);
 			if(redisTemplate.opsForValue().get(mapKey) == null){
 				kafkaUtil.sendMessage(dmpApiTopic, "", key);
 				redisTemplate.opsForValue().set(redisCallmapKey+key, key, 1,TimeUnit.DAYS);

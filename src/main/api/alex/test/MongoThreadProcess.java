@@ -4,7 +4,6 @@ import java.util.concurrent.Callable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.data.mongodb.core.MongoOperations;
 
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
@@ -13,7 +12,6 @@ import com.mongodb.DBObject;
 
 public class MongoThreadProcess implements Callable<Integer> {
 
-	private MongoOperations mongoOperations; 
 	private int start;
 	private int end;
 	private DBCursor cursor;
@@ -21,7 +19,6 @@ public class MongoThreadProcess implements Callable<Integer> {
 	Log log = LogFactory.getLog(MongoThreadProcess.class);
 	
 	public MongoThreadProcess(int start,int end,DBCursor cursor,DBCollection dBCollection) {
-		this.mongoOperations = mongoOperations;
 		this.start = start;
 		this.end = end;
 		this.cursor = cursor;
@@ -37,6 +34,8 @@ public class MongoThreadProcess implements Callable<Integer> {
 				DBObject a = cursor.next();
 				if(this.dBCollection.findOne(a) != null){
 					System.out.println(Thread.currentThread().getName()+ " delete " +a.get("_id"));
+					
+					System.out.println("process count:"+count+" "+Thread.currentThread().getName()+ " delete " +a.get("_id"));
 					this.dBCollection.remove(a);
 					count = count + 1;
 				}
