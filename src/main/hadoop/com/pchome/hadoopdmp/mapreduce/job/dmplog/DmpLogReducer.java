@@ -252,26 +252,33 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			long tim2 = System.currentTimeMillis();
 			log.info("process reduce cost:"+(tim2 - tim1)+" ms");
 		} catch (Throwable e) {
+			log.error(">>>>>> reduce error delete redis key:" +reducerMapKey.toString());
+			redisTemplate.delete(reducerMapKey.toString());
+			reducerMapKey.setLength(0);
 			log.error("reduce error>>>>>> " +e);
 		}
-
 	}
 
 	public void cleanup(Context context) {
 		try {
+			log.info(">>>>>>>>>>>>>>>redisKeyList:"+redisKeyList.size());
 			for(Iterator<String> iterator = redisKeyList.iterator(); iterator.hasNext();) {
 			    String redisKey = iterator.next();
 			    String dmpData = ((JSONObject) redisTemplate.opsForValue().get(redisKey)).toString();
 			    producer.send(new ProducerRecord<String, String>("dmp_log_prd", "", dmpData));
 			    redisTemplate.delete(redisKey);
-				keyOut.set(redisKey);
-				context.write(keyOut, valueOut);
+//				keyOut.set(redisKey);
+//				context.write(keyOut, valueOut);
 			    iterator.remove();
 			}
 			producer.close();
 			long end = System.currentTimeMillis();
 			log.info("total cost:"+(end - start) +" ms");
 		} catch (Throwable e) {
+			for(Iterator<String> iterator = redisKeyList.iterator(); iterator.hasNext();) {
+				String redisKey = iterator.next(); 
+				redisTemplate.delete(redisKey);
+			}
 			log.error("reduce cleanup error>>>>>> " + e);
 		}
 	}
