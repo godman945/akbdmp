@@ -2,6 +2,7 @@ package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +70,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	public StringBuffer reducerMapKey = new StringBuffer();
 	
 //	public List<String> redisKeyList = new ArrayList<>();
-	public List<String> redisKeyList = null;
+	public Set<String> redisKeySet = null;
 	
 	public long start;
 	
@@ -105,7 +106,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			props.put("key.serializer", kafkaKeySerializer);
 			props.put("value.serializer", kafkaValueSerializer);
 			producer = new KafkaProducer<String, String>(props);
-			redisKeyList = new ArrayList<>();
+			redisKeySet = new HashSet<String>();
 			start = System.currentTimeMillis();
 			jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
 		} catch (Throwable e) {
@@ -190,7 +191,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				classifyArray.add(redisClassify);
 				redisTemplate.opsForValue().set(reducerMapKey.toString(), jsonObjOrg);
 				redisTemplate.expire(reducerMapKey.toString(), 1, TimeUnit.HOURS);
-				redisKeyList.add(reducerMapKey.toString());
+				redisKeySet.add(reducerMapKey.toString());
 			}else{
 				JSONObject hadoopDataOrg = ((JSONObject)jsonObjOrg.get("data"));
 				JSONObject hadoopDataRedis =  ((JSONObject)dmpJson.get("data"));
@@ -261,8 +262,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	public void cleanup(Context context) {
 		try {
-			log.info(">>>>>>>>>>>>>>>redisKeyList:"+redisKeyList.size());
-			for(Iterator<String> iterator = redisKeyList.iterator(); iterator.hasNext();) {
+			log.info(">>>>>>>>>>>>>>>redisKeyList:"+redisKeySet.size());
+			for(Iterator<String> iterator = redisKeySet.iterator(); iterator.hasNext();) {
 			    String redisKey = iterator.next();
 			    String dmpData = ((JSONObject) redisTemplate.opsForValue().get(redisKey)).toString();
 			    producer.send(new ProducerRecord<String, String>("dmp_log_prd", "", dmpData));
@@ -275,7 +276,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			long end = System.currentTimeMillis();
 			log.info("total cost:"+(end - start) +" ms");
 		} catch (Throwable e) {
-			for(Iterator<String> iterator = redisKeyList.iterator(); iterator.hasNext();) {
+			for(Iterator<String> iterator = redisKeySet.iterator(); iterator.hasNext();) {
 				String redisKey = iterator.next(); 
 				redisTemplate.delete(redisKey);
 			}
