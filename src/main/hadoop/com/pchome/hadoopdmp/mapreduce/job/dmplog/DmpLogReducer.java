@@ -137,7 +137,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			String dmpSource = (String) jsonObjOrg.get("org_source");
 			String dmpMemid =  (String) ((JSONObject) jsonObjOrg.get("key")).get("memid");
 			String dmpUuid = (String) ((JSONObject) jsonObjOrg.get("key")).get("uuid");
-			
+			String recordDate = jsonObjOrg.getAsString("record_date");
 			//建立map key
 			reducerMapKey.append(dmpSource);
 			reducerMapKey.append("_");
@@ -151,6 +151,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			if(dmpJson == null){
 				//處理info資訊
 				JSONObject hadoopData =  ((JSONObject)jsonObjOrg.get("data"));
+				hadoopData.put("record_date", recordDate);
 				for (EnumDataKeyInfo enumDataKeyInfo : EnumDataKeyInfo.values()) {
 					JSONArray array = new JSONArray();
 					JSONObject infoJson = (JSONObject) hadoopData.get(enumDataKeyInfo.toString());
@@ -193,7 +194,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				redisKeySet.add(reducerMapKey.toString());
 			}else{
 				redisKeySet.add(reducerMapKey.toString());
-				log.info("add key:"+reducerMapKey.toString());
 				JSONObject hadoopDataOrg = ((JSONObject)jsonObjOrg.get("data"));
 				JSONObject hadoopDataRedis =  ((JSONObject)dmpJson.get("data"));
 				for (EnumDataKeyInfo enumDataKeyInfo : EnumDataKeyInfo.values()) {
