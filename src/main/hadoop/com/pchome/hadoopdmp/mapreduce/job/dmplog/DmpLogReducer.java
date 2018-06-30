@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 import java.util.Properties;
 import java.util.Set;
 
@@ -32,12 +33,12 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	private static Log log = LogFactory.getLog("DmpLogReducer");
 	
-	private final static String SYMBOL = String.valueOf(new char[] { 9, 31 });
-	
-	public static Map<String, Object> dmpLogMap = new HashMap<String, Object>();
+//	public static Map<String, Object> dmpLogMap = new HashMap<String, Object>();
 	
 	private Text keyOut = new Text();
+	
 	private Text valueOut = new Text();
+
 	public static String record_date;
 
 	private String kafkaMetadataBrokerlist;
@@ -62,6 +63,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 
 //	public StringBuffer reducerMapKey = new StringBuffer();
 	
+	public RedisTemplate<String, Object> redisTemplate = null;
+	
 	public Set<String> redisKeySet = null;
 	
 	public long start;
@@ -70,7 +73,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	
 	public int count;
 	
-	JSONParser jsonParser = null;
+	public JSONParser jsonParser = null;
+	
+	public String redisFountKey;
 	
 	public Map<String,JSONObject> kafkaDmpMap =null;
 	
@@ -80,7 +85,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		try {
 			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-//			this.redisTemplate = (RedisTemplate<String, Object>) ctx.getBean("redisTemplate");
+			this.redisTemplate = (RedisTemplate<String, Object>) ctx.getBean("redisTemplate");
 			this.kafkaMetadataBrokerlist = ctx.getEnvironment().getProperty("kafka.metadata.broker.list");
 			this.kafkaAcks = ctx.getEnvironment().getProperty("kafka.acks");
 			this.kafkaRetries = ctx.getEnvironment().getProperty("kafka.retries");
@@ -107,6 +112,15 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			times = 0;
 			jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
 			kafkaDmpMap = new HashMap<String,JSONObject>();
+			
+			String recordDate = context.getConfiguration().get("job.date");
+			String env = context.getConfiguration().get("spring.profiles.active");
+			if(env.equals("prd")){
+				redisFountKey = "prd:dmp:classify:"+recordDate+":";
+			}else{
+				redisFountKey = "stg:dmp:classify:"+recordDate+":";
+			}
+			
 		} catch (Throwable e) {
 			log.error("reduce setup error>>>>>> " +e);
 		}
@@ -259,21 +273,52 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		}
 	}
 
+	
+	public void processRedisMap(Map.Entry mapEntry,Map<String,Integer> redisClassifyMap){
+		JSONArray classifyArray = (JSONArray) ((Map)((Map)mapEntry.getValue()).get("data")).get("classify");
+		for (Object object : classifyArray) {
+			JSONObject obj = (JSONObject) object;
+			for (Entry<String, Object> set : obj.entrySet()) {
+				String redisKey = this.redisFountKey+set.getKey();
+				int redisCount = 0;
+				if(set.getValue().equals("null") || StringUtils.isBlank(set.getValue().toString())){
+					redisCount = 0;
+				}else{
+					redisCount = (Integer) set.getValue();
+				}
+				if(redisClassifyMap.containsKey(redisKey)){
+					int orgRedisCount = redisClassifyMap.get(redisKey);
+					int newRedisCount = redisCount + orgRedisCount;
+					redisClassifyMap.put(redisKey, newRedisCount);
+				}else{
+					redisClassifyMap.put(redisKey, redisCount);
+				}
+			}
+		}
+	}
+	
 	public void cleanup(Context context) {
 		try {
+			Map<String,Integer> redisClassifyMap = new HashMap<String, Integer>();
 			Iterator iterator = kafkaDmpMap.entrySet().iterator();
 			while (iterator.hasNext()) {
-				
 				count = count+1;
-				
 				Map.Entry mapEntry = (Map.Entry) iterator.next();
 				producer.send(new ProducerRecord<String, String>("dmp_log_prd", "", mapEntry.getValue().toString()));
-				
 				keyOut.set(mapEntry.getValue().toString());
 				context.write(keyOut, valueOut);
+				//處理redis
+				processRedisMap(mapEntry,redisClassifyMap);
 //				log.info(">>>>>>reduce Map send kafka:" + mapEntry.getValue().toString());
 			}
+			for (Entry<String, Integer> redisMap : redisClassifyMap.entrySet()) {
+				String redisKey = redisMap.getKey();
+				int count = redisMap.getValue();
+				redisTemplate.opsForValue().increment(redisKey, count);
+				redisTemplate.expire(redisKey, 4, TimeUnit.DAYS);
+			}
 			log.info(">>>>>>reduce count:" + count);
+			log.info(">>>>>>redisClassifyMap:" + redisClassifyMap);
 			producer.close();
 		} catch (Throwable e) {
 			log.error("reduce cleanup error>>>>>> " + e);
