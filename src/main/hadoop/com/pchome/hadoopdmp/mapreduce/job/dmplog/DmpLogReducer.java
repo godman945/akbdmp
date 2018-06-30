@@ -281,7 +281,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			JSONObject obj = (JSONObject) object;
 			for (Entry<String, Object> set : obj.entrySet()) {
 				String redisKey = this.redisFountKey+set.getKey();
-				int redisCount = 0;
+				int redisCount = (int) set.getValue();
 				if(redisClassifyMap.containsKey(redisKey)){
 					int orgRedisCount = redisClassifyMap.get(redisKey);
 					int newRedisCount = redisCount + orgRedisCount;
