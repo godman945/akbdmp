@@ -280,10 +280,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		for (Object object : classifyArray) {
 			JSONObject obj = (JSONObject) object;
 			for (Entry<String, Object> set : obj.entrySet()) {
-				if(set.getKey().equals("all_kdcl_log_time_info_Y")){
-					log.info(">>>>>>>>>>>>>>key:"+set.getKey());
-					log.info(">>>>>>>>>>>>>>count:"+set.getValue());
-				}
 				String redisKey = this.redisFountKey+set.getKey();
 				int redisCount = 0;
 				if(redisClassifyMap.containsKey(redisKey)){
@@ -314,6 +310,11 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			for (Entry<String, Integer> redisMap : redisClassifyMap.entrySet()) {
 				String redisKey = redisMap.getKey();
 				int count = redisMap.getValue();
+				
+				if(redisKey.equals("stg:dmp:classify:2018-06-30:all_kdcl_log_time_info_Y")){
+					log.info(">>>>>>>>>>>>>>redisKey:"+redisKey);
+					log.info(">>>>>>>>>>>>>>count:"+count);
+				}
 				redisTemplate.opsForValue().increment(redisKey, count);
 				redisTemplate.expire(redisKey, 4, TimeUnit.DAYS);
 			}
