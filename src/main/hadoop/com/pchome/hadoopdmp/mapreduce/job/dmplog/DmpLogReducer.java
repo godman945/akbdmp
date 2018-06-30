@@ -301,8 +301,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				count = count+1;
 				Map.Entry mapEntry = (Map.Entry) iterator.next();
 				producer.send(new ProducerRecord<String, String>("dmp_log_prd", "", mapEntry.getValue().toString()));
-				keyOut.set(mapEntry.getValue().toString());
-				context.write(keyOut, valueOut);
+//				keyOut.set(mapEntry.getValue().toString());
+//				context.write(keyOut, valueOut);
 				//處理redis
 				processRedisMap(mapEntry,redisClassifyMap);
 //				log.info(">>>>>>reduce Map send kafka:" + mapEntry.getValue().toString());
@@ -313,7 +313,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			for (Entry<String, Integer> redisMap : redisClassifyMap.entrySet()) {
 				String redisKey = redisMap.getKey();
 				int count = redisMap.getValue();
-				
 				redisTemplate.opsForValue().increment(redisKey, count);
 				redisTemplate.expire(redisKey, 4, TimeUnit.DAYS);
 			}
