@@ -311,10 +311,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				String redisKey = redisMap.getKey();
 				int count = redisMap.getValue();
 				
-				if(redisKey.equals("stg:dmp:classify:2018-06-30:all_kdcl_log_time_info_Y")){
-					log.info(">>>>>>>>>>>>>>redisKey:"+redisKey);
-					log.info(">>>>>>>>>>>>>>count:"+count);
-				}
 				redisTemplate.opsForValue().increment(redisKey, count);
 				redisTemplate.expire(redisKey, 4, TimeUnit.DAYS);
 			}
