@@ -307,6 +307,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				processRedisMap(mapEntry,redisClassifyMap);
 //				log.info(">>>>>>reduce Map send kafka:" + mapEntry.getValue().toString());
 			}
+			
+			log.info(">>>>>>write Redis>>>>>");
+			
 			for (Entry<String, Integer> redisMap : redisClassifyMap.entrySet()) {
 				String redisKey = redisMap.getKey();
 				int count = redisMap.getValue();
