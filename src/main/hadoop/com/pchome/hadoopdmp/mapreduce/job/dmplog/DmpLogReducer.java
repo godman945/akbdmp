@@ -274,18 +274,18 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	}
 
 	
+	@SuppressWarnings("rawtypes")
 	public void processRedisMap(Map.Entry mapEntry,Map<String,Integer> redisClassifyMap){
 		JSONArray classifyArray = (JSONArray) ((Map)((Map)mapEntry.getValue()).get("data")).get("classify");
 		for (Object object : classifyArray) {
 			JSONObject obj = (JSONObject) object;
 			for (Entry<String, Object> set : obj.entrySet()) {
+				if(set.getKey().equals("all_kdcl_log_time_info_Y")){
+					log.info(">>>>>>>>>>>>>>key:"+set.getKey());
+					log.info(">>>>>>>>>>>>>>count:"+set.getValue());
+				}
 				String redisKey = this.redisFountKey+set.getKey();
 				int redisCount = 0;
-				if(set.getValue().equals("null") || StringUtils.isBlank(set.getValue().toString())){
-					redisCount = 0;
-				}else{
-					redisCount = (Integer) set.getValue();
-				}
 				if(redisClassifyMap.containsKey(redisKey)){
 					int orgRedisCount = redisClassifyMap.get(redisKey);
 					int newRedisCount = redisCount + orgRedisCount;
