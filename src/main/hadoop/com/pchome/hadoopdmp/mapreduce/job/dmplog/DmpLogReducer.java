@@ -399,8 +399,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			
 			log.info(">>>>>>reduce count:" + count);
 			log.info(">>>>>>cleanup redisClassifyMap:" + reduceDmpMap);
-			
-			for (Entry<String, Integer> redisMap : redisClassifyMap.entrySet()) {
+			for (Entry<String, Integer> redisMap : reduceDmpMap.entrySet()) {
 				String redisKey = redisMap.getKey();
 				int count = redisMap.getValue();
 				redisTemplate.opsForValue().increment(redisKey, count);
