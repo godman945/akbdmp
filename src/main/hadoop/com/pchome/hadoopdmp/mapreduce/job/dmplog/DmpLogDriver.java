@@ -86,7 +86,7 @@ public class DmpLogDriver {
 			jobConf.set("mapred.map.tasks.speculative.execution","true");
 			jobConf.set("mapred.reduce.tasks.speculative.execution","true");
 //			//JVM
-			jobConf.set("mapred.child.java.opts", "-Xmx2048M");
+			jobConf.set("mapred.child.java.opts", "-Xmx4048M");
 //		    jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 			
 			jobConf.set("spring.profiles.active", env);
@@ -107,7 +107,7 @@ public class DmpLogDriver {
 			conf.set("mapred.reduce.tasks.speculative.execution","true");
 			
 			//JVM
-			conf.set("mapred.child.java.opts", "-Xmx2048M");
+			conf.set("mapred.child.java.opts", "-Xmx4048M");
 //			conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 			
 			
