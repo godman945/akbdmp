@@ -115,19 +115,18 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
 			kafkaDmpMap = new HashMap<String,JSONObject>();
 			
-			//Classify Map
-			reduceDmpMap = new HashMap<String,Integer>();
-			for (EnumClassifyKeyInfo enumClassifyKeyInfo : EnumClassifyKeyInfo.values()) {
-				reduceDmpMap.put(redisFountKey+enumClassifyKeyInfo.toString(), 0);
-			}
-			
-			
 			String recordDate = context.getConfiguration().get("job.date");
 			String env = context.getConfiguration().get("spring.profiles.active");
 			if(env.equals("prd")){
 				redisFountKey = "prd:dmp:classify:"+recordDate+":";
 			}else{
 				redisFountKey = "stg:dmp:classify:"+recordDate+":";
+			}
+			
+			//Classify Map
+			reduceDmpMap = new HashMap<String,Integer>();
+			for (EnumClassifyKeyInfo enumClassifyKeyInfo : EnumClassifyKeyInfo.values()) {
+				reduceDmpMap.put(redisFountKey+enumClassifyKeyInfo.toString(), 0);
 			}
 			
 		} catch (Throwable e) {
