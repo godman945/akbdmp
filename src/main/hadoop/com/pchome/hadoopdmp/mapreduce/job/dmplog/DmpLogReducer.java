@@ -374,13 +374,16 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			log.info(">>>>>>write Redis>>>>>");
 			
 			
+			//temp mark
+//			for (Entry<String, Integer> redisMap : reduceDmpMap.entrySet()) {
+//				String redisKey =redisMap.getKey();
+//				int count = redisMap.getValue();
+//				redisTemplate.opsForValue().increment(redisKey, count);
+//				redisTemplate.expire(redisKey, 4, TimeUnit.DAYS);
+//			}
+			//temp mark
 			
-			for (Entry<String, Integer> redisMap : reduceDmpMap.entrySet()) {
-				String redisKey =redisMap.getKey();
-				int count = redisMap.getValue();
-				redisTemplate.opsForValue().increment(redisKey, count);
-				redisTemplate.expire(redisKey, 4, TimeUnit.DAYS);
-			}
+			
 			
 //			for (Entry<String, Integer> redisMap : redisClassifyMap.entrySet()) {
 //				String redisKey = redisMap.getKey();
