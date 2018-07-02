@@ -395,8 +395,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //				redisTemplate.opsForValue().increment(redisKey, count);
 //				redisTemplate.expire(redisKey, 4, TimeUnit.DAYS);
 //			}
-			
-			
 			log.info(">>>>>>reduce count:" + count);
 			log.info(">>>>>>cleanup redisClassifyMap:" + reduceDmpMap);
 			for (Entry<String, Integer> redisMap : reduceDmpMap.entrySet()) {
@@ -405,7 +403,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				redisTemplate.opsForValue().increment(redisKey, count);
 				redisTemplate.expire(redisKey, 4, TimeUnit.DAYS);
 			}
-			
 			producer.close();
 		} catch (Throwable e) {
 			log.error("reduce cleanup error>>>>>> " + e);
