@@ -315,7 +315,10 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		} catch (Throwable e) {
 //			log.error(">>>>>> reduce error redis key:" +reducerMapKey.toString());
 //			reducerMapKey.setLength(0);
+			
 			log.error("reduce error>>>>>> " +e);
+			log.info(">>>>>>reduce error>> redisClassifyMap:" + reduceDmpMap);
+			
 		}
 	}
 	
@@ -354,6 +357,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	
 	public void cleanup(Context context) {
 		try {
+			log.info(">>>>>>write cleanup>>>>>");
+			
 			Map<String,Integer> redisClassifyMap = new HashMap<String, Integer>();
 			Iterator iterator = kafkaDmpMap.entrySet().iterator();
 			while (iterator.hasNext()) {
