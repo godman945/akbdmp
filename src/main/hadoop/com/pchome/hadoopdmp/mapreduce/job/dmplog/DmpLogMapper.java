@@ -170,7 +170,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					return;
 				}
 				
-				if ( (StringUtils.equals(values[1], "null")) && (StringUtils.equals(values[2], "null")) ){
+				if ( (StringUtils.equals(values[1], "null")||StringUtils.isBlank(values[1]) ) 
+						&& (StringUtils.equals(values[2], "null")||StringUtils.isBlank(values[2])) ){
 					return;
 				}
 				
