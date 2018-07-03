@@ -1,12 +1,10 @@
 package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -35,8 +33,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	private static Log log = LogFactory.getLog("DmpLogReducer");
 	
-//	public static Map<String, Object> dmpLogMap = new HashMap<String, Object>();
-	
 	private Text keyOut = new Text();
 	
 	private Text valueOut = new Text();
@@ -63,15 +59,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	public static Producer<String, String> producer = null;
 
-//	public StringBuffer reducerMapKey = new StringBuffer();
-	
 	public RedisTemplate<String, Object> redisTemplate = null;
-	
-	public Set<String> redisKeySet = null;
-	
-	public long start;
-	
-	public long times;
 	
 	public int count;
 	
@@ -81,7 +69,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	
 	public Map<String,JSONObject> kafkaDmpMap =null;
 	
-	public Map<String,Integer> reduceDmpMap =null;
+	public Map<String,Integer> redisClassifyMap =null;
 	
 	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
@@ -111,9 +99,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			props.put("key.serializer", kafkaKeySerializer);
 			props.put("value.serializer", kafkaValueSerializer);
 			producer = new KafkaProducer<String, String>(props);
-			redisKeySet = new HashSet<String>();
-			start = System.currentTimeMillis();
-			times = 0;
 			jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
 			kafkaDmpMap = new HashMap<String,JSONObject>();
 			
@@ -125,10 +110,10 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				redisFountKey = "stg:dmp:classify:"+recordDate+":";
 			}
 			
-			//Classify Map
-			reduceDmpMap = new HashMap<String,Integer>();
+			//Classify Map 
+			redisClassifyMap = new HashMap<String,Integer>();
 			for (EnumClassifyKeyInfo enumClassifyKeyInfo : EnumClassifyKeyInfo.values()) {
-				reduceDmpMap.put(redisFountKey+enumClassifyKeyInfo.toString(), 0);
+				redisClassifyMap.put(redisFountKey + enumClassifyKeyInfo.toString(), 0);
 			}
 			
 		} catch (Throwable e) {
@@ -157,8 +142,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			
 			JSONObject dmpJson = kafkaDmpMap.get(reducerMapKey.toString());
 			
-			
-			
 			if(dmpJson == null){
 				// 處理info資訊
 				JSONObject hadoopData = ((JSONObject) jsonObjOrg.get("data"));
@@ -177,83 +160,50 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					array.add(infoJson);
 					hadoopData.put(enumDataKeyInfo.toString(), array);
 				}
-
-//				// 處理classify資訊
-//				JSONArray classifyArrayOrg = (JSONArray) hadoopData.get("classify");
-//				JSONArray classifyArray = new JSONArray();
-//				JSONObject classifyObj = new JSONObject();
-//				for (Object object : classifyArrayOrg) {
-//					JSONObject classifyJson = (JSONObject) object;
-//					for (Entry<String, Object> entry : classifyJson.entrySet()) {
-//						String key = (String) entry.getKey();
-//						String nKey = key + "_" + "N";
-//						String yKey = key + "_" + "Y";
-//						String type = (String) entry.getValue();
-//						if (StringUtils.equals(type, "null")) {
-//							classifyObj.put(yKey, 0);
-//							classifyObj.put(nKey, 0);
-//						} else if (type.equals("Y")) {
-//							classifyObj.put(yKey, 1);
-//							classifyObj.put(nKey, 0);
-//						} else if (type.equals("N")) {
-//							classifyObj.put(yKey, 0);
-//							classifyObj.put(nKey, 1);
-//						}
-//					}
-//					
-//				}
-//				classifyArrayOrg.clear();
-//				classifyArray.add(classifyObj);
-//				hadoopData.put("classify", classifyArray);
-//				jsonObjOrg.put("data", hadoopData);
 				
-				//new
+				// 處理classify資訊
 				JSONArray classifyArrayOrg = (JSONArray) hadoopData.get("classify");
 				for (Object object : classifyArrayOrg) {
 					JSONObject classifyJson = (JSONObject) object;
 					for (Entry<String, Object> entry : classifyJson.entrySet()) {
 						String key = (String) entry.getKey();
-						
 						key = redisFountKey + key;
-						
 						String type = (String) entry.getValue();
 						if (StringUtils.equals(type, "null")) {
 							break;
-						} else{
+						} else{	
+							//type值是Y或N
 							key = key +"_"+type;
 						} 
-						int classifyValue = reduceDmpMap.get(key);
+						int classifyValue = redisClassifyMap.get(key);
 						classifyValue = classifyValue + 1;
-						reduceDmpMap.put(key, classifyValue);
+						redisClassifyMap.put(key, classifyValue);
 					}
 				}
-				//new
-				
-				
 				kafkaDmpMap.put(reducerMapKey.toString(), jsonObjOrg);
+				
 			}else{
 				JSONObject hadoopDataOrg = ((JSONObject) jsonObjOrg.get("data"));
-				JSONObject hadoopDataRedis = ((JSONObject) dmpJson.get("data"));
+				JSONObject hadoopDataDmpMap = ((JSONObject) dmpJson.get("data"));
 				for (EnumDataKeyInfo enumDataKeyInfo : EnumDataKeyInfo.values()) {
 					String source = ((JSONObject) hadoopDataOrg.get(enumDataKeyInfo.toString())).getAsString("source");
 					String value = ((JSONObject) hadoopDataOrg.get(enumDataKeyInfo.toString())).getAsString("value");
 					// 此次log資訊來源及值都不為null才取出資料進行判斷是否加1邏輯
-					if ((StringUtils.isNotBlank(source) && !source.equals("null"))
-							&& (StringUtils.isNotBlank(value) && !value.equals("null"))) {
+					if ( (StringUtils.isNotBlank(source) && !source.equals("null"))
+							&& (StringUtils.isNotBlank(value) && !value.equals("null")) ) {
 						boolean newDetail = true;
-						JSONArray array = (JSONArray) hadoopDataRedis.get(enumDataKeyInfo.toString());
+						JSONArray array = (JSONArray) hadoopDataDmpMap.get(enumDataKeyInfo.toString());
 						for (Object object : array) {
 							JSONObject infoJson = (JSONObject) object;
-							String redisSource = infoJson.getAsString("source");
-							String redisValue = infoJson.getAsString("value");
-							// 判斷log與redis內容是否一致
-							if (source.equals(redisSource) && value.equals(redisValue)) {
+							String kafkaDmpMapSource = infoJson.getAsString("source");
+							String kafkaDmpMapValue = infoJson.getAsString("value");
+							// 判斷log的source與value內容皆與kafkaDmpMap裡的內容一致，則該筆info的day_count+1
+							if (source.equals(kafkaDmpMapSource) && value.equals(kafkaDmpMapValue)) {
 								int dayCount = (int) infoJson.get("day_count");
 								dayCount = dayCount + 1;
 								infoJson.put("day_count", dayCount);
 								newDetail = false;
 							}
-
 						}
 						// 比對不到加入info所屬陣列
 						if (newDetail) {
@@ -266,100 +216,37 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					}
 				}
 
-				
-				
-//				// 計算clssify
-//				JSONArray redisClassifyArray = (JSONArray) hadoopDataRedis.get("classify");
-//				JSONArray orgClassifyArray = (JSONArray) hadoopDataOrg.get("classify");
-//				for (Object object : orgClassifyArray) {
-//					JSONObject orgClassifyJson = (JSONObject) object;
-//					for (Entry<String, Object> entry : orgClassifyJson.entrySet()) {
-//						String key = (String) entry.getKey();
-//						String nKey = key + "_" + "N";
-//						String yKey = key + "_" + "Y";
-//						String type = (String) entry.getValue();
-//						if (type.equals("Y")) {
-//							resetCountClassify(yKey, redisClassifyArray);
-//						} else if (type.equals("N")) {
-//							resetCountClassify(nKey, redisClassifyArray);
-//						}
-//					}
-//				}
-				
-				//new
+				// 計算clssify
 				JSONArray orgClassifyArray = (JSONArray) hadoopDataOrg.get("classify");
 				for (Object object : orgClassifyArray) {
 					JSONObject orgClassifyJson = (JSONObject) object;
 					for (Entry<String, Object> entry : orgClassifyJson.entrySet()) {
 						String key = (String) entry.getKey();
-						
 						key = redisFountKey + key; 
-						
 						String type = (String) entry.getValue();
 						if (StringUtils.equals(type, "null")) {
 							break;
 						} else{
+							//type值是Y或N
 							key = key +"_"+type;
 						} 
-						int classifyValue = reduceDmpMap.get(key);
+						int classifyValue = redisClassifyMap.get(key);
 						classifyValue = classifyValue + 1;
-						reduceDmpMap.put(key, classifyValue);
+						redisClassifyMap.put(key, classifyValue);
 					}
 				}
-				//new
-				
-				
-				
 				kafkaDmpMap.put(reducerMapKey.toString(), dmpJson);
 			}
-			//清空
-//			reducerMapKey.setLength(0);
 		} catch (Throwable e) {
 //			log.error(">>>>>> reduce error redis key:" +reducerMapKey.toString());
-//			reducerMapKey.setLength(0);
-			
 			log.error("reduce error>>>>>> " +e);
-			log.info(">>>>>>reduce error>> redisClassifyMap:" + reduceDmpMap);
-			
-		}
-	}
-	
-	//更新redis中classify數字
-	public void resetCountClassify(String key,JSONArray redisClassify){
-		for (Object object : redisClassify) {
-			JSONObject classifyJson = (JSONObject) object;
-			Integer count = (Integer) classifyJson.get(key);
-			if(count != null){
-				count = count + 1;
-				classifyJson.put(key, count);
-				break;
-			}
-		}
-	}
-
-	
-	@SuppressWarnings("rawtypes")
-	public void processRedisMap(Map.Entry mapEntry,Map<String,Integer> redisClassifyMap){
-		JSONArray classifyArray = (JSONArray) ((Map)((Map)mapEntry.getValue()).get("data")).get("classify");
-		for (Object object : classifyArray) {
-			JSONObject obj = (JSONObject) object;
-			for (Entry<String, Object> set : obj.entrySet()) {
-				String redisKey = this.redisFountKey+set.getKey();
-				int redisCount = (int) set.getValue();
-				if(redisClassifyMap.containsKey(redisKey)){
-					int orgRedisCount = redisClassifyMap.get(redisKey);
-					int newRedisCount = redisCount + orgRedisCount;
-					redisClassifyMap.put(redisKey, newRedisCount);
-				}else{
-					redisClassifyMap.put(redisKey, redisCount);
-				}
-			}
+			log.error(">>>>>>reduce error>> redisClassifyMap:" + redisClassifyMap);
 		}
 	}
 	
 	public void cleanup(Context context) {
 		try {
-			log.info(">>>>>>write cleanup>>>>>");
+//			log.info(">>>>>>write cleanup>>>>>");
 			
 			Map<String,Integer> redisClassifyMap = new HashMap<String, Integer>();
 			Iterator iterator = kafkaDmpMap.entrySet().iterator();
@@ -369,45 +256,22 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("dmp_log_prd", "", mapEntry.getValue().toString()));
 				while (!f.isDone()) {
 				}
-//				keyOut.set(mapEntry.getValue().toString());
-//				context.write(keyOut, valueOut);
-				
-				
-//				//處理redis
-//				processRedisMap(mapEntry,redisClassifyMap);
-				
-				
+				keyOut.set(mapEntry.getValue().toString());
+				context.write(keyOut, valueOut);
 //				log.info(">>>>>>reduce Map send kafka:" + mapEntry.getValue().toString());
 			}
-			log.info(">>>>>>write Redis>>>>>");
-			
-			
-			//temp mark
-//			for (Entry<String, Integer> redisMap : reduceDmpMap.entrySet()) {
-//				String redisKey =redisMap.getKey();
-//				int count = redisMap.getValue();
-//				redisTemplate.opsForValue().increment(redisKey, count);
-//				redisTemplate.expire(redisKey, 4, TimeUnit.DAYS);
-//			}
-			//temp mark
-			
-			
-			
-//			for (Entry<String, Integer> redisMap : redisClassifyMap.entrySet()) {
-//				String redisKey = redisMap.getKey();
-//				int count = redisMap.getValue();
-//				redisTemplate.opsForValue().increment(redisKey, count);
-//				redisTemplate.expire(redisKey, 4, TimeUnit.DAYS);
-//			}
+			producer.close();
 			log.info(">>>>>>reduce count:" + count);
-			log.info(">>>>>>cleanup redisClassifyMap:" + reduceDmpMap);
-			for (Entry<String, Integer> redisMap : reduceDmpMap.entrySet()) {
+			
+			log.info(">>>>>>write clssify to Redis>>>>>");
+			log.info(">>>>>>cleanup redisClassifyMap:" + redisClassifyMap);
+			for (Entry<String, Integer> redisMap : redisClassifyMap.entrySet()) {
 				String redisKey = redisMap.getKey();
 				int count = redisMap.getValue();
 				redisTemplate.opsForValue().increment(redisKey, count);
 				redisTemplate.expire(redisKey, 4, TimeUnit.DAYS);
 			}
-			producer.close();
+			
 		} catch (Throwable e) {
 			log.error("reduce cleanup error>>>>>> " + e);
 		}
