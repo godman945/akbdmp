@@ -185,7 +185,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				dmpDataBean.setAdClass(values[15]);
 				dmpDataBean.setAge("null");
 				dmpDataBean.setSex("null");
-				log.info(">>>>>> kdcl rawdata:" + valueStr);
+//				log.info(">>>>>> kdcl rawdata:" + valueStr);
 			}else if( valueStr.indexOf(campaignSymbol) > -1 ){	//Campaign log raw data格式
 				// values[0] memid			會員帳號
 				// values[1] uuid			通用唯一識別碼	
@@ -226,7 +226,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				 }else{
 					 dmpDataBean.setSex(values[5]);
 				 }
-				 log.info(">>>>>> campaige rawdata:" + valueStr);
+//				 log.info(">>>>>> campaige rawdata:" + valueStr);
 			}else{
 				 return;
 			}
@@ -275,7 +275,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			//轉成發kafka字串
 			String sendKafkaJson = dmpBeanToKafkaJson(dmpLogBeanResult);
 			
-			log.info(">>>>>> Mapper write key:" + sendKafkaJson.toString());
+//			log.info(">>>>>> Mapper write key:" + sendKafkaJson.toString());
 			
 			keyOut.set(sendKafkaJson.toString());
 			context.write(keyOut, valueOut);
