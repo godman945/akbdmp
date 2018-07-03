@@ -1,4 +1,4 @@
-package com.pchome.akbdmp.adm.job.quartz;
+package com.pchome.akbdmp.cron.job;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -18,8 +18,8 @@ import com.pchome.akbdmp.mysql.db.service.dmp.IKdclStatisticsSourceService;
 import com.pchome.akbdmp.spring.config.bean.allbeanscan.SpringAllConfig;
 
 @Component
-public class JobTest {
-	Logger log = Logger.getLogger(JobTest.class);
+public class KdclStatisticsSourceJob {
+	Logger log = Logger.getLogger(KdclStatisticsSourceJob.class);
 	
 	@Autowired
 	IKdclStatisticsSourceService kdclStatisticsSourceService; 
@@ -36,16 +36,11 @@ public class JobTest {
 		try{
 			log.info("****************** WRITE HADOOP DMP JOB START ******************");
 			Calendar calendar = Calendar.getInstance();
-//			calendar.add(Calendar.DAY_OF_MONTH, -1);
+			calendar.add(Calendar.DAY_OF_MONTH, -1);
 			String radisRecodeDate = sdf.format(calendar.getTime());
-			
-			radisRecodeDate = "2018-05-22";
-			
 			kdclStatisticsSourceService.deleteDmpCountByDate(radisRecodeDate);
 			Date date = new Date();
-			
 			for (String key : dmpRadisKey) {
-				radisRecodeDate = "2018-07-03";
 				String radisKey = key.replace("[DAY]", radisRecodeDate);
 				for (DmpLogKeyEnum dmpLogKey : DmpLogKeyEnum.values()) {
 					if(radisKey.contains(dmpLogKey.getKey())){
@@ -58,7 +53,6 @@ public class JobTest {
 							count = 0;
 						}
 						log.info(radisKey+" count:"+count);
-						radisRecodeDate = "2018-05-22";
 						saveDmpLog(count,idType,serviceType,behavior,classify,radisRecodeDate,date);
 						break;
 					}
@@ -70,7 +64,6 @@ public class JobTest {
 		}
 		log.info("****************** WRITE HADOOP DMP JOB START END ******************");
 	}
-	
 	
 	private void saveDmpLog(int count,String idType,String serviceType,String behavior,String classify,String radisRecodeDate,Date date) throws Exception{
 		KdclStatisticsSource KdclStatisticsSource = new KdclStatisticsSource();
@@ -99,8 +92,8 @@ public class JobTest {
 			System.out.println("spring.profiles.active:" + args[0]);
 			System.setProperty("spring.profiles.active", args[0]);
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
-			JobTest jobTest = (JobTest) ctx.getBean(JobTest.class);
-			jobTest.excute();
+			KdclStatisticsSourceJob kdclStatisticsSourceJob = (KdclStatisticsSourceJob) ctx.getBean(KdclStatisticsSourceJob.class);
+			kdclStatisticsSourceJob.excute();
 		}
 	}
 
