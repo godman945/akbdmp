@@ -248,7 +248,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		try {
 //			log.info(">>>>>>write cleanup>>>>>");
 			
-			Map<String,Integer> redisClassifyMap = new HashMap<String, Integer>();
 			Iterator iterator = kafkaDmpMap.entrySet().iterator();
 			while (iterator.hasNext()) {
 				count = count+1;
