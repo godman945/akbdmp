@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
@@ -17,6 +18,7 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -364,7 +366,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			while (iterator.hasNext()) {
 				count = count+1;
 				Map.Entry mapEntry = (Map.Entry) iterator.next();
-				producer.send(new ProducerRecord<String, String>("dmp_log_prd", "", mapEntry.getValue().toString()));
+				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("dmp_log_prd", "", mapEntry.getValue().toString()));
+				while (!f.isDone()) {
+				}
 //				keyOut.set(mapEntry.getValue().toString());
 //				context.write(keyOut, valueOut);
 				
