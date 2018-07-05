@@ -248,11 +248,20 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		try {
 //			log.info(">>>>>>write cleanup>>>>>");
 			
+			String kafkaTopic;
+			String env = context.getConfiguration().get("spring.profiles.active");
+			if(env.equals("prd")){
+				kafkaTopic = "dmp_log_prd";
+			}else{
+				kafkaTopic = "dmp_log_stg";
+			}
+			log.info(">>>>>>kafkaTopic: " + kafkaTopic);
+			
 			Iterator iterator = kafkaDmpMap.entrySet().iterator();
 			while (iterator.hasNext()) {
 				count = count+1;
 				Map.Entry mapEntry = (Map.Entry) iterator.next();
-				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>("dmp_log_prd", "", mapEntry.getValue().toString()));
+				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>(kafkaTopic, "", mapEntry.getValue().toString()));
 				while (!f.isDone()) {
 				}
 				keyOut.set(mapEntry.getValue().toString());
@@ -278,8 +287,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	
 	public static void main(String[] args) throws Exception {
-		System.setProperty("spring.profiles.active", "local");
-		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//		System.setProperty("spring.profiles.active", "local");
+//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+		
 //		DmpLogReducer dmpLogReducer = ctx.getBean(DmpLogReducer.class);
 ////		String a ="{'key':{'memid':'null','uuid':'c014b82c-65c3-4e59-88ac-825152412307'},'data':{'category_info':{'source':'null','value':'null'},'sex_info':{'source':'null','value':'null'},'age_info':{'source':'null','value':'null'},'area_country_info':{'source':'ip','value':'Taiwan'},'area_city_info':{'source':'ip','value':'Chengde'},'device_info':{'source':'user-agent','value':'MOBILE'},'device_phone_info':{'source':'user-agent','value':'APPLE'},'device_os_info':{'source':'user-agent','value':'IOS'},'device_browser_info':{'source':'user-agent','value':'Mobile Safari'},'time_info':{'source':'datetime','value':'17'},'classify':[{'memid_kdcl_log_personal_info_api':'null'},{'all_kdcl_log_personal_info':'N'},{'all_kdcl_log_class_ad_click':'null'},{'all_kdcl_log_class_24h_url':'null'},{'all_kdcl_log_class_ruten_url':'null'},{'all_kdcl_log_area_info':'Y'},{'all_kdcl_log_device_info':'Y'},{'all_kdcl_log_time_info':'Y'}]},'url':'','ip':'101.139.176.46','record_date':'2018-06-11','org_source':'kdcl','date_time':'2018-05-22 17:07:44','user_agent':'Mozilla\\5.0 (iPhone; CPU iPhone OS 11_3_1 like Mac OS X) AppleWebKit\\604.1.34 (KHTML, like Gecko) GSA\\37.1.171590344 Mobile\\15E302 Safari\\604.1','ad_class':'0017024822530000','record_count':658}";
 //		String a ="{'key':{'memid':'null','uuid':'c014b82c-65c3-4e59-88ac-825152412307'},'data':{'category_info':{'source':24h,'value':7997979979},'sex_info':{'source':'null','value':'null'},'age_info':{'source':'null','value':'null'},'area_country_info':{'source':'ip','value':'Taiwan'},'area_city_info':{'source':'ip','value':'Chengde'},'device_info':{'source':'user-agent','value':'MOBILE'},'device_phone_info':{'source':'user-agent','value':'APPLE'},'device_os_info':{'source':'user-agent','value':'IOS'},'device_browser_info':{'source':'user-agent','value':'Mobile Safari'},'time_info':{'source':'datetime','value':'17'},'classify':[{'memid_kdcl_log_personal_info_api':'null'},{'all_kdcl_log_personal_info':'N'},{'all_kdcl_log_class_ad_click':'null'},{'all_kdcl_log_class_24h_url':'null'},{'all_kdcl_log_class_ruten_url':'null'},{'all_kdcl_log_area_info':'Y'},{'all_kdcl_log_device_info':'Y'},{'all_kdcl_log_time_info':'Y'}]},'url':'http:\\\\www.gaomei.com.tw\\openhours\','ip':'101.139.176.46','record_date':'2018-06-11','org_source':'kdcl','date_time':'2018-05-22 17:05:53','user_agent':'Mozilla\\5.0 (iPhone; CPU iPhone OS 11_3_1 like Mac OS X) AppleWebKit\\604.1.34 (KHTML, like Gecko) GSA\\37.1.171590344 Mobile\\15E302 Safari\\604.1','ad_class':'0017024822530000','record_count':287}";
@@ -290,8 +300,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //		}	
 		
 		
-		RedisTemplate<String, Object> redisTemplate = (RedisTemplate<String, Object>) ctx.getBean("redisTemplate");
-		System.out.println(redisTemplate.opsForValue().get("kdcl_null_d9228b87-bc6d-4e23-a4e6-0d7563380c7e"));
+//		RedisTemplate<String, Object> redisTemplate = (RedisTemplate<String, Object>) ctx.getBean("redisTemplate");
+//		System.out.println(redisTemplate.opsForValue().get("kdcl_null_d9228b87-bc6d-4e23-a4e6-0d7563380c7e"));
+		
 //		redisTemplate.delete("kdcl_null_c014b82c-65c3-4e59-88ac-825152412307");
 //		List<String> a = new ArrayList<>();
 //		a.add("a");

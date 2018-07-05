@@ -173,55 +173,54 @@ public class DmpLogDriver {
 				log.info("file Input Path : " + alllogOpRange);
 				
 			} else if (timeType.equals("hour")) {
-				//測試機前2小時版本--上線前拿掉
-				String timePath  = "";
-				Calendar calendar2 = Calendar.getInstance();
-				if( (calendar2.get(calendar2.HOUR_OF_DAY) >= 0) &&  (calendar2.get(calendar2.HOUR_OF_DAY) <= 1) ){
-					calendar2.add(calendar2.DAY_OF_MONTH, -1); 
-					
-					if (calendar2.get(calendar2.HOUR_OF_DAY) == 0){
-						timePath = sdf1.format(calendar2.getTime())+"/22";
-					}
-					
-					if (calendar2.get(calendar2.HOUR_OF_DAY) == 1){
-						timePath = sdf1.format(calendar2.getTime())+"/23";
-					}
-				}else {
-					if(String.valueOf(calendar2.get(calendar2.HOUR_OF_DAY) - 2).length() < 2){
-						timePath = sdf1.format(calendar2.getTime()) +"/"+ "0"+(calendar.get(calendar2.HOUR_OF_DAY) - 2);
-					}else{
-						timePath = sdf1.format(calendar2.getTime()) +"/"+ (calendar.get(calendar2.HOUR_OF_DAY) - 2);
-					}
-				}
-				//測試機前2小時版本--上線前拿掉
-				
-				
-				
-				
-				
-//				//正式機前1小時版本
+//				//測試機前2小時版本--上線前拿掉
 //				String timePath  = "";
 //				Calendar calendar2 = Calendar.getInstance();
-//				if(calendar2.get(calendar2.HOUR_OF_DAY) == 0){
+//				if( (calendar2.get(calendar2.HOUR_OF_DAY) >= 0) &&  (calendar2.get(calendar2.HOUR_OF_DAY) <= 1) ){
 //					calendar2.add(calendar2.DAY_OF_MONTH, -1); 
-//					timePath = sdf1.format(calendar2.getTime())+"/23";
+//					
+//					if (calendar2.get(calendar2.HOUR_OF_DAY) == 0){
+//						timePath = sdf1.format(calendar2.getTime())+"/22";
+//					}
+//					
+//					if (calendar2.get(calendar2.HOUR_OF_DAY) == 1){
+//						timePath = sdf1.format(calendar2.getTime())+"/23";
+//					}
 //				}else {
-//					if(String.valueOf(calendar2.get(calendar2.HOUR_OF_DAY) - 1).length() < 2){
-//						timePath = sdf1.format(calendar2.getTime()) +"/"+ "0"+(calendar.get(calendar2.HOUR_OF_DAY) - 1);
+//					if(String.valueOf(calendar2.get(calendar2.HOUR_OF_DAY) - 2).length() < 2){
+//						timePath = sdf1.format(calendar2.getTime()) +"/"+ "0"+(calendar.get(calendar2.HOUR_OF_DAY) - 2);
 //					}else{
-//						timePath = sdf1.format(calendar2.getTime()) +"/"+ (calendar.get(calendar2.HOUR_OF_DAY) - 1);
+//						timePath = sdf1.format(calendar2.getTime()) +"/"+ (calendar.get(calendar2.HOUR_OF_DAY) - 2);
 //					}
 //				}
-//				//正式機前1小時版本
+//				//測試機前2小時版本--上線前拿掉
+				
+				
+				//正式機前1小時版本
+				String timePath  = "";
+				Calendar calendar2 = Calendar.getInstance();
+				if(calendar2.get(calendar2.HOUR_OF_DAY) == 0){
+					calendar2.add(calendar2.DAY_OF_MONTH, -1); 
+					timePath = sdf1.format(calendar2.getTime())+"/23";
+				}else {
+					if(String.valueOf(calendar2.get(calendar2.HOUR_OF_DAY) - 1).length() < 2){
+						timePath = sdf1.format(calendar2.getTime()) +"/"+ "0"+(calendar.get(calendar2.HOUR_OF_DAY) - 1);
+					}else{
+						timePath = sdf1.format(calendar2.getTime()) +"/"+ (calendar.get(calendar2.HOUR_OF_DAY) - 1);
+					}
+				}
+				//正式機前1小時版本
+				
+				
 				
 				
 				//輸入
 //				String logInputPath = "/home/webuser/dmp/testData/category/tmp";	//自己做測試資料			  		
 //				String logInputPath = "/home/webuser/dmp/testData/category";				//測試資料(有ruten、24h的資料)
 //				String logInputPath = "/home/webuser/analyzer/storedata/alllog/2018-05-22";			//測試path
-//				String logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-22/17";			//11點200萬筆資料  
+				String logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-22/17";			//11點200萬筆資料  
 //				String logInputPath = "/home/webuser/dmp/testData/category/20180522";			//測試path整天log
-				String logInputPath = akbPathAllLog + timePath;  //正式path  /home/webuser/akb/storedata/alllog/2018-05-15/05    	//正式path
+//				String logInputPath = akbPathAllLog + timePath;  //正式path  /home/webuser/akb/storedata/alllog/2018-05-15/05    	//正式path
 				
 //				String logInputPath = "/home/webuser/dmp/testData/category/20180522";
 				
