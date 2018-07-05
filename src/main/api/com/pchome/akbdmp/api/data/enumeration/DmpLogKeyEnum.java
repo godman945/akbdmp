@@ -27,6 +27,10 @@ public enum DmpLogKeyEnum {
 	CAMP_AREA_N("all_camp_log_area_info_N","camp_log","area_info","N","all"),
 	CAMP_DEVICE_Y("all_camp_log_device_info_Y","camp_log","device_info","Y","all"),
 	CAMP_DEVICE_N("all_camp_log_device_info_N","camp_log","device_info","N","all"),
+	CAMP_24_Y("all_camp_log_class_24h_url_Y","camp_log","class_24h_url","Y","all"),
+	CAMP_24_N("all_camp_log_class_24h_url_N","camp_log","class_24h_url","N","all"),
+	CAMP_RUTEN_Y("all_camp_log_class_ruten_url_Y","camp_log","class_ruten_url","Y","all"),
+	CAMP_RUTEN_N("all_camp_log_class_ruten_url_N","camp_log","class_ruten_url","N","all"),
 	CAMP_TIME_Y("all_camp_log_time_info_Y","camp_log","time_info","Y","all"),
 	CAMP_TIME_N("all_camp_log_time_info_N","camp_log","time_info","N","all");
 	
