@@ -314,7 +314,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //				context.write(keyOut, valueOut);
 //				log.info(">>>>>>reduce Map send kafka:" + mapEntry.getValue().toString());
 				
-				
+				time = time + 1;
+				long time1  =System.currentTimeMillis();
 				String tupleStr = mapEntry.getValue().toString();
 				JSONObject json = (JSONObject) this.jsonParser.parse(tupleStr);
 				String memid = "";
@@ -335,7 +336,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				if(StringUtils.isNotBlank(uuid) && !uuid.equals("null")){
 					process(json,uuid,"uuid");
 				}
-				
+				long time2  =System.currentTimeMillis();
+				log.info("total process count:"+time+" cost:"+(time2-time1)+"ms");
 				
 				
 				
