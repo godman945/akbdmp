@@ -94,7 +94,7 @@ public class ThirdAdClassComponent {
 				
 			}else{
 				
-				log.info(">>>>>>dbObject== null >>>>>>>>>>>>>>>");
+				log.info(">>>>>>dbObject== null >>>>>>>>>>>>>>>"+urlToMd5);
 				
 				//第3層資料沒有在mongo中，打爬蟲get標題
 				String prodTitle = "";
@@ -108,6 +108,7 @@ public class ThirdAdClassComponent {
 					log.info(">>>>>> url title : "+prodTitle);
 				}
 				
+				log.info(">>>>>>dbObject== null >>>>>>url>>>>>>>>>"+url);
 				//mark
 	//			prodTitle = "【良匠工具】電鑽鐵板剪(適用於切割鋁板,銅板,不鏽鋼板...)";
 				//mark
