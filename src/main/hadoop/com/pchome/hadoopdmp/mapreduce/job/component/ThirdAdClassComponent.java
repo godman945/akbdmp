@@ -51,15 +51,11 @@ public class ThirdAdClassComponent {
 			String categorySource = dmpDataBean.getCategorySource();	//取得第1、2層分類來源
 			String url = dmpDataBean.getUrl();
 			
-			log.info(">>>>>> category>>> "+category);
-			log.info(">>>>>> categorySource>>> "+categorySource);
-			log.info(">>>>>> url>>> "+url);
-			
 			if (!category.matches("\\d{16}")) {
 				return dmpDataBean;
 			}
 			
-			if ( (!StringUtils.equals("24h", categorySource)) ||  (!StringUtils.equals("ruten", categorySource)) ){
+			if ( (!StringUtils.equals("24h", categorySource)) &&  (!StringUtils.equals("ruten", categorySource)) ){
 				return dmpDataBean;
 			}
 			
@@ -75,6 +71,11 @@ public class ThirdAdClassComponent {
 				log.info(">>>>>> 不符合 url:------- " + url.toString());
 				return dmpDataBean;
 			}
+			
+			log.info(">>>>>> category>>> "+category);
+			log.info(">>>>>> categorySource>>> "+categorySource);
+			log.info(">>>>>> url>>> "+url);
+			
 			
 			
 			//url 作 md5 編碼當 key
