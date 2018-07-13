@@ -42,7 +42,9 @@ public class ThirdAdClassComponent {
 	
 	// 處理第3分類元件
 	public DmpLogBean processThirdAdclassInfo(DmpLogBean dmpDataBean ,DB mongoOperations) throws Exception {
-		try{	
+		try{
+			log.info(">>>>>> processThirdAdclassInfo");
+			
 			this.dBCollection= mongoOperations.getCollection("class_url_third_adclass");
 			
 			String category = dmpDataBean.getCategory();				//取得第1、2層分類
@@ -67,7 +69,7 @@ public class ThirdAdClassComponent {
 			}
 			Matcher m = p.matcher(url.toString());
 			if (!m.find()) {
-				System.out.println(("不符合 url:------- " + url.toString()));
+				log.info(">>>>>> 不符合 url:------- " + url.toString());
 				return dmpDataBean;
 			}
 			
