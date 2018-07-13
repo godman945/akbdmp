@@ -65,7 +65,6 @@ public class ThirdAdClassComponent {
 				p = Pattern.compile("https://24h.pchome.com.tw/prod/");
 			}else if( StringUtils.equals("ruten", categorySource) ){
 				p = Pattern.compile("http://goods.ruten.com.tw/item/show+\\?\\d+");
-				
 			}
 			Matcher m = p.matcher(url.toString());
 			if (!m.find()) {
