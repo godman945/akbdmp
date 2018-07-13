@@ -278,7 +278,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			}
 			
 			//依據第1、2分類，處理第3分類
-			dmpLogBeanResult = thirdAdClassComponent.processPersonalInfo(dmpLogBeanResult, mongoOrgOperations);
+			dmpLogBeanResult = thirdAdClassComponent.processThirdAdclassInfo(dmpLogBeanResult, mongoOrgOperations);
 			
 			
 			//個資處理元件
