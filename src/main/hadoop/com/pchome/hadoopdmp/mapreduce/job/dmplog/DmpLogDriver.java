@@ -274,7 +274,8 @@ public class DmpLogDriver {
 					hdfsPath + "/home/webuser/dmp/alex/log4j.xml",
 					hdfsPath + "/home/webuser/dmp/jobfile/DMP_24h_category.csv",
 					hdfsPath + "/home/webuser/dmp/jobfile/DMP_Ruten_category.csv",
-					hdfsPath + "/home/webuser/dmp/jobfile/GeoLite2-City.mmdb"
+					hdfsPath + "/home/webuser/dmp/jobfile/GeoLite2-City.mmdb",
+					hdfsPath + "/home/webuser/dmp/jobfile/ThirdAdClassTable.txt"
 			};
 			for (String filePath : filePaths) {
 				DistributedCache.addCacheFile(new URI(filePath), job.getConfiguration());

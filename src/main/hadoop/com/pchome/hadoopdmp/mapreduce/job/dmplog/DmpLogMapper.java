@@ -1,6 +1,8 @@
 package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.net.InetAddress;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -19,8 +21,8 @@ import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.json.JSONObject;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
@@ -32,6 +34,7 @@ import com.pchome.hadoopdmp.mapreduce.job.component.DateTimeComponent;
 import com.pchome.hadoopdmp.mapreduce.job.component.DeviceComponent;
 import com.pchome.hadoopdmp.mapreduce.job.component.GeoIpComponent;
 import com.pchome.hadoopdmp.mapreduce.job.component.PersonalInfoComponent;
+import com.pchome.hadoopdmp.mapreduce.job.component.ThirdAdClassComponent;
 import com.pchome.hadoopdmp.mapreduce.job.factory.ACategoryLogData;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryCodeBean;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryLogFactory;
@@ -58,6 +61,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();				 //分類個資表
 	public static List<CategoryCodeBean> category24hBeanList = new ArrayList<CategoryCodeBean>();				 //24H分類表
 	public static List<CategoryRutenCodeBean> categoryRutenBeanList = new ArrayList<CategoryRutenCodeBean>();	 //Ruten分類表
+	public static ArrayList<String> prodFileList = new ArrayList<String>();	 								     //24h、ruten第3分類對照表
+	public static ThirdAdClassComponent thirdAdClassComponent = new ThirdAdClassComponent();
 	public static PersonalInfoComponent personalInfoComponent = new PersonalInfoComponent();
 	public static GeoIpComponent geoIpComponent = new GeoIpComponent();
 	public static DateTimeComponent dateTimeComponent = new DateTimeComponent();
@@ -140,6 +145,15 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			//IP轉城市
 			File database = new File(path[5].toString());
 			reader = new DatabaseReader.Builder(database).build();  
+			
+			
+			//load 24h、ruten第3分類對照表(ThirdAdClassTable.txt)
+			Path thirdAdClassPath = Paths.get(path[6].toString());
+			charset = Charset.forName("UTF-8");
+			List<String> thirdAdClassLines = Files.readAllLines(thirdAdClassPath, charset);
+			for (String line : thirdAdClassLines) {
+				prodFileList.add(line);
+			}
 			
 		} catch (Exception e) {
 			log.error("Mapper setup error>>>>>> " +e);
@@ -262,6 +276,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				dmpLogBeanResult.setClass24hUrlClassify("null");
 				dmpLogBeanResult.setClassRutenUrlClassify("null");
 			}
+			
+			//依據第1、2分類，處理第3分類
+			dmpLogBeanResult = thirdAdClassComponent.processPersonalInfo(dmpLogBeanResult, mongoOrgOperations);
+			
 			
 			//個資處理元件
 			dmpLogBeanResult = personalInfoComponent.processPersonalInfo(dmpLogBeanResult, mongoOrgOperations);

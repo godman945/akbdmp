@@ -124,7 +124,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	@Override
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
 		try {
-//			log.info(">>>>>> reduce start : " + data);
+			log.info(">>>>>> reduce start : " + mapperKey.toString());
 			String data = mapperKey.toString();
 			JSONObject jsonObjOrg = (net.minidev.json.JSONObject)jsonParser.parse(data);
 			
@@ -245,44 +245,44 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	}
 	
 	public void cleanup(Context context) {
-		try {
-//			log.info(">>>>>>write cleanup>>>>>");
-			
-			String kafkaTopic;
-			String env = context.getConfiguration().get("spring.profiles.active");
-			if(env.equals("prd")){
-				kafkaTopic = "dmp_log_prd";
-			}else{
-				kafkaTopic = "dmp_log_stg";
-			}
-			log.info(">>>>>>kafkaTopic: " + kafkaTopic);
-			
-			Iterator iterator = kafkaDmpMap.entrySet().iterator();
-			while (iterator.hasNext()) {
-				count = count+1;
-				Map.Entry mapEntry = (Map.Entry) iterator.next();
-				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>(kafkaTopic, "", mapEntry.getValue().toString()));
-				while (!f.isDone()) {
-				}
-				keyOut.set(mapEntry.getValue().toString());
-				context.write(keyOut, valueOut);
-//				log.info(">>>>>>reduce Map send kafka:" + mapEntry.getValue().toString());
-			}
-			producer.close();
-			log.info(">>>>>>reduce count:" + count);
-			
-			log.info(">>>>>>write clssify to Redis>>>>>");
-			log.info(">>>>>>cleanup redisClassifyMap:" + redisClassifyMap);
-			for (Entry<String, Integer> redisMap : redisClassifyMap.entrySet()) {
-				String redisKey = redisMap.getKey();
-				int count = redisMap.getValue();
-				redisTemplate.opsForValue().increment(redisKey, count);
-				redisTemplate.expire(redisKey, 4, TimeUnit.DAYS);
-			}
-			
-		} catch (Throwable e) {
-			log.error("reduce cleanup error>>>>>> " + e);
-		}
+//		try {
+////			log.info(">>>>>>write cleanup>>>>>");
+//			
+//			String kafkaTopic;
+//			String env = context.getConfiguration().get("spring.profiles.active");
+//			if(env.equals("prd")){
+//				kafkaTopic = "dmp_log_prd";
+//			}else{
+//				kafkaTopic = "dmp_log_stg";
+//			}
+//			log.info(">>>>>>kafkaTopic: " + kafkaTopic);
+//			
+//			Iterator iterator = kafkaDmpMap.entrySet().iterator();
+//			while (iterator.hasNext()) {
+//				count = count+1;
+//				Map.Entry mapEntry = (Map.Entry) iterator.next();
+//				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>(kafkaTopic, "", mapEntry.getValue().toString()));
+//				while (!f.isDone()) {
+//				}
+//				keyOut.set(mapEntry.getValue().toString());
+//				context.write(keyOut, valueOut);
+////				log.info(">>>>>>reduce Map send kafka:" + mapEntry.getValue().toString());
+//			}
+//			producer.close();
+//			log.info(">>>>>>reduce count:" + count);
+//			
+//			log.info(">>>>>>write clssify to Redis>>>>>");
+//			log.info(">>>>>>cleanup redisClassifyMap:" + redisClassifyMap);
+//			for (Entry<String, Integer> redisMap : redisClassifyMap.entrySet()) {
+//				String redisKey = redisMap.getKey();
+//				int count = redisMap.getValue();
+//				redisTemplate.opsForValue().increment(redisKey, count);
+//				redisTemplate.expire(redisKey, 4, TimeUnit.DAYS);
+//			}
+//			
+//		} catch (Throwable e) {
+//			log.error("reduce cleanup error>>>>>> " + e);
+//		}
 	}
 
 	
