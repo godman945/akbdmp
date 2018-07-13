@@ -1,4 +1,4 @@
-package com.pchome.soft.util;
+package com.pchome.hadoopdmp.mapreduce.job.component;
 
 import java.io.BufferedReader;
 import java.io.IOException;

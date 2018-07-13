@@ -17,7 +17,6 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper;
 import com.pchome.hadoopdmp.mapreduce.job.factory.DmpLogBean;
-import com.pchome.soft.util.HttpUtil;
 
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
