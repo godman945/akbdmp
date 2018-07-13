@@ -93,16 +93,15 @@ public class ThirdAdClassComponent {
 			JSONParser jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
 			StringBuffer adCrawlerResult = HttpUtil.getInstance().doGet("http://pysvr.mypchome.com.tw/product/?url="+url);
 			JSONObject apiJsonObject = (net.minidev.json.JSONObject)jsonParser.parse(adCrawlerResult.toString());
-			System.out.println("網址: "+apiJsonObject);
 			JSONArray apiJsonAry = (JSONArray) apiJsonObject.get("products");
 			for (Object object : apiJsonAry) {
 				JSONObject infoJson = (JSONObject) object;
 				prodTitle = infoJson.getAsString("title");
-				System.out.println("網址 title : "+prodTitle);
+				log.info(">>>>>> url title : "+prodTitle);
 			}
 			
 			//mark
-			prodTitle = "【良匠工具】電鑽鐵板剪(適用於切割鋁板,銅板,不鏽鋼板...)";
+//			prodTitle = "【良匠工具】電鑽鐵板剪(適用於切割鋁板,銅板,不鏽鋼板...)";
 			//mark
 			
 			//比對title是否有命中第3分類對照表(ThirdAdClassTable.txt)
