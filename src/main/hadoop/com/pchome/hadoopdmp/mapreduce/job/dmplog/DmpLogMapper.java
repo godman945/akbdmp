@@ -349,6 +349,13 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		categoryInfoJson.put("value", dmpLogBeanResult.getCategory());
 		categoryInfoJson.put("source", dmpLogBeanResult.getCategorySource());
 		
+		//prod_class_info
+				JSONObject prodClassInfoJson = new JSONObject();
+				prodClassInfoJson.put("value", dmpLogBeanResult.getProdClassInfo());
+				prodClassInfoJson.put("source","null");
+		
+		
+		
 		//sex_info
 		JSONObject sexInfoJson = new JSONObject();
 		sexInfoJson.put("value", dmpLogBeanResult.getSex());
@@ -486,6 +493,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		//dataJson
 		JSONObject dataJson = new JSONObject();
 		dataJson.put("category_info", categoryInfoJson);
+		
+		dataJson.put("prod_class_info", prodClassInfoJson);
+		
+		
 		dataJson.put("sex_info", sexInfoJson);
 		dataJson.put("age_info", ageInfoJson);
 		dataJson.put("area_country_info", areaCountryInfoJson );
@@ -508,6 +519,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		sendKafkaJson.put("date_time", dmpLogBeanResult.getDateTime());
 		sendKafkaJson.put("user_agent", dmpLogBeanResult.getUserAgent() );
 		sendKafkaJson.put("ad_class", dmpLogBeanResult.getAdClass());
+		
+		sendKafkaJson.put("md5Url", dmpLogBeanResult.getUrlToMd5());
+		
 		sendKafkaJson.put("record_count", recordCount);
 		
 		return sendKafkaJson.toString();
