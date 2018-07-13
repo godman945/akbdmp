@@ -51,6 +51,10 @@ public class ThirdAdClassComponent {
 			String categorySource = dmpDataBean.getCategorySource();	//取得第1、2層分類來源
 			String url = dmpDataBean.getUrl();
 			
+			log.info(">>>>>> category>>> "+category);
+			log.info(">>>>>> categorySource>>> "+categorySource);
+			log.info(">>>>>> url>>> "+url);
+			
 			if (!category.matches("\\d{16}")) {
 				return dmpDataBean;
 			}
