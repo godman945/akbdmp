@@ -1,18 +1,9 @@
 package com.pchome.hadoopdmp.mapreduce.job.component;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.math.BigInteger;
-import java.net.URL;
-import java.net.URLConnection;
 import java.security.MessageDigest;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,13 +11,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.jayway.jsonpath.JsonPath;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper;
-import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper.combinedValue;
 import com.pchome.hadoopdmp.mapreduce.job.factory.DmpLogBean;
 import com.pchome.soft.util.HttpUtil;
 
@@ -39,6 +28,7 @@ public class ThirdAdClassComponent {
 	Log log = LogFactory.getLog("thirdAdClassComponent");
 	
 	private DBCollection dBCollection;
+	public static HttpUtil HttpUtil;
 	
 	// 處理第3分類元件
 	public DmpLogBean processThirdAdclassInfo(DmpLogBean dmpDataBean ,DB mongoOperations) throws Exception {
@@ -106,6 +96,9 @@ public class ThirdAdClassComponent {
 				String prodTitle = "";
 				JSONParser jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
 				StringBuffer adCrawlerResult = HttpUtil.getInstance().doGet("http://pysvr.mypchome.com.tw/product/?url="+url);
+				
+				log.info(">>>>>>Crawler : "+"http://pysvr.mypchome.com.tw/product/?url="+url);
+				
 				JSONObject apiJsonObject = (net.minidev.json.JSONObject)jsonParser.parse(adCrawlerResult.toString());
 				JSONArray apiJsonAry = (JSONArray) apiJsonObject.get("products");
 				for (Object object : apiJsonAry) {
