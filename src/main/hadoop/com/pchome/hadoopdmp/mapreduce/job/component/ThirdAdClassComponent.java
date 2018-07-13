@@ -101,6 +101,10 @@ public class ThirdAdClassComponent {
 				System.out.println("網址 title : "+prodTitle);
 			}
 			
+			//mark
+			prodTitle = "【良匠工具】電鑽鐵板剪(適用於切割鋁板,銅板,不鏽鋼板...)";
+			//mark
+			
 			//比對title是否有命中第3分類對照表(ThirdAdClassTable.txt)
 			ArrayList<String> matchProdList = new ArrayList<String>();
 			for (String string : DmpLogMapper.prodFileList) {
