@@ -351,6 +351,7 @@ public class ThirdCategoryLogDriver {
 		ThirdCategoryLogDriver thirdCategoryLogDriver = (ThirdCategoryLogDriver) ctx.getBean(ThirdCategoryLogDriver.class);
 		thirdCategoryLogDriver.drive(args[0],args[1]);
 		log.info("====driver end====");
+		
 	}
 //
 }
