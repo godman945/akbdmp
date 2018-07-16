@@ -273,6 +273,10 @@ public class ThirdCategoryLogMapper extends Mapper<LongWritable, Text, Text, Tex
 			//紀錄日期
 			dmpLogBeanResult.setRecordDate(record_date);
 			
+			log.info(">>>>>>category:" + dmpLogBeanResult.getCategory());
+			
+			log.info(">>>>>>CategorySource:" + dmpLogBeanResult.getCategorySource());
+			
 			//傳至kafka的值只要是null或空字串，全部轉成字串null
 			dmpLogBeanResult = dmpBeanIntegrate(dmpLogBeanResult);
 			
