@@ -21,6 +21,8 @@ public class Ad24HLog extends ACategoryLogData {
 	private DBCollection dBCollection;
 	
 	public Object processCategory(DmpLogBean dmpDataBean, DB mongoOperations) throws Exception {
+		try {
+		
 		this.dBCollection= mongoOperations.getCollection("class_url");
 		
 		dmpDataBean.setSource("kdcl");
@@ -94,6 +96,10 @@ public class Ad24HLog extends ACategoryLogData {
 		dmpDataBean.setCategory(category);
 		dmpDataBean.setCategorySource(categorySource);
 		dmpDataBean.setClass24hUrlClassify(class24hUrlClassify);
+		
+		} catch (Exception e) {
+			log.error("24H category error>>>>>> " +e); 
+		}
 		
 		return dmpDataBean;
 	}
