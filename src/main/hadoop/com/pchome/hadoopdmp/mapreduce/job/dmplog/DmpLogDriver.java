@@ -111,19 +111,8 @@ public class DmpLogDriver {
 //			conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 			
 			
-			//測試前2小時-上線拿掉
-			if( (calendar.get(Calendar.HOUR_OF_DAY) == 0) || (calendar.get(Calendar.HOUR_OF_DAY) == 1) ){
-				calendar.add(Calendar.DAY_OF_MONTH, -1);
-				conf.set("job.date",sdf1.format(calendar.getTime()));
-				jobConf.set("job.date",sdf1.format(calendar.getTime()));
-			}else{
-				conf.set("job.date",sdf1.format(calendar.getTime()));
-				jobConf.set("job.date",sdf1.format(calendar.getTime()));
-			}
-			//測試前2小時-上線拿掉
-			
-//			//上線打開
-//			if(calendar.get(Calendar.HOUR_OF_DAY) == 0){
+//			//測試前2小時-上線拿掉
+//			if( (calendar.get(Calendar.HOUR_OF_DAY) == 0) || (calendar.get(Calendar.HOUR_OF_DAY) == 1) ){
 //				calendar.add(Calendar.DAY_OF_MONTH, -1);
 //				conf.set("job.date",sdf1.format(calendar.getTime()));
 //				jobConf.set("job.date",sdf1.format(calendar.getTime()));
@@ -131,6 +120,17 @@ public class DmpLogDriver {
 //				conf.set("job.date",sdf1.format(calendar.getTime()));
 //				jobConf.set("job.date",sdf1.format(calendar.getTime()));
 //			}
+			//測試前2小時-上線拿掉
+			
+//			//上線打開
+			if(calendar.get(Calendar.HOUR_OF_DAY) == 0){
+				calendar.add(Calendar.DAY_OF_MONTH, -1);
+				conf.set("job.date",sdf1.format(calendar.getTime()));
+				jobConf.set("job.date",sdf1.format(calendar.getTime()));
+			}else{
+				conf.set("job.date",sdf1.format(calendar.getTime()));
+				jobConf.set("job.date",sdf1.format(calendar.getTime()));
+			}
 //			//上線打開
 			
 			// file system
@@ -173,6 +173,8 @@ public class DmpLogDriver {
 				log.info("file Input Path : " + alllogOpRange);
 				
 			} else if (timeType.equals("hour")) {
+				String outPath = "/home/webuser/dmp/log-analysis/year/";
+				
 //				//測試機前2小時版本--上線前拿掉
 //				String timePath  = "";
 //				Calendar calendar2 = Calendar.getInstance();
@@ -202,11 +204,14 @@ public class DmpLogDriver {
 				if(calendar2.get(calendar2.HOUR_OF_DAY) == 0){
 					calendar2.add(calendar2.DAY_OF_MONTH, -1); 
 					timePath = sdf1.format(calendar2.getTime())+"/23";
+					outPath = outPath + calendar2.getWeekYear()+"/"+sdf1.format(calendar2.getTime())+"/"+"23";
 				}else {
 					if(String.valueOf(calendar2.get(calendar2.HOUR_OF_DAY) - 1).length() < 2){
 						timePath = sdf1.format(calendar2.getTime()) +"/"+ "0"+(calendar.get(calendar2.HOUR_OF_DAY) - 1);
+						outPath = outPath + calendar2.getWeekYear()+"/"+sdf1.format(calendar2.getTime())+"/"+"0"+(calendar.get(calendar2.HOUR_OF_DAY) - 1);
 					}else{
 						timePath = sdf1.format(calendar2.getTime()) +"/"+ (calendar.get(calendar2.HOUR_OF_DAY) - 1);
+						outPath = outPath + calendar2.getWeekYear()+"/"+sdf1.format(calendar2.getTime())+"/"+(calendar.get(calendar2.HOUR_OF_DAY) - 1);
 					}
 				}
 				//正式機前1小時版本
@@ -216,11 +221,11 @@ public class DmpLogDriver {
 				
 				//輸入
 //				String logInputPath = "/home/webuser/dmp/testData/category/tmp";	//自己做測試資料			  		
-				String logInputPath = "/home/webuser/dmp/testData/category";				//測試資料(有ruten、24h的資料)
+//				String logInputPath = "/home/webuser/dmp/testData/category";				//測試資料(有ruten、24h的資料)
 //				String logInputPath = "/home/webuser/analyzer/storedata/alllog/2018-05-22";			//測試path
-//				String logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-22/17";			//11點200萬筆資料  
+//				String logInputPath = "/home/webuser/akb/storedata/alllog/2018-07-11/13";			//11點200萬筆資料  
 //				String logInputPath = "/home/webuser/dmp/testData/category/20180522";			//測試path整天log
-//				String logInputPath = akbPathAllLog + timePath;  //正式path  /home/webuser/akb/storedata/alllog/2018-05-15/05    	//正式path
+				String logInputPath = akbPathAllLog + timePath;  //正式path  /home/webuser/akb/storedata/alllog/2018-05-15/05    	//正式path
 				
 //				String logInputPath = "/home/webuser/dmp/testData/category/20180522";
 				
@@ -228,15 +233,15 @@ public class DmpLogDriver {
 //				String outputTempPath = "/home/webuser/bessie/output/category";			//測試資料(有ruten、24h的資料)
 //				String outputTempPath = "/home/webuser/bessie/output/17";
 //				String outputTempPath = "/home/webuser/bessie/output/20180522";
-				String outputTempPath = "/home/webuser/bessie/output";
+//				String outputTempPath = "/home/webuser/bessie/output";
 				//hdfs存在則刪除
-				deleteExistedDir(fs, new Path(outputTempPath), true);
+				deleteExistedDir(fs, new Path(outPath), true);
 				
 				log.info(">>>>>>INPUT PATH:"+logInputPath);
-				log.info(">>>>>>OUTPUT PATH:"+outputTempPath);
+				log.info(">>>>>>OUTPUT PATH:"+outPath);
 				
 				FileInputFormat.addInputPaths(job, logInputPath);
-				FileOutputFormat.setOutputPath(job, new Path(outputTempPath));
+				FileOutputFormat.setOutputPath(job, new Path(outPath));
 			} else {
 				log.info("date = null");
 				return;
@@ -274,8 +279,7 @@ public class DmpLogDriver {
 					hdfsPath + "/home/webuser/dmp/alex/log4j.xml",
 					hdfsPath + "/home/webuser/dmp/jobfile/DMP_24h_category.csv",
 					hdfsPath + "/home/webuser/dmp/jobfile/DMP_Ruten_category.csv",
-					hdfsPath + "/home/webuser/dmp/jobfile/GeoLite2-City.mmdb",
-					hdfsPath + "/home/webuser/dmp/jobfile/ThirdAdClassTable.txt"
+					hdfsPath + "/home/webuser/dmp/jobfile/GeoLite2-City.mmdb"
 			};
 			for (String filePath : filePaths) {
 				DistributedCache.addCacheFile(new URI(filePath), job.getConfiguration());

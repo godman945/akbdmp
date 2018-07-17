@@ -1,8 +1,6 @@
 package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.net.InetAddress;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -34,7 +32,6 @@ import com.pchome.hadoopdmp.mapreduce.job.component.DateTimeComponent;
 import com.pchome.hadoopdmp.mapreduce.job.component.DeviceComponent;
 import com.pchome.hadoopdmp.mapreduce.job.component.GeoIpComponent;
 import com.pchome.hadoopdmp.mapreduce.job.component.PersonalInfoComponent;
-import com.pchome.hadoopdmp.mapreduce.job.component.ThirdAdClassComponent;
 import com.pchome.hadoopdmp.mapreduce.job.factory.ACategoryLogData;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryCodeBean;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryLogFactory;
@@ -61,8 +58,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();				 //分類個資表
 	public static List<CategoryCodeBean> category24hBeanList = new ArrayList<CategoryCodeBean>();				 //24H分類表
 	public static List<CategoryRutenCodeBean> categoryRutenBeanList = new ArrayList<CategoryRutenCodeBean>();	 //Ruten分類表
-	public static ArrayList<String> prodFileList = new ArrayList<String>();	 								     //24h、ruten第3分類對照表
-	public static ThirdAdClassComponent thirdAdClassComponent = new ThirdAdClassComponent();
 	public static PersonalInfoComponent personalInfoComponent = new PersonalInfoComponent();
 	public static GeoIpComponent geoIpComponent = new GeoIpComponent();
 	public static DateTimeComponent dateTimeComponent = new DateTimeComponent();
@@ -145,15 +140,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			//IP轉城市
 			File database = new File(path[5].toString());
 			reader = new DatabaseReader.Builder(database).build();  
-			
-			
-			//load 24h、ruten第3分類對照表(ThirdAdClassTable.txt)
-			Path thirdAdClassPath = Paths.get(path[6].toString());
-			charset = Charset.forName("UTF-8");
-			List<String> thirdAdClassLines = Files.readAllLines(thirdAdClassPath, charset);
-			for (String line : thirdAdClassLines) {
-				prodFileList.add(line);
-			}
 			
 		} catch (Exception e) {
 			log.error("Mapper setup error>>>>>> " +e);
@@ -277,10 +263,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				dmpLogBeanResult.setClassRutenUrlClassify("null");
 			}
 			
-			//依據第1、2分類，處理第3分類
-			dmpLogBeanResult = thirdAdClassComponent.processThirdAdclassInfo(dmpLogBeanResult, mongoOrgOperations);
-			
-			
 			//個資處理元件
 			dmpLogBeanResult = personalInfoComponent.processPersonalInfo(dmpLogBeanResult, mongoOrgOperations);
 			
@@ -348,13 +330,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		JSONObject categoryInfoJson = new JSONObject();
 		categoryInfoJson.put("value", dmpLogBeanResult.getCategory());
 		categoryInfoJson.put("source", dmpLogBeanResult.getCategorySource());
-		
-		//prod_class_info
-				JSONObject prodClassInfoJson = new JSONObject();
-				prodClassInfoJson.put("value", dmpLogBeanResult.getProdClassInfo());
-				prodClassInfoJson.put("source","null");
-		
-		
 		
 		//sex_info
 		JSONObject sexInfoJson = new JSONObject();
@@ -493,10 +468,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		//dataJson
 		JSONObject dataJson = new JSONObject();
 		dataJson.put("category_info", categoryInfoJson);
-		
-		dataJson.put("prod_class_info", prodClassInfoJson);
-		
-		
 		dataJson.put("sex_info", sexInfoJson);
 		dataJson.put("age_info", ageInfoJson);
 		dataJson.put("area_country_info", areaCountryInfoJson );
@@ -519,9 +490,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		sendKafkaJson.put("date_time", dmpLogBeanResult.getDateTime());
 		sendKafkaJson.put("user_agent", dmpLogBeanResult.getUserAgent() );
 		sendKafkaJson.put("ad_class", dmpLogBeanResult.getAdClass());
-		
-		sendKafkaJson.put("md5Url", dmpLogBeanResult.getUrlToMd5());
-		
 		sendKafkaJson.put("record_count", recordCount);
 		
 		return sendKafkaJson.toString();

@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -17,12 +15,9 @@ import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper;
 
 
 public class Ad24HLog extends ACategoryLogData {
-	Log log = LogFactory.getLog("Ad24HLog");
 	private DBCollection dBCollection;
 	
 	public Object processCategory(DmpLogBean dmpDataBean, DB mongoOperations) throws Exception {
-		try {
-		
 		this.dBCollection= mongoOperations.getCollection("class_url");
 		
 		dmpDataBean.setSource("kdcl");
@@ -31,15 +26,6 @@ public class Ad24HLog extends ACategoryLogData {
 		String category = "null";
 		String categorySource = "null";
 		String class24hUrlClassify = "null";
-		
-		
-		
-		if (StringUtils.equals(dmpDataBean.getMemid(), "hihiboys")){
-			log.info(">>>>>> memid : " + dmpDataBean.getMemid() );
-			log.info(">>>>>> uuid : " + dmpDataBean.getUuid() );
-			log.info(">>>>>> url : " + dmpDataBean.getUrl() );
-		}
-		
 		
 		if (StringUtils.isBlank(sourceUrl)) {
 			dmpDataBean.setUrl("null");
@@ -56,11 +42,6 @@ public class Ad24HLog extends ACategoryLogData {
 				category = categoryBean.getNumberCode();
 				categorySource = "24h";
 				class24hUrlClassify = "Y";
-				
-				if (StringUtils.equals(dmpDataBean.getMemid(), "hihiboys")){
-					log.info(">>>>>> 24h category : " + category );
-				}
-				
 				break;
 			}
 		}
@@ -96,10 +77,6 @@ public class Ad24HLog extends ACategoryLogData {
 		dmpDataBean.setCategory(category);
 		dmpDataBean.setCategorySource(categorySource);
 		dmpDataBean.setClass24hUrlClassify(class24hUrlClassify);
-		
-		} catch (Exception e) {
-			log.error("24H category error>>>>>> " +e); 
-		}
 		
 		return dmpDataBean;
 	}
