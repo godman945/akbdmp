@@ -240,6 +240,11 @@ public class DmpLogDriver {
 				log.info(">>>>>>INPUT PATH:"+logInputPath);
 				log.info(">>>>>>OUTPUT PATH:"+outPath);
 				
+				//mark
+				logInputPath = "/home/webuser/dmp/testData/category";
+				outPath = "/home/webuser/bessie/output/thirdcategory";
+				//mark				
+				
 				FileInputFormat.addInputPaths(job, logInputPath);
 				FileOutputFormat.setOutputPath(job, new Path(outPath));
 			} else {
