@@ -234,16 +234,24 @@ public class DmpLogDriver {
 //				String outputTempPath = "/home/webuser/bessie/output/17";
 //				String outputTempPath = "/home/webuser/bessie/output/20180522";
 //				String outputTempPath = "/home/webuser/bessie/output";
+				
+				
+				
+				
+				//mark
+				logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-22/17";
+//				logInputPath = "/home/webuser/dmp/testData/category";
+				outPath = "/home/webuser/bessie/output/thirdcategory";
+				//mark
+				
+				
+				
+				
 				//hdfs存在則刪除
 				deleteExistedDir(fs, new Path(outPath), true);
 				
 				log.info(">>>>>>INPUT PATH:"+logInputPath);
 				log.info(">>>>>>OUTPUT PATH:"+outPath);
-				
-				//mark
-				logInputPath = "/home/webuser/dmp/testData/category";
-				outPath = "/home/webuser/bessie/output/thirdcategory";
-				//mark				
 				
 				FileInputFormat.addInputPaths(job, logInputPath);
 				FileOutputFormat.setOutputPath(job, new Path(outPath));
