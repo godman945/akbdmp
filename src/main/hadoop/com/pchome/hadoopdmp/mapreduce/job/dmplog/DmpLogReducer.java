@@ -157,6 +157,12 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					} else {
 						infoJson.put("day_count", 0);
 					}
+					
+					//提供第3分類用
+					if ( StringUtils.equals(enumDataKeyInfo.name(), "category_info") ){
+						infoJson.put("url", jsonObjOrg.get("url"));
+					}
+					
 					array.add(infoJson);
 					hadoopData.put(enumDataKeyInfo.toString(), array);
 				}
@@ -211,6 +217,11 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 							infoJson.put("source", source);
 							infoJson.put("value", value);
 							infoJson.put("day_count", 1);
+							
+							//提供第3分類用
+							if ( StringUtils.equals(enumDataKeyInfo.name(), "category_info") ){
+								infoJson.put("url", jsonObjOrg.get("url"));
+							}
 							array.add(infoJson);
 						}
 					}
