@@ -225,7 +225,7 @@ public class ThirdCategoryLogDriver {
 //				String logInputPath = "/home/webuser/dmp/testData/category/20180522";
 				
 				//輸出
-				String outputTempPath = "/home/webuser/bessie/output/category";			//測試資料(有ruten、24h的資料)
+				String outputTempPath = "/home/webuser/bessie/output/thirdcategory";			//測試資料(有ruten、24h的資料)
 //				String outputTempPath = "/home/webuser/bessie/output/17";
 //				String outputTempPath = "/home/webuser/bessie/output/20180522";
 //				String outputTempPath = "/home/webuser/bessie/output";

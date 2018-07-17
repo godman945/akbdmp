@@ -1,8 +1,6 @@
 package com.pchome.hadoopdmp.mapreduce.job.thirdcategorylog;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.net.InetAddress;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -21,7 +19,6 @@ import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;

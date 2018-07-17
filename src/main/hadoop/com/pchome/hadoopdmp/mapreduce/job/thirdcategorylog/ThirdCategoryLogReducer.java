@@ -107,7 +107,7 @@ public class ThirdCategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 				redisFountKey = "stg:dmp:classify:"+recordDate+":";
 			}
 			
-			//Classify Map 
+			//Classify Map
 			redisClassifyMap = new HashMap<String,Integer>();
 			for (EnumClassifyKeyInfo enumClassifyKeyInfo : EnumClassifyKeyInfo.values()) {
 				redisClassifyMap.put(redisFountKey + enumClassifyKeyInfo.toString(), 0);
