@@ -239,7 +239,8 @@ public class DmpLogDriver {
 				
 				
 				//mark
-				logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-22/17";
+				logInputPath = "/home/webuser/dmp/testData/category/lzoBK";
+//				logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-22/17";
 //				logInputPath = "/home/webuser/dmp/testData/category";
 				outPath = "/home/webuser/bessie/output/thirdcategory";
 				//mark
