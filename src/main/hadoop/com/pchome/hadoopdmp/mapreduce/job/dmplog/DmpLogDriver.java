@@ -270,7 +270,7 @@ public class DmpLogDriver {
 				String outPath2 = "/home/webuser/bessie/output/thirdTest";
 				
 				Job job2 = new Job(jobConf, "dmp_thirdcategory_log_"+ env + "_" + sdf.format(date));
-				job2.setJarByClass(ThirdCategoryLogDriver.class);
+				job2.setJarByClass(DmpLogDriver.class);
 				job2.setMapperClass(ThirdCategoryLogMapper.class);
 				job2.setMapOutputKeyClass(Text.class);
 				job2.setMapOutputValueClass(Text.class);
