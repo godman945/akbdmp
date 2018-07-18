@@ -69,7 +69,7 @@ public class ThirdCategoryLogMapper extends Mapper<LongWritable, Text, Text, Tex
 
 	@Override
 	public void setup(Context context) {
-		log.info(">>>>>> Third Category Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
+		log.info(">>>>>> Third  Category Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
 		try {
 			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
