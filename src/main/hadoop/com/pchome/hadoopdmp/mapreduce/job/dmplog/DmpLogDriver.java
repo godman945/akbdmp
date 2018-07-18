@@ -75,12 +75,14 @@ public class DmpLogDriver {
 	private SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
 	private SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMddHHmmss");
 	
+	String logInputPath;
+	String outPath;
+	
 	public void drive(String env,String timeType) throws Exception {
 		try {
 			Calendar calendar = Calendar.getInstance();
 			
 			JobConf jobConf = new JobConf();
-			jobConf.setJobName("hadoopJoinTask");
 			
 //			jobConf.setNumMapTasks(8);
 			
@@ -178,7 +180,7 @@ public class DmpLogDriver {
 				log.info("file Input Path : " + alllogOpRange);
 				
 			} else if (timeType.equals("hour")) {
-				String outPath = "/home/webuser/dmp/log-analysis/year/";
+				outPath = "/home/webuser/dmp/log-analysis/year/";
 				
 //				//測試機前2小時版本--上線前拿掉
 //				String timePath  = "";
@@ -230,7 +232,7 @@ public class DmpLogDriver {
 //				String logInputPath = "/home/webuser/analyzer/storedata/alllog/2018-05-22";			//測試path
 //				String logInputPath = "/home/webuser/akb/storedata/alllog/2018-07-11/13";			//11點200萬筆資料  
 //				String logInputPath = "/home/webuser/dmp/testData/category/20180522";			//測試path整天log
-				String logInputPath = akbPathAllLog + timePath;  //正式path  /home/webuser/akb/storedata/alllog/2018-05-15/05    	//正式path
+				logInputPath = akbPathAllLog + timePath;  //正式path  /home/webuser/akb/storedata/alllog/2018-05-15/05    	//正式path
 				
 //				String logInputPath = "/home/webuser/dmp/testData/category/20180522";
 				
@@ -258,37 +260,13 @@ public class DmpLogDriver {
 				//hdfs存在則刪除
 				deleteExistedDir(fs, new Path(outPath), true);
 				
-				log.info(">>>>>>INPUT PATH:"+logInputPath);
-				log.info(">>>>>>OUTPUT PATH:"+outPath);
+				log.info(">>>>>>Job1 INPUT PATH:"+logInputPath);
+				log.info(">>>>>>Job1 OUTPUT PATH:"+outPath);
 				
 				FileInputFormat.addInputPaths(job, logInputPath);
 				FileOutputFormat.setOutputPath(job, new Path(outPath));
 				
 				
-				
-				//job2
-				String outPath2 = "/home/webuser/bessie/output/thirdTest";
-				
-				Job job2 = new Job(jobConf, "dmp_thirdcategory_log_"+ env + "_" + sdf.format(date));
-				job2.setJarByClass(DmpLogDriver.class);
-				job2.setMapperClass(ThirdCategoryLogMapper.class);
-				job2.setMapOutputKeyClass(Text.class);
-				job2.setMapOutputValueClass(Text.class);
-				job2.setReducerClass(ThirdCategoryLogReducer.class);
-				job2.setInputFormatClass(LzoTextInputFormat.class);
-				job2.setOutputKeyClass(Text.class);
-				job2.setOutputValueClass(Text.class);
-				job2.setNumReduceTasks(1);//1個reduce 
-				job2.setMapSpeculativeExecution(false); 
-				
-				JobConf jobConf2=(JobConf) job2.getConfiguration();
-				jobConf2.setJobName("hadoopJoinTask");
-				
-				//设置job2输入路径  job的输出路径
-				FileInputFormat.addInputPaths(job2, logInputPath);
-				//设置job2输出的路径
-				FileOutputFormat.setOutputPath(job2, new Path(outPath2));
-				//job2
 				
 			} else {
 				log.info("date = null");
@@ -334,10 +312,44 @@ public class DmpLogDriver {
 			}
 	
 			if (job.waitForCompletion(true)) {
-				log.info("Job is OK");
+				log.info("Job1 is OK");
 			} else {
-				log.info("Job is Failed");
+				log.info("Job1 is Failed");
 			}
+
+			//job2
+			log.info("...... ThirdCategoryLog start ......");
+			
+			String outPath2 = "/home/webuser/bessie/output/thirdTest";
+			job = new Job(jobConf, "dmp_thirdcategory_log_"+ env + "_" + sdf.format(date));
+			job.setJarByClass(DmpLogDriver.class);
+			job.setMapperClass(ThirdCategoryLogMapper.class);
+			job.setMapOutputKeyClass(Text.class);
+			job.setMapOutputValueClass(Text.class);
+			job.setReducerClass(ThirdCategoryLogReducer.class);
+			job.setInputFormatClass(LzoTextInputFormat.class);
+			job.setOutputKeyClass(Text.class);
+			job.setOutputValueClass(Text.class);
+			job.setNumReduceTasks(1);//1個reduce 
+			job.setMapSpeculativeExecution(false); 
+			
+			
+			//设置job2输入路径  job的输出路径
+			FileInputFormat.addInputPaths(job, outPath);
+			//设置job2输出的路径
+			FileOutputFormat.setOutputPath(job, new Path(outPath2));
+			//job2
+
+			log.info(">>>>>>Job2 INPUT PATH:"+outPath);
+			log.info(">>>>>>Job2 OUTPUT PATH:"+outPath2);
+			
+			if (job.waitForCompletion(true)) {
+				log.info("Job2 is OK");
+			} else {
+				log.info("Job2 is Failed");
+			}
+			
+			
 		 } catch (Exception e) {
 			 log.error("drive error>>>>>> "+ e);
 	     }
