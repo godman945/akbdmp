@@ -246,11 +246,11 @@ public class DmpLogDriver {
 				
 				
 				//mark
-				logInputPath = "/home/webuser/dmp/testData/category/lzoBK";
+//				logInputPath = "/home/webuser/dmp/testData/category/lzoBK";
 //				logInputPath = "/home/webuser/akb/storedata/alllog/2018-07-16/12";//大檔output測試，是否爆output error
 //				logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-22/17";
 //				logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-22/17";
-//				logInputPath = "/home/webuser/dmp/testData/category";
+				logInputPath = "/home/webuser/dmp/testData/category";
 				outPath = "/home/webuser/bessie/output/thirdcategory1";
 				//mark
 				
