@@ -160,7 +160,7 @@ public class ThirdCategoryLogMapper extends Mapper<LongWritable, Text, Text, Tex
 	public void map(LongWritable offset, Text value, Context context) {
 		try {
 			//讀取kdcl、Campaign資料
-//			log.info("raw_data : " + value);
+			log.info("ThirdCategoryLogMapper raw_data : " + value.toString());
 			
 //			DmpLogBean dmpDataBean =  new DmpLogBean();
 			String valueStr = value.toString();
