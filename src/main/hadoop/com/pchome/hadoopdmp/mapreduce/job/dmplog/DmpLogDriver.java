@@ -23,6 +23,9 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.stereotype.Component;
 
 import com.hadoop.mapreduce.LzoTextInputFormat;
+import com.pchome.hadoopdmp.mapreduce.job.thirdcategorylog.ThirdCategoryLogDriver;
+import com.pchome.hadoopdmp.mapreduce.job.thirdcategorylog.ThirdCategoryLogMapper;
+import com.pchome.hadoopdmp.mapreduce.job.thirdcategorylog.ThirdCategoryLogReducer;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 
 @Component
@@ -77,6 +80,8 @@ public class DmpLogDriver {
 			Calendar calendar = Calendar.getInstance();
 			
 			JobConf jobConf = new JobConf();
+			jobConf.setJobName("hadoopJoinTask");
+			
 //			jobConf.setNumMapTasks(8);
 			
 			jobConf.set("mapred.max.split.size","3045728"); //3045728 49 //3045728000 7
@@ -257,6 +262,33 @@ public class DmpLogDriver {
 				
 				FileInputFormat.addInputPaths(job, logInputPath);
 				FileOutputFormat.setOutputPath(job, new Path(outPath));
+				
+				
+				
+				//job2
+				String outPath2 = "/home/webuser/bessie/output/thirdTest";
+				
+				Job job2 = new Job(jobConf, "dmp_thirdcategory_log_"+ env + "_" + sdf.format(date));
+				job2.setJarByClass(ThirdCategoryLogDriver.class);
+				job2.setMapperClass(ThirdCategoryLogMapper.class);
+				job2.setMapOutputKeyClass(Text.class);
+				job2.setMapOutputValueClass(Text.class);
+				job2.setReducerClass(ThirdCategoryLogReducer.class);
+				job2.setInputFormatClass(LzoTextInputFormat.class);
+				job2.setOutputKeyClass(Text.class);
+				job2.setOutputValueClass(Text.class);
+				job2.setNumReduceTasks(1);//1個reduce 
+				job2.setMapSpeculativeExecution(false); 
+				
+				JobConf jobConf2=(JobConf) job2.getConfiguration();
+				jobConf2.setJobName("hadoopJoinTask");
+				
+				//设置job2输入路径  job的输出路径
+				FileInputFormat.addInputPaths(job2, logInputPath);
+				//设置job2输出的路径
+				FileOutputFormat.setOutputPath(job2, new Path(outPath2));
+				//job2
+				
 			} else {
 				log.info("date = null");
 				return;

@@ -1,58 +1,57 @@
-//package com.pchome.hadoopdmp.mapreduce.job.thirdcategorylog;
-//
-//import java.io.File;
-//import java.net.InetAddress;
-//import java.nio.charset.Charset;
-//import java.nio.file.Files;
-//import java.nio.file.Path;
-//import java.nio.file.Paths;
-//import java.util.ArrayList;
-//import java.util.HashMap;
-//import java.util.List;
-//import java.util.Map;
-//
-//import org.apache.commons.lang.StringUtils;
-//import org.apache.commons.logging.Log;
-//import org.apache.commons.logging.LogFactory;
-//import org.apache.hadoop.conf.Configuration;
-//import org.apache.hadoop.filecache.DistributedCache;
-//import org.apache.hadoop.io.LongWritable;
-//import org.apache.hadoop.io.Text;
-//import org.apache.hadoop.mapreduce.Mapper;
-//import org.json.JSONObject;
-//import org.springframework.context.ApplicationContext;
-//import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-//import org.springframework.stereotype.Component;
-//
-//import com.maxmind.geoip2.DatabaseReader;
-//import com.mongodb.DB;
-//import com.pchome.hadoopdmp.enumerate.CategoryLogEnum;
-//import com.pchome.hadoopdmp.mapreduce.job.component.DateTimeComponent;
-//import com.pchome.hadoopdmp.mapreduce.job.component.DeviceComponent;
-//import com.pchome.hadoopdmp.mapreduce.job.component.GeoIpComponent;
-//import com.pchome.hadoopdmp.mapreduce.job.component.PersonalInfoComponent;
-//import com.pchome.hadoopdmp.mapreduce.job.component.ThirdAdClassComponent;
-//import com.pchome.hadoopdmp.mapreduce.job.factory.ACategoryLogData;
-//import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryCodeBean;
-//import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryLogFactory;
-//import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryRutenCodeBean;
-//import com.pchome.hadoopdmp.mapreduce.job.factory.DmpLogBean;
-//import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
-//import com.pchome.hadoopdmp.spring.config.bean.mongodborg.MongodbOrgHadoopConfig;
-//
-//@Component
-//public class ThirdCategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
-//	Log log = LogFactory.getLog("ThirdCategoryLogMapper");
-//	
+package com.pchome.hadoopdmp.mapreduce.job.thirdcategorylog;
+
+import java.io.File;
+import java.net.InetAddress;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.filecache.DistributedCache;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.json.JSONObject;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
+
+import com.maxmind.geoip2.DatabaseReader;
+import com.mongodb.DB;
+import com.pchome.hadoopdmp.enumerate.CategoryLogEnum;
+import com.pchome.hadoopdmp.mapreduce.job.component.DateTimeComponent;
+import com.pchome.hadoopdmp.mapreduce.job.component.DeviceComponent;
+import com.pchome.hadoopdmp.mapreduce.job.component.GeoIpComponent;
+import com.pchome.hadoopdmp.mapreduce.job.component.PersonalInfoComponent;
+import com.pchome.hadoopdmp.mapreduce.job.factory.ACategoryLogData;
+import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryCodeBean;
+import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryLogFactory;
+import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryRutenCodeBean;
+import com.pchome.hadoopdmp.mapreduce.job.factory.DmpLogBean;
+import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
+import com.pchome.hadoopdmp.spring.config.bean.mongodborg.MongodbOrgHadoopConfig;
+
+@Component
+public class ThirdCategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
+	Log log = LogFactory.getLog("ThirdCategoryLogMapper");
+	
 //	private static int recordCount = 0;
 //	private static int kdclLogLength = 30;
 //	private static int campaignLogLength = 9;
 //	private static String kdclSymbol = String.valueOf(new char[] { 9, 31 });
 //	private static String campaignSymbol = ",";
-//
-//	private Text keyOut = new Text();
-//	private Text valueOut = new Text();
-//
+
+	private Text keyOut = new Text();
+	private Text valueOut = new Text();
+
 //	public static String record_date;
 //	public static ArrayList<Map<String, String>> categoryList = new ArrayList<Map<String, String>>();		     //分類表	
 //	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();				 //分類個資表
@@ -67,10 +66,10 @@
 //	private DB mongoOrgOperations;
 //	public static DatabaseReader reader = null;
 //	public static InetAddress ipAddress = null;
-//
-//	@Override
-//	public void setup(Context context) {
-//		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
+
+	@Override
+	public void setup(Context context) {
+		log.info(">>>>>> Third Category Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
 //		try {
 //			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
 //			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
@@ -155,141 +154,27 @@
 //		} catch (Exception e) {
 //			log.error("Mapper setup error>>>>>> " +e);
 //		}
-//	}
-//
-//	@Override
-//	public void map(LongWritable offset, Text value, Context context) {
-//		try {
-//			//讀取kdcl、Campaign資料
-////			log.info("raw_data : " + value);
-//			
+	}
+
+	@Override
+	public void map(LongWritable offset, Text value, Context context) {
+		try {
+			//讀取kdcl、Campaign資料
+//			log.info("raw_data : " + value);
+			
 //			DmpLogBean dmpDataBean =  new DmpLogBean();
-//			String valueStr = value.toString();
-//			
-//			if ( valueStr.indexOf(kdclSymbol) > -1 ){	//kdcl log	raw data格式
-//				// values[0]  date time (2018-01-04 04:57:12)
-//				// values[1]  memid
-//				// values[2]  uuid
-//				// values[3]  ip
-//				// values[4]  url
-//				// values[5]  UserAgent
-//				// values[13] ck,pv
-//				// values[15] ad_class
-//				String[] values = valueStr.toString().split(kdclSymbol);
-//				if (values.length < kdclLogLength) {
-////					log.info("values.length < " + kdclLogLength);
-//					return;
-//				}
-//				
-//				if ( (StringUtils.equals(values[1], "null")||StringUtils.isBlank(values[1]) ) 
-//						&& (StringUtils.equals(values[2], "null")||StringUtils.isBlank(values[2])) ){
-//					return;
-//				}
-//				
-//				dmpDataBean.setDateTime(values[0]);
-//				dmpDataBean.setMemid(values[1]);
-//				dmpDataBean.setUuid(values[2]);
-//				dmpDataBean.setIp(values[3]);
-//				dmpDataBean.setUrl(values[4]);
-//				dmpDataBean.setUserAgent(values[5]);
-//				dmpDataBean.setSource(values[13]);
-//				dmpDataBean.setAdClass(values[15]);
-//				dmpDataBean.setAge("null");
-//				dmpDataBean.setSex("null");
-////				log.info(">>>>>> kdcl rawdata:" + valueStr);
-//			}else if( valueStr.indexOf(campaignSymbol) > -1 ){	//Campaign log raw data格式
-//				// values[0] memid			會員帳號
-//				// values[1] uuid			通用唯一識別碼	
-//				// values[2] ad_class		分類
-//				// values[3] Count			數量
-//				// values[4] age			年齡 (0或空字串)
-//				// values[5] sex			性別(F|M)
-//				// values[6] ip_area		地區(台北市 or 空字串)
-//				// values[7] record_date	紀錄日期(2018-04-27)
-//				// values[8] Over_write		是否覆寫(true|false)
-//				String[] values = valueStr.toString().split(campaignSymbol);
-//				 if (values.length < campaignLogLength) {
-////					 log.info("values.length < " + campaignLogLength);
-//					 return;
-//                 }
-//				 
-//				if ( StringUtils.isBlank(values[0]) && StringUtils.isBlank(values[1])  ){
-//					return;
-//				}
-//				 
-//				 dmpDataBean.setDateTime(values[7]);
-//				 dmpDataBean.setMemid(StringUtils.isBlank(values[0])? "null" :values[0]);
-//				 dmpDataBean.setUuid(values[1]);
-//				 dmpDataBean.setIp(values[6]);
-//				 dmpDataBean.setUrl("");
-//				 dmpDataBean.setUserAgent("");
-//				 dmpDataBean.setSource("campaign");
-//				 dmpDataBean.setAdClass(values[2]);
-//				 
-//				 if (StringUtils.equals(values[4], "0")){
-//					 dmpDataBean.setAge("null");
-//				 }else{
-//					 dmpDataBean.setAge(values[4]);
-//				 }
-//				 
-//				 if (StringUtils.isBlank(values[5])){
-//					 dmpDataBean.setSex("null");
-//				 }else{
-//					 dmpDataBean.setSex(values[5]);
-//				 }
-////				 log.info(">>>>>> campaige rawdata:" + valueStr);
-//			}else{
-//				 return;
-//			}
-//			
-//
-////			DmpLogBean dmpLogBeanResult = new DmpLogBean();
-//			
-//			//分類處理元件(分析click、24H、Ruten、campaign分類) 
-//			if ( (dmpDataBean.getSource().equals("ck")||dmpDataBean.getSource().equals("campaign")) ) {	// kdcl ad_click的adclass  或   campaign log的adclass 	//&& StringUtils.isNotBlank(dmpLogBeanResult.getAdClass())
-//				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
-//				dmpDataBean = (DmpLogBean) aCategoryLogData.processCategory(dmpDataBean, mongoOrgOperations);
-//			}else if (dmpDataBean.getSource().equals("pv") && StringUtils.isNotBlank(dmpDataBean.getUrl()) && dmpDataBean.getUrl().contains("ruten")) {	// 露天
-//				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
-//				dmpDataBean = (DmpLogBean) aCategoryLogData.processCategory(dmpDataBean, mongoOrgOperations);
-//			}else if (dmpDataBean.getSource().equals("pv") && StringUtils.isNotBlank(dmpDataBean.getUrl()) && dmpDataBean.getUrl().contains("24h")) {		// 24h
-//				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
-//				dmpDataBean = (DmpLogBean) aCategoryLogData.processCategory(dmpDataBean, mongoOrgOperations);
-//			}else if ( dmpDataBean.getSource().equals("pv") ){
-//				dmpDataBean.setSource("kdcl");
-//				dmpDataBean.setCategory("null");
-//				dmpDataBean.setCategorySource("null");
-//				dmpDataBean.setClassAdClickClassify("null");
-//				dmpDataBean.setClass24hUrlClassify("null");
-//				dmpDataBean.setClassRutenUrlClassify("null");
-//			}
-//			
-////			//依據第1、2分類，處理第3分類
-////			dmpLogBeanResult = thirdAdClassComponent.processThirdAdclassInfo(dmpLogBeanResult, mongoOrgOperations);
-//			
-//			//紀錄日期
-//			dmpDataBean.setRecordDate(record_date);
-//			
-////			log.info(">>>>>>category:" + dmpLogBeanResult.getCategory());
-////			log.info(">>>>>>CategorySource:" + dmpLogBeanResult.getCategorySource());
-//			
-//			
-//			//傳至kafka的值只要是null或空字串，全部轉成字串null
-//			dmpDataBean = dmpBeanIntegrate(dmpDataBean);
-//			
-//			//轉成發kafka字串
-//			String sendKafkaJson = dmpBeanToKafkaJson(dmpDataBean);
-//			
-//			log.info(">>>>>> Mapper write key:" + sendKafkaJson.toString());
-//			
-//			keyOut.set(sendKafkaJson.toString());
-//			context.write(keyOut, valueOut);
-//			
-//		} catch (Exception e) {
-//			log.error("Mapper error>>>>>> " +e); 
-//		}
-//	}
-//	
+			String valueStr = value.toString();
+			
+			log.info(">>>>>>ThirdCategoryLogMapper Mapper write key:" + valueStr);
+			
+			keyOut.set(valueStr);
+			context.write(keyOut, valueOut);
+			
+		} catch (Exception e) {
+			log.error("Mapper error>>>>>> " +e); 
+		}
+	}
+	
 //	public DmpLogBean dmpBeanIntegrate(DmpLogBean dmpLogBeanResult) throws Exception {
 //		dmpLogBeanResult.setMemid( StringUtils.isBlank(dmpLogBeanResult.getMemid()) ? "null" : dmpLogBeanResult.getMemid());
 //		dmpLogBeanResult.setUuid( StringUtils.isBlank(dmpLogBeanResult.getUuid()) ? "null" : dmpLogBeanResult.getUuid());
@@ -297,8 +182,8 @@
 //		dmpLogBeanResult.setCategorySource( StringUtils.isBlank(dmpLogBeanResult.getCategorySource()) ? "null" : dmpLogBeanResult.getCategorySource());
 //		return dmpLogBeanResult;
 //	}
-//	
-//	
+	
+	
 //	public String dmpBeanToKafkaJson(DmpLogBean dmpLogBeanResult) throws Exception {
 //		recordCount = recordCount + 1;
 //		//send kafka key
@@ -335,8 +220,8 @@
 //		
 //		return sendKafkaJson.toString();
 //	}
-//	
-//	
+	
+	
 //	public class combinedValue {
 //		public String gender;
 //		public String age;
@@ -346,31 +231,31 @@
 //			this.age = age;
 //		}
 //	}
-//	
+	
+
+//	 @Autowired
+//	 mongoOrgOperations mongoOrgOperations;
+//	 public void test() throws Exception{
+//	 System.out.println("BBB");
+//	 Query query = new
+//	 Query(Criteria.where("_id").is("59404c00e4b0ed734829caf4"));
+//	 ClassUrlMongoBean classUrlMongoBean = (ClassUrlMongoBean)
+//	 mongoOrgOperations.findOne(query, ClassUrlMongoBean.class);
+//	 System.out.println(classUrlMongoBean.getUrl());
+//	 System.out.println("AAA");
+//	 }
+
+	public static void main(String[] args) throws Exception {
+//		 DmpLogMapper dmpLogMapper = new DmpLogMapper();
+//		 dmpLogMapper.map(null, null, null);
 //
-////	 @Autowired
-////	 mongoOrgOperations mongoOrgOperations;
-////	 public void test() throws Exception{
-////	 System.out.println("BBB");
-////	 Query query = new
-////	 Query(Criteria.where("_id").is("59404c00e4b0ed734829caf4"));
-////	 ClassUrlMongoBean classUrlMongoBean = (ClassUrlMongoBean)
-////	 mongoOrgOperations.findOne(query, ClassUrlMongoBean.class);
-////	 System.out.println(classUrlMongoBean.getUrl());
-////	 System.out.println("AAA");
-////	 }
+//		System.setProperty("spring.profiles.active", "stg");
+//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//		DmpLogMapper dmpLogMapper1 = ctx.getBean(DmpLogMapper.class);
+//		
+//		dmpLogMapper1.test();
+//		dmpLogMapper1.map(null, null, null);
+
+	}
 //
-//	public static void main(String[] args) throws Exception {
-////		 DmpLogMapper dmpLogMapper = new DmpLogMapper();
-////		 dmpLogMapper.map(null, null, null);
-////
-////		System.setProperty("spring.profiles.active", "stg");
-////		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-////		DmpLogMapper dmpLogMapper1 = ctx.getBean(DmpLogMapper.class);
-////		
-////		dmpLogMapper1.test();
-////		dmpLogMapper1.map(null, null, null);
-//
-//	}
-////
-//}
+}
