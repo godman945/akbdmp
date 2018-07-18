@@ -333,6 +333,8 @@ public class DmpLogDriver {
 			job.setNumReduceTasks(1);//1個reduce 
 			job.setMapSpeculativeExecution(false); 
 			
+			//hdfs存在則刪除
+			deleteExistedDir(fs, new Path(outPath2), true);
 			
 			//设置job2输入路径  job的输出路径
 			FileInputFormat.addInputPaths(job, outPath);
