@@ -246,12 +246,12 @@ public class DmpLogDriver {
 				
 				
 				//mark
-//				logInputPath = "/home/webuser/dmp/testData/category/lzoBK";
+				logInputPath = "/home/webuser/dmp/testData/category/lzoBK";
 //				logInputPath = "/home/webuser/akb/storedata/alllog/2018-07-16/12";//大檔output測試，是否爆output error
 //				logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-22/17";
-				logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-22/17";
+//				logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-22/17";
 //				logInputPath = "/home/webuser/dmp/testData/category";
-				outPath = "/home/webuser/bessie/output/thirdcategory";
+				outPath = "/home/webuser/bessie/output/thirdcategory1";
 				//mark
 				
 				
@@ -320,7 +320,7 @@ public class DmpLogDriver {
 			//job2
 			log.info("...... ThirdCategoryLog start ......");
 			
-			String outPath2 = "/home/webuser/bessie/output/thirdTest";
+			String outPath2 = "/home/webuser/bessie/output/thirdcategory2";
 			job = new Job(jobConf, "dmp_thirdcategory_log_"+ env + "_" + sdf.format(date));
 			job.setJarByClass(DmpLogDriver.class);
 			job.setMapperClass(ThirdCategoryLogMapper.class);
