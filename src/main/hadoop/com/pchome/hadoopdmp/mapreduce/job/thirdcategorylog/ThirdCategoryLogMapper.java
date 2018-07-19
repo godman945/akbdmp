@@ -1,5 +1,8 @@
 package com.pchome.hadoopdmp.mapreduce.job.thirdcategorylog;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -82,30 +85,48 @@ public class ThirdCategoryLogMapper extends Mapper<LongWritable, Text, Text, Tex
 			JSONArray categoryArray =  (JSONArray) dataObj.get("category_info");
 			System.out.println("category_info: "+categoryArray);
 			
-			boolean haveThirdCategory = false;	//如果陣列有24H或ruten資料才處理第3分類
 			JSONArray newCategoryArray = new JSONArray();
 			
 			for (Object object : categoryArray) {
 				JSONObject infoJson = (JSONObject) object;
 				String source = infoJson.getAsString("source");
-				String value = infoJson.getAsString("value");
+//				String value = infoJson.getAsString("value");
 				String url = infoJson.getAsString("url");
-				String day_count = infoJson.getAsString("day_count");
+//				String day_count = infoJson.getAsString("day_count");
 				
 				System.out.println("source: "+source);
-				System.out.println("value: "+value);
+//				System.out.println("value: "+value);
 				System.out.println("url: "+url);
-				System.out.println("day_count: "+day_count);
+//				System.out.println("day_count: "+day_count);
+				
+				if ( (!source.equals("24h")) && !(source.equals("ruten")) ) {
+					break;
+				}
 				
 				//如果陣列有24H或ruten資料才處理第3分類
-				if (source.equals("24h") || source.equals("ruten")) {
-					haveThirdCategory = true;
-					newCategoryArray.add(object);
+				if (source.equals("24h")) {//確認url符合24h Pattern才塞入array
+					Pattern pattern = Pattern.compile("(http|https)://24h.pchome.com.tw/prod/");
+					Matcher m = pattern.matcher(url.toString());
+					if (m.find()) {
+						newCategoryArray.add(object);
+					}else{
+						break;
+					}
+				}
+				if (source.equals("ruten")) {//確認url符合ruten Pattern才塞入array
+					Pattern pattern = Pattern.compile("(http|https)://goods.ruten.com.tw/item/show+\\?\\d+");
+					Matcher m = pattern.matcher(url.toString());
+					if (m.find()) {
+						newCategoryArray.add(object);
+					}else{
+						break;
+					}
 				}
 			}
 			
+			//如果newCategoryArray有資料，就送入reducer處理第3分類
 			JSONObject thirdCategoryObj = new JSONObject();
-			if (haveThirdCategory){
+			if (newCategoryArray.size() > 0){
 				JSONObject keyObj = new JSONObject();
 				keyObj.put("memid",  ((JSONObject) jsonObjOrg.get("key")).get("memid"));
 				keyObj.put("uuid",  ((JSONObject) jsonObjOrg.get("key")).get("uuid"));
