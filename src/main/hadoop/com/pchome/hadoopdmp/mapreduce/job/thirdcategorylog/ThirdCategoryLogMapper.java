@@ -99,8 +99,8 @@ public class ThirdCategoryLogMapper extends Mapper<LongWritable, Text, Text, Tex
 				System.out.println("url: "+url);
 //				System.out.println("day_count: "+day_count);
 				
-				if ( (!source.equals("24h")) && !(source.equals("ruten")) ) {
-					break;
+				if ( (!source.equals("24h")) && (!source.equals("ruten")) ) {
+					continue;
 				}
 				
 				//如果陣列有24H或ruten資料才處理第3分類
@@ -110,7 +110,7 @@ public class ThirdCategoryLogMapper extends Mapper<LongWritable, Text, Text, Tex
 					if (m.find()) {
 						newCategoryArray.add(object);
 					}else{
-						break;
+						continue;
 					}
 				}
 				if (source.equals("ruten")) {//確認url符合ruten Pattern才塞入array
@@ -119,7 +119,7 @@ public class ThirdCategoryLogMapper extends Mapper<LongWritable, Text, Text, Tex
 					if (m.find()) {
 						newCategoryArray.add(object);
 					}else{
-						break;
+						continue;
 					}
 				}
 			}
