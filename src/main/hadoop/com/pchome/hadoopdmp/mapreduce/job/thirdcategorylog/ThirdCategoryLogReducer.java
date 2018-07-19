@@ -114,8 +114,16 @@ public class ThirdCategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 				redisClassifyMap.put(redisFountKey + enumClassifyKeyInfo.toString(), 0);
 			}
 			
+			
+			
+			
+			
+			
+			
+			
+			
 		} catch (Throwable e) {
-			log.error("reduce setup error>>>>>> " +e);
+			log.error("Third Category reduce setup error>>>>>> " +e);
 		}
 	}
 
@@ -123,6 +131,19 @@ public class ThirdCategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) throws IOException, InterruptedException {
 		
 		log.info(">>>>>>ThirdCategoryLogReducer reduce start : " + mapperKey.toString());
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		keyOut.set( mapperKey.toString());
 		context.write(keyOut, valueOut);

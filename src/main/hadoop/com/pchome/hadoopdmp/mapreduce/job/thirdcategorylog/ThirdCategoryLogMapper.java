@@ -133,11 +133,10 @@ public class ThirdCategoryLogMapper extends Mapper<LongWritable, Text, Text, Tex
 				thirdCategoryObj.put("key", keyObj);
 				
 				JSONObject thirdCategoryDataObj = new JSONObject();
-				thirdCategoryDataObj.put("prod_class_info", newCategoryArray);
+				thirdCategoryDataObj.put("category_info", newCategoryArray);
 				thirdCategoryDataObj.put("record_date", jsonObjOrg.get("record_date"));
 				thirdCategoryObj.put("data", thirdCategoryDataObj);
 				
-				System.out.println("final : "+thirdCategoryObj);
 			}else{
 				return;
 			}
@@ -151,52 +150,6 @@ public class ThirdCategoryLogMapper extends Mapper<LongWritable, Text, Text, Tex
 			log.error("Third Category Mapper error>>>>>> " +e); 
 		}
 	}
-	
-//	public DmpLogBean dmpBeanIntegrate(DmpLogBean dmpLogBeanResult) throws Exception {
-//		dmpLogBeanResult.setMemid( StringUtils.isBlank(dmpLogBeanResult.getMemid()) ? "null" : dmpLogBeanResult.getMemid());
-//		dmpLogBeanResult.setUuid( StringUtils.isBlank(dmpLogBeanResult.getUuid()) ? "null" : dmpLogBeanResult.getUuid());
-//		dmpLogBeanResult.setCategory( StringUtils.isBlank(dmpLogBeanResult.getCategory()) ? "null" : dmpLogBeanResult.getCategory());
-//		dmpLogBeanResult.setCategorySource( StringUtils.isBlank(dmpLogBeanResult.getCategorySource()) ? "null" : dmpLogBeanResult.getCategorySource());
-//		return dmpLogBeanResult;
-//	}
-	
-	
-//	public String dmpBeanToKafkaJson(DmpLogBean dmpLogBeanResult) throws Exception {
-//		recordCount = recordCount + 1;
-//		//send kafka key
-//		JSONObject keyJson = new JSONObject();
-//		keyJson.put("memid", dmpLogBeanResult.getMemid());
-//		keyJson.put("uuid", dmpLogBeanResult.getUuid());
-//		
-//		//send kafka data
-//		//category_info
-//		JSONObject categoryInfoJson = new JSONObject();
-//		categoryInfoJson.put("value", dmpLogBeanResult.getCategory());
-//		categoryInfoJson.put("source", dmpLogBeanResult.getCategorySource());
-//		
-//		//prod_class_info
-//				JSONObject prodClassInfoJson = new JSONObject();
-//				prodClassInfoJson.put("value", dmpLogBeanResult.getProdClassInfo());
-//				prodClassInfoJson.put("source","null");
-//		
-//		//dataJson
-//		JSONObject dataJson = new JSONObject();
-//		dataJson.put("category_info", categoryInfoJson);
-//		dataJson.put("prod_class_info", prodClassInfoJson);
-//		
-//		//send Kafka Json
-//		JSONObject sendKafkaJson = new JSONObject();
-//		sendKafkaJson.put("key", keyJson);
-//		sendKafkaJson.put("data", dataJson);
-//		sendKafkaJson.put("url",  dmpLogBeanResult.getUrl());
-//		sendKafkaJson.put("record_date", dmpLogBeanResult.getRecordDate());
-//		sendKafkaJson.put("org_source", dmpLogBeanResult.getSource());	//(kdcl、campaign)
-//		sendKafkaJson.put("ad_class", dmpLogBeanResult.getAdClass());
-//		sendKafkaJson.put("md5Url", dmpLogBeanResult.getUrlToMd5());
-//		sendKafkaJson.put("record_count", recordCount);
-//		
-//		return sendKafkaJson.toString();
-//	}
 	
 	
 	public class combinedValue {
