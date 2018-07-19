@@ -1,71 +1,43 @@
 package com.pchome.hadoopdmp.mapreduce.job.thirdcategorylog;
 
-import java.io.File;
-import java.net.InetAddress;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.json.JSONObject;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.maxmind.geoip2.DatabaseReader;
-import com.mongodb.DB;
-import com.pchome.hadoopdmp.enumerate.CategoryLogEnum;
-import com.pchome.hadoopdmp.mapreduce.job.component.DateTimeComponent;
-import com.pchome.hadoopdmp.mapreduce.job.component.DeviceComponent;
-import com.pchome.hadoopdmp.mapreduce.job.component.GeoIpComponent;
-import com.pchome.hadoopdmp.mapreduce.job.component.PersonalInfoComponent;
-import com.pchome.hadoopdmp.mapreduce.job.factory.ACategoryLogData;
-import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryCodeBean;
-import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryLogFactory;
-import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryRutenCodeBean;
-import com.pchome.hadoopdmp.mapreduce.job.factory.DmpLogBean;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
-import com.pchome.hadoopdmp.spring.config.bean.mongodborg.MongodbOrgHadoopConfig;
+
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
+import net.minidev.json.parser.JSONParser;
 
 @Component
 public class ThirdCategoryLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	Log log = LogFactory.getLog("ThirdCategoryLogMapper");
 	
-//	private static int recordCount = 0;
-//	private static int kdclLogLength = 30;
-//	private static int campaignLogLength = 9;
-//	private static String kdclSymbol = String.valueOf(new char[] { 9, 31 });
-//	private static String campaignSymbol = ",";
 
 	private Text keyOut = new Text();
 	private Text valueOut = new Text();
-
+	public JSONParser jsonParser = null;
 	public static String record_date;
-	public static ArrayList<Map<String, String>> categoryList = new ArrayList<Map<String, String>>();		     //分類表	
-	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();				 //分類個資表
-	public static List<CategoryCodeBean> category24hBeanList = new ArrayList<CategoryCodeBean>();				 //24H分類表
-	public static List<CategoryRutenCodeBean> categoryRutenBeanList = new ArrayList<CategoryRutenCodeBean>();	 //Ruten分類表
-	public static ArrayList<String> prodFileList = new ArrayList<String>();	 								     //24h、ruten第3分類對照表
-	public static ThirdAdClassComponent thirdAdClassComponent = new ThirdAdClassComponent();
-	public static PersonalInfoComponent personalInfoComponent = new PersonalInfoComponent();
-	public static GeoIpComponent geoIpComponent = new GeoIpComponent();
-	public static DateTimeComponent dateTimeComponent = new DateTimeComponent();
-	public static DeviceComponent deviceComponent = new DeviceComponent();
-	private DB mongoOrgOperations;
-	public static DatabaseReader reader = null;
-	public static InetAddress ipAddress = null;
+//	public static ArrayList<Map<String, String>> categoryList = new ArrayList<Map<String, String>>();		     //分類表	
+//	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();				 //分類個資表
+//	public static List<CategoryCodeBean> category24hBeanList = new ArrayList<CategoryCodeBean>();				 //24H分類表
+//	public static List<CategoryRutenCodeBean> categoryRutenBeanList = new ArrayList<CategoryRutenCodeBean>();	 //Ruten分類表
+//	public static ArrayList<String> prodFileList = new ArrayList<String>();	 								     //24h、ruten第3分類對照表
+//	public static ThirdAdClassComponent thirdAdClassComponent = new ThirdAdClassComponent();
+//	public static PersonalInfoComponent personalInfoComponent = new PersonalInfoComponent();
+//	public static GeoIpComponent geoIpComponent = new GeoIpComponent();
+//	public static DateTimeComponent dateTimeComponent = new DateTimeComponent();
+//	public static DeviceComponent deviceComponent = new DeviceComponent();
+//	private DB mongoOrgOperations;
+//	public static DatabaseReader reader = null;
+//	public static InetAddress ipAddress = null;
 
 	@Override
 	public void setup(Context context) {
@@ -73,77 +45,16 @@ public class ThirdCategoryLogMapper extends Mapper<LongWritable, Text, Text, Tex
 		try {
 			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-			this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
+//			this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
 			record_date = context.getConfiguration().get("job.date");
+			jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
 			Configuration conf = context.getConfiguration();
 			
-			//load 推估分類個資表(ClsfyGndAgeCrspTable.txt)
-			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
-			Path clsfyTable = Paths.get(path[1].toString());
-			Charset charset = Charset.forName("UTF-8");
-			List<String> lines = Files.readAllLines(clsfyTable, charset);
-			for (String line : lines) {
-				String[] tmpStrAry = line.split(";"); // 0001000000000000;M,35
-				String[] tmpStrAry2 = tmpStrAry[1].split(",");
-				clsfyCraspMap.put(tmpStrAry[0],new combinedValue(tmpStrAry[1].split(",")[0], tmpStrAry2.length > 1 ? tmpStrAry2[1] : ""));
-			}
-			
-
-			// load 分類表(pfp_ad_category_new.csv)
-			Path cate_path = Paths.get(path[0].toString());
-			charset = Charset.forName("UTF-8");
-			int maxCateLvl = 4;
-			categoryList = new ArrayList<Map<String, String>>();
-			for (int i = 0; i < maxCateLvl; i++) {
-				categoryList.add(new HashMap<String, String>());
-			}
-			lines.clear();
-			lines = Files.readAllLines(cate_path, charset);
-			// 將 table: pfp_ad_category_new 內容放入list中(共有 maxCateLvl 層)
-			for (String line : lines) {
-				String[] tmpStr = line.split(";");
-				int lvl = Integer.parseInt(tmpStr[5].replaceAll("\"", "").trim());
-				if (lvl <= maxCateLvl) {
-					categoryList.get(lvl - 1).put(tmpStr[3].replaceAll("\"", "").trim(),tmpStr[4].replaceAll("\"", "").replaceAll("@", "").trim());
-				}
-			}
-			
-			// load 24h分類表(DMP_24h_category.csv)
-			Path category24HPath = Paths.get(path[3].toString());
-			List<String> lines24H = Files.readAllLines(category24HPath, charset);
-			for (String line : lines24H) {
-				CategoryCodeBean categoryBean = new CategoryCodeBean();
-				
-				String[] tmpStrAry = line.split(","); // 0001000000000000;M,35
-				
-				categoryBean.setNumberCode(tmpStrAry[0].replaceAll("\"", ""));
-				categoryBean.setChineseDesc(tmpStrAry[1].replaceAll("\"", ""));
-				categoryBean.setBreadCrumb(tmpStrAry[2].replaceAll("\"", ""));
-				categoryBean.setEnglishCode(tmpStrAry[3].replaceAll("\"", ""));
-				
-				category24hBeanList.add(categoryBean);
-			}
-			
-			// load Ruten分類表(DMP_Ruten_category.csv)
-			Path categoryRutenPath = Paths.get(path[4].toString());
-			List<String> linesRuten = Files.readAllLines(categoryRutenPath, charset);
-			for (String line : linesRuten) {
-				CategoryRutenCodeBean categoryRutenBean = new CategoryRutenCodeBean();
-				
-				String[] tmpStrAry = line.split(","); //"0001000000000000","電腦、電腦周邊"
-				
-				categoryRutenBean.setNumberCode(tmpStrAry[0].replaceAll("\"", ""));
-				categoryRutenBean.setChineseDesc(tmpStrAry[1].replaceAll("\"", ""));
-				
-				categoryRutenBeanList.add(categoryRutenBean);
-			}
-			
-			//IP轉城市
-			File database = new File(path[5].toString());
-			reader = new DatabaseReader.Builder(database).build();  
 			
 			
 //			//load 24h、ruten第3分類對照表(ThirdAdClassTable.txt)
+//			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
+//			Charset charset = Charset.forName("UTF-8");
 //			Path thirdAdClassPath = Paths.get(path[6].toString());
 //			charset = Charset.forName("UTF-8");
 //			List<String> thirdAdClassLines = Files.readAllLines(thirdAdClassPath, charset);
@@ -151,27 +62,72 @@ public class ThirdCategoryLogMapper extends Mapper<LongWritable, Text, Text, Tex
 //				prodFileList.add(line);
 //			}
 			
+			
+			
 		} catch (Exception e) {
 			log.error("Mapper setup error>>>>>> " +e);
 		}
 	}
 
 	@Override
-	public void map(LongWritable offset, Text value, Context context) {
+	public void map(LongWritable offset, Text mapperValue, Context context) {
 		try {
 			//讀取kdcl、Campaign資料
-			log.info("ThirdCategoryLogMapper raw_data : " + value.toString());
+			log.info("ThirdCategoryLogMapper raw_data : " + mapperValue.toString());
 			
-//			DmpLogBean dmpDataBean =  new DmpLogBean();
-			String valueStr = value.toString();
+			String data = mapperValue.toString();
+			JSONObject jsonObjOrg = (net.minidev.json.JSONObject)jsonParser.parse(data);
 			
-			log.info(">>>>>>ThirdCategoryLogMapper Mapper write key:" + valueStr);
+			JSONObject dataObj =  (JSONObject) jsonObjOrg.get("data");
+			JSONArray categoryArray =  (JSONArray) dataObj.get("category_info");
+			System.out.println("category_info: "+categoryArray);
 			
-			keyOut.set(valueStr);
+			boolean haveThirdCategory = false;	//如果陣列有24H或ruten資料才處理第3分類
+			JSONArray newCategoryArray = new JSONArray();
+			
+			for (Object object : categoryArray) {
+				JSONObject infoJson = (JSONObject) object;
+				String source = infoJson.getAsString("source");
+				String value = infoJson.getAsString("value");
+				String url = infoJson.getAsString("url");
+				String day_count = infoJson.getAsString("day_count");
+				
+				System.out.println("source: "+source);
+				System.out.println("value: "+value);
+				System.out.println("url: "+url);
+				System.out.println("day_count: "+day_count);
+				
+				//如果陣列有24H或ruten資料才處理第3分類
+				if (source.equals("24h") || source.equals("ruten")) {
+					haveThirdCategory = true;
+					newCategoryArray.add(object);
+				}
+			}
+			
+			JSONObject thirdCategoryObj = new JSONObject();
+			if (haveThirdCategory){
+				JSONObject keyObj = new JSONObject();
+				keyObj.put("memid",  ((JSONObject) jsonObjOrg.get("key")).get("memid"));
+				keyObj.put("uuid",  ((JSONObject) jsonObjOrg.get("key")).get("uuid"));
+				thirdCategoryObj.put("key", keyObj);
+				
+				JSONObject thirdCategoryDataObj = new JSONObject();
+				thirdCategoryDataObj.put("prod_class_info", newCategoryArray);
+				thirdCategoryDataObj.put("record_date", jsonObjOrg.get("record_date"));
+				thirdCategoryObj.put("data", thirdCategoryDataObj);
+				
+				System.out.println("final : "+thirdCategoryObj);
+			}else{
+				return;
+			}
+			
+			log.info(">>>>>>ThirdCategoryLogMapper Mapper write key:" + thirdCategoryObj.toString());
+			
+			keyOut.set(thirdCategoryObj.toString());
 			context.write(keyOut, valueOut);
 			
 		} catch (Exception e) {
-			log.error("Mapper error>>>>>> " +e); 
+			log.error("Third Category Mapper error>>>>>> " +e); 
 		}
 	}
 	
