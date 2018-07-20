@@ -29,6 +29,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 	+"com.pchome.hadoopdmp.mapreduce.job.dmplog,"
 //	+"com.pchome.hadoopdmp.mapreduce.job.combinerTest,"
 	+"com.pchome.hadoopdmp.mapreduce.job.thirdcategorylog,"
+	+"com.pchome.hadoopdmp.dao,"
 	
 )
 @PropertySource({ 

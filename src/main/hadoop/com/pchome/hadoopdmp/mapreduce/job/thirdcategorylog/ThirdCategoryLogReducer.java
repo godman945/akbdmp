@@ -1,9 +1,11 @@
 package com.pchome.hadoopdmp.mapreduce.job.thirdcategorylog;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
@@ -18,9 +20,18 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import com.pchome.hadoopdmp.mapreduce.job.dmplog.EnumClassifyKeyInfo;
-import com.pchome.hadoopdmp.mapreduce.job.dmplog.EnumDataKeyInfo;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
+import com.pchome.hadoopdmp.dao.PfpAdCategoryNewDAO;
+import com.pchome.hadoopdmp.dao.SequenceDAO;
+import com.pchome.hadoopdmp.mapreduce.job.component.HttpUtil;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
+import com.pchome.hadoopdmp.spring.config.bean.mongodborg.MongodbOrgHadoopConfig;
 
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -63,11 +74,16 @@ public class ThirdCategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	
 	public JSONParser jsonParser = null;
 	
-	public String redisFountKey;
+	private DB mongoOrgOperations;
 	
-	public Map<String,JSONObject> kafkaDmpMap =null;
+	private DBCollection dBCollection;
 	
-	public Map<String,Integer> redisClassifyMap =null;
+	private int crawlerCount = 0; 
+	
+	private PfpAdCategoryNewDAO categoryDAO = null;
+	
+	private SequenceDAO sequenceDAO = null;
+	
 	
 	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
@@ -75,6 +91,7 @@ public class ThirdCategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 		try {
 			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+			this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
 			this.redisTemplate = (RedisTemplate<String, Object>) ctx.getBean("redisTemplate");
 			this.kafkaMetadataBrokerlist = ctx.getEnvironment().getProperty("kafka.metadata.broker.list");
 			this.kafkaAcks = ctx.getEnvironment().getProperty("kafka.acks");
@@ -98,26 +115,15 @@ public class ThirdCategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 			props.put("value.serializer", kafkaValueSerializer);
 			producer = new KafkaProducer<String, String>(props);
 			jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
-			kafkaDmpMap = new HashMap<String,JSONObject>();
-			
+		
 			String recordDate = context.getConfiguration().get("job.date");
 			String env = context.getConfiguration().get("spring.profiles.active");
-			if(env.equals("prd")){
-				redisFountKey = "prd:dmp:classify:"+recordDate+":";
-			}else{
-				redisFountKey = "stg:dmp:classify:"+recordDate+":";
-			}
 			
-			//Classify Map
-			redisClassifyMap = new HashMap<String,Integer>();
-			for (EnumClassifyKeyInfo enumClassifyKeyInfo : EnumClassifyKeyInfo.values()) {
-				redisClassifyMap.put(redisFountKey + enumClassifyKeyInfo.toString(), 0);
-			}
-			
-			
-			
-			
-			
+			//mysql init
+			categoryDAO = new PfpAdCategoryNewDAO();
+			categoryDAO.dbInit();
+			sequenceDAO = new SequenceDAO();
+			sequenceDAO.dbInit();
 			
 			
 			
@@ -128,149 +134,188 @@ public class ThirdCategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	}
 
 	@Override
-	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) throws IOException, InterruptedException {
+	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
+		try {
+			log.info(">>>>>>ThirdCategoryLogReducer reduce start : " + mapperKey.toString());
+			
+			JSONObject jsonObjOrg = (net.minidev.json.JSONObject)jsonParser.parse(mapperKey.toString());
+	//		System.out.println("str: "+jsonObjOrg);
+			
+			JSONObject dataObj =  (JSONObject) jsonObjOrg.get("data");
+			JSONArray categoryArray =  (JSONArray) dataObj.get("category_info");
+	//		System.out.println("category_info: "+categoryArray);
+			
+			
+			
+			JSONArray prodClassinfoAry = new JSONArray();
+			for (Object object : categoryArray) {
+				ArrayList<String> thirdCategoryList = new ArrayList<String>();  //放第3分類list
+				JSONObject infoJson = (JSONObject) object;
+				String categorySource = infoJson.getAsString("source");
+				String categoryValue = infoJson.getAsString("value");
+				String categoryUrl = infoJson.getAsString("url");
+				String categoryDayCount = infoJson.getAsString("day_count");
+				
+				System.out.println("categorySource: "+categorySource);
+				System.out.println("categoryValue: "+categoryValue);
+				System.out.println("categoryUrl: "+categoryUrl);
+				System.out.println("categoryDayCount: "+categoryDayCount);
+				
+				String urlToMd5 = getMD5(categoryUrl);
+				DBObject dbObject = queryClassUrlThirdAdclass(urlToMd5);		//查mongo有無資料
+				if (dbObject != null) {
+					//如果mongo已有第3層資料，直接將array塞進dmpDataBean的Prod_class_info
+					thirdCategoryList = (ArrayList<String>) dbObject.get("prod_class_info");
+				}else{
+					//先檢查MYSQL有無此第1第2分類代號，沒有就不新增
+					int length =16;
+					String categoryValueStr = categoryValue;
+					categoryValueStr = categoryValueStr.substring(0,8);
+					String level2Category =categoryValueStr+String.format("%1$0"+(length -categoryValueStr.length())+"d",0);
+					int parent_id = categoryDAO.querySecondCategoryExist(level2Category);
+					System.out.println("parent_id : "+parent_id);
+					
+					if (parent_id==0){
+						System.out.println("沒有第2分類 : "+parent_id);
+						continue;
+					}
+					
+					//打爬蟲要title
+					String prodTitle = adCrawlerGetTitle(categoryUrl);
+					if ( StringUtils.isNotBlank(prodTitle)){
+						//比對title是否有命中第3分類對照表(ThirdAdClassTable.txt)
+	//					for (String string : DmpLogMapper.prodFileList) {
+						
+						ArrayList<String> newMongothirdCateList = new ArrayList<String>();  //如此url在mongo沒有第3分類資料，即新增
+						for (String prodName : ThirdCategoryLogMapper.prodFileList) {
+							if ( prodTitle.indexOf(prodName) > -1){
+								//查詢mysql是否有第3分類資料
+								categoryValueStr = categoryValue.substring(0,8);
+								String Level3code= categoryDAO.queryThirdCategoryExist(categoryValueStr, prodName);
+								if (StringUtils.isBlank(Level3code)){
+									System.out.println("沒有第3分類");
+									//此第2分類下沒有這個第3分類商品，新增至pfp_ad_category_new table
+	//								8.檢查mysql pfp_ad_category_new 第一第二層之下有無此關鍵字
+	//								9.沒有的話給一個第三層代號，並建立一筆第三層代號
+	//								10.yes.txt 可能會比對中多個字,每一個字均要建立第三層(第3層為8碼流水號ex:00000001)
+	//								11.將建立的多個第三層代號，用url 當key 寫入 mongodb 讓下次第4部驟可以查詢到
+	//								12.將1 2 3 層資料傳遞到下一個模組
+	//								13.kafa 紀錄格式 prod_class_info category可傳入多個分類
+									int seq = sequenceDAO.querySequence();
+									seq = seq+1;
+									String thirdCategorySeq = String.format("%08d", seq);
+									String thirdCategoryCode = categoryValueStr+thirdCategorySeq;
+									
+									categoryDAO.insertThirdCategory(Integer.toString(parent_id), thirdCategoryCode, prodName, 3);
+									sequenceDAO.updateSequence(seq);
+									
+									thirdCategoryList.add(thirdCategoryCode);
+									newMongothirdCateList.add(thirdCategoryCode);
+								}else{
+									thirdCategoryList.add(Level3code);
+									newMongothirdCateList.add(Level3code);
+									System.out.println("有第3分類 : "+Level3code);
+								}
+							}
+						}
+						
+						//有中到第3分類檔(ThirdAdClassTable.txt)，即把資料新增至class_url_third_adclass table
+						if (newMongothirdCateList.size()>0){
+							insertClassUrlThirdAdclass(urlToMd5,newMongothirdCateList);
+						} 
+					}
+				}
+				
+				//新增prod_class_info 第3分類array內容
+				JSONObject prodClassinfoObj = new JSONObject();
+				prodClassinfoObj.put("source", categorySource);
+				prodClassinfoObj.put("value", thirdCategoryList);
+				prodClassinfoObj.put("day_count", categoryDayCount);
+				prodClassinfoAry.add(prodClassinfoObj);	//prod_class_info
+			}
+			
+			//重組第3分類json後發送給kafka
+			JSONObject newALLObj = new JSONObject();
+			JSONObject newKeyObj = new JSONObject();
+			newKeyObj.put("uuid",  ((JSONObject) jsonObjOrg.get("key")).get("uuid"));
+			newKeyObj.put("memid", ((JSONObject) jsonObjOrg.get("key")).get("memid"));
+			newALLObj.put("key", newKeyObj);
+			
+			JSONObject newDataObj = new JSONObject();
+			newDataObj.put("prod_class_info", prodClassinfoAry);
+			newDataObj.put("record_date", ((JSONObject) jsonObjOrg.get("data")).get("record_date"));
+			newALLObj.put("data", newDataObj);
+			
+			
+			log.info(">>>>>>>>>>>第3分類>>>>>>:"+newALLObj.toString());
+			
+			keyOut.set(newALLObj.toString());
+			context.write(keyOut, valueOut);
+		} catch (Throwable e) {
+//			log.error(">>>>>> reduce error redis key:" +reducerMapKey.toString());
+			log.error("ThirdCategoryLogReducer reduce error>>>>>> " +e);
+		}
+	}
+	
+	public String getMD5(String str) {
+        MessageDigest md = null;
+	    try {
+	    	md = MessageDigest.getInstance("MD5");
+	        md.update(str.getBytes());
+	    } catch (Exception e) {
+	    	System.out.println(e);
+	    }
+		return  new BigInteger(1, md.digest()).toString(16);
+	}
+	
+	public DBObject queryClassUrlThirdAdclass(String urlToMd5) throws Exception {
+		dBCollection= mongoOrgOperations.getCollection("class_url_third_adclass");
+		BasicDBObject andQuery = new BasicDBObject();
+		List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+		obj.add(new BasicDBObject("_id", urlToMd5));
+		andQuery.put("$and", obj);
+		DBObject dbObject =  dBCollection.findOne(andQuery);
+		return dbObject;
+	}
+	
+	public void insertClassUrlThirdAdclass(String urlToMd5,ArrayList<String> newMongothirdCateList) throws Exception {
+		dBCollection= mongoOrgOperations.getCollection("class_url_third_adclass");
+	    DBObject documents = new BasicDBObject("_id",urlToMd5).append("prod_class_info", newMongothirdCateList);
+	    dBCollection.insert(documents);
+	}
+	
+	
+	public String adCrawlerGetTitle(String url) throws Exception {
+		crawlerCount = crawlerCount +1;
 		
-		log.info(">>>>>>ThirdCategoryLogReducer reduce start : " + mapperKey.toString());
+		log.info(">>>>>>crawlerCount : "+crawlerCount);
 		
+		if (crawlerCount == 6){
+			Thread.sleep(5000);
+			log.info(">>>>>>Crawler sleep(5000)");
+		}
 		
+		//第3層資料沒有在mongo中，打爬蟲get標題
+		String prodTitle = "";
+		StringBuffer adCrawlerResult = HttpUtil.getInstance().doGet("http://pysvr.mypchome.com.tw/product/?url="+url);
 		
+		log.info(">>>>>>Crawler : "+"http://pysvr.mypchome.com.tw/product/?url="+url);
 		
+		JSONObject adCrawlerObj = (net.minidev.json.JSONObject)jsonParser.parse(adCrawlerResult.toString());
+		JSONArray adCrawlerAry = (JSONArray) adCrawlerObj.get("products");
+		for (Object adCrawlerObjs : adCrawlerAry) {
+			JSONObject adCrawler = (JSONObject) adCrawlerObjs;
+			prodTitle = adCrawler.getAsString("title");
+			log.info(">>>>>> url title : "+prodTitle);
+		}
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		keyOut.set( mapperKey.toString());
-		context.write(keyOut, valueOut);
-//		log.info(">>>>>>reduce Map send kafka:" + mapEntry.getValue().toString());
-		
-//		try {
-//			log.info(">>>>>> reduce start : " + mapperKey.toString());
-//			String data = mapperKey.toString();
-//			JSONObject jsonObjOrg = (net.minidev.json.JSONObject)jsonParser.parse(data);
-//			
-//			String dmpSource = (String) jsonObjOrg.get("org_source");
-//			String dmpMemid =  (String) ((JSONObject) jsonObjOrg.get("key")).get("memid");
-//			String dmpUuid = (String) ((JSONObject) jsonObjOrg.get("key")).get("uuid");
-//			String recordDate = jsonObjOrg.getAsString("record_date");
-//			//建立map key
-//			StringBuffer reducerMapKey = new StringBuffer();
-//			reducerMapKey.append(dmpSource);
-//			reducerMapKey.append("_");
-//			reducerMapKey.append(dmpMemid);
-//			reducerMapKey.append("_");
-//			reducerMapKey.append(dmpUuid);
-//			
-//			JSONObject dmpJson = kafkaDmpMap.get(reducerMapKey.toString());
-//			
-//			if(dmpJson == null){
-//				// 處理info資訊
-//				JSONObject hadoopData = ((JSONObject) jsonObjOrg.get("data"));
-//				hadoopData.put("record_date", recordDate);
-//				for (EnumDataKeyInfo enumDataKeyInfo : EnumDataKeyInfo.values()) {
-//					JSONArray array = new JSONArray();
-//					JSONObject infoJson = (JSONObject) hadoopData.get(enumDataKeyInfo.toString());
-//					String source = infoJson.getAsString("source");
-//					String value = infoJson.getAsString("value");
-//					if ((StringUtils.isNotBlank(source) && !source.equals("null"))
-//							&& (StringUtils.isNotBlank(value) && !value.equals("null"))) {
-//						infoJson.put("day_count", 1);
-//					} else {
-//						infoJson.put("day_count", 0);
-//					}
-//					array.add(infoJson);
-//					hadoopData.put(enumDataKeyInfo.toString(), array);
-//				}
-//				
-//				// 處理classify資訊
-//				JSONArray classifyArrayOrg = (JSONArray) hadoopData.get("classify");
-//				for (Object object : classifyArrayOrg) {
-//					JSONObject classifyJson = (JSONObject) object;
-//					for (Entry<String, Object> entry : classifyJson.entrySet()) {
-//						String key = (String) entry.getKey();
-//						key = redisFountKey + key;
-//						String type = (String) entry.getValue();
-//						if (StringUtils.equals(type, "null")) {
-//							break;
-//						} else{	
-//							//type值是Y或N
-//							key = key +"_"+type;
-//						} 
-//						int classifyValue = redisClassifyMap.get(key);
-//						classifyValue = classifyValue + 1;
-//						redisClassifyMap.put(key, classifyValue);
-//					}
-//				}
-//				kafkaDmpMap.put(reducerMapKey.toString(), jsonObjOrg);
-//				
-//			}else{
-//				JSONObject hadoopDataOrg = ((JSONObject) jsonObjOrg.get("data"));
-//				JSONObject hadoopDataDmpMap = ((JSONObject) dmpJson.get("data"));
-//				for (EnumDataKeyInfo enumDataKeyInfo : EnumDataKeyInfo.values()) {
-//					String source = ((JSONObject) hadoopDataOrg.get(enumDataKeyInfo.toString())).getAsString("source");
-//					String value = ((JSONObject) hadoopDataOrg.get(enumDataKeyInfo.toString())).getAsString("value");
-//					// 此次log資訊來源及值都不為null才取出資料進行判斷是否加1邏輯
-//					if ( (StringUtils.isNotBlank(source) && !source.equals("null"))
-//							&& (StringUtils.isNotBlank(value) && !value.equals("null")) ) {
-//						boolean newDetail = true;
-//						JSONArray array = (JSONArray) hadoopDataDmpMap.get(enumDataKeyInfo.toString());
-//						for (Object object : array) {
-//							JSONObject infoJson = (JSONObject) object;
-//							String kafkaDmpMapSource = infoJson.getAsString("source");
-//							String kafkaDmpMapValue = infoJson.getAsString("value");
-//							// 判斷log的source與value內容皆與kafkaDmpMap裡的內容一致，則該筆info的day_count+1
-//							if (source.equals(kafkaDmpMapSource) && value.equals(kafkaDmpMapValue)) {
-//								int dayCount = (int) infoJson.get("day_count");
-//								dayCount = dayCount + 1;
-//								infoJson.put("day_count", dayCount);
-//								newDetail = false;
-//							}
-//						}
-//						// 比對不到加入info所屬陣列
-//						if (newDetail) {
-//							JSONObject infoJson = new JSONObject();
-//							infoJson.put("source", source);
-//							infoJson.put("value", value);
-//							infoJson.put("day_count", 1);
-//							array.add(infoJson);
-//						}
-//					}
-//				}
-//
-//				// 計算clssify
-//				JSONArray orgClassifyArray = (JSONArray) hadoopDataOrg.get("classify");
-//				for (Object object : orgClassifyArray) {
-//					JSONObject orgClassifyJson = (JSONObject) object;
-//					for (Entry<String, Object> entry : orgClassifyJson.entrySet()) {
-//						String key = (String) entry.getKey();
-//						key = redisFountKey + key; 
-//						String type = (String) entry.getValue();
-//						if (StringUtils.equals(type, "null")) {
-//							break;
-//						} else{
-//							//type值是Y或N
-//							key = key +"_"+type;
-//						} 
-//						int classifyValue = redisClassifyMap.get(key);
-//						classifyValue = classifyValue + 1;
-//						redisClassifyMap.put(key, classifyValue);
-//					}
-//				}
-//				kafkaDmpMap.put(reducerMapKey.toString(), dmpJson);
-//			}
-//		} catch (Throwable e) {
-////			log.error(">>>>>> reduce error redis key:" +reducerMapKey.toString());
-//			log.error("reduce error>>>>>> " +e);
-//			log.error(">>>>>>reduce error>> redisClassifyMap:" + redisClassifyMap);
-//		}
+		return prodTitle;
 	}
 	
 	public void cleanup(Context context) {
+		
+		categoryDAO.closeAll();
+		sequenceDAO.closeAll();
 //		try {
 ////			log.info(">>>>>>write cleanup>>>>>");
 //			
