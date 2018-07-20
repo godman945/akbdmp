@@ -27,6 +27,7 @@ public class PfpAdCategoryNewDAO {
 		try {
 			String sql = " select * from pfp_ad_category_new where 1=1 and code  ='"+code+"' and level =2 ";
 			ResultSet rs = stmt.executeQuery(sql);
+			log.info("querySecondCategoryExist : "+sql);
 
 			while (rs.next()) {
 				parent_id  = rs.getInt("id");
@@ -44,7 +45,7 @@ public class PfpAdCategoryNewDAO {
 		String level3Code="";
 		try {
 			String sql = " select * from pfp_ad_category_new where 1=1 and code like '"+code+"%' and name = '"+ name +"' and level =3 ";
-			System.out.println("sql: "+sql);
+			log.info("queryThirdCategoryExist : "+sql);
 			
 			ResultSet rs = stmt.executeQuery(sql);
 
@@ -70,8 +71,7 @@ public class PfpAdCategoryNewDAO {
 					level + "," +
 					" NOW()) ";
 //					sdf.format(	) + "')";
-			
-			System.out.println(sql);
+			log.info("insertThirdCategory : "+sql);
 			stmt.executeUpdate(sql);
 		}catch(Exception e){
 			log.error(e.getMessage());

@@ -120,10 +120,10 @@ public class ThirdCategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 			String env = context.getConfiguration().get("spring.profiles.active");
 			
 			//mysql init
-			categoryDAO = new PfpAdCategoryNewDAO();
-			categoryDAO.dbInit();
-			sequenceDAO = new SequenceDAO();
-			sequenceDAO.dbInit();
+			this.categoryDAO = new PfpAdCategoryNewDAO();
+			this.categoryDAO.dbInit();
+			this.sequenceDAO = new SequenceDAO();
+			this.sequenceDAO.dbInit();
 			
 			
 			
@@ -172,7 +172,7 @@ public class ThirdCategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 					String categoryValueStr = categoryValue;
 					categoryValueStr = categoryValueStr.substring(0,8);
 					String level2Category =categoryValueStr+String.format("%1$0"+(length -categoryValueStr.length())+"d",0);
-					int parent_id = categoryDAO.querySecondCategoryExist(level2Category);
+					int parent_id = this.categoryDAO.querySecondCategoryExist(level2Category);
 					System.out.println("parent_id : "+parent_id);
 					
 					if (parent_id==0){
@@ -191,7 +191,7 @@ public class ThirdCategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 							if ( prodTitle.indexOf(prodName) > -1){
 								//查詢mysql是否有第3分類資料
 								categoryValueStr = categoryValue.substring(0,8);
-								String Level3code= categoryDAO.queryThirdCategoryExist(categoryValueStr, prodName);
+								String Level3code= this.categoryDAO.queryThirdCategoryExist(categoryValueStr, prodName);
 								if (StringUtils.isBlank(Level3code)){
 									System.out.println("沒有第3分類");
 									//此第2分類下沒有這個第3分類商品，新增至pfp_ad_category_new table
@@ -201,13 +201,13 @@ public class ThirdCategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	//								11.將建立的多個第三層代號，用url 當key 寫入 mongodb 讓下次第4部驟可以查詢到
 	//								12.將1 2 3 層資料傳遞到下一個模組
 	//								13.kafa 紀錄格式 prod_class_info category可傳入多個分類
-									int seq = sequenceDAO.querySequence();
+									int seq = this.sequenceDAO.querySequence();
 									seq = seq+1;
 									String thirdCategorySeq = String.format("%08d", seq);
 									String thirdCategoryCode = categoryValueStr+thirdCategorySeq;
 									
-									categoryDAO.insertThirdCategory(Integer.toString(parent_id), thirdCategoryCode, prodName, 3);
-									sequenceDAO.updateSequence(seq);
+									this.categoryDAO.insertThirdCategory(Integer.toString(parent_id), thirdCategoryCode, prodName, 3);
+									this.sequenceDAO.updateSequence(seq);
 									
 									thirdCategoryList.add(thirdCategoryCode);
 									newMongothirdCateList.add(thirdCategoryCode);
@@ -269,19 +269,19 @@ public class ThirdCategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	}
 	
 	public DBObject queryClassUrlThirdAdclass(String urlToMd5) throws Exception {
-		dBCollection= mongoOrgOperations.getCollection("class_url_third_adclass");
+		this.dBCollection= this.mongoOrgOperations.getCollection("class_url_third_adclass");
 		BasicDBObject andQuery = new BasicDBObject();
 		List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
 		obj.add(new BasicDBObject("_id", urlToMd5));
 		andQuery.put("$and", obj);
-		DBObject dbObject =  dBCollection.findOne(andQuery);
+		DBObject dbObject =  this.dBCollection.findOne(andQuery);
 		return dbObject;
 	}
 	
 	public void insertClassUrlThirdAdclass(String urlToMd5,ArrayList<String> newMongothirdCateList) throws Exception {
-		dBCollection= mongoOrgOperations.getCollection("class_url_third_adclass");
+		this.dBCollection= this.mongoOrgOperations.getCollection("class_url_third_adclass");
 	    DBObject documents = new BasicDBObject("_id",urlToMd5).append("prod_class_info", newMongothirdCateList);
-	    dBCollection.insert(documents);
+	    this.dBCollection.insert(documents);
 	}
 	
 	
@@ -314,8 +314,8 @@ public class ThirdCategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	
 	public void cleanup(Context context) {
 		
-		categoryDAO.closeAll();
-		sequenceDAO.closeAll();
+		this.categoryDAO.closeAll();
+		this.sequenceDAO.closeAll();
 //		try {
 ////			log.info(">>>>>>write cleanup>>>>>");
 //			

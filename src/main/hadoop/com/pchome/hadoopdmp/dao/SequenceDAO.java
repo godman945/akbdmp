@@ -26,6 +26,7 @@ public class SequenceDAO {
 		try {
 			String sql = " update sequence  set table_no = "+seq+" WHERE table_name ='pfp_ad_category_new' and table_char ='cateSeq' ";
 			stmt.executeUpdate(sql);
+			log.info("updateSequence : "+sql);
 
 		} catch (Exception e) {
 			System.out.println(e);
@@ -37,7 +38,8 @@ public class SequenceDAO {
 		try {
 			String sql = " SELECT * FROM sequence  WHERE 1=1 and table_name ='pfp_ad_category_new' and table_char ='cateSeq' ";
 			ResultSet rs = stmt.executeQuery(sql);
-
+			log.info("querySequence : "+sql);
+			
 			while (rs.next()) {
 				table_no = rs.getInt("table_no");
 			}
