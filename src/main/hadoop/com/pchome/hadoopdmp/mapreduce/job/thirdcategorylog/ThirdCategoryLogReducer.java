@@ -137,7 +137,7 @@ public class ThirdCategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 			Configuration conf = context.getConfiguration();
 			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
 			Charset charset = Charset.forName("UTF-8");
-			Path thirdAdClassPath = Paths.get(path[6].toString());
+			Path thirdAdClassPath = Paths.get(path[0].toString());
 			charset = Charset.forName("UTF-8");
 			List<String> thirdAdClassLines = Files.readAllLines(thirdAdClassPath, charset);
 			for (String line : thirdAdClassLines) {

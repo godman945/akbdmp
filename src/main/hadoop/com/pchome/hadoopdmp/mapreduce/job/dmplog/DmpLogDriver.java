@@ -346,6 +346,15 @@ public class DmpLogDriver {
 			log.info(">>>>>>Job2 INPUT PATH:"+outPath);
 			log.info(">>>>>>Job2 OUTPUT PATH:"+outPath2);
 			
+			
+			String[] filePaths2 = {
+					hdfsPath + "/home/webuser/dmp/jobfile/ThirdAdClassTable.txt"
+			};
+			for (String filePath : filePaths2) {
+				DistributedCache.addCacheFile(new URI(filePath), job.getConfiguration());
+			}
+			
+			
 			if (job.waitForCompletion(true)) {
 				log.info("Job2 is OK");
 			} else {
