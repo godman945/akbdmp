@@ -56,6 +56,7 @@ public class SequenceDAO {
 		try{
 			conn = DriverManager.getConnection(url, user, password);
 			stmt = conn.createStatement();
+			log.info("Sequence DAO Connection : "+stmt.getConnection());
 		}catch(Exception e){
 			log.error(e.getMessage());
 		}
