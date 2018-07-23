@@ -313,6 +313,7 @@ public class ThirdCategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	
 	public String adCrawlerGetTitle(String url) throws Exception {
 		Thread.sleep(1000);
+		log.info(">>>>>>Crawler sleep(1000)");
 		
 //		crawlerCount = crawlerCount +1;
 //		log.info(">>>>>>crawlerCount : "+crawlerCount);
