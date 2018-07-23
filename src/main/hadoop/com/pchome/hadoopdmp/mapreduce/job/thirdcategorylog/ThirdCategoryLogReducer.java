@@ -139,11 +139,11 @@ public class ThirdCategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 			log.info(">>>>>>ThirdCategoryLogReducer reduce start : " + mapperKey.toString());
 			
 			JSONObject jsonObjOrg = (net.minidev.json.JSONObject)jsonParser.parse(mapperKey.toString());
-	//		System.out.println("str: "+jsonObjOrg);
+	//		log.info("str: "+jsonObjOrg);
 			
 			JSONObject dataObj =  (JSONObject) jsonObjOrg.get("data");
 			JSONArray categoryArray =  (JSONArray) dataObj.get("category_info");
-	//		System.out.println("category_info: "+categoryArray);
+	//		log.info("category_info: "+categoryArray);
 			
 			
 			
@@ -156,10 +156,10 @@ public class ThirdCategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 				String categoryUrl = infoJson.getAsString("url");
 				String categoryDayCount = infoJson.getAsString("day_count");
 				
-				System.out.println("categorySource: "+categorySource);
-				System.out.println("categoryValue: "+categoryValue);
-				System.out.println("categoryUrl: "+categoryUrl);
-				System.out.println("categoryDayCount: "+categoryDayCount);
+				log.info("categorySource: "+categorySource);
+				log.info("categoryValue: "+categoryValue);
+				log.info("categoryUrl: "+categoryUrl);
+				log.info("categoryDayCount: "+categoryDayCount);
 				
 				String urlToMd5 = getMD5(categoryUrl);
 				DBObject dbObject = queryClassUrlThirdAdclass(urlToMd5);		//查mongo有無資料
@@ -173,10 +173,10 @@ public class ThirdCategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 					categoryValueStr = categoryValueStr.substring(0,8);
 					String level2Category =categoryValueStr+String.format("%1$0"+(length -categoryValueStr.length())+"d",0);
 					int parent_id = this.categoryDAO.querySecondCategoryExist(level2Category);
-					System.out.println("parent_id : "+parent_id);
+					log.info("parent_id : "+parent_id);
 					
 					if (parent_id==0){
-						System.out.println("沒有第2分類 : "+parent_id);
+						log.info("沒有第2分類 : "+parent_id);
 						continue;
 					}
 					
@@ -188,12 +188,19 @@ public class ThirdCategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 						
 						ArrayList<String> newMongothirdCateList = new ArrayList<String>();  //如此url在mongo沒有第3分類資料，即新增
 						for (String prodName : ThirdCategoryLogMapper.prodFileList) {
+							
+							log.info("ThirdCategoryLogMapper.prodFileList.size() : "+ThirdCategoryLogMapper.prodFileList.size());
+							log.info("prodName loop : "+prodName);
+							
 							if ( prodTitle.indexOf(prodName) > -1){
+								
+								log.info("match prodName -1 : "+prodName);
+								
 								//查詢mysql是否有第3分類資料
 								categoryValueStr = categoryValue.substring(0,8);
 								String Level3code= this.categoryDAO.queryThirdCategoryExist(categoryValueStr, prodName);
 								if (StringUtils.isBlank(Level3code)){
-									System.out.println("沒有第3分類");
+									log.info("No queryThirdCategoryExist");
 									//此第2分類下沒有這個第3分類商品，新增至pfp_ad_category_new table
 	//								8.檢查mysql pfp_ad_category_new 第一第二層之下有無此關鍵字
 	//								9.沒有的話給一個第三層代號，並建立一筆第三層代號
@@ -214,7 +221,7 @@ public class ThirdCategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 								}else{
 									thirdCategoryList.add(Level3code);
 									newMongothirdCateList.add(Level3code);
-									System.out.println("有第3分類 : "+Level3code);
+									log.info("Have the  queryThirdCategoryExist>>");
 								}
 							}
 						}
@@ -263,7 +270,7 @@ public class ThirdCategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	    	md = MessageDigest.getInstance("MD5");
 	        md.update(str.getBytes());
 	    } catch (Exception e) {
-	    	System.out.println(e);
+	    	log.error(e);
 	    }
 		return  new BigInteger(1, md.digest()).toString(16);
 	}

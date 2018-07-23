@@ -90,7 +90,7 @@ public class ThirdCategoryLogMapper extends Mapper<LongWritable, Text, Text, Tex
 			
 			JSONObject dataObj =  (JSONObject) jsonObjOrg.get("data");
 			JSONArray categoryArray =  (JSONArray) dataObj.get("category_info");
-			System.out.println("category_info: "+categoryArray);
+			log.info("category_info: "+categoryArray);
 			
 			JSONArray newCategoryArray = new JSONArray();
 			
@@ -101,10 +101,10 @@ public class ThirdCategoryLogMapper extends Mapper<LongWritable, Text, Text, Tex
 				String url = infoJson.getAsString("url");
 //				String day_count = infoJson.getAsString("day_count");
 				
-				System.out.println("source: "+source);
-//				System.out.println("value: "+value);
-				System.out.println("url: "+url);
-//				System.out.println("day_count: "+day_count);
+				log.info("source: "+source);
+//				log.info("value: "+value);
+				log.info("url: "+url);
+//				log.info("day_count: "+day_count);
 				
 				if ( (!source.equals("24h")) && (!source.equals("ruten")) ) {
 					continue;
