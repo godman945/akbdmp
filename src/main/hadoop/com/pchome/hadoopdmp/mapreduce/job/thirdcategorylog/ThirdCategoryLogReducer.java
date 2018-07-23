@@ -2,6 +2,10 @@ package com.pchome.hadoopdmp.mapreduce.job.thirdcategorylog;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +15,8 @@ import java.util.Properties;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -84,6 +90,7 @@ public class ThirdCategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	
 	private SequenceDAO sequenceDAO = null;
 	
+	public static ArrayList<String> prodFileList = new ArrayList<String>();	 								     //24h、ruten第3分類對照表
 	
 	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
@@ -126,6 +133,18 @@ public class ThirdCategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 			this.sequenceDAO.dbInit();
 			
 			
+			//load 24h、ruten第3分類對照表(ThirdAdClassTable.txt)
+			Configuration conf = context.getConfiguration();
+			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
+			Charset charset = Charset.forName("UTF-8");
+			Path thirdAdClassPath = Paths.get(path[6].toString());
+			charset = Charset.forName("UTF-8");
+			List<String> thirdAdClassLines = Files.readAllLines(thirdAdClassPath, charset);
+			for (String line : thirdAdClassLines) {
+				prodFileList.add(line);
+			}
+			
+			
 			
 			
 		} catch (Throwable e) {
@@ -138,7 +157,7 @@ public class ThirdCategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 		
 		log.info(">>>>>>ThirdCategoryLogReducer reduce start : " + mapperKey.toString());
 		
-		log.info("ThirdCategoryLogMapper.prodFileList.size() : "+ThirdCategoryLogMapper.prodFileList.size());
+		log.info("ThirdCategoryLogMapper.prodFileList.size() : "+prodFileList.size());
 		
 		
 //		

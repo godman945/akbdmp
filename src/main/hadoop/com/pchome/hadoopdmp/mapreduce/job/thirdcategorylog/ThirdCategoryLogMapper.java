@@ -39,7 +39,7 @@ public class ThirdCategoryLogMapper extends Mapper<LongWritable, Text, Text, Tex
 //	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();				 //分類個資表
 //	public static List<CategoryCodeBean> category24hBeanList = new ArrayList<CategoryCodeBean>();				 //24H分類表
 //	public static List<CategoryRutenCodeBean> categoryRutenBeanList = new ArrayList<CategoryRutenCodeBean>();	 //Ruten分類表
-	public static ArrayList<String> prodFileList = new ArrayList<String>();	 								     //24h、ruten第3分類對照表
+//	public static ArrayList<String> prodFileList = new ArrayList<String>();	 								     //24h、ruten第3分類對照表
 //	public static ThirdAdClassComponent thirdAdClassComponent = new ThirdAdClassComponent();
 //	public static PersonalInfoComponent personalInfoComponent = new PersonalInfoComponent();
 //	public static GeoIpComponent geoIpComponent = new GeoIpComponent();
@@ -62,15 +62,15 @@ public class ThirdCategoryLogMapper extends Mapper<LongWritable, Text, Text, Tex
 			
 			
 			
-			//load 24h、ruten第3分類對照表(ThirdAdClassTable.txt)
-			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
-			Charset charset = Charset.forName("UTF-8");
-			Path thirdAdClassPath = Paths.get(path[6].toString());
-			charset = Charset.forName("UTF-8");
-			List<String> thirdAdClassLines = Files.readAllLines(thirdAdClassPath, charset);
-			for (String line : thirdAdClassLines) {
-				prodFileList.add(line);
-			}
+//			//load 24h、ruten第3分類對照表(ThirdAdClassTable.txt)
+//			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
+//			Charset charset = Charset.forName("UTF-8");
+//			Path thirdAdClassPath = Paths.get(path[6].toString());
+//			charset = Charset.forName("UTF-8");
+//			List<String> thirdAdClassLines = Files.readAllLines(thirdAdClassPath, charset);
+//			for (String line : thirdAdClassLines) {
+//				prodFileList.add(line);
+//			}
 			
 			
 			
