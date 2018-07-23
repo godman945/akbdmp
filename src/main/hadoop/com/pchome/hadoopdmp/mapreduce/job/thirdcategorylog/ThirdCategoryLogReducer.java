@@ -155,140 +155,132 @@ public class ThirdCategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	@Override
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
 		
-		log.info(">>>>>>ThirdCategoryLogReducer reduce start : " + mapperKey.toString());
-		
-		log.info(">>>Reducer prodFileList.size() : "+prodFileList.size());
-		
-		
-//		
-//		try {
-//			log.info(">>>>>>ThirdCategoryLogReducer reduce start : " + mapperKey.toString());
-//			
-//			JSONObject jsonObjOrg = (net.minidev.json.JSONObject)jsonParser.parse(mapperKey.toString());
-//	//		log.info("str: "+jsonObjOrg);
-//			
-//			JSONObject dataObj =  (JSONObject) jsonObjOrg.get("data");
-//			JSONArray categoryArray =  (JSONArray) dataObj.get("category_info");
-//	//		log.info("category_info: "+categoryArray);
-//			
-//			
-//			
-//			JSONArray prodClassinfoAry = new JSONArray();
-//			for (Object object : categoryArray) {
-//				ArrayList<String> thirdCategoryList = new ArrayList<String>();  //放第3分類list
-//				JSONObject infoJson = (JSONObject) object;
-//				String categorySource = infoJson.getAsString("source");
-//				String categoryValue = infoJson.getAsString("value");
-//				String categoryUrl = infoJson.getAsString("url");
-//				String categoryDayCount = infoJson.getAsString("day_count");
-//				
-//				log.info("categorySource: "+categorySource);
-//				log.info("categoryValue: "+categoryValue);
-//				log.info("categoryUrl: "+categoryUrl);
-//				log.info("categoryDayCount: "+categoryDayCount);
-//				
-//				String urlToMd5 = getMD5(categoryUrl);
-//				DBObject dbObject = queryClassUrlThirdAdclass(urlToMd5);		//查mongo有無資料
-//				if (dbObject != null) {
-//					//如果mongo已有第3層資料，直接將array塞進dmpDataBean的Prod_class_info
-//					thirdCategoryList = (ArrayList<String>) dbObject.get("prod_class_info");
-//				}else{
-//					//先檢查MYSQL有無此第1第2分類代號，沒有就不新增
-//					int length =16;
-//					String categoryValueStr = categoryValue;
-//					categoryValueStr = categoryValueStr.substring(0,8);
-//					String level2Category =categoryValueStr+String.format("%1$0"+(length -categoryValueStr.length())+"d",0);
-//					int parent_id = this.categoryDAO.querySecondCategoryExist(level2Category);
-//					log.info("parent_id : "+parent_id);
-//					
-//					if (parent_id==0){
-//						log.info("NO Second Category : "+parent_id);
-//						continue;
-//					}
-//					
-//					//打爬蟲要title
-//					String prodTitle = adCrawlerGetTitle(categoryUrl);
-//					if ( StringUtils.isNotBlank(prodTitle)){
-//						//比對title是否有命中第3分類對照表(ThirdAdClassTable.txt)
-//	//					for (String string : DmpLogMapper.prodFileList) {
-//						
-//						log.info("ThirdCategoryLogMapper.prodFileList.size() : "+ThirdCategoryLogMapper.prodFileList.size());
-//						
-//						ArrayList<String> newMongothirdCateList = new ArrayList<String>();  //如此url在mongo沒有第3分類資料，即新增
-//						for (String prodName : ThirdCategoryLogMapper.prodFileList) {
-//						
-//							log.info("prodName loop : "+prodName);
-//							
-//							if ( prodTitle.indexOf(prodName) > -1){
-//								
-//								log.info("match prodName -1 : "+prodName);
-//								
-//								//查詢mysql是否有第3分類資料
-//								categoryValueStr = categoryValue.substring(0,8);
-//								String Level3code= this.categoryDAO.queryThirdCategoryExist(categoryValueStr, prodName);
-//								if (StringUtils.isBlank(Level3code)){
-//									log.info("No queryThirdCategoryExist");
-//									//此第2分類下沒有這個第3分類商品，新增至pfp_ad_category_new table
-//	//								8.檢查mysql pfp_ad_category_new 第一第二層之下有無此關鍵字
-//	//								9.沒有的話給一個第三層代號，並建立一筆第三層代號
-//	//								10.yes.txt 可能會比對中多個字,每一個字均要建立第三層(第3層為8碼流水號ex:00000001)
-//	//								11.將建立的多個第三層代號，用url 當key 寫入 mongodb 讓下次第4部驟可以查詢到
-//	//								12.將1 2 3 層資料傳遞到下一個模組
-//	//								13.kafa 紀錄格式 prod_class_info category可傳入多個分類
-//									int seq = this.sequenceDAO.querySequence();
-//									seq = seq+1;
-//									String thirdCategorySeq = String.format("%08d", seq);
-//									String thirdCategoryCode = categoryValueStr+thirdCategorySeq;
-//									
-//									this.categoryDAO.insertThirdCategory(Integer.toString(parent_id), thirdCategoryCode, prodName, 3);
-//									this.sequenceDAO.updateSequence(seq);
-//									
-//									thirdCategoryList.add(thirdCategoryCode);
-//									newMongothirdCateList.add(thirdCategoryCode);
-//								}else{
-//									thirdCategoryList.add(Level3code);
-//									newMongothirdCateList.add(Level3code);
-//									log.info("Have the  queryThirdCategoryExist>>");
-//								}
-//							}
-//						}
-//						
-//						//有中到第3分類檔(ThirdAdClassTable.txt)，即把資料新增至class_url_third_adclass table
-//						if (newMongothirdCateList.size()>0){
-//							insertClassUrlThirdAdclass(urlToMd5,newMongothirdCateList);
-//						} 
-//					}
-//				}
-//				
-//				//新增prod_class_info 第3分類array內容
-//				JSONObject prodClassinfoObj = new JSONObject();
-//				prodClassinfoObj.put("source", categorySource);
-//				prodClassinfoObj.put("value", thirdCategoryList);
-//				prodClassinfoObj.put("day_count", categoryDayCount);
-//				prodClassinfoAry.add(prodClassinfoObj);	//prod_class_info
-//			}
-//			
-//			//重組第3分類json後發送給kafka
-//			JSONObject newALLObj = new JSONObject();
-//			JSONObject newKeyObj = new JSONObject();
-//			newKeyObj.put("uuid",  ((JSONObject) jsonObjOrg.get("key")).get("uuid"));
-//			newKeyObj.put("memid", ((JSONObject) jsonObjOrg.get("key")).get("memid"));
-//			newALLObj.put("key", newKeyObj);
-//			
-//			JSONObject newDataObj = new JSONObject();
-//			newDataObj.put("prod_class_info", prodClassinfoAry);
-//			newDataObj.put("record_date", ((JSONObject) jsonObjOrg.get("data")).get("record_date"));
-//			newALLObj.put("data", newDataObj);
-//			
-//			
-//			log.info(">>>>>>>>>>>第3分類>>>>>>:"+newALLObj.toString());
-//			
-//			keyOut.set(newALLObj.toString());
-//			context.write(keyOut, valueOut);
-//		} catch (Throwable e) {
-////			log.error(">>>>>> reduce error redis key:" +reducerMapKey.toString());
-//			log.error("ThirdCategoryLogReducer reduce error>>>>>> " +e);
-//		}
+		try {
+			log.info(">>>>>>ThirdCategoryLogReducer reduce start : " + mapperKey.toString());
+			
+			JSONObject jsonObjOrg = (net.minidev.json.JSONObject)jsonParser.parse(mapperKey.toString());
+	//		log.info("str: "+jsonObjOrg);
+			
+			JSONObject dataObj =  (JSONObject) jsonObjOrg.get("data");
+			JSONArray categoryArray =  (JSONArray) dataObj.get("category_info");
+	//		log.info("category_info: "+categoryArray);
+			
+			
+			
+			JSONArray prodClassinfoAry = new JSONArray();
+			for (Object object : categoryArray) {
+				ArrayList<String> thirdCategoryList = new ArrayList<String>();  //放第3分類list
+				JSONObject infoJson = (JSONObject) object;
+				String categorySource = infoJson.getAsString("source");
+				String categoryValue = infoJson.getAsString("value");
+				String categoryUrl = infoJson.getAsString("url");
+				String categoryDayCount = infoJson.getAsString("day_count");
+				
+				log.info("categorySource: "+categorySource);
+				log.info("categoryValue: "+categoryValue);
+				log.info("categoryUrl: "+categoryUrl);
+				log.info("categoryDayCount: "+categoryDayCount);
+				
+				String urlToMd5 = getMD5(categoryUrl);
+				DBObject dbObject = queryClassUrlThirdAdclass(urlToMd5);		//查mongo有無資料
+				if (dbObject != null) {
+					//如果mongo已有第3層資料，直接將array塞進dmpDataBean的Prod_class_info
+					thirdCategoryList = (ArrayList<String>) dbObject.get("prod_class_info");
+				}else{
+					//先檢查MYSQL有無此第1第2分類代號，沒有就不新增
+					int length =16;
+					String categoryValueStr = categoryValue;
+					categoryValueStr = categoryValueStr.substring(0,8);
+					String level2Category =categoryValueStr+String.format("%1$0"+(length -categoryValueStr.length())+"d",0);
+					int parent_id = this.categoryDAO.querySecondCategoryExist(level2Category);
+					log.info("parent_id : "+parent_id);
+					
+					if (parent_id==0){
+						log.info("NO Second Category : "+parent_id);
+						continue;
+					}
+					
+					//打爬蟲要title
+					String prodTitle = adCrawlerGetTitle(categoryUrl);
+					if ( StringUtils.isNotBlank(prodTitle)){
+						//比對title是否有命中第3分類對照表(ThirdAdClassTable.txt)
+	//					for (String string : DmpLogMapper.prodFileList) {
+						
+						ArrayList<String> newMongothirdCateList = new ArrayList<String>();  //如此url在mongo沒有第3分類資料，即新增
+						for (String prodName : prodFileList) {
+						
+							log.info("prodName loop : "+prodName);
+							
+							if ( prodTitle.indexOf(prodName) > -1){
+								
+								log.info("match prodName -1 : "+prodName);
+								
+								//查詢mysql是否有第3分類資料
+								categoryValueStr = categoryValue.substring(0,8);
+								String Level3code= this.categoryDAO.queryThirdCategoryExist(categoryValueStr, prodName);
+								if (StringUtils.isBlank(Level3code)){
+									log.info("No queryThirdCategoryExist");
+									//此第2分類下沒有這個第3分類商品，新增至pfp_ad_category_new table
+	//								8.檢查mysql pfp_ad_category_new 第一第二層之下有無此關鍵字
+	//								9.沒有的話給一個第三層代號，並建立一筆第三層代號
+	//								10.yes.txt 可能會比對中多個字,每一個字均要建立第三層(第3層為8碼流水號ex:00000001)
+	//								11.將建立的多個第三層代號，用url 當key 寫入 mongodb 讓下次第4部驟可以查詢到
+	//								12.將1 2 3 層資料傳遞到下一個模組
+	//								13.kafa 紀錄格式 prod_class_info category可傳入多個分類
+									int seq = this.sequenceDAO.querySequence();
+									seq = seq+1;
+									String thirdCategorySeq = String.format("%08d", seq);
+									String thirdCategoryCode = categoryValueStr+thirdCategorySeq;
+									
+									this.categoryDAO.insertThirdCategory(Integer.toString(parent_id), thirdCategoryCode, prodName, 3);
+									this.sequenceDAO.updateSequence(seq);
+									
+									thirdCategoryList.add(thirdCategoryCode);
+									newMongothirdCateList.add(thirdCategoryCode);
+								}else{
+									thirdCategoryList.add(Level3code);
+									newMongothirdCateList.add(Level3code);
+									log.info("Have the  queryThirdCategoryExist>>");
+								}
+							}
+						}
+						
+						//有中到第3分類檔(ThirdAdClassTable.txt)，即把資料新增至class_url_third_adclass table
+						if (newMongothirdCateList.size()>0){
+							insertClassUrlThirdAdclass(urlToMd5,newMongothirdCateList);
+						} 
+					}
+				}
+				
+				//新增prod_class_info 第3分類array內容
+				JSONObject prodClassinfoObj = new JSONObject();
+				prodClassinfoObj.put("source", categorySource);
+				prodClassinfoObj.put("value", thirdCategoryList);
+				prodClassinfoObj.put("day_count", categoryDayCount);
+				prodClassinfoAry.add(prodClassinfoObj);	//prod_class_info
+			}
+			
+			//重組第3分類json後發送給kafka
+			JSONObject newALLObj = new JSONObject();
+			JSONObject newKeyObj = new JSONObject();
+			newKeyObj.put("uuid",  ((JSONObject) jsonObjOrg.get("key")).get("uuid"));
+			newKeyObj.put("memid", ((JSONObject) jsonObjOrg.get("key")).get("memid"));
+			newALLObj.put("key", newKeyObj);
+			
+			JSONObject newDataObj = new JSONObject();
+			newDataObj.put("prod_class_info", prodClassinfoAry);
+			newDataObj.put("record_date", ((JSONObject) jsonObjOrg.get("data")).get("record_date"));
+			newALLObj.put("data", newDataObj);
+			
+			
+			log.info(">>>>>>>>>>>第3分類>>>>>>:"+newALLObj.toString());
+			
+			keyOut.set(newALLObj.toString());
+			context.write(keyOut, valueOut);
+		} catch (Throwable e) {
+//			log.error(">>>>>> reduce error redis key:" +reducerMapKey.toString());
+			log.error("ThirdCategoryLogReducer reduce error>>>>>> " +e);
+		}
 	}
 	
 	public String getMD5(String str) {
@@ -320,14 +312,14 @@ public class ThirdCategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 	
 	
 	public String adCrawlerGetTitle(String url) throws Exception {
-		crawlerCount = crawlerCount +1;
+		Thread.sleep(1000);
 		
-		log.info(">>>>>>crawlerCount : "+crawlerCount);
-		
-		if (crawlerCount == 6){
-			Thread.sleep(5000);
-			log.info(">>>>>>Crawler sleep(5000)");
-		}
+//		crawlerCount = crawlerCount +1;
+//		log.info(">>>>>>crawlerCount : "+crawlerCount);
+//		if (crawlerCount == 6){
+//			Thread.sleep(5000);
+//			log.info(">>>>>>Crawler sleep(5000)");
+//		}
 		
 		//第3層資料沒有在mongo中，打爬蟲get標題
 		String prodTitle = "";
