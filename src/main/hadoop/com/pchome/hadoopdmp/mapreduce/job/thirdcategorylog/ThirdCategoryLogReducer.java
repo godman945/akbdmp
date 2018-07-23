@@ -157,7 +157,7 @@ public class ThirdCategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 		
 		log.info(">>>>>>ThirdCategoryLogReducer reduce start : " + mapperKey.toString());
 		
-		log.info("ThirdCategoryLogMapper.prodFileList.size() : "+prodFileList.size());
+		log.info(">>>Reducer prodFileList.size() : "+prodFileList.size());
 		
 		
 //		
