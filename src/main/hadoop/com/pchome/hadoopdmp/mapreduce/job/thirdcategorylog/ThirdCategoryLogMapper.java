@@ -81,81 +81,88 @@ public class ThirdCategoryLogMapper extends Mapper<LongWritable, Text, Text, Tex
 
 	@Override
 	public void map(LongWritable offset, Text mapperValue, Context context) {
-		try {
-			//讀取kdcl、Campaign資料
-			log.info("ThirdCategoryLogMapper raw_data : " + mapperValue.toString());
-			
-			String data = mapperValue.toString();
-			JSONObject jsonObjOrg = (net.minidev.json.JSONObject)jsonParser.parse(data);
-			
-			JSONObject dataObj =  (JSONObject) jsonObjOrg.get("data");
-			JSONArray categoryArray =  (JSONArray) dataObj.get("category_info");
-			System.out.println("category_info: "+categoryArray);
-			
-			JSONArray newCategoryArray = new JSONArray();
-			
-			for (Object object : categoryArray) {
-				JSONObject infoJson = (JSONObject) object;
-				String source = infoJson.getAsString("source");
-//				String value = infoJson.getAsString("value");
-				String url = infoJson.getAsString("url");
-//				String day_count = infoJson.getAsString("day_count");
-				
-				System.out.println("source: "+source);
-//				System.out.println("value: "+value);
-				System.out.println("url: "+url);
-//				System.out.println("day_count: "+day_count);
-				
-				if ( (!source.equals("24h")) && (!source.equals("ruten")) ) {
-					continue;
-				}
-				
-				//如果陣列有24H或ruten資料才處理第3分類
-				if (source.equals("24h")) {//確認url符合24h Pattern才塞入array
-					Pattern pattern = Pattern.compile("(http|https)://24h.pchome.com.tw/prod/");
-					Matcher m = pattern.matcher(url.toString());
-					if (m.find()) {
-						newCategoryArray.add(object);
-					}else{
-						continue;
-					}
-				}
-				if (source.equals("ruten")) {//確認url符合ruten Pattern才塞入array
-					Pattern pattern = Pattern.compile("(http|https)://goods.ruten.com.tw/item/show+\\?\\d+");
-					Matcher m = pattern.matcher(url.toString());
-					if (m.find()) {
-						newCategoryArray.add(object);
-					}else{
-						continue;
-					}
-				}
-			}
-			
-			//如果newCategoryArray有資料，就送入reducer處理第3分類
-			JSONObject thirdCategoryObj = new JSONObject();
-			if (newCategoryArray.size() > 0){
-				JSONObject keyObj = new JSONObject();
-				keyObj.put("memid",  ((JSONObject) jsonObjOrg.get("key")).get("memid"));
-				keyObj.put("uuid",  ((JSONObject) jsonObjOrg.get("key")).get("uuid"));
-				thirdCategoryObj.put("key", keyObj);
-				
-				JSONObject thirdCategoryDataObj = new JSONObject();
-				thirdCategoryDataObj.put("category_info", newCategoryArray);
-				thirdCategoryDataObj.put("record_date", jsonObjOrg.get("record_date"));
-				thirdCategoryObj.put("data", thirdCategoryDataObj);
-				
-			}else{
-				return;
-			}
-			
-			log.info(">>>>>>ThirdCategoryLogMapper Mapper write key:" + thirdCategoryObj.toString());
-			
-			keyOut.set(thirdCategoryObj.toString());
+		try{		
+			keyOut.set(mapperValue.toString());
 			context.write(keyOut, valueOut);
-			
 		} catch (Exception e) {
 			log.error("Third Category Mapper error>>>>>> " +e); 
 		}
+		
+//		try {
+//			//讀取kdcl、Campaign資料
+//			log.info("ThirdCategoryLogMapper raw_data : " + mapperValue.toString());
+//			
+//			String data = mapperValue.toString();
+//			JSONObject jsonObjOrg = (net.minidev.json.JSONObject)jsonParser.parse(data);
+//			
+//			JSONObject dataObj =  (JSONObject) jsonObjOrg.get("data");
+//			JSONArray categoryArray =  (JSONArray) dataObj.get("category_info");
+//			System.out.println("category_info: "+categoryArray);
+//			
+//			JSONArray newCategoryArray = new JSONArray();
+//			
+//			for (Object object : categoryArray) {
+//				JSONObject infoJson = (JSONObject) object;
+//				String source = infoJson.getAsString("source");
+////				String value = infoJson.getAsString("value");
+//				String url = infoJson.getAsString("url");
+////				String day_count = infoJson.getAsString("day_count");
+//				
+//				System.out.println("source: "+source);
+////				System.out.println("value: "+value);
+//				System.out.println("url: "+url);
+////				System.out.println("day_count: "+day_count);
+//				
+//				if ( (!source.equals("24h")) && (!source.equals("ruten")) ) {
+//					continue;
+//				}
+//				
+//				//如果陣列有24H或ruten資料才處理第3分類
+//				if (source.equals("24h")) {//確認url符合24h Pattern才塞入array
+//					Pattern pattern = Pattern.compile("(http|https)://24h.pchome.com.tw/prod/");
+//					Matcher m = pattern.matcher(url.toString());
+//					if (m.find()) {
+//						newCategoryArray.add(object);
+//					}else{
+//						continue;
+//					}
+//				}
+//				if (source.equals("ruten")) {//確認url符合ruten Pattern才塞入array
+//					Pattern pattern = Pattern.compile("(http|https)://goods.ruten.com.tw/item/show+\\?\\d+");
+//					Matcher m = pattern.matcher(url.toString());
+//					if (m.find()) {
+//						newCategoryArray.add(object);
+//					}else{
+//						continue;
+//					}
+//				}
+//			}
+//			
+//			//如果newCategoryArray有資料，就送入reducer處理第3分類
+//			JSONObject thirdCategoryObj = new JSONObject();
+//			if (newCategoryArray.size() > 0){
+//				JSONObject keyObj = new JSONObject();
+//				keyObj.put("memid",  ((JSONObject) jsonObjOrg.get("key")).get("memid"));
+//				keyObj.put("uuid",  ((JSONObject) jsonObjOrg.get("key")).get("uuid"));
+//				thirdCategoryObj.put("key", keyObj);
+//				
+//				JSONObject thirdCategoryDataObj = new JSONObject();
+//				thirdCategoryDataObj.put("category_info", newCategoryArray);
+//				thirdCategoryDataObj.put("record_date", jsonObjOrg.get("record_date"));
+//				thirdCategoryObj.put("data", thirdCategoryDataObj);
+//				
+//			}else{
+//				return;
+//			}
+//			
+//			log.info(">>>>>>ThirdCategoryLogMapper Mapper write key:" + thirdCategoryObj.toString());
+//			
+//			keyOut.set(thirdCategoryObj.toString());
+//			context.write(keyOut, valueOut);
+//			
+//		} catch (Exception e) {
+//			log.error("Third Category Mapper error>>>>>> " +e); 
+//		}
 	}
 	
 	
