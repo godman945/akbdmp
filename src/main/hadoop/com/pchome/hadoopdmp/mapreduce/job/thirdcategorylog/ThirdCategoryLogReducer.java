@@ -139,6 +139,10 @@ public class ThirdCategoryLogReducer extends Reducer<Text, Text, Text, Text> {
 		int seq = this.sequenceDAO.querySequence();
 		log.info(">>>>>>sequenceDAO seq~~~ : " + seq);
 		
+		seq = seq +1;
+		this.sequenceDAO.updateSequence(seq);
+		log.info(">>>>>>sequenceDAO update seq~~~ : " + seq);
+		
 		
 //		try {
 //			log.info(">>>>>>ThirdCategoryLogReducer reduce start : " + mapperKey.toString());
