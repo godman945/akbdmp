@@ -318,48 +318,48 @@ public class DmpLogDriver {
 				log.info("Job1 is Failed");
 			}
 
-			//job2
-			log.info("...... ThirdCategoryLog start ......");
-			
-			String outPath2 = "/home/webuser/bessie/output/thirdcategory2";
-			job = new Job(jobConf, "dmp_thirdcategory_log_"+ env + "_" + sdf.format(date));
-			job.setJarByClass(DmpLogDriver.class);
-			job.setMapperClass(ThirdCategoryLogMapper.class);
-			job.setMapOutputKeyClass(Text.class);
-			job.setMapOutputValueClass(Text.class);
-			job.setReducerClass(ThirdCategoryLogReducer.class);
-			job.setInputFormatClass(TextInputFormat.class);
-			job.setOutputKeyClass(Text.class);
-			job.setOutputValueClass(Text.class);
-			job.setNumReduceTasks(1);//1個reduce 
-			job.setMapSpeculativeExecution(false); 
-			
-			//hdfs存在則刪除
-			deleteExistedDir(fs, new Path(outPath2), true);
-			
-			//设置job2输入路径  job的输出路径
-			FileInputFormat.addInputPaths(job, outPath);
-			//设置job2输出的路径
-			FileOutputFormat.setOutputPath(job, new Path(outPath2));
-			//job2
-
-			log.info(">>>>>>Job2 INPUT PATH:"+outPath);
-			log.info(">>>>>>Job2 OUTPUT PATH:"+outPath2);
-			
-			
-			String[] filePaths2 = {
-					hdfsPath + "/home/webuser/dmp/jobfile/ThirdAdClassTable.txt"
-			};
-			for (String filePath : filePaths2) {
-				DistributedCache.addCacheFile(new URI(filePath), job.getConfiguration());
-			}
-			
-			
-			if (job.waitForCompletion(true)) {
-				log.info("Job2 is OK");
-			} else {
-				log.info("Job2 is Failed");
-			}
+//			//job2
+//			log.info("...... ThirdCategoryLog start ......");
+//			
+//			String outPath2 = "/home/webuser/bessie/output/thirdcategory2";
+//			job = new Job(jobConf, "dmp_thirdcategory_log_"+ env + "_" + sdf.format(date));
+//			job.setJarByClass(DmpLogDriver.class);
+//			job.setMapperClass(ThirdCategoryLogMapper.class);
+//			job.setMapOutputKeyClass(Text.class);
+//			job.setMapOutputValueClass(Text.class);
+//			job.setReducerClass(ThirdCategoryLogReducer.class);
+//			job.setInputFormatClass(TextInputFormat.class);
+//			job.setOutputKeyClass(Text.class);
+//			job.setOutputValueClass(Text.class);
+//			job.setNumReduceTasks(1);//1個reduce 
+//			job.setMapSpeculativeExecution(false); 
+//			
+//			//hdfs存在則刪除
+//			deleteExistedDir(fs, new Path(outPath2), true);
+//			
+//			//设置job2输入路径  job的输出路径
+//			FileInputFormat.addInputPaths(job, outPath);
+//			//设置job2输出的路径
+//			FileOutputFormat.setOutputPath(job, new Path(outPath2));
+//			//job2
+//
+//			log.info(">>>>>>Job2 INPUT PATH:"+outPath);
+//			log.info(">>>>>>Job2 OUTPUT PATH:"+outPath2);
+//			
+//			
+//			String[] filePaths2 = {
+//					hdfsPath + "/home/webuser/dmp/jobfile/ThirdAdClassTable.txt"
+//			};
+//			for (String filePath : filePaths2) {
+//				DistributedCache.addCacheFile(new URI(filePath), job.getConfiguration());
+//			}
+//			
+//			
+//			if (job.waitForCompletion(true)) {
+//				log.info("Job2 is OK");
+//			} else {
+//				log.info("Job2 is Failed");
+//			}
 			
 			
 		 } catch (Exception e) {
