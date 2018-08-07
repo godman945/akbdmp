@@ -250,8 +250,8 @@ public class DmpLogDriver {
 //				logInputPath = "/home/webuser/akb/storedata/alllog/2018-07-16/12";//大檔output測試，是否爆output error
 //				logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-22/11";
 //				logInputPath = "/home/webuser/akb/storedata/alllog/2018-05-22/17";
-				logInputPath = "/home/webuser/dmp/testData/category";
-				outPath = "/home/webuser/bessie/output/thirdcategory1";
+//				logInputPath = "/home/webuser/dmp/testData/category";
+//				outPath = "/home/webuser/bessie/output/thirdcategory1";
 				//mark
 				
 				
