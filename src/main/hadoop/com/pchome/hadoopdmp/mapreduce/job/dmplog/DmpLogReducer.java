@@ -311,14 +311,23 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	
 	
 	public void cleanup(Context context) {
-		//mark
 		try{
+			String kafkaTopic;
+			String env = context.getConfiguration().get("spring.profiles.active");
+			if(env.equals("prd")){
+				kafkaTopic = "dmp_log_prd";
+			}else{
+				kafkaTopic = "dmp_log_stg";
+			}
 			Iterator iterator = kafkaDmpMap.entrySet().iterator();
 			while (iterator.hasNext()) {
 				count = count + 1;
 				Map.Entry mapEntry = (Map.Entry) iterator.next();
-				keyOut.set(mapEntry.getValue().toString());
-				context.write(keyOut, valueOut);
+				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>(kafkaTopic, "", mapEntry.getValue().toString()));
+				while (!f.isDone()) {
+				}
+//				keyOut.set(mapEntry.getValue().toString());
+//				context.write(keyOut, valueOut);
 //				log.info(">>>>>>reduce Map send kafka:" + mapEntry.getValue().toString());
 			}
 			log.info(">>>>>>reduce count:" + count);
