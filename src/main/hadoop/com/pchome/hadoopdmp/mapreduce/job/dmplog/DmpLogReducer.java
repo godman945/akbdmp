@@ -321,6 +321,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				context.write(keyOut, valueOut);
 //				log.info(">>>>>>reduce Map send kafka:" + mapEntry.getValue().toString());
 			}
+			log.info(">>>>>>reduce count:" + count);
 			log.info(">>>>>>cleanup redisClassifyMap:" + redisClassifyMap);
 		} catch (Throwable e) {
 			log.error("reduce cleanup error>>>>>> " + e);
