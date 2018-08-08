@@ -208,7 +208,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	
 	
 	//處理mdp map不存在時
-	private void processKafakDmpMapKeyNotExist(String recordDate,JSONObject jsonObjOrg,String reducerMapKey){
+	private void processKafakDmpMapKeyNotExist(String recordDate,JSONObject jsonObjOrg,String reducerMapKey)throws Exception{
 		// 處理info資訊
 		JSONObject hadoopData = ((JSONObject) jsonObjOrg.get("data"));
 		hadoopData.put("record_date", recordDate);
@@ -255,7 +255,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		kafkaDmpMap.put(reducerMapKey.toString(), jsonObjOrg);
 	}
 	//處理mdp map存在時
-	private void processKafakDmpMapKeyIsExist(String recordDate,JSONObject jsonObjOrg,String reducerMapKey,JSONObject dmpJson){
+	private void processKafakDmpMapKeyIsExist(String recordDate,JSONObject jsonObjOrg,String reducerMapKey,JSONObject dmpJson) throws Exception{
 		JSONObject hadoopDataOrg = ((JSONObject) jsonObjOrg.get("data"));
 		JSONObject hadoopDataDmpMap = ((JSONObject) dmpJson.get("data"));
 		for (EnumDataKeyInfo enumDataKeyInfo : EnumDataKeyInfo.values()) {
