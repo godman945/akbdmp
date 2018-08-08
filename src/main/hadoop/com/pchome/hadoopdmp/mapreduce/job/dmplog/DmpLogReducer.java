@@ -256,14 +256,14 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	}
 	//處理mdp map存在時
 	private void processKafakDmpMapKeyIsExist(String recordDate,JSONObject jsonObjOrg,String reducerMapKey,JSONObject dmpJson) throws Exception{
+		log.info(">>>>>>>>>10-1");
 		JSONObject hadoopDataOrg = ((JSONObject) jsonObjOrg.get("data"));
 		JSONObject hadoopDataDmpMap = ((JSONObject) dmpJson.get("data"));
 		for (EnumDataKeyInfo enumDataKeyInfo : EnumDataKeyInfo.values()) {
 			String source = ((JSONObject) hadoopDataOrg.get(enumDataKeyInfo.toString())).getAsString("source");
 			String value = ((JSONObject) hadoopDataOrg.get(enumDataKeyInfo.toString())).getAsString("value");
 			// 此次log資訊來源及值都不為null才取出資料進行判斷是否加1邏輯
-			if ( (StringUtils.isNotBlank(source) && !source.equals("null"))
-					&& (StringUtils.isNotBlank(value) && !value.equals("null")) ) {
+			if ((StringUtils.isNotBlank(source) && !source.equals("null"))	&& (StringUtils.isNotBlank(value) && !value.equals("null"))) {
 				boolean newDetail = true;
 				JSONArray array = (JSONArray) hadoopDataDmpMap.get(enumDataKeyInfo.toString());
 				for (Object object : array) {
@@ -293,7 +293,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				}
 			}
 		}
-
+		log.info(">>>>>>>>>10-2");
 		// 計算clssify
 		JSONArray orgClassifyArray = (JSONArray) hadoopDataOrg.get("classify");
 		for (Object object : orgClassifyArray) {
@@ -313,6 +313,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				redisClassifyMap.put(key, classifyValue);
 			}
 		}
+		log.info(">>>>>>>>>10-3");
 		kafkaDmpMap.put(reducerMapKey.toString(), dmpJson);
 	}
 	
