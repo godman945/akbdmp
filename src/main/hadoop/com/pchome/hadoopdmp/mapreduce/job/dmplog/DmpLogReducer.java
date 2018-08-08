@@ -125,7 +125,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	@Override
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
 		try {
-			log.info(">>>>>> reduce start : " + mapperKey.toString());
+//			log.info(">>>>>> reduce start : " + mapperKey.toString());
 			String data = mapperKey.toString();
 			JSONObject jsonObjOrg = (net.minidev.json.JSONObject)jsonParser.parse(data);
 			
