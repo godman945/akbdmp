@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Insert title here</title>
+<script  id="pcadscript" language="javascript" async src="js/ptag.js"></script>
+</head>
+<body>
+
+
+<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function ptag(){dataLayer.push(arguments);}
+	  ptag('js', {'time':new Date()});
+	  ptag({'paid':1});
+	  ptag('event',{'type':'page_view','op1':'page_view_op1','op2':'page_view_op2'});
+	  ptag('event',{'type':'convert','convert_id':'convert001','convert_price':'199','op1':'convert_op1','op2':'convert_op2'});
+	  ptag('event',{'type':'tracking','tracking_id':'tracking001','prod_id':'prod_001','prod_price':'150','prod_dis':'145','op1':'tracking_op1','op2':'tracking_op2'});
+</script>
+
+
+<!-- 
+<button id="go" type="button" style="background-color:aquamarine;width:80px;">購物鈕</button>
+<br>
+<br>
+<div id="figId"></div>
+<br>
+輸入UUID: <input id="uuid" type ="text" value/>
+<br><br>
+輸入再行銷ID: <input id="trackId" type ="text" value/>
+<br><br>
+輸入商品ID: <input id="prodId" type ="text" value/>
+<br><br>
+<input type="button" onclick="send();" value = "送出"/>
+
+<script>
+
+	document.getElementById("go").addEventListener('click', function(event) {
+		console.log("使用者點擊購物車")
+		//取消事件的預設行為
+		event.preventDefault();
+		ptag('event', 'shopping', {'event_label': 'shopping_cart', 'event_category': 'buy'});
+		console.log("傳送完畢")
+	});
+</script>
+ -->
+
+
+
+</body>
+</html>
+
+
+ 
+
+
