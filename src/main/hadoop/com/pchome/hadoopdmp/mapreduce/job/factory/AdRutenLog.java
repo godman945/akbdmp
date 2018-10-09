@@ -66,13 +66,13 @@ public class AdRutenLog extends ACategoryLogData {
 			try {
 				// url 不存在
 				StringBuffer transformUrl = new StringBuffer();
-				Pattern p = Pattern.compile("http://goods.ruten.com.tw/item/\\S+\\?\\d+");
+				Pattern p = Pattern.compile("(http|https)://goods.ruten.com.tw/item/\\S+\\?\\d+");
 				Matcher m = p.matcher(sourceUrl.toString());
 
 				if (m.find()) {
 					// url是Ruten商品頁，爬蟲撈麵包屑
 					transformUrl.append("http://m.ruten.com.tw/goods/show.php?g=");
-					transformUrl.append(m.group().replaceAll("http://goods.ruten.com.tw/item/\\S+\\?", ""));
+					transformUrl.append(m.group().replaceAll("(http|https)://goods.ruten.com.tw/item/\\S+\\?", ""));
 					// Thread.sleep(500);
 					Document doc = Jsoup.parse(new URL(transformUrl.toString()), 10000);
 					Elements breadcrumbE = doc.body().select("table[class=goods-list]");
