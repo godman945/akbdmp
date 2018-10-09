@@ -208,7 +208,7 @@ public class AdController extends BaseController {
 		try {
 			String data = IOUtils.toString(request.getInputStream(), "UTF8");
 			System.out.println(data);
-//			kafkaUtil.sendMessage("akb_prod_ad_stg", "", data);
+			kafkaUtil.sendMessage("akb_prod_ad_stg", "", data);
 			return "";
 		} catch (Exception e) {
 			log.error(">>>>" + e.getMessage());
