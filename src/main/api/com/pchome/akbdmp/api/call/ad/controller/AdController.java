@@ -5,17 +5,17 @@ import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,7 +26,6 @@ import com.pchome.akbdmp.api.call.base.controller.BaseController;
 import com.pchome.akbdmp.api.data.enumeration.DmpApiReturnCodeEnum;
 import com.pchome.akbdmp.api.data.enumeration.DmpLogInfoKeyEnum;
 import com.pchome.akbdmp.api.data.returndata.ReturnData;
-import com.pchome.akbdmp.spring.config.bean.allbeanscan.SpringAllConfig;
 import com.pchome.soft.depot.utils.KafkaUtil;
 
 @RestController
@@ -60,6 +59,9 @@ public class AdController extends BaseController {
 	@Value("${radis.dmpinfo}")
 	private String radisDmpinfoKey;
 	
+	@Value("${radis.retargeting}")
+	private String radisRetargetingKey;
+	
 	
 	/**
 	 * 1.REDIS PRD MAP:prd:dmp:callmap:[uuid | pcid]
@@ -68,6 +70,7 @@ public class AdController extends BaseController {
 	 * 4.REDIS STG 分類頻次 :stg:dmp:callfc:[uuid | pcid]
 	 * 5.REDIS STG 分類:prd:dmp:class:[uuid | pcid]
 	 * 6.REDIS PRD 分類:stg:dmp:class:[uuid | pcid]
+	 * 7.REDIS STG RETARGETING stg:pa:track:[uuid | pcid]
 	 * */
 	Log log = LogFactory.getLog(AdController.class);
 	// @CrossOrigin(origins = {"http://pcbwebstg.pchome.com.tw"})
@@ -97,8 +100,8 @@ public class AdController extends BaseController {
 			String fcKey = redisCallfcKey+key;
 			String classKey = redisClassKey+key;
 			
-			//map不存在key則呼叫kafka建立redis key反之只取redis key
-			redisTemplate.opsForValue().get(mapKey);
+//			map不存在key則呼叫kafka建立redis key反之只取redis key
+//			redisTemplate.opsForValue().get(mapKey);
 			if(redisTemplate.opsForValue().get(mapKey) == null){
 				kafkaUtil.sendMessage(dmpApiTopic, "", key);
 				redisTemplate.opsForValue().set(redisCallmapKey+key, key, 1,TimeUnit.DAYS);
@@ -111,17 +114,26 @@ public class AdController extends BaseController {
 					return result;
 				}
 				
-				if(redisTemplate.opsForValue().get(fcKey) == null || (Integer)redisTemplate.opsForValue().get(fcKey) > redisFrequency){
-					JSONObject json = new JSONObject(redisDmpClassValue); 
-					json.put("ad_class", new JSONArray());
-					json.put("behavior", "");
-					result = json.toString();
-					return result;
-				}
 				
+				
+				String retargetingKey = radisRetargetingKey + key;
+				if(redisTemplate.opsForValue().get(retargetingKey) != null){
+					String retargeting = (String) redisTemplate.opsForValue().get(retargetingKey);
+					JSONObject resultJson = new JSONObject(redisDmpClassValue);
+					resultJson.put("retargeting_ad", new JSONObject(retargeting));
+					redisDmpClassValue = resultJson.toString();
+				}
+//				if(redisTemplate.opsForValue().get(fcKey) == null || (Integer)redisTemplate.opsForValue().get(fcKey) > redisFrequency){
+//					JSONObject json = new JSONObject(redisDmpClassValue); 
+//					json.put("ad_class", new JSONArray());
+//					json.put("behavior", "");
+//					result = json.toString();
+//					return result;
+//				}
 				result = redisDmpClassValue;
 				redisTemplate.opsForValue().increment(fcKey, 1);
 			}
+			
 			return result;
 		} catch (Exception e) {
 			log.error(">>>>" + e.getMessage());
@@ -173,6 +185,31 @@ public class AdController extends BaseController {
 				result =  (String) obj;
 			}
 			return result;
+		} catch (Exception e) {
+			log.error(">>>>" + e.getMessage());
+			e.printStackTrace();
+			ReturnData returnData = new ReturnData();
+			returnData.setCode(DmpApiReturnCodeEnum.API_CODE_E002.getCode());
+			returnData.setResult(e.getMessage());
+			returnData.setStatus(DmpApiReturnCodeEnum.API_CODE_E002.isStatus());
+			return getReturnData(returnData);
+		}
+	}
+	
+	
+	
+	
+//	@RequestMapping(value = "/api/prodAdTest", method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json;charset=UTF-8")
+	@RequestMapping(value = "/api/prodAdTest", method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/x-www-form-urlencoded;charset=UTF-8")
+	@ResponseBody
+	public Object prodAdTest(
+			HttpServletRequest request
+			) throws Exception {
+		try {
+			String data = IOUtils.toString(request.getInputStream(), "UTF8");
+			System.out.println(data);
+//			kafkaUtil.sendMessage("akb_prod_ad_stg", "", data);
+			return "";
 		} catch (Exception e) {
 			log.error(">>>>" + e.getMessage());
 			e.printStackTrace();
