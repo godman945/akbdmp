@@ -70,7 +70,7 @@ public class AdRutenLog extends ACategoryLogData {
 				Matcher m = p.matcher(sourceUrl.toString());
 
 				if (m.find()) {
-					// url是Ruten商品頁，爬蟲撈麵包屑
+					// url是Ruten商品頁，爬蟲撈麵包屑(http與https)
 					transformUrl.append("http://m.ruten.com.tw/goods/show.php?g=");
 					transformUrl.append(m.group().replaceAll("(http|https)://goods.ruten.com.tw/item/\\S+\\?", ""));
 					// Thread.sleep(500);
