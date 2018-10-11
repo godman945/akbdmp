@@ -31,7 +31,7 @@ public class Ad24HLog extends ACategoryLogData {
 			dmpDataBean.setUrl("null");
 			dmpDataBean.setCategory("null");
 			dmpDataBean.setCategorySource("null");
-			dmpDataBean.setClass24hUrlClassify("null");
+			dmpDataBean.setClass24hUrlClassify("N");
 			return dmpDataBean;
 		}
 		

@@ -14,7 +14,8 @@ public class AdClickLog extends ACategoryLogData {
 		if (!adClass.matches("\\d{16}")) {
 			dmpDataBean.setCategory("null");
 			dmpDataBean.setCategorySource("null");
-			dmpDataBean.setClassAdClickClassify("null");
+			dmpDataBean.setClassAdClickClassify("N");
+			return dmpDataBean;
 		}
 		
 		

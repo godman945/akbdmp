@@ -40,7 +40,7 @@ public class AdRutenLog extends ACategoryLogData {
 			dmpDataBean.setUrl("null");
 			dmpDataBean.setCategory("null");
 			dmpDataBean.setCategorySource("null");
-			dmpDataBean.setClassRutenUrlClassify("null");
+			dmpDataBean.setClassRutenUrlClassify("N");
 			return dmpDataBean;
 		}
 		
@@ -126,21 +126,21 @@ public class AdRutenLog extends ACategoryLogData {
 						// 沒有麵包屑
 						category = "null";
 						categorySource = "null";
-						classRutenUrlClassify = "null";
+						classRutenUrlClassify = "N";
 						insertClassUrl(sourceUrl.trim(),"0","","","沒有麵包屑的訊息",1) ;
 					}
 				} else {
 					// url不是Ruten商品頁，寫入mongo
 					category = "null";
 					categorySource = "null";
-					classRutenUrlClassify = "null";
+					classRutenUrlClassify = "N";
 					insertClassUrl(sourceUrl.trim(),"0","","","url不符合Ruten商品頁",1) ;
 				}
 
 			} catch (Exception e) {
 				category = "null";
 				categorySource = "null";
-				classRutenUrlClassify = "null";
+				classRutenUrlClassify = "N";
 				insertClassUrl(sourceUrl.trim(),"0","","","",1) ;
 				log.error(">>>>>>"+ e.getMessage());
 			}
