@@ -5,23 +5,22 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 
 import com.jayway.jsonpath.JsonPath;
-import com.pchome.akbdmp.api.data.enumeration.ClassCountMongoDBEnum;
-import com.pchome.hadoopdmp.data.mongo.pojo.UserDetailMongoBean;
-import com.pchome.hadoopdmp.data.mongo.pojo.UserDetailMongoBeanForHadoop;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
 import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper;
 import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper.combinedValue;
 import com.pchome.hadoopdmp.mapreduce.job.factory.DmpLogBean;
@@ -29,42 +28,35 @@ import com.pchome.hadoopdmp.mapreduce.job.factory.DmpLogBean;
 public class PersonalInfoComponent {
 	
 	Log log = LogFactory.getLog("PersonalInfoComponent");
-
+	
+	private DBCollection dBCollection;
+	
 	// 處理個資元件
-	public DmpLogBean processPersonalInfo(DmpLogBean dmpDataBean ,MongoOperations mongoOperations) throws Exception {
+	public DmpLogBean processPersonalInfo(DmpLogBean dmpDataBean ,DB mongoOperations) throws Exception {
+		this.dBCollection= mongoOperations.getCollection("user_detail");
 		
 		String memid = dmpDataBean.getMemid();
 		String category = dmpDataBean.getCategory();
-
+		
 		// 如有memid資料，先查mongo，再撈會員中心查個資
 		// 撈回mongo為NA也算已打過會員中心API，不再重打會員中心api
 		if ((StringUtils.isNotBlank(memid)) && (!memid.equals("null"))) {
-			Query queryUserInfo = new Query(Criteria.where(ClassCountMongoDBEnum.USER_ID.getKey()).is(memid));
-			UserDetailMongoBean userDetailMongoBean = mongoOperations.findOne(queryUserInfo, UserDetailMongoBean.class);
+			DBObject dbObject = queryUserDetail(memid);
+			
 			String msex = "";
 			String mage = "";
-			if (userDetailMongoBean != null) {
-				// 查看user_detail結構中有無mage和msex
-				Map<String, Object> userInfoMap = new HashMap<String, Object>();
-				userInfoMap = userDetailMongoBean.getUser_info();
-				if ((userInfoMap.get("mage") == null) || (userInfoMap.get("msex") == null)) {
-					// Mongo沒有mage、msex資料空的打會員中心 API
-					// 會員中心有資料寫回 mogodb msex mage 
-					// 會員中心沒有資料寫入 NA
-					Map<String, Object> memberInfoMap = findMemberInfoAPI(memid);
-					msex = (String) memberInfoMap.get("msex");
-					mage = (String) memberInfoMap.get("mage");
-
-					Update realPersonalData = new Update();
-					realPersonalData.set("user_info.type", "memid");
-					realPersonalData.set("user_info.memid", "");
-					realPersonalData.set("user_info.msex", msex);
-					realPersonalData.set("user_info.mage", mage);
-					mongoOperations.updateFirst(new Query(Criteria.where(ClassCountMongoDBEnum.USER_ID.getKey()).is(memid)), realPersonalData,"user_detail");
-					
+			if (dbObject != null) {
+				String userInfoStr = dbObject.get("user_info").toString();
+				
+				// mongo user_detail舊資料中有無mage、msex
+				 if ( (!userInfoStr.contains("mage")) || (!userInfoStr.contains("msex")) ){
+					Map<String, Object> memberInfoMapApi = findMemberInfoAPI(memid);
+					msex = (String) memberInfoMapApi.get("msex");
+					mage = (String) memberInfoMapApi.get("mage");
+					//更新user資料
+					updateUserDetail(memid,msex,mage);
 					dmpDataBean.setMsex("null");
 					dmpDataBean.setMage("null");
-					
 					if ( (!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA")) ) {
 						dmpDataBean.setPersonalInfoApiClassify("Y");
 					} else {
@@ -78,27 +70,13 @@ public class PersonalInfoComponent {
 				}
 			} else {
 				// mongo尚未新增user_detail，直接新增一筆mongo資料，塞會員中心打回來的性別、年齡(空的轉成NA寫入)
-				Map<String, Object> memberInfoMap = findMemberInfoAPI(memid);
-				msex = (String) memberInfoMap.get("msex");
-				mage = (String) memberInfoMap.get("mage");
-				
-				Map<String, String> map = new HashMap<String, String>();
-				map.put("type", "memid");
-				map.put("memid", "");
-				map.put("mage", mage);
-				map.put("msex", msex);
-				
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-				Date today = new Date();
-				String todayStr = sdf.format(today);
-
-				UserDetailMongoBeanForHadoop hadoopUserDetailBean = new UserDetailMongoBeanForHadoop();
-				hadoopUserDetailBean.setUser_id(memid);
-				hadoopUserDetailBean.setCreate_date(todayStr);
-				hadoopUserDetailBean.setUpdate_date(todayStr);
-				hadoopUserDetailBean.setUser_info(map);
-				mongoOperations.save(hadoopUserDetailBean);
-				
+				Map<String, Object> memberInfoMapApi = findMemberInfoAPI(memid);
+				msex = (String) memberInfoMapApi.get("msex");
+				mage = (String) memberInfoMapApi.get("mage");
+				//新增user
+				insertUserDetail(memid,msex,mage);
+				dmpDataBean.setMsex("null");
+				dmpDataBean.setMage("null");
 				if ( (!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA")) ) {
 					dmpDataBean.setPersonalInfoApiClassify("Y");
 				} else {
@@ -107,7 +85,6 @@ public class PersonalInfoComponent {
 			}
 		}
 		
-		
 		//如果raw data就有推估的age、sex，即PersonalInfo已被分類
 		if ( (!StringUtils.equals(dmpDataBean.getSex(), "null")) && (!StringUtils.equals(dmpDataBean.getAge(), "null")) ){
 			dmpDataBean.setPersonalInfoClassify("Y");
@@ -115,30 +92,62 @@ public class PersonalInfoComponent {
 			dmpDataBean.setAgeSource(dmpDataBean.getSource());
 			return dmpDataBean;
 		}
-		
-		// 讀取ClsfyGndAgeCrspTable.txt做age、sex個資推估
-		Map<String, String> forecastInfoMap = forecastPersonalInfo(category);
-		String sex = forecastInfoMap.get("sex");
-		String age = forecastInfoMap.get("age");
-		
-		dmpDataBean.setSex(sex);
-		dmpDataBean.setSexSource( StringUtils.equals(sex, "null") ? "null" : "excel" ); 
-		dmpDataBean.setAge(age);
-		dmpDataBean.setAgeSource( StringUtils.equals(age, "null") ? "null" : "excel" );
-		
-		if ( (!StringUtils.equals(age, "null")) && (!StringUtils.equals(sex, "null")) ) {
-			dmpDataBean.setPersonalInfoClassify("Y");
-		} else {
-			dmpDataBean.setPersonalInfoClassify("N");
-		}
+		//處理個資推估
+		dmpDataBean = processForecastPersonalInfo(dmpDataBean,category);
 		
 		return dmpDataBean;
 	}
 	
+
 	
+	public DmpLogBean processForecastPersonalInfo(DmpLogBean dmpDataBean, String category) throws Exception {
+		// 讀取ClsfyGndAgeCrspTable.txt做age、sex個資推估
+		Map<String, String> forecastInfoMap = forecastPersonalInfo(category);
+		String sex = forecastInfoMap.get("sex");
+		String age = forecastInfoMap.get("age");
+
+		dmpDataBean.setSex(sex);
+		dmpDataBean.setSexSource(StringUtils.equals(sex, "null") ? "null" : "excel");
+		dmpDataBean.setAge(age);
+		dmpDataBean.setAgeSource(StringUtils.equals(age, "null") ? "null" : "excel");
+
+		if ((!StringUtils.equals(age, "null")) && (!StringUtils.equals(sex, "null"))) {
+			dmpDataBean.setPersonalInfoClassify("Y");
+		} else {
+			dmpDataBean.setPersonalInfoClassify("N");
+		}
+		return dmpDataBean;
+	}
+	
+	public DBObject queryUserDetail(String memid) throws Exception {
+		BasicDBObject andQuery = new BasicDBObject();
+		List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+		obj.add(new BasicDBObject("user_id", memid));
+		andQuery.put("$and", obj);
+		DBObject dbObject =  dBCollection.findOne(andQuery);
+		return dbObject;
+	}
+	
+	public void updateUserDetail(String memid,String msex,String mage) throws Exception {
+		DBObject updateCondition = new BasicDBObject();
+		updateCondition.put("user_id", memid);
+		DBObject updatedValue = new BasicDBObject();
+		updatedValue.put("user_info", new BasicDBObject("msex", msex).append("mage", mage)
+				.append("type", "memid").append("memid", ""));
+		DBObject updateSetValue = new BasicDBObject("$set", updatedValue);
+		dBCollection.update(updateCondition, updateSetValue); 
+	}
+	
+	public void insertUserDetail(String memid,String msex,String mage) throws Exception {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date today = new Date();
+		String todayStr = sdf.format(today);
+		DBObject documents = new BasicDBObject("user_id",memid).append("create_date", todayStr).append("update_date", todayStr)
+				.append("user_info", new BasicDBObject("msex", msex).append("mage", mage).append("memid", "").append("type", "memid"));
+		dBCollection.insert(documents);
+	}
 	
 	public Map<String, String> forecastPersonalInfo(String category) throws Exception {
-		
 		combinedValue combineObj = DmpLogMapper.clsfyCraspMap.get(category);
 		String sex = (combineObj != null) ? combineObj.gender : "null";
 		String age = (combineObj != null) ? combineObj.age : "null";

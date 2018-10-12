@@ -19,12 +19,14 @@ import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Component;
 
 import com.maxmind.geoip2.DatabaseReader;
+import com.mongodb.DB;
 import com.pchome.hadoopdmp.enumerate.CategoryLogEnum;
 import com.pchome.hadoopdmp.mapreduce.job.component.DateTimeComponent;
 import com.pchome.hadoopdmp.mapreduce.job.component.DeviceComponent;
@@ -36,7 +38,7 @@ import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryLogFactory;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryRutenCodeBean;
 import com.pchome.hadoopdmp.mapreduce.job.factory.DmpLogBean;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
-import com.pchome.hadoopdmp.spring.config.bean.mongodb.MongodbHadoopConfig;
+import com.pchome.hadoopdmp.spring.config.bean.mongodborg.MongodbOrgHadoopConfig;
 
 @Component
 public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
@@ -60,7 +62,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public static GeoIpComponent geoIpComponent = new GeoIpComponent();
 	public static DateTimeComponent dateTimeComponent = new DateTimeComponent();
 	public static DeviceComponent deviceComponent = new DeviceComponent();
-	private MongoOperations mongoOperations;
+	private DB mongoOrgOperations;
 	public static DatabaseReader reader = null;
 	public static InetAddress ipAddress = null;
 
@@ -70,7 +72,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		try {
 			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-			this.mongoOperations = ctx.getBean(MongodbHadoopConfig.class).mongoProducer();
+			this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
 			record_date = context.getConfiguration().get("job.date");
 			Configuration conf = context.getConfiguration();
 			
@@ -146,12 +148,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 
 	@Override
 	public void map(LongWritable offset, Text value, Context context) {
-		
 		try {
 			//讀取kdcl、Campaign資料
-			log.info("raw_data : " + value);
+//			log.info("raw_data : " + value);
 			
-			DmpLogBean dmpDataBean = new DmpLogBean();
+			DmpLogBean dmpDataBean =  new DmpLogBean();
 			String valueStr = value.toString();
 			
 			if ( valueStr.indexOf(kdclSymbol) > -1 ){	//kdcl log	raw data格式
@@ -165,9 +166,15 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				// values[15] ad_class
 				String[] values = valueStr.toString().split(kdclSymbol);
 				if (values.length < kdclLogLength) {
-					log.info("values.length < " + kdclLogLength);
+//					log.info("values.length < " + kdclLogLength);
 					return;
 				}
+				
+				if ( (StringUtils.equals(values[1], "null")||StringUtils.isBlank(values[1]) ) 
+						&& (StringUtils.equals(values[2], "null")||StringUtils.isBlank(values[2])) ){
+					return;
+				}
+				
 				dmpDataBean.setDateTime(values[0]);
 				dmpDataBean.setMemid(values[1]);
 				dmpDataBean.setUuid(values[2]);
@@ -178,7 +185,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				dmpDataBean.setAdClass(values[15]);
 				dmpDataBean.setAge("null");
 				dmpDataBean.setSex("null");
-				log.info(">>>>>> kdcl rawdata:" + valueStr);
+//				log.info(">>>>>> kdcl rawdata:" + valueStr);
 			}else if( valueStr.indexOf(campaignSymbol) > -1 ){	//Campaign log raw data格式
 				// values[0] memid			會員帳號
 				// values[1] uuid			通用唯一識別碼	
@@ -191,9 +198,13 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				// values[8] Over_write		是否覆寫(true|false)
 				String[] values = valueStr.toString().split(campaignSymbol);
 				 if (values.length < campaignLogLength) {
-					 log.info("values.length < " + campaignLogLength);
+//					 log.info("values.length < " + campaignLogLength);
 					 return;
                  }
+				 
+				if ( StringUtils.isBlank(values[0]) && StringUtils.isBlank(values[1])  ){
+					return;
+				}
 				 
 				 dmpDataBean.setDateTime(values[7]);
 				 dmpDataBean.setMemid(StringUtils.isBlank(values[0])? "null" :values[0]);
@@ -215,7 +226,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				 }else{
 					 dmpDataBean.setSex(values[5]);
 				 }
-				 log.info(">>>>>> campaige rawdata:" + valueStr);
+//				 log.info(">>>>>> campaige rawdata:" + valueStr);
 			}else{
 				 return;
 			}
@@ -227,70 +238,261 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			dmpLogBeanResult = geoIpComponent.ipTransformGEO(dmpDataBean);
 			
 			//時間處理元件(日期時間字串轉成小時)			
-			dmpLogBeanResult = dateTimeComponent.datetimeTransformHour(dmpLogBeanResult);
+			dmpLogBeanResult = dateTimeComponent.datetimeTransformHour(dmpLogBeanResult); 
 			
 			//裝置處理元件(UserAgent轉成裝置資訊)
 			dmpLogBeanResult = deviceComponent.parseUserAgentToDevice(dmpLogBeanResult);
 			
 			
 			//分類處理元件(分析click、24H、Ruten、campaign分類) 
-			if ( (dmpLogBeanResult.getSource().equals("ck")||dmpLogBeanResult.getSource().equals("campaign")) && StringUtils.isNotBlank(dmpLogBeanResult.getAdClass())) {	// kdcl ad_click的adclass  或   campaign log的adclass 
+			if ( (dmpLogBeanResult.getSource().equals("ck")||dmpLogBeanResult.getSource().equals("campaign")) ) {	// kdcl ad_click的adclass  或   campaign log的adclass 	//&& StringUtils.isNotBlank(dmpLogBeanResult.getAdClass())
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
-				dmpLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(dmpLogBeanResult, mongoOperations);
+				dmpLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(dmpLogBeanResult, mongoOrgOperations);
 			}else if (dmpLogBeanResult.getSource().equals("pv") && StringUtils.isNotBlank(dmpLogBeanResult.getUrl()) && dmpLogBeanResult.getUrl().contains("ruten")) {	// 露天
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
-				dmpLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(dmpLogBeanResult, mongoOperations);
+				dmpLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(dmpLogBeanResult, mongoOrgOperations);
 			}else if (dmpLogBeanResult.getSource().equals("pv") && StringUtils.isNotBlank(dmpLogBeanResult.getUrl()) && dmpLogBeanResult.getUrl().contains("24h")) {		// 24h
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
-				dmpLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(dmpLogBeanResult, mongoOperations);
-			}else{
-				return;
+				dmpLogBeanResult = (DmpLogBean) aCategoryLogData.processCategory(dmpLogBeanResult, mongoOrgOperations);
+			}else if ( dmpLogBeanResult.getSource().equals("pv") ){
+				dmpLogBeanResult.setSource("kdcl");
+				dmpLogBeanResult.setCategory("null");
+				dmpLogBeanResult.setCategorySource("null");
+				dmpLogBeanResult.setClassAdClickClassify("null");
+				dmpLogBeanResult.setClass24hUrlClassify("null");
+				dmpLogBeanResult.setClassRutenUrlClassify("null");
 			}
 			
 			//個資處理元件
-			dmpLogBeanResult = personalInfoComponent.processPersonalInfo(dmpLogBeanResult, mongoOperations);
+			dmpLogBeanResult = personalInfoComponent.processPersonalInfo(dmpLogBeanResult, mongoOrgOperations);
 			
 			//紀錄日期
 			dmpLogBeanResult.setRecordDate(record_date);
 			
+			//傳至kafka的值只要是null或空字串，全部轉成字串null
+			dmpLogBeanResult = dmpBeanIntegrate(dmpLogBeanResult);
 			
-			// 0:memid + 1:uuid + 2:category + 3.categorySource 
-			// 4.sex + 5.sexSource + 6.age + 7.ageSource 
-			// 8.country + 9.city + 10.areaInfoSource
-			//11.device_info_source + 12.device_info 
-			//13.device_phone_info + 14.device_os_info + 15.device_browser_info 
-			//16.time_info_hour + 17.time_info_source 
+			//轉成發kafka字串
+			String sendKafkaJson = dmpBeanToKafkaJson(dmpLogBeanResult);
 			
-			//classify
-			//18.personal_info_api + 19.personal_info 
-			//20.class_ad_click + 21.class_24h_url + 22.class_ruten_url
-			//23.area_info + 24.device_info + 25.time_info
-			//26.url + 27.ip + 28.record_date + 29.org_source(kdcl、campaign) 
-			//30.date_time + 31.user_agent +32.ad_class + 33.record_count
+//			log.info(">>>>>> Mapper write key:" + sendKafkaJson.toString());
 			
-			recordCount = recordCount + 1;
-			String memid = StringUtils.isBlank(dmpLogBeanResult.getMemid()) ? "null" : dmpLogBeanResult.getMemid();
-			String result = memid + kdclSymbol + dmpLogBeanResult.getUuid() + kdclSymbol + dmpLogBeanResult.getCategory() + kdclSymbol  + dmpLogBeanResult.getCategorySource()
-			+ kdclSymbol + dmpLogBeanResult.getSex() + kdclSymbol + dmpLogBeanResult.getSexSource() + kdclSymbol + dmpLogBeanResult.getAge() + kdclSymbol + dmpLogBeanResult.getAgeSource()
-			+ kdclSymbol + dmpLogBeanResult.getCountry() + kdclSymbol + dmpLogBeanResult.getCity() + kdclSymbol + dmpLogBeanResult.getAreaInfoSource()
-			+ kdclSymbol + dmpLogBeanResult.getDeviceInfoSource() + kdclSymbol + dmpLogBeanResult.getDeviceInfo()
-			+ kdclSymbol + dmpLogBeanResult.getDevicePhoneInfo() + kdclSymbol + dmpLogBeanResult.getDeviceOsInfo() + kdclSymbol + dmpLogBeanResult.getDeviceBrowserInfo()
-			+ kdclSymbol + dmpLogBeanResult.getHour() + kdclSymbol + dmpLogBeanResult.getTimeInfoSource() 
-			+ kdclSymbol +dmpLogBeanResult.getPersonalInfoApiClassify()+ kdclSymbol +dmpLogBeanResult.getPersonalInfoClassify()
-			+ kdclSymbol +dmpLogBeanResult.getClassAdClickClassify() + kdclSymbol +dmpLogBeanResult.getClass24hUrlClassify()+ kdclSymbol +dmpLogBeanResult.getClassRutenUrlClassify()
-			+ kdclSymbol +dmpLogBeanResult.getAreaInfoClassify()+ kdclSymbol +dmpLogBeanResult.getDeviceInfoClassify()+ kdclSymbol +dmpLogBeanResult.getTimeInfoClassify()
-			+ kdclSymbol + dmpLogBeanResult.getUrl() + kdclSymbol + dmpLogBeanResult.getIp() + kdclSymbol + dmpLogBeanResult.getRecordDate()+ kdclSymbol + dmpLogBeanResult.getSource()
-			+ kdclSymbol + dmpLogBeanResult.getDateTime() + kdclSymbol + dmpLogBeanResult.getUserAgent() + kdclSymbol + dmpLogBeanResult.getAdClass() 
-			+ kdclSymbol + recordCount;
-			
-			log.info(">>>>>> Mapper write key:" + result);
-			
-			keyOut.set(result);
+			keyOut.set(sendKafkaJson.toString());
 			context.write(keyOut, valueOut);
 			
 		} catch (Exception e) {
-			log.error("Mapper error>>>>>> " +e);
+			log.error("Mapper error>>>>>> " +e); 
 		}
+	}
+	
+	public DmpLogBean dmpBeanIntegrate(DmpLogBean dmpLogBeanResult) throws Exception {
+		dmpLogBeanResult.setMemid( StringUtils.isBlank(dmpLogBeanResult.getMemid()) ? "null" : dmpLogBeanResult.getMemid());
+		dmpLogBeanResult.setUuid( StringUtils.isBlank(dmpLogBeanResult.getUuid()) ? "null" : dmpLogBeanResult.getUuid());
+		dmpLogBeanResult.setCategory( StringUtils.isBlank(dmpLogBeanResult.getCategory()) ? "null" : dmpLogBeanResult.getCategory());
+		dmpLogBeanResult.setCategorySource( StringUtils.isBlank(dmpLogBeanResult.getCategorySource()) ? "null" : dmpLogBeanResult.getCategorySource());
+		dmpLogBeanResult.setSex( StringUtils.isBlank(dmpLogBeanResult.getSex()) ? "null" : dmpLogBeanResult.getSex());
+		dmpLogBeanResult.setSexSource( StringUtils.isBlank(dmpLogBeanResult.getSexSource()) ? "null" : dmpLogBeanResult.getSexSource());
+		dmpLogBeanResult.setAge( StringUtils.isBlank(dmpLogBeanResult.getAge()) ? "null" : dmpLogBeanResult.getAge());
+		dmpLogBeanResult.setAgeSource( StringUtils.isBlank(dmpLogBeanResult.getAgeSource()) ? "null" : dmpLogBeanResult.getAgeSource());
+		dmpLogBeanResult.setCountry( StringUtils.isBlank(dmpLogBeanResult.getCountry()) ? "null" : dmpLogBeanResult.getCountry());
+		dmpLogBeanResult.setAreaInfoSource( StringUtils.isBlank(dmpLogBeanResult.getAreaInfoSource()) ? "null" : dmpLogBeanResult.getAreaInfoSource());
+		dmpLogBeanResult.setCity( StringUtils.isBlank(dmpLogBeanResult.getCity()) ? "null" : dmpLogBeanResult.getCity());
+		dmpLogBeanResult.setAreaInfoSource( StringUtils.isBlank(dmpLogBeanResult.getAreaInfoSource()) ? "null" : dmpLogBeanResult.getAreaInfoSource());
+		dmpLogBeanResult.setDeviceInfo( StringUtils.isBlank(dmpLogBeanResult.getDeviceInfo()) ? "null" : dmpLogBeanResult.getDeviceInfo());
+		dmpLogBeanResult.setDeviceInfoSource( StringUtils.isBlank(dmpLogBeanResult.getDeviceInfoSource()) ? "null" : dmpLogBeanResult.getDeviceInfoSource());
+		dmpLogBeanResult.setDevicePhoneInfo( StringUtils.isBlank(dmpLogBeanResult.getDevicePhoneInfo()) ? "null" : dmpLogBeanResult.getDevicePhoneInfo());
+		dmpLogBeanResult.setDeviceOsInfo( StringUtils.isBlank(dmpLogBeanResult.getDeviceOsInfo()) ? "null" : dmpLogBeanResult.getDeviceOsInfo());
+		dmpLogBeanResult.setDeviceBrowserInfo( StringUtils.isBlank(dmpLogBeanResult.getDeviceBrowserInfo()) ? "null" : dmpLogBeanResult.getDeviceBrowserInfo());
+		dmpLogBeanResult.setHour( StringUtils.isBlank(dmpLogBeanResult.getHour()) ? "null" : dmpLogBeanResult.getHour());
+		dmpLogBeanResult.setTimeInfoSource( StringUtils.isBlank(dmpLogBeanResult.getTimeInfoSource()) ? "null" : dmpLogBeanResult.getTimeInfoSource());
+		dmpLogBeanResult.setPersonalInfoApiClassify( StringUtils.isBlank(dmpLogBeanResult.getPersonalInfoApiClassify()) ? "null" : dmpLogBeanResult.getPersonalInfoApiClassify());
+		dmpLogBeanResult.setPersonalInfoClassify( StringUtils.isBlank(dmpLogBeanResult.getPersonalInfoClassify()) ? "null" : dmpLogBeanResult.getPersonalInfoClassify());
+		dmpLogBeanResult.setClassAdClickClassify( StringUtils.isBlank(dmpLogBeanResult.getClassAdClickClassify()) ? "null" : dmpLogBeanResult.getClassAdClickClassify());
+		dmpLogBeanResult.setClass24hUrlClassify( StringUtils.isBlank(dmpLogBeanResult.getClass24hUrlClassify()) ? "null" : dmpLogBeanResult.getClass24hUrlClassify());
+		dmpLogBeanResult.setClassRutenUrlClassify( StringUtils.isBlank(dmpLogBeanResult.getClassRutenUrlClassify()) ? "null" : dmpLogBeanResult.getClassRutenUrlClassify());
+		dmpLogBeanResult.setAreaInfoClassify( StringUtils.isBlank(dmpLogBeanResult.getAreaInfoClassify()) ? "null" : dmpLogBeanResult.getAreaInfoClassify());
+		dmpLogBeanResult.setDeviceInfoClassify( StringUtils.isBlank(dmpLogBeanResult.getDeviceInfoClassify()) ? "null" : dmpLogBeanResult.getDeviceInfoClassify());
+		dmpLogBeanResult.setTimeInfoClassify( StringUtils.isBlank(dmpLogBeanResult.getTimeInfoClassify()) ? "null" : dmpLogBeanResult.getTimeInfoClassify());
+		
+		return dmpLogBeanResult;
+	}
+	
+	
+	public String dmpBeanToKafkaJson(DmpLogBean dmpLogBeanResult) throws Exception {
+		recordCount = recordCount + 1;
+		//send kafka key
+		JSONObject keyJson = new JSONObject();
+		keyJson.put("memid", dmpLogBeanResult.getMemid());
+		keyJson.put("uuid", dmpLogBeanResult.getUuid());
+		
+		//send kafka data
+		//category_info
+		JSONObject categoryInfoJson = new JSONObject();
+		categoryInfoJson.put("value", dmpLogBeanResult.getCategory());
+		categoryInfoJson.put("source", dmpLogBeanResult.getCategorySource());
+		
+		//sex_info
+		JSONObject sexInfoJson = new JSONObject();
+		sexInfoJson.put("value", dmpLogBeanResult.getSex());
+		sexInfoJson.put("source", dmpLogBeanResult.getSexSource());
+		
+		//age_info
+		JSONObject ageInfoJson = new JSONObject();
+		ageInfoJson.put("value", dmpLogBeanResult.getAge());
+		ageInfoJson.put("source", dmpLogBeanResult.getAgeSource());
+		
+		//area_country_info
+		JSONObject areaCountryInfoJson = new JSONObject();
+		areaCountryInfoJson.put("value", dmpLogBeanResult.getCountry());
+		areaCountryInfoJson.put("source", dmpLogBeanResult.getAreaInfoSource());
+
+		//area_city_info
+		JSONObject areaCityInfoJson = new JSONObject();
+		areaCityInfoJson.put("value", dmpLogBeanResult.getCity());
+		areaCityInfoJson.put("source", dmpLogBeanResult.getAreaInfoSource());
+					
+		//device_info
+		JSONObject deviceInfoJson = new JSONObject();
+		deviceInfoJson.put("value", dmpLogBeanResult.getDeviceInfo());
+		deviceInfoJson.put("source", dmpLogBeanResult.getDeviceInfoSource());
+		
+		//device_phone_info
+		JSONObject devicePhoneInfoJson = new JSONObject();
+		devicePhoneInfoJson.put("value", dmpLogBeanResult.getDevicePhoneInfo());
+		devicePhoneInfoJson.put("source", dmpLogBeanResult.getDeviceInfoSource());
+		
+		//device_os_info
+		JSONObject deviceOsInfoJson = new JSONObject();
+		deviceOsInfoJson.put("value", dmpLogBeanResult.getDeviceOsInfo());
+		deviceOsInfoJson.put("source", dmpLogBeanResult.getDeviceInfoSource());
+		
+		//device_browser_info
+		JSONObject deviceBrowserInfoJson = new JSONObject();
+		deviceBrowserInfoJson.put("value", dmpLogBeanResult.getDeviceBrowserInfo());
+		deviceBrowserInfoJson.put("source", dmpLogBeanResult.getDeviceInfoSource());
+		
+		//time_info
+		JSONObject timeInfoJson = new JSONObject();
+		timeInfoJson.put("value", dmpLogBeanResult.getHour());
+		timeInfoJson.put("source", dmpLogBeanResult.getTimeInfoSource());
+
+		//put classify Array
+		JSONArray classifyArray = new JSONArray();
+		//kdcl classify 
+		if ( (StringUtils.equals(dmpLogBeanResult.getSource(), "kdcl")) ){
+			
+			//memid_kdcl_log_personal_info_api
+			JSONObject memid_kdcl_log_personal_info_api = new JSONObject();
+			memid_kdcl_log_personal_info_api.put("memid_kdcl_log_personal_info_api", dmpLogBeanResult.getPersonalInfoApiClassify());
+			classifyArray.put(memid_kdcl_log_personal_info_api);
+			
+			//all_kdcl_log_personal_info
+			JSONObject all_kdcl_log_personal_info = new JSONObject();
+			all_kdcl_log_personal_info.put("all_kdcl_log_personal_info", dmpLogBeanResult.getPersonalInfoClassify());
+			classifyArray.put(all_kdcl_log_personal_info);
+			
+			//all_kdcl_log_class_ad_click
+			JSONObject all_kdcl_log_class_ad_click = new JSONObject();
+			all_kdcl_log_class_ad_click.put("all_kdcl_log_class_ad_click", dmpLogBeanResult.getClassAdClickClassify());
+			classifyArray.put(all_kdcl_log_class_ad_click);
+			
+			//all_kdcl_log_class_24h_url
+			JSONObject all_kdcl_log_class_24h_url = new JSONObject();
+			all_kdcl_log_class_24h_url.put("all_kdcl_log_class_24h_url", dmpLogBeanResult.getClass24hUrlClassify());
+			classifyArray.put(all_kdcl_log_class_24h_url);
+			
+			//all_kdcl_log_class_ruten_url
+			JSONObject all_kdcl_log_class_ruten_url = new JSONObject();
+			all_kdcl_log_class_ruten_url.put("all_kdcl_log_class_ruten_url", dmpLogBeanResult.getClassRutenUrlClassify());
+			classifyArray.put(all_kdcl_log_class_ruten_url);
+			
+			//all_kdcl_log_area_info
+			JSONObject all_kdcl_log_area_info = new JSONObject();
+			all_kdcl_log_area_info.put("all_kdcl_log_area_info", dmpLogBeanResult.getAreaInfoClassify());
+			classifyArray.put(all_kdcl_log_area_info);
+			
+			//all_kdcl_log_device_info
+			JSONObject all_kdcl_log_device_info = new JSONObject();
+			all_kdcl_log_device_info.put("all_kdcl_log_device_info", dmpLogBeanResult.getDeviceInfoClassify());
+			classifyArray.put(all_kdcl_log_device_info);
+			
+			//all_kdcl_log_time_info
+			JSONObject all_kdcl_log_time_info = new JSONObject();
+			all_kdcl_log_time_info.put("all_kdcl_log_time_info", dmpLogBeanResult.getTimeInfoClassify());
+			classifyArray.put(all_kdcl_log_time_info);
+		}
+		
+		//campaign classify
+		if ( (StringUtils.equals(dmpLogBeanResult.getSource(), "campaign")) ){
+			//memid_camp_log_personal_info_api
+			JSONObject memid_camp_log_personal_info_api = new JSONObject();
+			memid_camp_log_personal_info_api.put("memid_camp_log_personal_info_api", dmpLogBeanResult.getPersonalInfoApiClassify());
+			classifyArray.put(memid_camp_log_personal_info_api);
+			
+			//all_camp_log_personal_info
+			JSONObject all_camp_log_personal_info = new JSONObject();
+			all_camp_log_personal_info.put("all_camp_log_personal_info", dmpLogBeanResult.getPersonalInfoClassify());
+			classifyArray.put(all_camp_log_personal_info);
+			
+			//all_camp_log_class_ad_click
+			JSONObject all_camp_log_class_ad_click = new JSONObject();
+			all_camp_log_class_ad_click.put("all_camp_log_class_ad_click", dmpLogBeanResult.getClassAdClickClassify());
+			classifyArray.put(all_camp_log_class_ad_click);
+			
+			//all_camp_log_class_24h_url
+			JSONObject all_camp_log_class_24h_url = new JSONObject();
+			all_camp_log_class_24h_url.put("all_camp_log_class_24h_url", dmpLogBeanResult.getClass24hUrlClassify());
+			classifyArray.put(all_camp_log_class_24h_url);
+			
+			//all_camp_log_class_ruten_url
+			JSONObject all_camp_log_class_ruten_url = new JSONObject();
+			all_camp_log_class_ruten_url.put("all_camp_log_class_ruten_url", dmpLogBeanResult.getClassRutenUrlClassify());
+			classifyArray.put(all_camp_log_class_ruten_url);
+			
+			//all_camp_log_area_info
+			JSONObject all_camp_log_area_info = new JSONObject();
+			all_camp_log_area_info.put("all_camp_log_area_info", dmpLogBeanResult.getAreaInfoClassify());
+			classifyArray.put(all_camp_log_area_info);
+			
+			//all_camp_log_device_info
+			JSONObject all_camp_log_device_info = new JSONObject();
+			all_camp_log_device_info.put("all_camp_log_device_info",dmpLogBeanResult.getDeviceInfoClassify());
+			classifyArray.put(all_camp_log_device_info);
+
+			//all_camp_log_time_info
+			JSONObject all_camp_log_time_info = new JSONObject();
+			all_camp_log_time_info.put("all_camp_log_time_info",  dmpLogBeanResult.getTimeInfoClassify());
+			classifyArray.put(all_camp_log_time_info);
+		}
+		
+		//dataJson
+		JSONObject dataJson = new JSONObject();
+		dataJson.put("category_info", categoryInfoJson);
+		dataJson.put("sex_info", sexInfoJson);
+		dataJson.put("age_info", ageInfoJson);
+		dataJson.put("area_country_info", areaCountryInfoJson );
+		dataJson.put("area_city_info", areaCityInfoJson );
+		dataJson.put("device_info", deviceInfoJson );
+		dataJson.put("device_phone_info", devicePhoneInfoJson );
+		dataJson.put("device_os_info", deviceOsInfoJson);
+		dataJson.put("device_browser_info", deviceBrowserInfoJson);
+		dataJson.put("time_info", timeInfoJson);
+		dataJson.put("classify", classifyArray);
+		
+		//send Kafka Json
+		JSONObject sendKafkaJson = new JSONObject();
+		sendKafkaJson.put("key", keyJson);
+		sendKafkaJson.put("data", dataJson);
+		sendKafkaJson.put("url",  dmpLogBeanResult.getUrl());
+		sendKafkaJson.put("ip", dmpLogBeanResult.getIp());
+		sendKafkaJson.put("record_date", dmpLogBeanResult.getRecordDate());
+		sendKafkaJson.put("org_source", dmpLogBeanResult.getSource());	//(kdcl、campaign)
+		sendKafkaJson.put("date_time", dmpLogBeanResult.getDateTime());
+		sendKafkaJson.put("user_agent", dmpLogBeanResult.getUserAgent() );
+		sendKafkaJson.put("ad_class", dmpLogBeanResult.getAdClass());
+		sendKafkaJson.put("record_count", recordCount);
+		
+		return sendKafkaJson.toString();
 	}
 	
 	
@@ -306,13 +508,13 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	
 
 //	 @Autowired
-//	 MongoOperations mongoOperations;
+//	 mongoOrgOperations mongoOrgOperations;
 //	 public void test() throws Exception{
 //	 System.out.println("BBB");
 //	 Query query = new
 //	 Query(Criteria.where("_id").is("59404c00e4b0ed734829caf4"));
 //	 ClassUrlMongoBean classUrlMongoBean = (ClassUrlMongoBean)
-//	 mongoOperations.findOne(query, ClassUrlMongoBean.class);
+//	 mongoOrgOperations.findOne(query, ClassUrlMongoBean.class);
 //	 System.out.println(classUrlMongoBean.getUrl());
 //	 System.out.println("AAA");
 //	 }

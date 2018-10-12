@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.mongodb.DBObject;
 
-public interface IClassUrlDAO {
+public interface IOrgUserDetailDAO {
 
 	public int insert(List<DBObject> list) throws Exception;
 
@@ -23,5 +23,8 @@ public interface IClassUrlDAO {
     public boolean checkUrlClassed(String url) throws Exception;
 
     public DBObject checkUrl(String url) throws Exception;
+    
+    
+    public DBObject findOneUserDetail(String userId) throws Exception;
 
 }

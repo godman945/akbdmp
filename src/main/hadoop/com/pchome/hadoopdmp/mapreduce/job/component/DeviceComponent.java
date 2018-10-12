@@ -33,7 +33,7 @@ public class DeviceComponent {
 		dmpDataBean.setDeviceInfo(operatingSystem.getDeviceType().toString());
 		dmpDataBean.setDevicePhoneInfo(operatingSystem.getManufacturer().toString());
 		dmpDataBean.setDeviceOsInfo(operatingSystem.getGroup().toString());
-		dmpDataBean.setDeviceBrowserInfo(browser.getName());
+		dmpDataBean.setDeviceBrowserInfo(browser.getGroup().toString());
 		dmpDataBean.setDeviceInfoSource("user-agent");
 		
 		if ( (!StringUtils.equals(dmpDataBean.getDeviceInfo(),"UNKNOWN")) && (!StringUtils.equals(dmpDataBean.getDevicePhoneInfo(),"UNKNOWN"))

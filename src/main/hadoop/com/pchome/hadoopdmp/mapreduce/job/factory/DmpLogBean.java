@@ -59,7 +59,27 @@ public class DmpLogBean {
 	private String personalInfoApiClassify = "null";
 	private String personalInfoClassify = "null";
 	
+	//第3分類
+	private ArrayList<String> prodClassInfo = new ArrayList<String>();
+	private String urlToMd5 ="null";
 	
+	
+	public String getUrlToMd5() {
+		return urlToMd5;
+	}
+
+	public void setUrlToMd5(String urlToMd5) {
+		this.urlToMd5 = urlToMd5;
+	}
+
+	public ArrayList<String> getProdClassInfo() {
+		return prodClassInfo;
+	}
+
+	public void setProdClassInfo(ArrayList<String> prodClassInfo) {
+		this.prodClassInfo = prodClassInfo;
+	}
+
 	public String getCountry() {
 		return country;
 	}
