@@ -208,9 +208,18 @@ public class AdController extends BaseController {
 			) throws Exception {
 		try {
 			String data = IOUtils.toString(request.getInputStream(), "UTF8");
-			System.out.println(data);
-			kafkaUtil.sendMessage("akb_prod_ad_stg", "", data);
-			return "";
+			JSONObject json = new JSONObject();
+			if(StringUtils.isNotBlank(data)){
+				String array[] = data.split("&");
+				for (String obj : array) {
+					String detail[] = obj.split("=");
+					String key = detail[0];
+					String value = detail[1];
+					json.put(key, value);
+				}
+			}
+			kafkaUtil.sendMessage("akb_prod_ad_stg", "", json.toString());
+			return "success";
 		} catch (Exception e) {
 			log.error(">>>>" + e.getMessage());
 			e.printStackTrace();
