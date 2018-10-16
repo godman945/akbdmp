@@ -9,6 +9,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -81,24 +82,24 @@ public class AdController extends BaseController {
 			@RequestParam(defaultValue = "", required = false) String uuid
 			) throws Exception {
 		try {
-			
 			String key  = "";
-			String result = "{\"ad_class\":[],\"behavior\":\"\",\"sex\":\"\",\"age\":\"\"}";
+			JSONObject result = new JSONObject();
+			result.put("ad_class", new JSONArray());
+			result.put("behavior", "");
+			result.put("sex", "");
+			result.put("age", "");
+			result.put("retargeting_prod", "");
 			if(StringUtils.isBlank(memid) && StringUtils.isBlank(uuid)){
-				result = "{\"ad_class\":[],\"behavior\":\"\",\"sex\":\"\",\"age\":\"\"}";
-				return result;
+				return result.toString();
 			}
-			
 			if(StringUtils.isNotBlank(memid)){
 				key = memid;
 			}else if(StringUtils.isNotBlank(uuid)){
 				key = uuid;
 			}
-			
 			String mapKey = redisCallmapKey+key;
 			String fcKey = redisCallfcKey+key;
 			String classKey = redisClassKey+key;
-			
 //			map不存在key則呼叫kafka建立redis key反之只取redis key
 //			redisTemplate.opsForValue().get(mapKey);
 			if(redisTemplate.opsForValue().get(mapKey) == null){
@@ -106,34 +107,35 @@ public class AdController extends BaseController {
 				redisTemplate.opsForValue().set(redisCallmapKey+key, key, 1,TimeUnit.DAYS);
 				return result;
 			}
-			
-			if(redisTemplate.opsForValue().get(mapKey) != null){
-				String redisDmpClassValue = (String) redisTemplate.opsForValue().get(classKey);
-				if(StringUtils.isBlank(redisDmpClassValue)){
+			//dmp有資料
+			Object redisDmpClassValue = redisTemplate.opsForValue().get(classKey);
+			if(redisDmpClassValue != null){
+				if(StringUtils.isBlank(redisDmpClassValue.toString())){
 					return result;
 				}
-				
-				
-				
-				String retargetingKey = radisRetargetingKey + key;
-				if(redisTemplate.opsForValue().get(retargetingKey) != null){
-					String retargeting = (String) redisTemplate.opsForValue().get(retargetingKey);
-					JSONObject resultJson = new JSONObject(redisDmpClassValue);
-					resultJson.put("retargeting_ad", new JSONObject(retargeting));
-					redisDmpClassValue = resultJson.toString();
-				}
-//				if(redisTemplate.opsForValue().get(fcKey) == null || (Integer)redisTemplate.opsForValue().get(fcKey) > redisFrequency){
-//					JSONObject json = new JSONObject(redisDmpClassValue); 
-//					json.put("ad_class", new JSONArray());
-//					json.put("behavior", "");
-//					result = json.toString();
-//					return result;
-//				}
-				result = redisDmpClassValue;
+				result = new JSONObject(redisDmpClassValue.toString());
 				redisTemplate.opsForValue().increment(fcKey, 1);
 			}
+			//再行銷商品資料
+			String retargetingKey = radisRetargetingKey + key;
+			Object obj = redisTemplate.opsForValue().get(retargetingKey);
+			if(obj != null){
+				String retargeting = obj.toString();
+				JSONObject retargetingAdJson = new JSONObject(retargeting);
+				result.put("retargeting_prod", retargetingAdJson);
+			}
 			
-			return result;
+			//頻次資料
+			Object fckeyTimes = redisTemplate.opsForValue().get(fcKey);
+			if(fckeyTimes == null || (Integer)fckeyTimes > redisFrequency){
+				System.out.println((Integer) fckeyTimes);
+				result.put("ad_class", new JSONArray());
+				result.put("behavior", "");
+				result.put("sex", "");
+				result.put("age", "");
+			}
+			
+			return result.toString();
 		} catch (Exception e) {
 			log.error(">>>>" + e.getMessage());
 			e.printStackTrace();
