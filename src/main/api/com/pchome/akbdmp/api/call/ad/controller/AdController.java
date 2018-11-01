@@ -134,6 +134,8 @@ public class AdController extends BaseController {
 				result.put("age", "");
 			}
 			if(!active.equals("prd")){
+				log.info("memid:"+memid);
+				log.info("uuid:"+uuid);
 				log.info("result:"+result);
 			}
 			return result.toString();
