@@ -62,7 +62,6 @@ public class AdController extends BaseController {
 	@Value("${radis.retargeting}")
 	private String radisRetargetingKey;
 	
-	
 	/**
 	 * 1.REDIS PRD MAP:prd:dmp:callmap:[uuid | pcid]
 	 * 2.REDIS STG MAP:stg:dmp:callmap:[uuid | pcid]
@@ -134,7 +133,9 @@ public class AdController extends BaseController {
 				result.put("sex", "");
 				result.put("age", "");
 			}
-			
+			if(!active.equals("prd")){
+				log.info("result:"+result);
+			}
 			return result.toString();
 		} catch (Exception e) {
 			log.error(">>>>" + e.getMessage());
