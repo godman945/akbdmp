@@ -109,7 +109,7 @@ public class AdController extends BaseController {
 			}
 			//dmp有資料
 			Object redisDmpClassValue = redisTemplate.opsForValue().get(classKey);
-			if(redisDmpClassValue != null){
+			if(redisDmpClassValue != null && StringUtils.isNotBlank(redisDmpClassValue.toString())){
 				if(StringUtils.isBlank(redisDmpClassValue.toString())){
 					return result;
 				}
