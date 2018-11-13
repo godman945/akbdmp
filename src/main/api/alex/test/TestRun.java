@@ -1,7 +1,10 @@
 package alex.test;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import com.pchome.akbdmp.spring.config.bean.allbeanscan.SpringAllConfig;
 import com.pchome.soft.depot.utils.DateFormatUtil;
+import com.pchome.soft.depot.utils.KafkaUtil;
 
 @Component
 public class TestRun {
@@ -22,15 +26,72 @@ public class TestRun {
 	@Autowired
 	DateFormatUtil dateFormatUtil;
 
+	
+	@Autowired
+ 	private KafkaUtil KafkaUtil;
+	
 	private void redisTest() throws Exception{
 		
+//		redisTemplate.opsForValue().set("alex", "AAA");
+//		redisTemplate.expire("alex", 1, TimeUnit.DAYS);
+//		Long a = redisTemplate.getExpire("alex");
+//		System.out.println(a);
+//		
+//		
+//		
+//		redisTemplate.expire("", timeout, TimeUnit.SECONDS)
 		
 		
 		
 		
-		String s = (String) redisTemplate.opsForValue().get("Alex");
-		System.out.println(s);
 		
+		
+//		JSONObject f = new JSONObject();
+//		f.put("event", "convert");
+////		f.put("event", "tracking");
+//		JSONObject c = new JSONObject();
+////		c.put("trackId", "traceId002");
+//		
+//		c.put("convertId", "CAC20181112000000001");
+//		c.put("ruleId", "RLE20180724000000001");
+//		
+//		f.put("codeCondition", c);
+//		KafkaUtil.sendMessage("TEST", "TEST-2", "AA");
+		
+		
+		
+		
+		
+		
+		
+		
+		int partition = 0;
+		String partitionHashcode = "1";
+		for (int i = 0; i < 10000; i++) {
+			KafkaUtil.sendMessage("TEST", partitionHashcode, "thread2_"+i);
+			if(partition == 2){
+				partition = 0;
+				partitionHashcode = "1";
+			}else{
+				partition = partition + 1;
+				if(partition == 1){
+					partitionHashcode = "key0";
+				}
+				if(partition == 2){
+					partitionHashcode = "key2";
+				}
+			}
+		}
+	
+		
+		
+//		System.out.println(redisTemplate.opsForValue().get("stg:pa:codecheck:traceId002"));
+//		
+////		System.out.println(KafkaUtil == null);
+//		KafkaUtil.sendMessage("akb_prod_code_check_stg", "", f.toString());
+//		String s = (String) redisTemplate.opsForValue().get("Alex");
+//		System.out.println(s);
+//		
 		
 //		redisTemplate.
 //		System.out.println("1>>>>"+redisTemplate.opsForValue().get("1"));
@@ -170,6 +231,13 @@ public class TestRun {
 	}
 
 	public static void main(String[] args) throws Exception {
+		System.setProperty("spring.profiles.active", "stg");
+		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
+		TestRun TestRun = (TestRun) ctx.getBean(TestRun.class);
+		TestRun.redisTest();
+		
+		
+		
 ////		Connection conn = null;   
 ////		 try {
 ////	            Class.forName("com.mysql.jdbc.Driver").newInstance();   //Driver name
@@ -221,9 +289,6 @@ public class TestRun {
 		 
 		 
 		 
-		System.setProperty("spring.profiles.active", "stg");
-		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
-		TestRun TestRun = (TestRun) ctx.getBean(TestRun.class);
-		TestRun.redisTest();
+		
 	}
 }
