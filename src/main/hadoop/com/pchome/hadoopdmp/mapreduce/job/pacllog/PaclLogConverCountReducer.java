@@ -30,24 +30,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 
 	public static String record_date;
 
-	private String kafkaMetadataBrokerlist;
-
-	private String kafkaAcks;
-
-	private String kafkaRetries;
-
-	private String kafkaBatchSize;
-
-	private String kafkaLingerMs;
-
-	private String kafkaBufferMemory;
-
-	private String kafkaSerializerClass;
-
-	private String kafkaKeySerializer;
-
-	private String kafkaValueSerializer;
-
 	public static Producer<String, String> producer = null;
 
 	public RedisTemplate<String, Object> redisTemplate = null;
@@ -64,7 +46,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 
 	private MysqlUtil mysqlUtil = null;
 	
-	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
 		try {
@@ -84,7 +65,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 		try {
 			String convertSeq = mapperKey.toString();
 			log.info(">>>>>>>>>convertSeq:"+convertSeq);
-			ResultSet resultSet = mysqlUtil.query(" select * pfp_code_convert_rule where 1 = 1 and convert_seq = '"+convertSeq+"' ");
+			ResultSet resultSet = mysqlUtil.query(" select * from pfp_code_convert_rule where 1 = 1 and convert_seq = '"+convertSeq+"' ");
 			while(resultSet.next()){
 				log.info(">>>>>>"+resultSet.getString("convert_rule_id"));
 				log.info(">>>>>>"+resultSet.getString("convert_rule_way"));
@@ -101,7 +82,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	}
 	public void cleanup(Context context) {
 		try {
-		
+			mysqlUtil.closeConnection();
 		} catch (Throwable e) {
 			log.error("reduce cleanup error>>>>>> " + e);
 		}
