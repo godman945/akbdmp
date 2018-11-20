@@ -36,8 +36,8 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 			log.info(">>>>>:"+arrayData[2]);
 			String type = arrayData[2];
 			if(type.equals("convert")){
-				keyOut.set(type);
-				context.write(keyOut, new Text(arrayData[3]));
+				keyOut.set(arrayData[3]);
+				context.write(keyOut, new Text(arrayData[4]));
 			}
 		} catch (Exception e) {
 			log.error("Mapper error>>>>>> " +e); 
