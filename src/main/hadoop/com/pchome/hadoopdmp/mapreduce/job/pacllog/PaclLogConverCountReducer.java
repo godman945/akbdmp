@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -15,14 +14,10 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.kafka.clients.producer.Producer;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 import com.pchome.soft.util.MysqlUtil;
-import com.sun.xml.internal.stream.Entity;
 
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
@@ -55,8 +50,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	private MysqlUtil mysqlUtil = null;
 	
 	private StringBuffer convertCondition = new StringBuffer();
-	
-	private StringBuffer convertCount = new StringBuffer();
 	
 	private Map<String,Set<String>> convertResultMap = new HashMap<>();
 	
