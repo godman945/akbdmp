@@ -13,7 +13,8 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 	
 	private Text keyOut = new Text();
 
-
+	private static String paclSymbol = String.valueOf(new char[] { 9, 31 });
+	
 	@Override
 	public void setup(Context context) {
 		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
@@ -30,7 +31,7 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 			//讀取kdcl、Campaign資料
 			log.info("raw_data : " + value);
 			String valueStr = value.toString();
-			String arrayData[] = valueStr.split("	");
+			String arrayData[] = valueStr.split(paclSymbol);
 			log.info(">>>>>:"+arrayData[11]);
 			log.info(">>>>>:"+arrayData[12]);
 			log.info(">>>>>:"+arrayData[13]);
