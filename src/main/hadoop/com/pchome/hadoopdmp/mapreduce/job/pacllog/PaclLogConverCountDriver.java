@@ -54,26 +54,8 @@ public class PaclLogConverCountDriver {
 	@Value("${hpd11.mapred.task.timeout}")
 	private String mapredTimeout;
 
-	@Value("${crawlBreadCrumb.urls.path}")
-	private String crawlBreadCrumbUrlsPath;
-
-	@Value("${analyzer.path.alllog}")
-	private String analyzerPathAlllog;
-
-	@Value("${input.path.testingflag}")
-	private String inputPathTestingFlag;
-
-	@Value("${input.path.testingpath}")
-	private String inputPathTestingPath;
-
-	@Value("${adLog.class.path}")
-	private String adLogClassPpath;
-	
-	@Value("${akb.path.alllog}")
-	private String akbPathAllLog;
-	
-	private SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
-	private SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMddHHmmss");
+	@Value("${akb.pacl.all}")
+	private String akbPacLoglAll;
 	
 	String logInputPath;
 	String outPath;
@@ -137,7 +119,8 @@ public class PaclLogConverCountDriver {
 			job.setNumReduceTasks(1);//1個reduce 
 			job.setMapSpeculativeExecution(false);
 			
-			logInputPath = "/home/webuser/alex/pacl_log/pacl_test_log_2018_11_20.lzo";
+//			logInputPath = "/home/webuser/alex/pacl_log/pacl_test_log_2018_11_20.lzo";
+			logInputPath = akbPacLoglAll;
 			outPath = "/home/webuser/alex/pacl_output";
 			//hdfs存在則刪除
 			deleteExistedDir(fs, new Path(outPath), true);
