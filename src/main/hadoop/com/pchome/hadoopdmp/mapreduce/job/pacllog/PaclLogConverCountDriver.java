@@ -185,7 +185,7 @@ public class PaclLogConverCountDriver {
 			
 			
 			
-			Job job2 = new Job(jobConf, "dmp_conv_"+ env + "_" + sdf.format(date));
+			Job job2 = new Job(jobConf, "dmp_conv2_"+ env + "_" + sdf.format(date));
 			job2.setJarByClass(PaclLogConverCountDriver.class);
 			job2.setMapperClass(PaclLogConverCountMapper.class);
 			job2.setReducerClass(PaclLogConverCountReducer2.class);
@@ -198,22 +198,14 @@ public class PaclLogConverCountDriver {
 			job2.setMapSpeculativeExecution(false);
 
 			String paths = "/home/webuser/alex/pacl_log/kdcl1_analyzer_2018-08-16.lzo,/home/webuser/alex/pacl_log/kdcl2_analyzer_2018-08-16.lzo";
-			FileInputFormat.addInputPaths(job, paths);
+			FileInputFormat.addInputPaths(job2, paths);
 			outPath = "/home/webuser/alex/pacl_output2";
 			//hdfs存在則刪除
 			deleteExistedDir(fs, new Path(outPath), true);
-			FileOutputFormat.setOutputPath(job, new Path(outPath));
-			
-			
-			for (String jarPath : jarPaths) {
-				DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fs);
-			}
+			FileOutputFormat.setOutputPath(job2, new Path(outPath));
 	
-			for (String filePath : filePaths) {
-				DistributedCache.addCacheFile(new URI(filePath), job.getConfiguration());
-			}
 	
-			if (job.waitForCompletion(true)) {
+			if (job2.waitForCompletion(true)) {
 				log.info("Job2 is OK");
 				
 			} else {
