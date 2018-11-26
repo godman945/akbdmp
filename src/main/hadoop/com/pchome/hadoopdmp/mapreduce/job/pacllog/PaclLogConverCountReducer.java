@@ -169,166 +169,26 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 					min = count;
 				}
 			}
-			
-			
+			int convertPriceCount = 0;
+			//1:每次 2:一次
+			if(pcalConditionBean.getConvertNumType() == 1){
+				convertPriceCount = Integer.parseInt(pcalConditionBean.getConvertPrice()) * min;
+			}else if(pcalConditionBean.getConvertNumType() == 2){
+				convertPriceCount = Integer.parseInt(pcalConditionBean.getConvertPrice());
+			}
 			log.info("============="+convertConditionSet+" convert count:"+min);
-			
 			keyOut.set(uuid);
-			
 			convertWriteInfo.append(paclSymbol).append("clickRangeDate:").append(pcalConditionBean.getClickRangeDate()).append(paclSymbol);
+			convertWriteInfo.append("impRangeDate:").append(pcalConditionBean.getImpRangeDate()).append(paclSymbol);
+			convertWriteInfo.append("convertPriceCount:").append(convertPriceCount).append(paclSymbol);
+			convertWriteInfo.append("convertPric:").append(pcalConditionBean.getConvertPrice()).append(paclSymbol);
+			convertWriteInfo.append("convertBelong:").append(pcalConditionBean.getConvertBelong()).append(paclSymbol);
+			convertWriteInfo.append("convertSeq:").append(convertSeq);
 			valueOut.set(convertWriteInfo.toString());
 			context.write(keyOut, valueOut);
-			
 			convertConditionSet.clear();
 			convertWriteInfo.setLength(0);
 			sql.setLength(0);
-			
-			
-			
-			
-			
-			
-			//開始計算條件出現次數
-//			for (Text text : mapperValue) {
-//				String paclRouleId = text.toString();
-//	//			log.info(">>>>>>>>>"+rouleId);
-//				String data = "";
-//				if(pcalConditionBean.getConvertRule().indexOf(paclRouleId.toString()) >= 0){
-//					Set<String> convertConditionSet = pcalConditionBean.getConvertConditionSet();
-//					Iterator<String> convertCondition =  convertConditionSet.iterator();
-//					while (convertCondition.hasNext()) {
-//						String converArray[] = convertCondition.next().split("_");
-//						String rouleId = converArray[0];
-//						int count = Integer.parseInt(converArray[1]);
-//						if(paclRouleId.equals(rouleId)){
-//							count ++;
-//							data = rouleId+"_"+String.valueOf(count);
-//							convertCondition.remove();
-//							convertConditionSet.add(data);
-//							break;
-//						}
-//					}
-//					
-//				 }
-//			}
-//			
-//			
-//			//統計轉換次數
-//			int min = 0;
-//			for (String rouleIdCountStr : pcalConditionBean.getConvertConditionSet()) {
-//				String converArray[] = rouleIdCountStr.split("_");
-//				int count = Integer.parseInt(converArray[1]);
-//				if(count == 0){
-//					min = 0;
-//					break;
-//				}
-//				if(min == 0){
-//					min = count;
-//				}else if(count < min){
-//					min = count;
-//				}
-//			}
-//			pcalConditionBean.setConvertCount(min);
-			
-			
-			
-			
-			
-			
-			
-			
-			
-//			//整理條件內容與總計
-//			Set<String> convertConditionSet = pcalConditionBean.getConvertConditionSet();		 
-//			String convertConditionArray[] = pcalConditionBean.getConvertRule().split(":");
-//			for (String rouleId : convertConditionArray) {
-//				convertConditionSet.add(rouleId+"_0");
-//			}
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-//			log.info(">>>>>>>>>convertSeq:"+convertSeq);
-			
-			
-//			ResultSet resultSet = mysqlUtil.query(sql.toString());
-////			ResultSet resultSet = mysqlUtil.query(" select * from pfp_code_convert_rule where 1 = 1 and convert_seq = '"+convertSeq+"' ");
-//			
-//			String clickRangeDate = "";
-//			String impRangeDate = "";
-//			String convertPrice = "";
-//			
-//			while(resultSet.next()){
-//				String rouleId = resultSet.getString("convert_rule_id");
-//				if(resultSet.isLast()){
-//					convertCondition.append(rouleId);
-//				}else{
-//					convertCondition.append(rouleId).append(":");
-//				}
-////				log.info(">>>>>>"+resultSet.getString("convert_rule_id"));
-////				log.info(">>>>>>"+resultSet.getString("convert_rule_way"));
-////				log.info(">>>>>>"+resultSet.getString("convert_rule_value"));
-//			}
-//			log.info(">>>>>>>>>convertCondition:"+convertCondition.toString());
-//			log.info("--------------");
-//			//整理條件內容與總計
-//			Set<String> convertConditionSet = new HashSet<String>();			 
-//			String convertConditionArray[] = convertCondition.toString().split(":");
-//			for (String rouleId : convertConditionArray) {
-//				convertConditionSet.add(rouleId+"_0");
-//			}
-//			convertResultMap.put(convertSeq, convertConditionSet);
-//			
-//			//開始計算條件出現次數
-//			for (Text text : mapperValue) {
-//				String paclRouleId = text.toString();
-////				log.info(">>>>>>>>>"+rouleId);
-//				String data = "";
-//				if(convertCondition.toString().indexOf(paclRouleId.toString()) >= 0){
-//					for (String setStr : convertConditionSet) {
-//						String converArray[] = setStr.split("_");
-//						String rouleId = converArray[0];
-//						int count = Integer.parseInt(converArray[1]);
-//						if(paclRouleId.equals(rouleId)){
-//							convertConditionSet.remove(rouleId+"_"+count);
-//							count ++;
-//							data = rouleId+"_"+String.valueOf(count);
-//							convertConditionSet.add(data);
-//							break;
-//						}
-//					 }
-//				 }
-//			}
-//			log.info(">>>>>>>>>>>>>>>>convertResultMap:"+convertResultMap);
-//			//統計轉換次數
-//			for (Entry<String, Set<String>> entry : convertResultMap.entrySet()) {
-//				int min = 0;
-//				for (String str : entry.getValue()) {
-//					String converArray[] = str.split("_");
-//					int count = Integer.parseInt(converArray[1]);
-//					if(count == 0){
-//						min = 0;
-//						break;
-//					}
-//					if(min == 0){
-//						min = count;
-//					}else if(count < min){
-//						min = count;
-//					}
-//				}
-//				log.info("============="+entry.getKey()+" convert count:"+min);
-////				keyOut.set(other);
-//				context.write(keyOut, valueOut);
-//				
-//			}
 			convertResultMap.clear();
 		} catch (Throwable e) {
 			log.error("reduce error>>>>>> " + e);
