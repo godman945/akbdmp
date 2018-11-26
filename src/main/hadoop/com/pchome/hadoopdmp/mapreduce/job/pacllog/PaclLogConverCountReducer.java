@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -46,14 +47,22 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	public Map<String, JSONObject> kafkaDmpMap = null;
 
 	public Map<String, Integer> redisClassifyMap = null;
+	
+	public static Map<String, PcalConditionBean> convertConditionMap = new HashMap<String, PcalConditionBean>();
 
 	private MysqlUtil mysqlUtil = null;
 	
-	private StringBuffer convertCondition = new StringBuffer();
+	private StringBuffer convertWriteInfo = new StringBuffer();
 	
 	private StringBuffer sql = new StringBuffer();
 	
 	private Map<String,Set<String>> convertResultMap = new HashMap<>();
+	
+	private Set<String> convertConditionSet = new HashSet<String>();	
+	
+	private static PcalConditionBean pcalConditionBean;
+	
+	private static String paclSymbol = String.valueOf(new char[] { 9, 31 });
 	
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
@@ -72,54 +81,64 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	@Override
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
 		try {
-			convertCondition.setLength(0);
-			sql.setLength(0);
-			String convertSeq = mapperKey.toString();
-			log.info(">>>>>>>>>convertSeq:"+convertSeq);
-			
-			
-			sql.append(" SELECT c.convert_seq, ");
-			sql.append(" 	c.click_range_date,  ");
-			sql.append(" 	c.imp_range_date,  ");
-			sql.append(" 	c.convert_price, ");
-			sql.append(" 	c.convert_status, ");
-			sql.append(" 	c.convert_belong, ");
-			sql.append(" 	c.convert_num_type, ");
-			sql.append(" 	r.convert_rule_id  ");
-			sql.append(" FROM   pfp_code_convert_rule r,  ");
-			sql.append(" 		pfp_code_convert c ");
-			sql.append(" WHERE  1 = 1 ");
-			sql.append(" AND c.convert_seq = '").append(convertSeq).append("'");
-			sql.append(" AND r.convert_seq = c.convert_seq  ");
-			ResultSet resultSet = mysqlUtil.query(sql.toString());
-//			ResultSet resultSet = mysqlUtil.query(" select * from pfp_code_convert_rule where 1 = 1 and convert_seq = '"+convertSeq+"' ");
-			while(resultSet.next()){
-				String rouleId = resultSet.getString("convert_rule_id");
-				if(resultSet.isLast()){
-					convertCondition.append(rouleId);
-				}else{
-					convertCondition.append(rouleId).append(":");
+			String key = mapperKey.toString();
+			log.info(">>>>>>init mapperKey:"+key);
+			String convertSeq = key.split("_")[0];
+			String uuid = key.split("_")[1];
+			if(convertConditionMap.get(convertSeq) == null){
+				log.info(">>>>>>convertConditionMap data not exist!!");
+				sql.append(" SELECT c.convert_seq, ");
+				sql.append(" 	c.click_range_date,  ");
+				sql.append(" 	c.imp_range_date,  ");
+				sql.append(" 	c.convert_price, ");
+				sql.append(" 	c.convert_status, ");
+				sql.append(" 	c.convert_belong, ");
+				sql.append(" 	c.convert_num_type, ");
+				sql.append(" 	GROUP_CONCAT(convert_rule_id SEPARATOR ':')convert_rule_id  ");
+				sql.append(" FROM   pfp_code_convert_rule r,  ");
+				sql.append(" 		pfp_code_convert c ");
+				sql.append(" WHERE  1 = 1 ");
+				sql.append(" AND c.convert_seq = '").append(convertSeq).append("'");
+				sql.append(" AND r.convert_seq = c.convert_seq  ");
+				sql.append(" GROUP BY r.convert_seq  ");
+				
+				ResultSet resultSet = mysqlUtil.query(sql.toString());
+				while(resultSet.next()){
+					int clickRangeDate = resultSet.getInt("click_range_date");
+					int impRangeDate = resultSet.getInt("imp_range_date");
+					String convertPrice = resultSet.getString("convert_price");
+					String convertStatus = resultSet.getString("convert_status");
+					String convertBelong = resultSet.getString("convert_belong");
+					int convertNumType = resultSet.getInt("convert_num_type");
+					String convertRule = resultSet.getString("convert_rule_id");
+					pcalConditionBean = new PcalConditionBean();
+					pcalConditionBean.setClickRangeDate(clickRangeDate);
+					pcalConditionBean.setImpRangeDate(impRangeDate);
+					pcalConditionBean.setConvertPrice(convertPrice);
+					pcalConditionBean.setConvertStatus(convertStatus);
+					pcalConditionBean.setConvertNumType(convertNumType);
+					pcalConditionBean.setConvertBelong(convertBelong);
+					pcalConditionBean.setConvertRule(convertRule);
+					convertConditionMap.put(convertSeq, pcalConditionBean);
+					log.info(">>>>>>convertConditionMap:"+convertConditionMap);
 				}
-//				log.info(">>>>>>"+resultSet.getString("convert_rule_id"));
-//				log.info(">>>>>>"+resultSet.getString("convert_rule_way"));
-//				log.info(">>>>>>"+resultSet.getString("convert_rule_value"));
+			}else{
+				log.info(">>>>>>convertConditionMap data exist!!");
+				pcalConditionBean = convertConditionMap.get(convertSeq);
 			}
-			log.info(">>>>>>>>>convertCondition:"+convertCondition.toString());
-			log.info("--------------");
+			
 			//整理條件內容與總計
-			Set<String> convertConditionSet = new HashSet<String>();			 
-			String convertConditionArray[] = convertCondition.toString().split(":");
+					 
+			String convertConditionArray[] = pcalConditionBean.getConvertRule().split(":");
 			for (String rouleId : convertConditionArray) {
 				convertConditionSet.add(rouleId+"_0");
 			}
-			convertResultMap.put(convertSeq, convertConditionSet);
 			
 			//開始計算條件出現次數
 			for (Text text : mapperValue) {
 				String paclRouleId = text.toString();
-//				log.info(">>>>>>>>>"+rouleId);
 				String data = "";
-				if(convertCondition.toString().indexOf(paclRouleId.toString()) >= 0){
+				if(pcalConditionBean.getConvertRule().indexOf(paclRouleId.toString()) >= 0){
 					for (String setStr : convertConditionSet) {
 						String converArray[] = setStr.split("_");
 						String rouleId = converArray[0];
@@ -134,29 +153,183 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 					 }
 				 }
 			}
-			log.info(">>>>>>>>>>>>>>>>"+convertResultMap);
+			
 			//統計轉換次數
-			for (Entry<String, Set<String>> entry : convertResultMap.entrySet()) {
-				int min = 0;
-				for (String str : entry.getValue()) {
-					String converArray[] = str.split("_");
-					int count = Integer.parseInt(converArray[1]);
-					if(count == 0){
-						min = 0;
-						break;
-					}
-					if(min == 0){
-						min = count;
-					}else if(count < min){
-						min = count;
-					}
+			int min = 0;
+			for (String rouleIdCountStr : convertConditionSet) {
+				String converArray[] = rouleIdCountStr.split("_");
+				int count = Integer.parseInt(converArray[1]);
+				if(count == 0){
+					min = 0;
+					break;
 				}
-				log.info("============="+entry.getKey()+" convert count:"+min);
+				if(min == 0){
+					min = count;
+				}else if(count < min){
+					min = count;
+				}
 			}
 			
 			
+			log.info("============="+convertConditionSet+" convert count:"+min);
 			
-			log.info("-*****************-");
+			keyOut.set(uuid);
+			
+			convertWriteInfo.append(paclSymbol).append("clickRangeDate:").append(pcalConditionBean.getClickRangeDate()).append(paclSymbol);
+			valueOut.set(convertWriteInfo.toString());
+			context.write(keyOut, valueOut);
+			
+			convertConditionSet.clear();
+			convertWriteInfo.setLength(0);
+			sql.setLength(0);
+			
+			
+			
+			
+			
+			
+			//開始計算條件出現次數
+//			for (Text text : mapperValue) {
+//				String paclRouleId = text.toString();
+//	//			log.info(">>>>>>>>>"+rouleId);
+//				String data = "";
+//				if(pcalConditionBean.getConvertRule().indexOf(paclRouleId.toString()) >= 0){
+//					Set<String> convertConditionSet = pcalConditionBean.getConvertConditionSet();
+//					Iterator<String> convertCondition =  convertConditionSet.iterator();
+//					while (convertCondition.hasNext()) {
+//						String converArray[] = convertCondition.next().split("_");
+//						String rouleId = converArray[0];
+//						int count = Integer.parseInt(converArray[1]);
+//						if(paclRouleId.equals(rouleId)){
+//							count ++;
+//							data = rouleId+"_"+String.valueOf(count);
+//							convertCondition.remove();
+//							convertConditionSet.add(data);
+//							break;
+//						}
+//					}
+//					
+//				 }
+//			}
+//			
+//			
+//			//統計轉換次數
+//			int min = 0;
+//			for (String rouleIdCountStr : pcalConditionBean.getConvertConditionSet()) {
+//				String converArray[] = rouleIdCountStr.split("_");
+//				int count = Integer.parseInt(converArray[1]);
+//				if(count == 0){
+//					min = 0;
+//					break;
+//				}
+//				if(min == 0){
+//					min = count;
+//				}else if(count < min){
+//					min = count;
+//				}
+//			}
+//			pcalConditionBean.setConvertCount(min);
+			
+			
+			
+			
+			
+			
+			
+			
+			
+//			//整理條件內容與總計
+//			Set<String> convertConditionSet = pcalConditionBean.getConvertConditionSet();		 
+//			String convertConditionArray[] = pcalConditionBean.getConvertRule().split(":");
+//			for (String rouleId : convertConditionArray) {
+//				convertConditionSet.add(rouleId+"_0");
+//			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+//			log.info(">>>>>>>>>convertSeq:"+convertSeq);
+			
+			
+//			ResultSet resultSet = mysqlUtil.query(sql.toString());
+////			ResultSet resultSet = mysqlUtil.query(" select * from pfp_code_convert_rule where 1 = 1 and convert_seq = '"+convertSeq+"' ");
+//			
+//			String clickRangeDate = "";
+//			String impRangeDate = "";
+//			String convertPrice = "";
+//			
+//			while(resultSet.next()){
+//				String rouleId = resultSet.getString("convert_rule_id");
+//				if(resultSet.isLast()){
+//					convertCondition.append(rouleId);
+//				}else{
+//					convertCondition.append(rouleId).append(":");
+//				}
+////				log.info(">>>>>>"+resultSet.getString("convert_rule_id"));
+////				log.info(">>>>>>"+resultSet.getString("convert_rule_way"));
+////				log.info(">>>>>>"+resultSet.getString("convert_rule_value"));
+//			}
+//			log.info(">>>>>>>>>convertCondition:"+convertCondition.toString());
+//			log.info("--------------");
+//			//整理條件內容與總計
+//			Set<String> convertConditionSet = new HashSet<String>();			 
+//			String convertConditionArray[] = convertCondition.toString().split(":");
+//			for (String rouleId : convertConditionArray) {
+//				convertConditionSet.add(rouleId+"_0");
+//			}
+//			convertResultMap.put(convertSeq, convertConditionSet);
+//			
+//			//開始計算條件出現次數
+//			for (Text text : mapperValue) {
+//				String paclRouleId = text.toString();
+////				log.info(">>>>>>>>>"+rouleId);
+//				String data = "";
+//				if(convertCondition.toString().indexOf(paclRouleId.toString()) >= 0){
+//					for (String setStr : convertConditionSet) {
+//						String converArray[] = setStr.split("_");
+//						String rouleId = converArray[0];
+//						int count = Integer.parseInt(converArray[1]);
+//						if(paclRouleId.equals(rouleId)){
+//							convertConditionSet.remove(rouleId+"_"+count);
+//							count ++;
+//							data = rouleId+"_"+String.valueOf(count);
+//							convertConditionSet.add(data);
+//							break;
+//						}
+//					 }
+//				 }
+//			}
+//			log.info(">>>>>>>>>>>>>>>>convertResultMap:"+convertResultMap);
+//			//統計轉換次數
+//			for (Entry<String, Set<String>> entry : convertResultMap.entrySet()) {
+//				int min = 0;
+//				for (String str : entry.getValue()) {
+//					String converArray[] = str.split("_");
+//					int count = Integer.parseInt(converArray[1]);
+//					if(count == 0){
+//						min = 0;
+//						break;
+//					}
+//					if(min == 0){
+//						min = count;
+//					}else if(count < min){
+//						min = count;
+//					}
+//				}
+//				log.info("============="+entry.getKey()+" convert count:"+min);
+////				keyOut.set(other);
+//				context.write(keyOut, valueOut);
+//				
+//			}
+			convertResultMap.clear();
 		} catch (Throwable e) {
 			log.error("reduce error>>>>>> " + e);
 		}
@@ -165,6 +338,9 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 		try {
 			mysqlUtil.closeConnection();
 		} catch (Throwable e) {
+			convertConditionSet.clear();
+			convertWriteInfo.setLength(0);
+			sql.setLength(0);
 			log.error("reduce cleanup error>>>>>> " + e);
 		}
 	}
@@ -172,97 +348,133 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	
 	
 	public static void main(String args[]){
-		MysqlUtil mysqlUtil = MysqlUtil.getInstance();
-		try{
-			List<String> a = new ArrayList<String>();
-			a.add("RLE20180724000000001");
-			a.add("RLE20180724000000001");
-			a.add("RLE20180724000000001");
-			a.add("RLE20180724000000002");
-			a.add("RLE20180724000000002");
-			a.add("ALEX");
-			a.add("ALEX");
-			a.add("ALEX");
-			
-//			String url = "jdbc:mysql://kddbdev.mypchome.com.tw:3306/akb_video";
-//			String jdbcDriver = "com.mysql.jdbc.Driver";
-//			String user = "keyword";
-//			String password =  "K1y0nLine";
-//			mysqlUtil.setConnection(url, user, password);
-//			
-//			String convertSeq = "CAC20181112000000001";
-//			
-			StringBuffer convertCondition = new StringBuffer("RLE20180724000000001:RLE20180724000000002:ALEX");
-//			ResultSet resultSet = mysqlUtil.query(" select * from pfp_code_convert_rule where 1 = 1 and convert_seq = '"+convertSeq+"' ");
-//			while(resultSet.next()){
-//				String rouleId = resultSet.getString("convert_rule_id");
-//				if(resultSet.isLast()){
-//					convertCondition.append(rouleId);
-//				}else{
-//					convertCondition.append(rouleId).append(":");
-//				}
-//				log.info(">>>>>>"+resultSet.getString("convert_rule_id"));
-//				log.info(">>>>>>"+resultSet.getString("convert_rule_way"));
-//				log.info(">>>>>>"+resultSet.getString("convert_rule_value"));
+		
+		
+//		PcalConditionBean PcalConditionBean = new PcalConditionBean();
+//		Set<String> a = new HashSet<>();
+//		a.add("A01");
+//		a.add("A02");
+//		a.add("A03");
+//		
+//		PcalConditionBean.setConvertConditionSet(a);
+//		
+//		Set<String> b = PcalConditionBean.getConvertConditionSet();
+//		
+//		Iterator<String> h =  b.iterator();
+//		while (h.hasNext()) {
+//			String dat  = h.next();
+//			if(dat.equals("A03")){
+//				String j = dat;
+//				j =j +"_AAAA";
+//				h.remove();
+//				b.add(j);
 //			}
-			
-			System.out.println(convertCondition.toString());
-			
-			 Map<String,Set<String>> map = new HashMap<>();
-			 
-			 
-			 Set<String> set = new HashSet<String>();			 
-			 String convertConditionArray[] = convertCondition.toString().split(":");
-			 for (String string : convertConditionArray) {
-				 set.add(string+"_0");
-			 }
-			 map.put("CAC20181112000000001", set);
-			 String data = "";
-			 for (String str : a) {
-				 data = "";
-				 if(convertCondition.toString().indexOf(str) >= 0){
-					 for (String setStr : set) {
-						String converArray[] = setStr.split("_");
-						String rouleId = converArray[0];
-						int count = Integer.parseInt(converArray[1]);
-						if(str.equals(rouleId)){
-							set.remove(rouleId+"_"+count);
-							count ++;
-							data = rouleId+"_"+String.valueOf(count);
-							set.add(data);
-							break;
-						}
-					 }
-				 }
-			}
-			 
-			System.out.println(map);
-			for (Entry<String, Set<String>> entry : map.entrySet()) {
-				int min = 0;
-				System.out.println(entry.getKey());
-				System.out.println(entry.getValue());
-				
-				for (String str : entry.getValue()) {
-					String converArray[] = str.split("_");
-					String rouleId = converArray[0];
-					int count = Integer.parseInt(converArray[1]);
-					if(count == 0){
-						min = 0;
-						break;
-					}
-					if(min == 0){
-						min = count;
-					}else if(count < min){
-						min = count;
-					}
-				}
-				System.out.println(min);
-			}
-			
-//			mysqlUtil.closeConnection();
-		}catch(Exception e){
-			e.printStackTrace();
-		}
+//			
+//		}
+//		System.out.println(b);
+//		System.out.println(PcalConditionBean.getConvertConditionSet());
+		
+		
+//		for (String string : b) {
+//			if(string.equals("A02")){
+//				PcalConditionBean.getConvertConditionSet().remove("A02");
+//			}
+//		}
+//		
+//		System.out.println(b);
+//		System.out.println(PcalConditionBean.getConvertConditionSet());
+		
+//		MysqlUtil mysqlUtil = MysqlUtil.getInstance();
+//		try{
+//			List<String> a = new ArrayList<String>();
+//			a.add("RLE20180724000000001");
+//			a.add("RLE20180724000000001");
+//			a.add("RLE20180724000000001");
+//			a.add("RLE20180724000000002");
+//			a.add("RLE20180724000000002");
+//			a.add("ALEX");
+//			a.add("ALEX");
+//			a.add("ALEX");
+//			
+////			String url = "jdbc:mysql://kddbdev.mypchome.com.tw:3306/akb_video";
+////			String jdbcDriver = "com.mysql.jdbc.Driver";
+////			String user = "keyword";
+////			String password =  "K1y0nLine";
+////			mysqlUtil.setConnection(url, user, password);
+////			
+////			String convertSeq = "CAC20181112000000001";
+////			
+//			StringBuffer convertCondition = new StringBuffer("RLE20180724000000001:RLE20180724000000002:ALEX");
+////			ResultSet resultSet = mysqlUtil.query(" select * from pfp_code_convert_rule where 1 = 1 and convert_seq = '"+convertSeq+"' ");
+////			while(resultSet.next()){
+////				String rouleId = resultSet.getString("convert_rule_id");
+////				if(resultSet.isLast()){
+////					convertCondition.append(rouleId);
+////				}else{
+////					convertCondition.append(rouleId).append(":");
+////				}
+////				log.info(">>>>>>"+resultSet.getString("convert_rule_id"));
+////				log.info(">>>>>>"+resultSet.getString("convert_rule_way"));
+////				log.info(">>>>>>"+resultSet.getString("convert_rule_value"));
+////			}
+//			
+//			System.out.println(convertCondition.toString());
+//			
+//			 Map<String,Set<String>> map = new HashMap<>();
+//			 
+//			 
+//			 Set<String> set = new HashSet<String>();			 
+//			 String convertConditionArray[] = convertCondition.toString().split(":");
+//			 for (String string : convertConditionArray) {
+//				 set.add(string+"_0");
+//			 }
+//			 map.put("CAC20181112000000001", set);
+//			 String data = "";
+//			 for (String str : a) {
+//				 data = "";
+//				 if(convertCondition.toString().indexOf(str) >= 0){
+//					 for (String setStr : set) {
+//						String converArray[] = setStr.split("_");
+//						String rouleId = converArray[0];
+//						int count = Integer.parseInt(converArray[1]);
+//						if(str.equals(rouleId)){
+//							set.remove(rouleId+"_"+count);
+//							count ++;
+//							data = rouleId+"_"+String.valueOf(count);
+//							set.add(data);
+//							break;
+//						}
+//					 }
+//				 }
+//			}
+//			 
+//			System.out.println(map);
+//			for (Entry<String, Set<String>> entry : map.entrySet()) {
+//				int min = 0;
+//				System.out.println(entry.getKey());
+//				System.out.println(entry.getValue());
+//				
+//				for (String str : entry.getValue()) {
+//					String converArray[] = str.split("_");
+//					String rouleId = converArray[0];
+//					int count = Integer.parseInt(converArray[1]);
+//					if(count == 0){
+//						min = 0;
+//						break;
+//					}
+//					if(min == 0){
+//						min = count;
+//					}else if(count < min){
+//						min = count;
+//					}
+//				}
+//				System.out.println(min);
+//			}
+//			
+////			mysqlUtil.closeConnection();
+//		}catch(Exception e){
+//			e.printStackTrace();
+//		}
 		
 		
 		
