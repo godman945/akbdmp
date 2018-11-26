@@ -185,6 +185,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			convertWriteInfo.append("convertBelong:").append(pcalConditionBean.getConvertBelong()).append(paclSymbol);
 			convertWriteInfo.append("convertSeq:").append(convertSeq);
 			valueOut.set(convertWriteInfo.toString());
+			log.info(">>>>>>write:"+convertWriteInfo.toString());
 			context.write(keyOut, valueOut);
 			convertConditionSet.clear();
 			convertWriteInfo.setLength(0);
