@@ -119,7 +119,7 @@ public class PaclLogConverCountDriver {
 			job.setNumReduceTasks(1);//1個reduce 
 			job.setMapSpeculativeExecution(false);
 			
-			logInputPath = "/home/webuser/alex/pacl_log/pacl_test_log_2018_11_26.lzo";
+			logInputPath = "/home/webuser/alex/pacl_log/pacl_2018_11_26.txt.lzo";
 //			logInputPath = akbPacLoglAll;
 			outPath = "/home/webuser/alex/pacl_output";
 			//hdfs存在則刪除
