@@ -31,7 +31,7 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 			//讀取kdcl、Campaign資料
 			log.info("raw_data : " + value);
 			String valueStr = value.toString();
-			String arrayData[] = valueStr.split("       ");
+			String arrayData[] = valueStr.split("			");
 			log.info("arrayData size : " + arrayData.length);
 			String type = arrayData[11];
 			if(type.equals("convert")){
