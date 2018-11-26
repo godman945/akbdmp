@@ -16,6 +16,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.springframework.beans.factory.annotation.Value;
@@ -105,7 +106,7 @@ public class PaclLogConverCountDriver {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Date date = new Date();
 			// job
-			log.info("----job start----");
+			log.info("----job1 start----");
 	
 			Job job = new Job(jobConf, "dmp_conv_count_"+ env + "_" + sdf.format(date));
 			job.setJarByClass(PaclLogConverCountDriver.class);
@@ -174,11 +175,58 @@ public class PaclLogConverCountDriver {
 			}
 	
 			if (job.waitForCompletion(true)) {
-				log.info("Job is OK");
+				log.info("Job1 is OK");
+				
 			} else {
-				log.info("Job is Failed");
+				log.info("Job1 is Failed");
 			}
 
+			log.info("----job2 start----");
+			
+			
+			
+			Job job2 = new Job(jobConf, "dmp_conv_"+ env + "_" + sdf.format(date));
+			job2.setJarByClass(PaclLogConverCountDriver.class);
+			job2.setMapperClass(PaclLogConverCountMapper.class);
+			job2.setReducerClass(PaclLogConverCountReducer2.class);
+			job2.setMapOutputKeyClass(Text.class);
+			job2.setMapOutputValueClass(Text.class);
+			job2.setInputFormatClass(LzoTextInputFormat.class);
+			job2.setOutputKeyClass(Text.class);
+			job2.setOutputValueClass(Text.class);
+			job2.setNumReduceTasks(1);//1個reduce 
+			job2.setMapSpeculativeExecution(false);
+
+			String paths = "/home/webuser/alex/pacl_log/kdcl1_analyzer_2018-08-16.lzo,/home/webuser/alex/pacl_log/kdcl2_analyzer_2018-08-16.lzo";
+			FileInputFormat.addInputPaths(job, paths);
+			outPath = "/home/webuser/alex/pacl_output2";
+			//hdfs存在則刪除
+			deleteExistedDir(fs, new Path(outPath), true);
+			FileOutputFormat.setOutputPath(job, new Path(outPath));
+			
+			
+			for (String jarPath : jarPaths) {
+				DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fs);
+			}
+	
+			for (String filePath : filePaths) {
+				DistributedCache.addCacheFile(new URI(filePath), job.getConfiguration());
+			}
+	
+			if (job.waitForCompletion(true)) {
+				log.info("Job2 is OK");
+				
+			} else {
+				log.info("Job2 is Failed");
+			}
+			
+			
+			
+			
+			
+			
+			
+			
 			
 			
 		 } catch (Exception e) {

@@ -30,24 +30,31 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 	@Override
 	public void map(LongWritable offset, Text value, Context context) {
 		try {
-			
 			InputSplit inputSplit=(InputSplit)context.getInputSplit(); 
 			String filename = ((FileSplit)inputSplit).getPath().getName();
 			log.info("filename:"+filename);
-			
-			
-			log.info("raw_data : " + value);
-			String valueStr = value.toString();
-			String arrayData[] = valueStr.split(paclSymbol);
-			log.info("arrayData size : " + arrayData.length);
-			String uuid = arrayData[2];
-			String type = arrayData[11];
-			String convId = arrayData[12];
-			String rouleId = arrayData[13];
-			if(type.equals("convert")){
-				keyOut.set(convId+"_"+uuid);
-				context.write(keyOut, new Text(rouleId.replace(";", "")));
+			if(filename.equals("pacl_2018_11_26.txt.lzo")){
+				log.info("raw_data : " + value);
+				String valueStr = value.toString();
+				String arrayData[] = valueStr.split(paclSymbol);
+				log.info("arrayData size : " + arrayData.length);
+				String uuid = arrayData[2];
+				String type = arrayData[11];
+				String convId = arrayData[12];
+				String rouleId = arrayData[13];
+				if(type.equals("convert")){
+					keyOut.set(convId+"_"+uuid);
+					context.write(keyOut, new Text(rouleId.replace(";", "")));
+				}
+			}else{
+				log.info(">>>>>job2:"+filename);
+				log.info("raw_data : " + value);
 			}
+			
+			
+			
+			
+			
 		} catch (Exception e) {
 			log.error("Mapper error>>>>>> " +e); 
 		}
