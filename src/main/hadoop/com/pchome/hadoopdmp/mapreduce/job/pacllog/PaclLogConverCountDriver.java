@@ -119,8 +119,8 @@ public class PaclLogConverCountDriver {
 			job.setNumReduceTasks(1);//1個reduce 
 			job.setMapSpeculativeExecution(false);
 			
-//			logInputPath = "/home/webuser/alex/pacl_log/pacl_test_log_2018_11_20.lzo";
-			logInputPath = akbPacLoglAll;
+			logInputPath = "/home/webuser/alex/pacl_log/pacl_test_log_2018_11_26.lzo";
+//			logInputPath = akbPacLoglAll;
 			outPath = "/home/webuser/alex/pacl_output";
 			//hdfs存在則刪除
 			deleteExistedDir(fs, new Path(outPath), true);

@@ -51,6 +51,8 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	
 	private StringBuffer convertCondition = new StringBuffer();
 	
+	private StringBuffer sql = new StringBuffer();
+	
 	private Map<String,Set<String>> convertResultMap = new HashMap<>();
 	
 	public void setup(Context context) {
@@ -71,9 +73,26 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
 		try {
 			convertCondition.setLength(0);
+			sql.setLength(0);
 			String convertSeq = mapperKey.toString();
 			log.info(">>>>>>>>>convertSeq:"+convertSeq);
-			ResultSet resultSet = mysqlUtil.query(" select * from pfp_code_convert_rule where 1 = 1 and convert_seq = '"+convertSeq+"' ");
+			
+			
+			sql.append(" SELECT c.convert_seq, ");
+			sql.append(" 	c.click_range_date,  ");
+			sql.append(" 	c.imp_range_date,  ");
+			sql.append(" 	c.convert_price, ");
+			sql.append(" 	c.convert_status, ");
+			sql.append(" 	c.convert_belong, ");
+			sql.append(" 	c.convert_num_type, ");
+			sql.append(" 	r.convert_rule_id  ");
+			sql.append(" FROM   pfp_code_convert_rule r,  ");
+			sql.append(" 		pfp_code_convert c ");
+			sql.append(" WHERE  1 = 1 ");
+			sql.append(" AND c.convert_seq = '").append(convertSeq).append("'");
+			sql.append(" AND r.convert_seq = c.convert_seq  ");
+			ResultSet resultSet = mysqlUtil.query(sql.toString());
+//			ResultSet resultSet = mysqlUtil.query(" select * from pfp_code_convert_rule where 1 = 1 and convert_seq = '"+convertSeq+"' ");
 			while(resultSet.next()){
 				String rouleId = resultSet.getString("convert_rule_id");
 				if(resultSet.isLast()){
