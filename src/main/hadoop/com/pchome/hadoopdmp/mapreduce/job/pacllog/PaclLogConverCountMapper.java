@@ -32,6 +32,10 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 			log.info("raw_data : " + value);
 			String valueStr = value.toString();
 			String arrayData[] = valueStr.split(paclSymbol);
+			log.info("arrayData size : " + arrayData.length);
+			
+			
+			
 			String type = arrayData[11];
 			if(type.equals("convert")){
 				keyOut.set(arrayData[12]);
