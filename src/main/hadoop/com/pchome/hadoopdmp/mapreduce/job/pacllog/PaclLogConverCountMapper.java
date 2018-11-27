@@ -47,11 +47,11 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 			String valueStr = value.toString();
 			String arrayData[] = valueStr.split(paclSymbol);
 			
-			log.info("Path:"+((FileSplit)inputSplit).getPath());
-			log.info("filename:"+filename);
+//			log.info("Path:"+((FileSplit)inputSplit).getPath());
+//			log.info("filename:"+filename);
 			if(filename.equals("pacl_2018_11_26.txt.lzo")){
-				log.info("raw_data : " + valueStr);
-				log.info("arrayData size : " + arrayData.length);
+//				log.info("raw_data : " + valueStr);
+//				log.info("arrayData size : " + arrayData.length);
 				String uuid = arrayData[2];
 				String type = arrayData[11];
 				String convId = arrayData[12];
@@ -63,22 +63,22 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 			}else{
 				if(filename.contains("kdcl")){
 					log.info(">>>>>>kdcl log");
-					log.info("raw_data : " + value);
-					log.info("arrayData size : " + arrayData.length);
+//					log.info("raw_data : " + value);
+//					log.info("arrayData size : " + arrayData.length);
 					String date = arrayData[0];
 					String uuid = arrayData[2];
 					String type = arrayData[13];
 					String adSeq = arrayData[16];
-					log.info(">>>>>>date:"+date);
-					log.info(">>>>>>uuid:"+uuid);
-					log.info(">>>>>>type:"+type);
+//					log.info(">>>>>>date:"+date);
+//					log.info(">>>>>>uuid:"+uuid);
+//					log.info(">>>>>>type:"+type);
 					keyOut.set(uuid+"_"+type);
 					mapperValue.append(date).append(",").append(adSeq);
 					context.write(keyOut, new Text(mapperValue.toString()));
 				}else{
 					log.info(">>>>>>conv log");
-					log.info("raw_data : " + value);
-					log.info("arrayData size : " + arrayData.length);
+//					log.info("raw_data : " + value);
+//					log.info("arrayData size : " + arrayData.length);
 					String uuid = arrayData[0];
 					String clickRangeDate = arrayData[1];
 					String impRangeDate = arrayData[2];
@@ -92,6 +92,7 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					keyOut.set(uuid+"_ck");
 					context.write(keyOut, new Text(mapperValue.toString()));
 					
+					keyOut.clear();
 					keyOut.set(uuid+"_pv");
 					context.write(keyOut, new Text(mapperValue.toString()));
 				}
