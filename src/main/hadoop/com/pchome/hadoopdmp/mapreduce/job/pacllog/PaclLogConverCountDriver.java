@@ -24,6 +24,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
+import com.hadoop.compression.lzo.LzopCodec;
 import com.hadoop.mapreduce.LzoTextInputFormat;
 import com.pchome.hadoopdmp.mapreduce.job.thirdcategorylog.ThirdCategoryLogMapper;
 import com.pchome.hadoopdmp.mapreduce.job.thirdcategorylog.ThirdCategoryLogReducer;
@@ -113,7 +114,7 @@ public class PaclLogConverCountDriver {
 			job.setMapperClass(PaclLogConverCountMapper.class);
 			job.setReducerClass(PaclLogConverCountReducer.class);
 			job.setMapOutputKeyClass(Text.class);
-			job.setMapOutputValueClass(LzoTextInputFormat.class);
+			job.setMapOutputValueClass(Text.class);
 			job.setInputFormatClass(LzoTextInputFormat.class);
 			job.setOutputKeyClass(Text.class);
 			job.setOutputValueClass(Text.class);
@@ -130,7 +131,7 @@ public class PaclLogConverCountDriver {
 			log.info(">>>>>>Job1 OUTPUT PATH:"+outPath);
 			FileInputFormat.addInputPaths(job, logInputPath);
 			FileOutputFormat.setOutputPath(job, new Path(outPath));
-			
+			FileOutputFormat.setOutputCompressorClass(job, LzopCodec.class);
 			
 //			FileInputFormat.addInputPaths(job, logInputPath);
 //			FileOutputFormat.setOutputPath(job, new Path(outPath));
