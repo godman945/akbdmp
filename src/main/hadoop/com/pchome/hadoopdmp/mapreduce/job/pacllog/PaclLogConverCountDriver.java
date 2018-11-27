@@ -113,7 +113,7 @@ public class PaclLogConverCountDriver {
 			job.setMapperClass(PaclLogConverCountMapper.class);
 			job.setReducerClass(PaclLogConverCountReducer.class);
 			job.setMapOutputKeyClass(Text.class);
-			job.setMapOutputValueClass(Text.class);
+			job.setMapOutputValueClass(LzoTextInputFormat.class);
 			job.setInputFormatClass(LzoTextInputFormat.class);
 			job.setOutputKeyClass(Text.class);
 			job.setOutputValueClass(Text.class);
@@ -191,7 +191,7 @@ public class PaclLogConverCountDriver {
 			job2.setReducerClass(PaclLogConverCountReducer2.class);
 			job2.setMapOutputKeyClass(Text.class);
 			job2.setMapOutputValueClass(Text.class);
-			job2.setInputFormatClass(TextInputFormat.class);
+			job2.setInputFormatClass(LzoTextInputFormat.class);
 			job2.setOutputKeyClass(Text.class);
 			job2.setOutputValueClass(Text.class);
 			job2.setNumReduceTasks(1);//1個reduce 
