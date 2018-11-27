@@ -63,7 +63,7 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 			}else{
 				if(filename.contains("kdcl")){
 					log.info(">>>>>>kdcl log");
-//					log.info("raw_data : " + value);
+					log.info("raw_data : " + value);
 //					log.info("arrayData size : " + arrayData.length);
 					String date = arrayData[0];
 					String uuid = arrayData[2];
@@ -73,11 +73,11 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 //					log.info(">>>>>>uuid:"+uuid);
 //					log.info(">>>>>>type:"+type);
 					keyOut.set(uuid);
-					mapperValue.append(date).append(",").append(adSeq).append(",").append(type).append(",").append(adSeq).append(",").append(filename);
+					mapperValue.append(date).append(",").append(adSeq).append(",").append(type).append(",").append(filename);
 					context.write(keyOut, new Text(mapperValue.toString()));
 				}else{
 					log.info(">>>>>>conv log");
-//					log.info("raw_data : " + value);
+					log.info("raw_data : " + value);
 //					log.info("arrayData size : " + arrayData.length);
 					String uuid = arrayData[0].trim();
 					String clickRangeDate = arrayData[1];
