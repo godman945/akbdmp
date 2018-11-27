@@ -32,42 +32,45 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 		try {
 			InputSplit inputSplit=(InputSplit)context.getInputSplit(); 
 			String filename = ((FileSplit)inputSplit).getPath().getName();
+			log.info("Path:"+((FileSplit)inputSplit).getPath());
 			log.info("filename:"+filename);
-			if(filename.equals("pacl_2018_11_26.txt.lzo")){
-				log.info("raw_data : " + value);
-				String valueStr = value.toString();
-				String arrayData[] = valueStr.split(paclSymbol);
-				log.info("arrayData size : " + arrayData.length);
-				String uuid = arrayData[2];
-				String type = arrayData[11];
-				String convId = arrayData[12];
-				String rouleId = arrayData[13];
-				if(type.equals("convert")){
-					keyOut.set(convId+"_"+uuid);
-					context.write(keyOut, new Text(rouleId.replace(";", "")));
-				}
-			}else{
-				log.info("raw_data : " + value);
-				String valueStr = value.toString();
-				String arrayData[] = valueStr.split(paclSymbol);
-				
-				if(filename.contains("kdcl")){
-					log.info(">>>>>>kdcl log");
-					log.info("arrayData size : " + arrayData.length);
-//					String uuid = arrayData[2];
-//					String kdclLogDate = arrayData[0];
-//					String kdclLogDate = arrayData[0];
-				}else{
-					log.info(">>>>>>convert log");
-					log.info("arrayData size : " + arrayData.length);
-				}
-				
-				
-				
-//				log.info(">>>>>job2:"+filename);
+//			if(filename.equals("pacl_2018_11_26.txt.lzo")){
+//				String valueStr = value.toString();
+//				String arrayData[] = valueStr.split(paclSymbol);
+//				log.info("raw_data : " + valueStr);
+//				log.info("arrayData size : " + arrayData.length);
+//				String uuid = arrayData[2];
+//				String type = arrayData[11];
+//				String convId = arrayData[12];
+//				String rouleId = arrayData[13];
+//				if(type.equals("convert")){
+//					keyOut.set(convId+"_"+uuid);
+//					context.write(keyOut, new Text(rouleId.replace(";", "")));
+//				}
+//			}else{
 //				log.info("raw_data : " + value);
-			}
-			
+//				String valueStr = value.toString();
+//				String arrayData[] = valueStr.split(paclSymbol);
+//				
+//				if(filename.contains("kdcl")){
+//					log.info(">>>>>>kdcl log");
+//					log.info("arrayData size : " + arrayData.length);
+////					String uuid = arrayData[2];
+//					String date = arrayData[0];
+//					String uuid = arrayData[2];
+//					String type = arrayData[13];
+//					
+//				}
+//				
+//				
+//				
+//				
+//				
+//				
+////				log.info(">>>>>job2:"+filename);
+////				log.info("raw_data : " + value);
+//			}
+//			
 			
 			
 			
