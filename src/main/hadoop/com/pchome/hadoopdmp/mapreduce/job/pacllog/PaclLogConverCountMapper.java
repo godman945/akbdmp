@@ -73,7 +73,7 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 //					log.info(">>>>>>uuid:"+uuid);
 //					log.info(">>>>>>type:"+type);
 					keyOut.set(uuid);
-					mapperValue.append(date).append(",").append(adSeq).append(",").append(type).append(",").append(filename);
+					mapperValue.append(date).append(",").append(adSeq).append(",").append(type).append(",").append(adSeq).append(",").append(filename);
 					context.write(keyOut, new Text(mapperValue.toString()));
 				}else{
 					log.info(">>>>>>conv log");

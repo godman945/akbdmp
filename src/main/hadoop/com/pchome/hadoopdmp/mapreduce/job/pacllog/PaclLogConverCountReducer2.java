@@ -1,7 +1,9 @@
 package com.pchome.hadoopdmp.mapreduce.job.pacllog;
 
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -56,15 +58,13 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	
 	private StringBuffer sql = new StringBuffer();
 	
-	private Map<String,Set<String>> convertResultMap = new HashMap<>();
-	
-	private Set<String> convertConditionSet = new HashSet<String>();	
-	
-	private static PcalConditionBean pcalConditionBean;
-	
-	private static String paclSymbol = String.valueOf(new char[] { 9, 31 });
+	private static String[] convertConditionArray = null;	
 	
 	private static List<String> dataList = new ArrayList<String>();
+	
+	private static Date date = new Date();
+	
+	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
@@ -87,23 +87,53 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			boolean flagKdcl = false;
 			boolean flagPart = false;
 			dataList.clear();
+			convertConditionArray = null;
+			
+			
 			for (Text text : mapperValue) {
 				String value = text.toString();
-				dataList.add(value);
 				if(value.contains("kdcl")){
+					dataList.add(value);
 					flagKdcl = true;
 				}
 				if(value.contains("part-r-00000")){
 					flagPart = true;
+					convertConditionArray = value.split(",");
 				}
 			}
-					
-			
 			
 			if(flagKdcl && flagPart){
 				log.info("##>>>>>>key:"+key);
+				
+				String clickRangeDate = convertConditionArray[0];
+				String impRangeDate = convertConditionArray[1];
+				String convertPriceCount = convertConditionArray[2];
+				String convertPric = convertConditionArray[3];
+				//1:最終 2:最初
+				String convertBelong = convertConditionArray[4];
+				String convertSeq = convertConditionArray[5];
+				
 				for (String str : dataList) {
-					log.info(str);
+					String[] kdclDataArray = str.split(",");
+					String kdclDate = kdclDataArray[0];
+					String kdclType = kdclDataArray[1];
+					String kdclAdseq = kdclDataArray[2];
+					long day = (long) (date.getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
+					log.info(">>>>>>>>>>>>>:"+str);
+					log.info(">>>>>>>>>>>>>adseq:"+kdclAdseq);
+					log.info(">>>>>>>>>>>>>kdclType:"+kdclType);
+					log.info(">>>>>>>>>>>>>range day:"+day);
+					long d = 0;
+					if(kdclType.equals("ck")){
+						d = Long.valueOf(clickRangeDate.split(":")[1]);
+					}else if(kdclType.equals("pv")){
+						d = Long.valueOf(impRangeDate.split(":")[1]);
+					}
+					log.info(">>>>>>>>>>>>>range day flag:"+(day <= d));
+					
+					
+					
+					log.info("***************************");
 				}
 			}
 		} catch (Throwable e) {
@@ -114,7 +144,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 		try {
 			mysqlUtil.closeConnection();
 		} catch (Throwable e) {
-			convertConditionSet.clear();
 			convertWriteInfo.setLength(0);
 			sql.setLength(0);
 			log.error("reduce cleanup error>>>>>> " + e);
