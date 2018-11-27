@@ -86,6 +86,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			boolean flagPart = false;
 			for (Text text : mapperValue) {
 				String value = text.toString();
+				log.info(">>>>>@@@@ value:"+value);
 				if(value.contains("kdcl")){
 					flagKdcl = true;
 				}
@@ -95,10 +96,10 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			}
 				
 			if(flagKdcl && flagPart){
-				log.info("key:"+key);
+				log.info(">>>>>>key:"+key);
 				for (Text text : mapperValue) {
 					String value = text.toString();
-					log.info(">>>>>:"+value.toString());
+					log.info(">>>>>value:"+value);
 				}
 			}
 			
