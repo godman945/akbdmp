@@ -130,10 +130,11 @@ public class PaclLogConverCountDriver {
 			log.info(">>>>>>Job1 INPUT PATH:"+logInputPath);
 			log.info(">>>>>>Job1 OUTPUT PATH:"+outPath);
 			FileInputFormat.addInputPaths(job, logInputPath);
-			FileOutputFormat.setOutputPath(job, new Path(outPath));
 			FileOutputFormat.setCompressOutput(job, true);
 			FileOutputFormat.setOutputCompressorClass(job, LzopCodec.class);
-			job.waitForCompletion(true);  
+			FileOutputFormat.setOutputPath(job, new Path(outPath));
+			
+			
 //			FileInputFormat.addInputPaths(job, logInputPath);
 //			FileOutputFormat.setOutputPath(job, new Path(outPath));
 				
