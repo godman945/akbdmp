@@ -79,7 +79,7 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					log.info(">>>>>>conv log");
 //					log.info("raw_data : " + value);
 //					log.info("arrayData size : " + arrayData.length);
-					String uuid = arrayData[0];
+					String uuid = arrayData[0].trim();
 					String clickRangeDate = arrayData[1];
 					String impRangeDate = arrayData[2];
 					String convertPriceCount = arrayData[3];
