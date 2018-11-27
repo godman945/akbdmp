@@ -116,8 +116,8 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				for (String str : dataList) {
 					String[] kdclDataArray = str.split(",");
 					String kdclDate = kdclDataArray[0];
-					String kdclType = kdclDataArray[1];
-					String kdclAdseq = kdclDataArray[2];
+					String kdclAdseq = kdclDataArray[1];
+					String kdclType = kdclDataArray[2];
 					long day = (long) (date.getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
 					log.info(">>>>>>>>>>>>>:"+str);
 					log.info(">>>>>>>>>>>>>adseq:"+kdclAdseq);

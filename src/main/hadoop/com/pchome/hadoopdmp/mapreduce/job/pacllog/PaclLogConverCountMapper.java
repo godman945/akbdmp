@@ -68,7 +68,7 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					String date = arrayData[0];
 					String uuid = arrayData[2];
 					String type = arrayData[13];
-					String adSeq = arrayData[16];
+					String adSeq = arrayData[11];
 //					log.info(">>>>>>date:"+date);
 //					log.info(">>>>>>uuid:"+uuid);
 //					log.info(">>>>>>type:"+type);
