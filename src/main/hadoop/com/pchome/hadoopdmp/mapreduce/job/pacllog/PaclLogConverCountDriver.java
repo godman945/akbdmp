@@ -116,12 +116,11 @@ public class PaclLogConverCountDriver {
 			job.setReducerClass(PaclLogConverCountReducer.class);
 			job.setMapOutputKeyClass(Text.class);
 			job.setMapOutputValueClass(Text.class);
-			job.setInputFormatClass(LzoTextInputFormat.class);
-			job.setOutputKeyClass(LzoIndexOutputFormat.class);
-			job.setOutputValueClass(LzoIndexOutputFormat.class);
+			job.setOutputKeyClass(Text.class);
+			job.setOutputValueClass(Text.class);
 			job.setNumReduceTasks(1);//1個reduce 
 			job.setMapSpeculativeExecution(false);
-			
+			job.setInputFormatClass(LzoTextInputFormat.class);
 			logInputPath = "/home/webuser/alex/pacl_log/pacl_2018_11_26.txt.lzo";
 //			logInputPath = akbPacLoglAll;
 			outPath = "/home/webuser/alex/pacl_output";
@@ -132,6 +131,7 @@ public class PaclLogConverCountDriver {
 			log.info(">>>>>>Job1 OUTPUT PATH:"+outPath);
 			FileInputFormat.addInputPaths(job, logInputPath);
 			FileOutputFormat.setOutputPath(job, new Path(outPath));
+			FileOutputFormat.setCompressOutput(job, true);
 			FileOutputFormat.setOutputCompressorClass(job, LzopCodec.class);
 			
 //			FileInputFormat.addInputPaths(job, logInputPath);
