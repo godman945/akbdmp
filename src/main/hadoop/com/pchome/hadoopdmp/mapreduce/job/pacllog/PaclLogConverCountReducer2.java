@@ -84,23 +84,27 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			String key = mapperKey.toString();
 			boolean flagKdcl = false;
 			boolean flagPart = false;
-			for (Text text : mapperValue) {
-				String value = text.toString();
-				log.info(">>>>>@@@@ value:"+value);
-				if(value.contains("kdcl")){
-					flagKdcl = true;
-				}
-				if(value.contains("part-r-00000")){
-					flagPart = true;
-				}
-			}
-				
-			if(flagKdcl && flagPart){
-				log.info(">>>>>>key:"+key);
+			
+			if(key.equals("2f59086e290c6a4a513834ba16f563e6")){
 				for (Text text : mapperValue) {
 					String value = text.toString();
-					log.info(">>>>>value:"+value);
+					log.info(">>>>>@@@@ value:"+value);
+					if(value.contains("kdcl")){
+						flagKdcl = true;
+					}
+					if(value.contains("part-r-00000")){
+						flagPart = true;
+					}
 				}
+					
+				if(flagKdcl && flagPart){
+					log.info("##>>>>>>key:"+key);
+					for (Text text : mapperValue) {
+						String value = text.toString();
+						log.info("##>>>>>value:"+value);
+					}
+				}
+				
 			}
 			
 			
