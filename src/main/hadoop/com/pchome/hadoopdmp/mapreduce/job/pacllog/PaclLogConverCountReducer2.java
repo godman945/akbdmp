@@ -82,28 +82,22 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
 		try {
 			String key = mapperKey.toString();
-			log.info(">>>>>>key1:"+key);
 			boolean flagKdcl = false;
 			boolean flagPart = false;
-			
-			
-			if(key.equals("2f59086e290c6a4a513834ba16f563e6")){
-				for (Text text : mapperValue) {
-					String value = text.toString();
-					log.info(">>>>>1:"+value.toString());
-					if(value.contains("kdcl")){
-						flagKdcl = true;
-					}
-					if(value.contains("part-r-00000")){
-						flagPart = true;
-					}
+			for (Text text : mapperValue) {
+				String value = text.toString();
+				if(value.contains("kdcl")){
+					flagKdcl = true;
 				}
+				if(value.contains("part-r-00000")){
+					flagPart = true;
+				}
+			}
 				
-				if(flagKdcl && flagPart){
-					log.info("key:"+key);
-					for (Text text : mapperValue) {
-						log.info(">>>>>:"+text.toString());
-					}
+			if(flagKdcl && flagPart){
+				log.info("key:"+key);
+				for (Text text : mapperValue) {
+					log.info(">>>>>:"+text.toString());
 				}
 			}
 			
