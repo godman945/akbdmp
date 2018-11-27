@@ -97,7 +97,8 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			if(flagKdcl && flagPart){
 				log.info("key:"+key);
 				for (Text text : mapperValue) {
-					log.info(">>>>>:"+text.toString());
+					String value = text.toString();
+					log.info(">>>>>:"+value.toString());
 				}
 			}
 			
