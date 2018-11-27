@@ -47,8 +47,25 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					context.write(keyOut, new Text(rouleId.replace(";", "")));
 				}
 			}else{
-				log.info(">>>>>job2:"+filename);
 				log.info("raw_data : " + value);
+				String valueStr = value.toString();
+				String arrayData[] = valueStr.split(paclSymbol);
+				
+				if(filename.contains("kdcl")){
+					log.info(">>>>>>kdcl log");
+					log.info("arrayData size : " + arrayData.length);
+//					String uuid = arrayData[2];
+//					String kdclLogDate = arrayData[0];
+//					String kdclLogDate = arrayData[0];
+				}else{
+					log.info(">>>>>>convert log");
+					log.info("arrayData size : " + arrayData.length);
+				}
+				
+				
+				
+//				log.info(">>>>>job2:"+filename);
+//				log.info("raw_data : " + value);
 			}
 			
 			
