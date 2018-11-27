@@ -116,8 +116,10 @@ public class PaclLogConverCountDriver {
 			job.setReducerClass(PaclLogConverCountReducer.class);
 			job.setMapOutputKeyClass(Text.class);
 			job.setMapOutputValueClass(Text.class);
-			job.setOutputKeyClass(Text.class);
-			job.setOutputValueClass(Text.class);
+			
+			
+			job.setOutputKeyClass(LzopCodec.class);
+			job.setOutputValueClass(LzopCodec.class);
 			job.setNumReduceTasks(1);//1個reduce 
 			job.setMapSpeculativeExecution(false);
 			job.setInputFormatClass(LzoTextInputFormat.class);
