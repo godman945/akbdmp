@@ -64,6 +64,8 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	
 	private static String paclSymbol = String.valueOf(new char[] { 9, 31 });
 	
+	private static List<String> dataList = new ArrayList<String>();
+	
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
 		try {
@@ -84,31 +86,24 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			String key = mapperKey.toString();
 			boolean flagKdcl = false;
 			boolean flagPart = false;
-			
-			if(key.equals("2f59086e290c6a4a513834ba16f563e6")){
-				for (Text text : mapperValue) {
-					String value = text.toString();
-					log.info(">>>>>@@@@ value:"+value);
-					if(value.contains("kdcl")){
-						flagKdcl = true;
-					}
-					if(value.contains("part-r-00000")){
-						flagPart = true;
-					}
+			dataList.clear();
+			for (Text text : mapperValue) {
+				String value = text.toString();
+				dataList.add(value);
+				if(value.contains("kdcl")){
+					flagKdcl = true;
 				}
-					
-				if(flagKdcl && flagPart){
-					log.info("##>>>>>>key:"+key);
-					for (Text text : mapperValue) {
-						String value = text.toString();
-						log.info("##>>>>>value:"+value);
-					}
+				if(value.contains("part-r-00000")){
+					flagPart = true;
 				}
-				
 			}
-			
-			
-			
+					
+			if(flagKdcl && flagPart){
+				log.info("##>>>>>>key:"+key);
+				for (String str : dataList) {
+					System.out.println(str);
+				}
+			}
 		} catch (Throwable e) {
 			log.error("reduce error>>>>>> " + e);
 		}
