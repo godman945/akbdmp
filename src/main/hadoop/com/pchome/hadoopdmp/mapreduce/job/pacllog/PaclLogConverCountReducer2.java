@@ -98,10 +98,12 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				}
 			}
 					
+			
+			
 			if(flagKdcl && flagPart){
 				log.info("##>>>>>>key:"+key);
 				for (String str : dataList) {
-					System.out.println(str);
+					log.info(str);
 				}
 			}
 		} catch (Throwable e) {
