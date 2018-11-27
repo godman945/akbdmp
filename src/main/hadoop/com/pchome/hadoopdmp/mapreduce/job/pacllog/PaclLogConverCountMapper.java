@@ -32,11 +32,12 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 		try {
 			InputSplit inputSplit=(InputSplit)context.getInputSplit(); 
 			String filename = ((FileSplit)inputSplit).getPath().getName();
+			String valueStr = value.toString();
+			String arrayData[] = valueStr.split(paclSymbol);
+			
 			log.info("Path:"+((FileSplit)inputSplit).getPath());
 			log.info("filename:"+filename);
 			if(filename.equals("pacl_2018_11_26.txt.lzo")){
-				String valueStr = value.toString();
-				String arrayData[] = valueStr.split(paclSymbol);
 				log.info("raw_data : " + valueStr);
 				log.info("arrayData size : " + arrayData.length);
 				String uuid = arrayData[2];
@@ -47,30 +48,29 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					keyOut.set(convId+"_"+uuid);
 					context.write(keyOut, new Text(rouleId.replace(";", "")));
 				}
-			}//else{
-//				log.info("raw_data : " + value);
-//				String valueStr = value.toString();
-//				String arrayData[] = valueStr.split(paclSymbol);
-//				
-//				if(filename.contains("kdcl")){
-//					log.info(">>>>>>kdcl log");
-//					log.info("arrayData size : " + arrayData.length);
-////					String uuid = arrayData[2];
-//					String date = arrayData[0];
+			}else{
+				if(filename.contains("kdcl")){
+					log.info(">>>>>>kdcl log");
+					log.info("raw_data : " + value);
+					log.info("arrayData size : " + arrayData.length);
 //					String uuid = arrayData[2];
-//					String type = arrayData[13];
-//					
-//				}
-//				
-//				
-//				
-//				
-//				
-//				
-////				log.info(">>>>>job2:"+filename);
-////				log.info("raw_data : " + value);
-//			}
-//			
+					String date = arrayData[0];
+					String uuid = arrayData[2];
+					String type = arrayData[13];
+					
+					log.info(">>>>>>date:"+date);
+					log.info(">>>>>>uuid:"+uuid);
+					log.info(">>>>>>type:"+type);
+					
+					
+				}else{
+					log.info(">>>>>>conv log");
+					log.info("raw_data : " + value);
+					log.info("arrayData size : " + arrayData.length);
+				}
+
+			}
+			
 			
 			
 			
