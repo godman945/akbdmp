@@ -197,8 +197,8 @@ public class PaclLogConverCountDriver {
 			job2.setOutputValueClass(Text.class);
 			job2.setNumReduceTasks(1);//1個reduce 
 			job2.setMapSpeculativeExecution(false);
-//			String paths = "/home/webuser/alex/pacl_log/kdcl1_07_03_log.lzo,/home/webuser/alex/pacl_log/kdcl2_07_03_log.lzo,/home/webuser/alex/pacl_output/part-r-00000";
-			String paths = "/home/webuser/alex/pacl_output/part-r-00000";
+			String paths = "/home/webuser/alex/pacl_log/kdcl1_07_03_log.lzo,/home/webuser/alex/pacl_log/kdcl2_07_03_log.lzo,/home/webuser/alex/pacl_output/part-r-00000.lzo";
+//			String paths = "/home/webuser/alex/pacl_output/part-r-00000.lzo";
 			FileInputFormat.addInputPaths(job2, paths);
 			outPath = "/home/webuser/alex/pacl_output2";
 			//hdfs存在則刪除
