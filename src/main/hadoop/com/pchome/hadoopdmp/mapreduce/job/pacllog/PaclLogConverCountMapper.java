@@ -72,8 +72,8 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 //					log.info(">>>>>>date:"+date);
 //					log.info(">>>>>>uuid:"+uuid);
 //					log.info(">>>>>>type:"+type);
-					keyOut.set(uuid+"_"+type);
-					mapperValue.append(date).append(",").append(adSeq);
+					keyOut.set(uuid);
+					mapperValue.append(date).append(",").append(adSeq).append(",").append(type).append(",").append(filename);
 					context.write(keyOut, new Text(mapperValue.toString()));
 				}else{
 					log.info(">>>>>>conv log");
@@ -88,13 +88,10 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					String convertSeq = arrayData[6];
 					
 					mapperValue.append(clickRangeDate).append(",").append(impRangeDate).append(",").append(convertPriceCount);
-					mapperValue.append(",").append(convertPric).append(",").append(convertBelong).append(",").append(convertSeq);
-					keyOut.set(uuid+"_ck");
+					mapperValue.append(",").append(convertPric).append(",").append(convertBelong).append(",").append(convertSeq).append(",").append(filename);
+					keyOut.set(uuid);
 					context.write(keyOut, new Text(mapperValue.toString()));
 					
-					keyOut.clear();
-					keyOut.set(uuid+"_pv");
-					context.write(keyOut, new Text(mapperValue.toString()));
 				}
 			}
 		} catch (Exception e) {
