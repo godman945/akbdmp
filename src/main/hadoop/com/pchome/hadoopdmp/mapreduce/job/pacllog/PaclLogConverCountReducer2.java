@@ -81,7 +81,12 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	@Override
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
 		try {
-		
+			String key = mapperKey.toString();
+			log.info(">>>>>>key:"+key);
+			for (Text text : mapperValue) {
+				log.info(text.toString());
+			}
+			
 		} catch (Throwable e) {
 			log.error("reduce error>>>>>> " + e);
 		}

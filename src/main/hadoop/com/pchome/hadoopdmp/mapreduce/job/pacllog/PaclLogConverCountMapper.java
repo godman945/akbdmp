@@ -1,5 +1,9 @@
 package com.pchome.hadoopdmp.mapreduce.job.pacllog;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.io.LongWritable;
@@ -17,11 +21,18 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 
 	private static String paclSymbol = String.valueOf(new char[] { 9, 31 });
 	
+	private static SimpleDateFormat sdf =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	
+	private StringBuffer mapperValue = new StringBuffer();
+	
+	private static Calendar calendar = null;
 	@Override
 	public void setup(Context context) {
 		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
 		try {
-			
+			calendar = Calendar.getInstance();
+			calendar.setTime(new Date());
+			calendar.add(Calendar.DAY_OF_MONTH, -1); 
 		} catch (Exception e) {
 			log.error("Mapper setup error>>>>>> " +e);
 		}
@@ -29,6 +40,7 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 
 	@Override
 	public void map(LongWritable offset, Text value, Context context) {
+		mapperValue.setLength(0);
 		try {
 			InputSplit inputSplit=(InputSplit)context.getInputSplit(); 
 			String filename = ((FileSplit)inputSplit).getPath().getName();
@@ -53,28 +65,37 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					log.info(">>>>>>kdcl log");
 					log.info("raw_data : " + value);
 					log.info("arrayData size : " + arrayData.length);
-//					String uuid = arrayData[2];
 					String date = arrayData[0];
 					String uuid = arrayData[2];
 					String type = arrayData[13];
-					
+					String adSeq = arrayData[16];
 					log.info(">>>>>>date:"+date);
 					log.info(">>>>>>uuid:"+uuid);
 					log.info(">>>>>>type:"+type);
-					
-					
+					keyOut.set(uuid+"_"+type);
+					mapperValue.append(date).append(",").append(adSeq);
+					context.write(keyOut, new Text(mapperValue.toString()));
 				}else{
 					log.info(">>>>>>conv log");
 					log.info("raw_data : " + value);
 					log.info("arrayData size : " + arrayData.length);
+					String uuid = arrayData[0];
+					String clickRangeDate = arrayData[1];
+					String impRangeDate = arrayData[2];
+					String convertPriceCount = arrayData[3];
+					String convertPric = arrayData[4];
+					String convertBelong = arrayData[5];
+					String convertSeq = arrayData[6];
+					
+					mapperValue.append(clickRangeDate).append(",").append(impRangeDate).append(",").append(convertPriceCount);
+					mapperValue.append(",").append(convertPric).append(",").append(convertBelong).append(",").append(convertSeq);
+					keyOut.set(uuid+"_ck");
+					context.write(keyOut, new Text(mapperValue.toString()));
+					
+					keyOut.set(uuid+"_pv");
+					context.write(keyOut, new Text(mapperValue.toString()));
 				}
-
 			}
-			
-			
-			
-			
-			
 		} catch (Exception e) {
 			log.error("Mapper error>>>>>> " +e); 
 		}
