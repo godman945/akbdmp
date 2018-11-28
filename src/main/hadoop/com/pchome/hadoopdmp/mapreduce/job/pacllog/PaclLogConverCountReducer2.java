@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.io.Text;
@@ -67,11 +66,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	
-	private static String ckAdSeq = "";
-	private static String ckDate = "";
-	private static String pvAdSeq = "";
-	private static String pvDate = "";
-	
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
 		try {
@@ -116,12 +110,8 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				String convertPriceCount = convertConditionArray[2];
 				String convertPric = convertConditionArray[3];
 				//1:最終 2:最初
-				String convertBelong = convertConditionArray[4].split(":")[1];
+				String convertBelong = convertConditionArray[4];
 				String convertSeq = convertConditionArray[5];
-				
-				
-				long impRangeDateCondition = Long.valueOf(clickRangeDate.split(":")[1]);
-				long clickRangeDateCondition = Long.valueOf(impRangeDate.split(":")[1]);
 				
 				for (String str : dataList) {
 					String[] kdclDataArray = str.split(",");
@@ -134,51 +124,18 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 					log.info(">>>>>>>>>>>>>kdclType:"+kdclType);
 					log.info(">>>>>>>>>>>>>range day:"+day);
 					long d = 0;
-					if(kdclType.equals("ck") && day <= clickRangeDateCondition){
-						if(StringUtils.isBlank(ckDate)){
-							ckDate = kdclDate;
-							ckAdSeq = kdclAdseq;
-						}
-						if(convertBelong.equals("1")){
-							if(sdf.parse(kdclDate).compareTo(sdf.parse(ckDate)) >=0){
-								ckDate = kdclDate;
-								ckAdSeq = kdclAdseq;
-							}
-						}else{
-							if(sdf.parse(kdclDate).compareTo(sdf.parse(ckDate)) <= 0){
-								ckDate = kdclDate;
-								ckAdSeq = kdclAdseq;
-							}
-						}
-					}else if(kdclType.equals("pv") && day <= impRangeDateCondition){
-						if(StringUtils.isBlank(pvDate)){
-							pvDate = kdclDate;
-							pvAdSeq = kdclAdseq;
-						}
-						if(convertBelong.equals("1")){
-							if(sdf.parse(kdclDate).compareTo(sdf.parse(ckDate)) >=0){
-								pvDate = kdclDate;
-								pvAdSeq = kdclAdseq;
-							}
-						}else{
-							if(sdf.parse(kdclDate).compareTo(sdf.parse(ckDate)) <= 0){
-								pvDate = kdclDate;
-								pvAdSeq = kdclAdseq;
-							}
-						}
+					if(kdclType.equals("ck")){
+						d = Long.valueOf(clickRangeDate.split(":")[1]);
+					}else if(kdclType.equals("pv")){
+						d = Long.valueOf(impRangeDate.split(":")[1]);
 					}
 					log.info(">>>>>>>>>>>>>range day flag:"+(day <= d));
+					
 					
 					
 					log.info("***************************");
 				}
 			}
-			
-			
-			ckAdSeq = "";
-			ckDate = "";
-			pvAdSeq = "";
-			pvDate = "";
 		} catch (Throwable e) {
 			log.error("reduce error>>>>>> " + e);
 		}
