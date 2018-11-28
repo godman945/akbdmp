@@ -47,53 +47,72 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 			String valueStr = value.toString();
 			String arrayData[] = valueStr.split(paclSymbol);
 			
-//			log.info("Path:"+((FileSplit)inputSplit).getPath());
-//			log.info("filename:"+filename);
-			if(filename.equals("pacl_2018_11_26.txt.lzo")){
-//				log.info("raw_data : " + valueStr);
-//				log.info("arrayData size : " + arrayData.length);
+			if(filename.contains("pacl")){
 				String uuid = arrayData[2];
 				String type = arrayData[11];
 				String convId = arrayData[12];
 				String rouleId = arrayData[13];
-				if(type.equals("convert")){
-					keyOut.set(convId+"_"+uuid);
-					context.write(keyOut, new Text(rouleId.replace(";", "")));
-				}
-			}else{
-				if(filename.contains("kdcl")){
-					log.info(">>>>>>kdcl log");
-					log.info("raw_data : " + value);
-//					log.info("arrayData size : " + arrayData.length);
-					String date = arrayData[0];
-					String uuid = arrayData[2];
-					String type = arrayData[13];
-					String adSeq = arrayData[11];
-//					log.info(">>>>>>date:"+date);
-//					log.info(">>>>>>uuid:"+uuid);
-//					log.info(">>>>>>type:"+type);
-					keyOut.set(uuid);
-					mapperValue.append(date).append(",").append(adSeq).append(",").append(type).append(",").append(filename);
-					context.write(keyOut, new Text(mapperValue.toString()));
-				}else{
-					log.info(">>>>>>conv log");
-					log.info("raw_data : " + value);
-//					log.info("arrayData size : " + arrayData.length);
-					String uuid = arrayData[0].trim();
-					String clickRangeDate = arrayData[1];
-					String impRangeDate = arrayData[2];
-					String convertPriceCount = arrayData[3];
-					String convertPric = arrayData[4];
-					String convertBelong = arrayData[5];
-					String convertSeq = arrayData[6];
-					
-					mapperValue.append(clickRangeDate).append(",").append(impRangeDate).append(",").append(convertPriceCount);
-					mapperValue.append(",").append(convertPric).append(",").append(convertBelong).append(",").append(convertSeq).append(",").append(filename);
-					keyOut.set(uuid);
-					context.write(keyOut, new Text(mapperValue.toString()));
-					
-				}
+				keyOut.set(uuid);
+				mapperValue.append(filename).append(",").append(type).append(",").append(convId).append(",").append(rouleId.replace(";", ""));
+				context.write(keyOut, new Text(rouleId.replace(";", "")));
+			}else if(filename.contains("kdcl")){
+				String date = arrayData[0];
+				String uuid = arrayData[2];
+				String type = arrayData[13];
+				String adSeq = arrayData[11];
+				keyOut.set(uuid);
+				mapperValue.append(filename).append(",").append(date).append(",").append(adSeq).append(",").append(type).append(",").append(filename);
+				context.write(keyOut, new Text(mapperValue.toString()));
 			}
+			
+			
+////			log.info("Path:"+((FileSplit)inputSplit).getPath());
+////			log.info("filename:"+filename);
+//			if(filename.equals("pacl_2018_11_26.txt.lzo")){
+////				log.info("raw_data : " + valueStr);
+////				log.info("arrayData size : " + arrayData.length);
+//				String uuid = arrayData[2];
+//				String type = arrayData[11];
+//				String convId = arrayData[12];
+//				String rouleId = arrayData[13];
+//				if(type.equals("convert")){
+//					keyOut.set(convId+"_"+uuid);
+//					context.write(keyOut, new Text(rouleId.replace(";", "")));
+//				}
+//			}else{
+//				if(filename.contains("kdcl")){
+//					log.info(">>>>>>kdcl log");
+//					log.info("raw_data : " + value);
+////					log.info("arrayData size : " + arrayData.length);
+//					String date = arrayData[0];
+//					String uuid = arrayData[2];
+//					String type = arrayData[13];
+//					String adSeq = arrayData[11];
+////					log.info(">>>>>>date:"+date);
+////					log.info(">>>>>>uuid:"+uuid);
+////					log.info(">>>>>>type:"+type);
+//					keyOut.set(uuid);
+//					mapperValue.append(date).append(",").append(adSeq).append(",").append(type).append(",").append(filename);
+//					context.write(keyOut, new Text(mapperValue.toString()));
+//				}else{
+//					log.info(">>>>>>conv log");
+//					log.info("raw_data : " + value);
+////					log.info("arrayData size : " + arrayData.length);
+//					String uuid = arrayData[0].trim();
+//					String clickRangeDate = arrayData[1];
+//					String impRangeDate = arrayData[2];
+//					String convertPriceCount = arrayData[3];
+//					String convertPric = arrayData[4];
+//					String convertBelong = arrayData[5];
+//					String convertSeq = arrayData[6];
+//					
+//					mapperValue.append(clickRangeDate).append(",").append(impRangeDate).append(",").append(convertPriceCount);
+//					mapperValue.append(",").append(convertPric).append(",").append(convertBelong).append(",").append(convertSeq).append(",").append(filename);
+//					keyOut.set(uuid);
+//					context.write(keyOut, new Text(mapperValue.toString()));
+//					
+//				}
+//			}
 		} catch (Exception e) {
 			log.error("Mapper error>>>>>> " +e); 
 		}

@@ -124,7 +124,10 @@ public class PaclLogConverCountDriver {
 			job.setNumReduceTasks(1);//1個reduce 
 			job.setMapSpeculativeExecution(false);
 			job.setInputFormatClass(LzoTextInputFormat.class);
-			logInputPath = "/home/webuser/alex/pacl_log/pacl_2018_11_26.txt.lzo";
+//			logInputPath = "/home/webuser/alex/pacl_log/pacl_2018_11_26.txt.lzo";
+			logInputPath = "/home/webuser/alex/pacl_log/kdcl1_07_03_log.lzo,/home/webuser/alex/pacl_log/kdcl2_07_03_log.lzo,/home/webuser/alex/pacl_log/pacl_2018_11_26.txt.lzo";
+			
+			
 //			logInputPath = akbPacLoglAll;
 			outPath = "/home/webuser/alex/pacl_output";
 			//hdfs存在則刪除
@@ -195,35 +198,35 @@ public class PaclLogConverCountDriver {
 				log.info("Job1 is Failed");
 			}
 
-			log.info("----job2 start----");
-			
-			
-			
-			Job job2 = new Job(jobConf, "dmp_conv2_"+ env + "_" + sdf.format(date));
-			job2.setJarByClass(PaclLogConverCountDriver.class);
-			job2.setMapperClass(PaclLogConverCountMapper.class);
-			job2.setReducerClass(PaclLogConverCountReducer2.class);
-			job2.setMapOutputKeyClass(Text.class);
-			job2.setMapOutputValueClass(Text.class);
-			job2.setInputFormatClass(LzoTextInputFormat.class);
-			job2.setOutputKeyClass(Text.class);
-			job2.setOutputValueClass(Text.class);
-			job2.setNumReduceTasks(1);//1個reduce 
-			job2.setMapSpeculativeExecution(false);
-			String paths = "/home/webuser/alex/pacl_log/kdcl1_07_03_log.lzo,/home/webuser/alex/pacl_log/kdcl2_07_03_log.lzo,/home/webuser/alex/pacl_output/part-r-00000.lzo";
-//			String paths = "/home/webuser/alex/pacl_output/part-r-00000.lzo";
-			FileInputFormat.addInputPaths(job2, paths);
-			outPath = "/home/webuser/alex/pacl_output2";
-			//hdfs存在則刪除
-			deleteExistedDir(fs, new Path(outPath), true);
-			FileOutputFormat.setOutputPath(job2, new Path(outPath));
-	
-			if (job2.waitForCompletion(true)) {
-				log.info("Job2 is OK");
-				
-			} else {
-				log.info("Job2 is Failed");
-			}
+//			log.info("----job2 start----");
+//			
+//			
+//			
+//			Job job2 = new Job(jobConf, "dmp_conv2_"+ env + "_" + sdf.format(date));
+//			job2.setJarByClass(PaclLogConverCountDriver.class);
+//			job2.setMapperClass(PaclLogConverCountMapper.class);
+//			job2.setReducerClass(PaclLogConverCountReducer2.class);
+//			job2.setMapOutputKeyClass(Text.class);
+//			job2.setMapOutputValueClass(Text.class);
+//			job2.setInputFormatClass(LzoTextInputFormat.class);
+//			job2.setOutputKeyClass(Text.class);
+//			job2.setOutputValueClass(Text.class);
+//			job2.setNumReduceTasks(1);//1個reduce 
+//			job2.setMapSpeculativeExecution(false);
+//			String paths = "/home/webuser/alex/pacl_log/kdcl1_07_03_log.lzo,/home/webuser/alex/pacl_log/kdcl2_07_03_log.lzo,/home/webuser/alex/pacl_output/part-r-00000.lzo";
+////			String paths = "/home/webuser/alex/pacl_output/part-r-00000.lzo";
+//			FileInputFormat.addInputPaths(job2, paths);
+//			outPath = "/home/webuser/alex/pacl_output2";
+//			//hdfs存在則刪除
+//			deleteExistedDir(fs, new Path(outPath), true);
+//			FileOutputFormat.setOutputPath(job2, new Path(outPath));
+//	
+//			if (job2.waitForCompletion(true)) {
+//				log.info("Job2 is OK");
+//				
+//			} else {
+//				log.info("Job2 is Failed");
+//			}
 			
 			
 			
