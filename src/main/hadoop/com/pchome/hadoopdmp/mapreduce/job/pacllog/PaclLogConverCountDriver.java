@@ -202,6 +202,7 @@ public class PaclLogConverCountDriver {
 			Job job2 = new Job(jobConf, "dmp_conv2_"+ env + "_" + sdf.format(date));
 			job2.setJarByClass(PaclLogConverCountDriver.class);
 			job2.setMapperClass(PaclLogConverCountMapper.class);
+			job2.setCombinerClass(PaclLogConvertCombiner.class);
 			job2.setReducerClass(PaclLogConverCountReducer2.class);
 			job2.setMapOutputKeyClass(Text.class);
 			job2.setMapOutputValueClass(Text.class);

@@ -79,7 +79,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			log.error("reduce setup error>>>>>> " + e);
 		}
 	}
-
+	
 	@Override
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
 		try {
