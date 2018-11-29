@@ -42,8 +42,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 
 	public int count;
 
-	public JSONParser jsonParser = null;
-
 	public String redisFountKey;
 
 	public Map<String, JSONObject> kafkaDmpMap = null;
@@ -60,11 +58,19 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	
 	private static String[] convertConditionArray = null;	
 	
-	private static List<String> dataList = new ArrayList<String>();
+	private static List<JSONObject> dataList = new ArrayList<JSONObject>();
 	
 	private static Date date = new Date();
 	
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	
+	private JSONObject logJson = new JSONObject();
+	
+	private static boolean flagKdcl = false;
+	
+	private static boolean flagPart = false;
+	
+	private JSONParser jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
 	
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
@@ -84,58 +90,101 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
 		try {
 			String key = mapperKey.toString();
-			boolean flagKdcl = false;
-			boolean flagPart = false;
 			dataList.clear();
-			convertConditionArray = null;
-			
-			
+			logJson.clear();
+//			convertConditionArray = null;
+			flagKdcl = false;
+			flagPart = false;
 			for (Text text : mapperValue) {
 				String value = text.toString();
-				if(value.contains("kdcl")){
-					dataList.add(value);
+				logJson = (JSONObject) jsonParser.parse(value);
+				if(logJson.getAsString("filename").contains("kdcl")){
+					dataList.add(logJson);
 					flagKdcl = true;
 				}
-				if(value.contains("part-r-00000")){
-					flagPart = true;
-					convertConditionArray = value.split(",");
+				if(logJson.getAsString("filename").contains("part-r-00000")){
+					dataList.add(logJson);
+					flagKdcl = true;
 				}
+				logJson.clear();
+//				if(value.contains("kdcl")){
+//					dataList.add(value);
+//					flagKdcl = true;
+//				}
+//				if(value.contains("part-r-00000")){
+//					flagPart = true;
+//					convertConditionArray = value.split(",");
+//				}
 			}
+			
+			
 			
 			if(flagKdcl && flagPart){
 				log.info("##>>>>>>key:"+key);
-				
-				String clickRangeDate = convertConditionArray[0];
-				String impRangeDate = convertConditionArray[1];
-				String convertPriceCount = convertConditionArray[2];
-				String convertPric = convertConditionArray[3];
-				//1:最終 2:最初
-				String convertBelong = convertConditionArray[4];
-				String convertSeq = convertConditionArray[5];
-				
-				for (String str : dataList) {
-					String[] kdclDataArray = str.split(",");
-					String kdclDate = kdclDataArray[0];
-					String kdclAdseq = kdclDataArray[1];
-					String kdclType = kdclDataArray[2];
-					long day = (long) (date.getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
-					log.info(">>>>>>>>>>>>>:"+str);
-					log.info(">>>>>>>>>>>>>adseq:"+kdclAdseq);
-					log.info(">>>>>>>>>>>>>kdclType:"+kdclType);
-					log.info(">>>>>>>>>>>>>range day:"+day);
-					long d = 0;
-					if(kdclType.equals("ck")){
-						d = Long.valueOf(clickRangeDate.split(":")[1]);
-					}else if(kdclType.equals("pv")){
-						d = Long.valueOf(impRangeDate.split(":")[1]);
-					}
-					log.info(">>>>>>>>>>>>>range day flag:"+(day <= d));
-					
-					
-					
-					log.info("***************************");
+				for (JSONObject json : dataList) {
+					log.info(json);
 				}
 			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+//			if(flagKdcl && flagPart){
+//				log.info("##>>>>>>key:"+key);
+//				
+//				String clickRangeDate = convertConditionArray[0];
+//				String impRangeDate = convertConditionArray[1];
+//				String convertPriceCount = convertConditionArray[2];
+//				String convertPric = convertConditionArray[3];
+//				//1:最終 2:最初
+//				String convertBelong = convertConditionArray[4];
+//				String convertSeq = convertConditionArray[5];
+//				
+//				String adDateBelong = "";
+//				String adSeqBelong = "";
+//				
+//				
+//				
+//				for (String str : dataList) {
+//					String[] kdclDataArray = str.split(",");
+//					String kdclDate = kdclDataArray[0];
+//					String kdclAdseq = kdclDataArray[1];
+//					String kdclType = kdclDataArray[2];
+//					long day = (long) (date.getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
+//					log.info(">>>>>>>>>>>>>:"+str);
+//					log.info(">>>>>>>>>>>>>adseq:"+kdclAdseq);
+//					log.info(">>>>>>>>>>>>>kdclType:"+kdclType);
+//					log.info(">>>>>>>>>>>>>range day:"+day);
+//					long d = 0;
+//					if(kdclType.equals("ck")){
+//						d = Long.valueOf(clickRangeDate.split(":")[1]);
+//					}else if(kdclType.equals("pv")){
+//						d = Long.valueOf(impRangeDate.split(":")[1]);
+//					}
+//					log.info(">>>>>>>>>>>>>range day flag:"+(day <= d));
+//					
+//					if(day <= d){
+//						if(convertBelong.equals("1") && sdf.parse(kdclDate).compareTo(anotherDate) >= 0){
+//							
+//						}
+//						if(convertBelong.equals("2")){
+//							
+//						}
+//					}
+					
+					
+//					log.info("***************************");
+//				}
+//			}
 		} catch (Throwable e) {
 			log.error("reduce error>>>>>> " + e);
 		}
