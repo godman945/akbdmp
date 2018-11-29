@@ -49,12 +49,12 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 	public void map(LongWritable offset, Text value, Context context) {
 		try {
 			InputSplit inputSplit=(InputSplit)context.getInputSplit(); 
-			String filename = ((FileSplit)inputSplit).getPath().getName();
+			String fileName = ((FileSplit)inputSplit).getPath().getName();
 			String valueStr = value.toString();
 			String arrayData[] = valueStr.split(paclSymbol);
 //			log.info("Path:"+((FileSplit)inputSplit).getPath());
 //			log.info("filename:"+filename);
-			if(filename.equals("pacl_2018_11_26.txt.lzo")){
+			if(fileName.equals("pacl_2018_11_26.txt.lzo")){
 //				log.info("raw_data : " + valueStr);
 //				log.info("arrayData size : " + arrayData.length);
 				String uuid = arrayData[2];
@@ -66,7 +66,7 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					context.write(keyOut, new Text(rouleId.replace(";", "")));
 				}
 			}else{
-				if(filename.contains("kdcl")){
+				if(fileName.contains("kdcl")){
 					log.info(">>>>>>kdcl log");
 					log.info("raw_data : " + value);
 //					log.info("arrayData size : " + arrayData.length);
@@ -109,7 +109,7 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					kdclInfo.put("adType", adType);
 					kdclInfo.put("actionSeq", actionSeq);
 					kdclInfo.put("groupSeq", groupSeq);
-					kdclInfo.put("filename", filename);
+					kdclInfo.put("fileName", fileName);
 					keyOut.set(uuid);
 					context.write(keyOut, new Text(kdclInfo.toString()));
 				}else{
@@ -129,7 +129,7 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					paclInfo.put("convertPrice",convertPrice);
 					paclInfo.put("convertBelong",convertBelong);
 					paclInfo.put("convertSeq",convertSeq);
-					paclInfo.put("filename",filename);
+					paclInfo.put("fileName",fileName);
 					keyOut.set(uuid);
 					context.write(keyOut, new Text(paclInfo.toString()));
 				}

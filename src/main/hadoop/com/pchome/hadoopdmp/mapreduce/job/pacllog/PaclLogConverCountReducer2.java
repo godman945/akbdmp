@@ -100,11 +100,17 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 					String value = text.toString();
 					log.info(">>>"+value);
 					logJson = (JSONObject) jsonParser.parse(value);
-					if(logJson.getAsString("filename").contains("kdcl")){
+					
+					
+					log.info("fileName:"+logJson.getAsString("fileName"));
+					log.info("kdcl:"+logJson.getAsString("fileName").contains("kdcl"));
+					log.info("kdcl:"+logJson.getAsString("fileName").contains("part-r-00000"));
+					
+					if(logJson.getAsString("fileName").contains("kdcl")){
 						dataList.add(logJson);
 						flagKdcl = true;
 					}
-					if(logJson.getAsString("filename").contains("part-r-00000")){
+					if(logJson.getAsString("fileName").contains("part-r-00000")){
 						dataList.add(logJson);
 						flagKdcl = true;
 					}
@@ -118,6 +124,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 //						convertConditionArray = value.split(",");
 //					}
 				}
+				log.info("list>>>>>>>"+dataList);
 			}
 	
 			
