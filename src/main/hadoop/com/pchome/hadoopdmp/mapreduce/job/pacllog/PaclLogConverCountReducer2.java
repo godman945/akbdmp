@@ -64,11 +64,11 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	
-	private JSONObject logJson = new JSONObject();
+//	private JSONObject logJson = new JSONObject();
 	
 	private static boolean flagKdcl = false;
 	
-	private static boolean flagPart = false;
+	private static boolean flagPacl = false;
 	
 	private JSONParser jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
 	
@@ -91,20 +91,19 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 		try {
 			String key = mapperKey.toString();
 			dataList.clear();
-			logJson.clear();
 //			convertConditionArray = null;
 			flagKdcl = false;
-			flagPart = false;
+			flagPacl = false;
 			if(key.equals("2f59086e290c6a4a513834ba16f563e6")){
 				for (Text text : mapperValue) {
 					String value = text.toString();
 					log.info(">>>"+value);
-					logJson = (JSONObject) jsonParser.parse(value);
+					JSONObject logJson = (JSONObject) jsonParser.parse(value);
 					
 					
 					log.info("fileName:"+logJson.getAsString("fileName"));
 					log.info("kdcl:"+logJson.getAsString("fileName").contains("kdcl"));
-					log.info("kdcl:"+logJson.getAsString("fileName").contains("part-r-00000"));
+					log.info("pacl:"+logJson.getAsString("fileName").contains("part-r-00000"));
 					
 					if(logJson.getAsString("fileName").contains("kdcl")){
 						dataList.add(logJson);
@@ -114,7 +113,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 						dataList.add(logJson);
 						flagKdcl = true;
 					}
-					logJson.clear();
+//					logJson.clear();
 //					if(value.contains("kdcl")){
 //						dataList.add(value);
 //						flagKdcl = true;
@@ -124,13 +123,16 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 //						convertConditionArray = value.split(",");
 //					}
 				}
+				
+				log.info("flagKdcl>>>>>>>"+flagKdcl);
+				log.info("flagPacl>>>>>>>"+flagPacl);
 				log.info("list>>>>>>>"+dataList);
 			}
 	
 			
 			
 			
-			if(flagKdcl && flagPart){
+			if(flagKdcl && flagPacl){
 				log.info("##>>>>>>key:"+key);
 				for (JSONObject json : dataList) {
 					log.info(json);
