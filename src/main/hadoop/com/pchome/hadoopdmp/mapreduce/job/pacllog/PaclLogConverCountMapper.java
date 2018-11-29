@@ -105,7 +105,7 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					kdclInfo.put("styleId",styleId);
 					kdclInfo.put("uuid",uuid);
 					kdclInfo.put("adSeq", adSeq);
-					kdclInfo.put("type", type);
+					kdclInfo.put("kdclType", type);
 					kdclInfo.put("adType", adType);
 					kdclInfo.put("actionSeq", actionSeq);
 					kdclInfo.put("groupSeq", groupSeq);

@@ -56,7 +56,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	
 	private StringBuffer sql = new StringBuffer();
 	
-	private static String[] convertConditionArray = null;	
 	
 	private static List<JSONObject> dataList = new ArrayList<JSONObject>();
 	
@@ -71,6 +70,10 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	private static boolean flagPacl = false;
 	
 	private JSONParser jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
+	
+	
+	
+	
 	
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
@@ -91,7 +94,17 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 		try {
 			String key = mapperKey.toString();
 			dataList.clear();
-//			convertConditionArray = null;
+			
+			String clickRangeDate = "";
+			String impRangeDate = "";
+			String convertPriceCount = "";
+			String convertPrice = "";
+			//1:最終 2:最初
+			String convertBelong = "";
+			String convertSeq = "";
+			String adDateBelong = "";
+			String adSeqBelong = "";
+			
 			flagKdcl = false;
 			flagPacl = false;
 			if(key.equals("2f59086e290c6a4a513834ba16f563e6")){
@@ -99,43 +112,40 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 					String value = text.toString();
 					log.info(">>>"+value);
 					JSONObject logJson = (JSONObject) jsonParser.parse(value);
-					
-					
 					log.info("fileName:"+logJson.getAsString("fileName"));
 					log.info("kdcl:"+logJson.getAsString("fileName").contains("kdcl"));
 					log.info("pacl:"+logJson.getAsString("fileName").contains("part-r-00000"));
-					
 					if(logJson.getAsString("fileName").contains("kdcl")){
 						dataList.add(logJson);
 						flagKdcl = true;
 					}
 					if(logJson.getAsString("fileName").contains("part-r-00000")){
-						dataList.add(logJson);
-						flagKdcl = true;
+//						dataList.add(logJson);
+						flagPacl = true;
+						
+						clickRangeDate = logJson.getAsString("clickRangeDate");
+						impRangeDate = logJson.getAsString("impRangeDate");
+						convertPriceCount = logJson.getAsString("convertPriceCount");
+						convertPrice = logJson.getAsString("convertPrice");
+						convertBelong = logJson.getAsString("convertBelong");
+						convertSeq = logJson.getAsString("convertSeq");
 					}
-//					logJson.clear();
-//					if(value.contains("kdcl")){
-//						dataList.add(value);
-//						flagKdcl = true;
-//					}
-//					if(value.contains("part-r-00000")){
-//						flagPart = true;
-//						convertConditionArray = value.split(",");
-//					}
 				}
-				
-				log.info("flagKdcl>>>>>>>"+flagKdcl);
-				log.info("flagPacl>>>>>>>"+flagPacl);
-				log.info("list>>>>>>>"+dataList);
 			}
-	
-			
-			
-			
 			if(flagKdcl && flagPacl){
 				log.info("##>>>>>>key:"+key);
 				for (JSONObject json : dataList) {
-					log.info(json);
+					String kdclDate = json.getAsString("kdclDate");
+					String kdclType = json.getAsString("kdclType");
+					long day = (long) (date.getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
+					long d = 0;
+					if(kdclType.equals("ck")){
+						d = Long.valueOf(clickRangeDate.split(":")[1]);
+					}else if(kdclType.equals("pv")){
+						d = Long.valueOf(impRangeDate.split(":")[1]);
+					}
+					log.info(">>>>>>>>>>>>>range day flag:"+(day <= d));
+					
 				}
 			}
 			
