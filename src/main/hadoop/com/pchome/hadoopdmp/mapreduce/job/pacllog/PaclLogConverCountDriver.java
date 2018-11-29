@@ -203,13 +203,13 @@ public class PaclLogConverCountDriver {
 			job2.setJarByClass(PaclLogConverCountDriver.class);
 			job2.setMapperClass(PaclLogConverCountMapper.class);
 			job2.setReducerClass(PaclLogConverCountReducer2.class);
-			job2.setCombinerClass(PaclLogConvertCombiner.class);
+//			job2.setCombinerClass(PaclLogConvertCombiner.class);
 			job2.setMapOutputKeyClass(Text.class);
 			job2.setMapOutputValueClass(Text.class);
 			job2.setInputFormatClass(LzoTextInputFormat.class);
 			job2.setOutputKeyClass(Text.class);
 			job2.setOutputValueClass(Text.class);
-			job2.setNumReduceTasks(1);//1個reduce 
+			job2.setNumReduceTasks(5);//1個reduce 
 			job2.setMapSpeculativeExecution(false);
 			String paths = "/home/webuser/alex/pacl_log/kdcl1_07_03_log.lzo,/home/webuser/alex/pacl_log/kdcl2_07_03_log.lzo,/home/webuser/alex/pacl_output/part-r-00000.lzo";
 //			String paths = "/home/webuser/alex/pacl_output/part-r-00000.lzo";
