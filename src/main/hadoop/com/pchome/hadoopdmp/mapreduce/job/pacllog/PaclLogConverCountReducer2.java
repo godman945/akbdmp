@@ -95,27 +95,31 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 //			convertConditionArray = null;
 			flagKdcl = false;
 			flagPart = false;
-			for (Text text : mapperValue) {
-				String value = text.toString();
-				logJson = (JSONObject) jsonParser.parse(value);
-				if(logJson.getAsString("filename").contains("kdcl")){
-					dataList.add(logJson);
-					flagKdcl = true;
+			if(key.equals("2f59086e290c6a4a513834ba16f563e6")){
+				for (Text text : mapperValue) {
+					String value = text.toString();
+					log.info(">>>"+value);
+					logJson = (JSONObject) jsonParser.parse(value);
+					if(logJson.getAsString("filename").contains("kdcl")){
+						dataList.add(logJson);
+						flagKdcl = true;
+					}
+					if(logJson.getAsString("filename").contains("part-r-00000")){
+						dataList.add(logJson);
+						flagKdcl = true;
+					}
+					logJson.clear();
+//					if(value.contains("kdcl")){
+//						dataList.add(value);
+//						flagKdcl = true;
+//					}
+//					if(value.contains("part-r-00000")){
+//						flagPart = true;
+//						convertConditionArray = value.split(",");
+//					}
 				}
-				if(logJson.getAsString("filename").contains("part-r-00000")){
-					dataList.add(logJson);
-					flagKdcl = true;
-				}
-				logJson.clear();
-//				if(value.contains("kdcl")){
-//					dataList.add(value);
-//					flagKdcl = true;
-//				}
-//				if(value.contains("part-r-00000")){
-//					flagPart = true;
-//					convertConditionArray = value.split(",");
-//				}
 			}
+	
 			
 			
 			
