@@ -150,11 +150,11 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			}
 			if(flagKdcl && flagPacl){
 				log.info("##>>>>>>key:"+key);
-//				for (JSONObject json : dataCkList) {
-//					kdclDate = json.getAsString("kdclDate");
-//					differenceDay = (long) (date.getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
-//					log.info("kdclDate ck:"+kdclDate+" flag:"+(differenceDay <= Long.valueOf(clickRangeDate)) + " range:"+differenceDay);
-//				}
+				for (JSONObject json : dataCkList) {
+					kdclDate = json.getAsString("kdclDate");
+					differenceDay = (long) (date.getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
+					log.info("kdclDate ck:"+kdclDate+" flag:"+(differenceDay <= Long.valueOf(clickRangeDate)) + " range:"+differenceDay);
+				}
 				for (JSONObject json : dataCkList) {
 					kdclDate = json.getAsString("kdclDate");
 					differenceDay = (long) (date.getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
