@@ -86,6 +86,10 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	private static String convertBelong = "";
 	private static String convertSeq = "";
 	private static String kdclDate = "";
+	private static Iterator<JSONObject> iterator = null;
+	private static JSONObject iteratorJson = null;
+	
+	
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
 		try {
@@ -109,6 +113,8 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			String key = mapperKey.toString();
 			dataCkList.clear();
 			dataPvList.clear();
+			iteratorJson = null;
+			iterator = null;
 			differenceDay = null;
 			clickRangeDate = "";
 			impRangeDate = "";
@@ -150,18 +156,31 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			}
 			if(flagKdcl && flagPacl){
 				log.info("##>>>>>>key:"+key);
-				for (JSONObject json : dataCkList) {
-					kdclDate = json.getAsString("kdclDate");
+//				for (JSONObject json : dataCkList) {
+//					kdclDate = json.getAsString("kdclDate");
+//					differenceDay = (long) (date.getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
+//					log.info("kdclDate ck:"+kdclDate+" flag:"+(differenceDay <= Long.valueOf(clickRangeDate)) + " range:"+differenceDay);
+//				}
+//				for (JSONObject json : dataCkList) {
+//					kdclDate = json.getAsString("kdclDate");
+//					differenceDay = (long) (date.getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
+//					if(differenceDay > Long.valueOf(clickRangeDate)){
+//						dataCkList.remove(json);
+//					}
+//				}
+				
+				
+				iterator = dataCkList.iterator();
+				while (iterator.hasNext()) {
+					iteratorJson = (JSONObject)iterator.next();
+					kdclDate = iteratorJson.getAsString("kdclDate");
 					differenceDay = (long) (date.getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
 					log.info("kdclDate ck:"+kdclDate+" flag:"+(differenceDay <= Long.valueOf(clickRangeDate)) + " range:"+differenceDay);
-				}
-				for (JSONObject json : dataCkList) {
-					kdclDate = json.getAsString("kdclDate");
-					differenceDay = (long) (date.getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
 					if(differenceDay > Long.valueOf(clickRangeDate)){
-						dataCkList.remove(json);
+						iterator.remove();
 					}
 				}
+				
 				//排序時間
 				sortKdclDataList(dataCkList);
 				log.info("after sort kdclDate ck:"+ dataCkList);
