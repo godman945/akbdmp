@@ -57,12 +57,12 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 			if(fileName.equals("pacl_2018_11_26.txt.lzo")){
 //				log.info("raw_data : " + valueStr);
 //				log.info("arrayData size : " + arrayData.length);
-				String uuid = arrayData[2];
-				String type = arrayData[11];
+				String paclUuid = arrayData[2];
+				String paclType = arrayData[11];
 				String convId = arrayData[12];
 				String rouleId = arrayData[13];
-				if(type.equals("convert")){
-					keyOut.set(convId+"_"+uuid);
+				if(paclType.equals("convert")){
+					keyOut.set(convId+"_"+paclUuid);
 					context.write(keyOut, new Text(rouleId.replace(";", "")));
 				}
 			}else{
@@ -75,7 +75,7 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					if(times.length() == 1){
 						times = 0+times;
 					}
-					date = sdf2.format(sdf.parse(date));
+					String formatDate = sdf2.format(sdf.parse(date));
 					String pfpCustomerInfoId = arrayData[6];
 					String pfbxCustomerInfoId = arrayData[25];
 					String pfbxPositionId = arrayData[26];
@@ -91,8 +91,8 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					String adType = arrayData[14];
 					String actionSeq = arrayData[21];
 					String groupSeq = arrayData[22];
-					
-					kdclInfo.put("kdclDate", date);
+					kdclInfo.put("kdclSourceDate", date);
+					kdclInfo.put("kdclDate", formatDate);
 					kdclInfo.put("keclTime", times);
 					kdclInfo.put("pfpCustomerInfoId", pfpCustomerInfoId);
 					kdclInfo.put("pfbxCustomerInfoId",pfbxCustomerInfoId );

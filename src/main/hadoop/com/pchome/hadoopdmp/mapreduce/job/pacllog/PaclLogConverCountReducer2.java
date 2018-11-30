@@ -252,7 +252,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 		Collections.sort(dataCkList, new Comparator<JSONObject>() {
 			public int compare(JSONObject o1, JSONObject o2) {
 				try {
-					return sdf.parse(o2.getAsString("time")).compareTo(sdf.parse(o1.getAsString("time")));
+					return sdf.parse(o2.getAsString("kdclSourceDate")).compareTo(sdf.parse(o1.getAsString("kdclSourceDate")));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
