@@ -1,7 +1,6 @@
 package com.pchome.hadoopdmp.mapreduce.job.pacllog;
 
 import java.sql.PreparedStatement;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -240,16 +239,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 		try {
 			log.info("cleanup:"+saveDBMap);
 			for (Entry<String ,JSONObject> data : saveDBMap.entrySet()) {
-				
-				
-//				String clickRangeDate = paclJsonInfo.getAsString("clickRangeDate");
-//				String impRangeDate = paclJsonInfo.getAsString("impRangeDate");
-//				String convertPriceCount = paclJsonInfo.getAsString("convertPriceCount");
-//				String convertPrice = paclJsonInfo.getAsString("convertPrice");
-//				String convertBelong = paclJsonInfo.getAsString("convertBelong");
-//				String convertSeq = paclJsonInfo.getAsString("convertSeq");
-//				String convertNumType = paclJsonInfo.getAsString("convertNumType");
-//				String convertNumType = convertNumType
 				String type = data.getKey().split("<PCHOME>")[1];
 				String uuid = data.getKey().split("<PCHOME>")[0];
 				JSONObject json = data.getValue();
@@ -288,13 +277,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				preparedStmt.setString(32,json.getAsString("*****"));
 				preparedStmt.setDate(33, java.sql.Date.valueOf(sdf.format(date)));
 				preparedStmt.setDate(34,java.sql.Date.valueOf(sdf.format(date)));
-//				PreparedStatement preparedStmt = connect.prepareStatement(sql);
-//				preparedStmt.setString (1, "Barney");
-//				preparedStmt.setString (2, "Rubble");
-//				preparedStmt.setDate   (3, startDate);
-//				preparedStmt.setBoolean(4, false);
-//				preparedStmt.setInt    (5, 5000);
-				
 				mysqlUtil.insert(preparedStmt);
 			}
 			
