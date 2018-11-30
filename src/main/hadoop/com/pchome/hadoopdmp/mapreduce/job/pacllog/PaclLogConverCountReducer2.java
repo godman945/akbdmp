@@ -95,6 +95,9 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			String password =  "K1y0nLine";
 			mysqlUtil = MysqlUtil.getInstance();
 			mysqlUtil.setConnection(url, user, password);
+			
+			log.info("mysqlUtil:"+mysqlUtil.getInstance());
+			
 		} catch (Throwable e) {
 			log.error("reduce setup error>>>>>> " + e);
 		}
@@ -127,17 +130,14 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 					log.info("pacl:"+logJson.getAsString("fileName").contains("part-r-00000"));
 					if(logJson.getAsString("fileName").contains("kdcl")){
 						flagKdcl = true;
-						
 						String kdclType = logJson.getAsString("kdclType");
 						if(kdclType.equals("ck")){
 							dataCkList.add(logJson);
 						}else if(kdclType.equals("pv")){
 							dataPvList.add(logJson);
 						}
-						
 					}
 					if(logJson.getAsString("fileName").contains("part-r-00000")){
-//						dataList.add(logJson);
 						flagPacl = true;
 						clickRangeDate = logJson.getAsString("clickRangeDate");
 						impRangeDate = logJson.getAsString("impRangeDate");
@@ -150,12 +150,11 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			}
 			if(flagKdcl && flagPacl){
 				log.info("##>>>>>>key:"+key);
-				for (JSONObject json : dataCkList) {
-					kdclDate = json.getAsString("kdclDate");
-					differenceDay = (long) (date.getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
-					log.info("kdclDate ck:"+kdclDate+" flag:"+(differenceDay <= Long.valueOf(clickRangeDate)) + " range:"+differenceDay);
-				}
-				
+//				for (JSONObject json : dataCkList) {
+//					kdclDate = json.getAsString("kdclDate");
+//					differenceDay = (long) (date.getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
+//					log.info("kdclDate ck:"+kdclDate+" flag:"+(differenceDay <= Long.valueOf(clickRangeDate)) + " range:"+differenceDay);
+//				}
 				for (JSONObject json : dataCkList) {
 					kdclDate = json.getAsString("kdclDate");
 					differenceDay = (long) (date.getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
@@ -166,79 +165,14 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				//排序時間
 				sortKdclDataList(dataCkList);
 				log.info("after sort kdclDate ck:"+ dataCkList);
-				if(convertBelong.equals("1")){
-					log.info("final data:"+dataCkList.get(0));
+				if(dataCkList.size() > 0){
+					if(convertBelong.equals("1")){
+						log.info("final data:"+dataCkList.get(dataCkList.size() - 1));
+					}
+					if(convertBelong.equals("2")){
+						log.info("final data:"+dataCkList.get(0));
+					}
 				}
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-//				String belongAdDate = "";
-//				for (JSONObject json : dataCkList) {
-//					String kdclDate = json.getAsString("kdclDate");
-//					long day = (long) (date.getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
-//					long d = Long.valueOf(clickRangeDate.split(":")[1]);
-//					log.info(">>>>>>>>>>>>>range day flag:"+(day <= d) + " date:"+kdclDate);
-//					if(day <= d){
-//						if(StringUtils.isBlank(belongAdDate)){
-//							belongAdDate = kdclDate;
-//							continue;
-//						}
-//						
-//						if(convertBelong.equals("1") && sdf.parse(kdclDate).compareTo(sdf.parse(belongAdDate)) >= 0){
-//							belongAdDate = kdclDate;
-//						}
-////						if(convertBelong.equals("2") && sdf.parse(kdclDate).compareTo(sdf.parse(belongAdDate)) <= 0){
-////							belongAdDate = kdclDate;
-////						}
-//					}
-//				}
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-//				for (JSONObject json : dataCkList) {
-//					String kdclDate = json.getAsString("kdclDate");
-//					String kdclType = json.getAsString("kdclType");
-//					long day = (long) (date.getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
-//					long d = 0;
-//					if(kdclType.equals("ck")){
-//						d = Long.valueOf(clickRangeDate.split(":")[1]);
-//					}else if(kdclType.equals("pv")){
-//						d = Long.valueOf(impRangeDate.split(":")[1]);
-//					}
-//					log.info(">>>>>>>>>>>>>range day flag:"+(day <= d));
-//					
-//					
-//					if(day <= d){
-//						if(StringUtils.isBlank(adCkDateBelong)){
-//							adCkDateBelong = kdclDate;
-//						}
-//						if(StringUtils.isBlank(adPvDateBelong)){
-//							adPvDateBelong = kdclDate;
-//						}
-//						
-//						if(convertBelong.equals("1") && sdf.parse(kdclDate).compareTo(sdf.parse(adCkDateBelong)) >= 0){
-//							
-//						}
-//						if(convertBelong.equals("2") && sdf.parse(kdclDate).compareTo(sdf.parse(adCkDateBelong)) <= 0){
-//							
-//						}
-//					}
-//				}
 			}
 			
 		} catch (Throwable e) {
