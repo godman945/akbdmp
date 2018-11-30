@@ -155,28 +155,29 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			}
 			
 			//統計轉換次數
-			int min = 0;
+			int convertCount = 0;
 			for (String rouleIdCountStr : convertConditionSet) {
 				String converArray[] = rouleIdCountStr.split("_");
 				int count = Integer.parseInt(converArray[1]);
 				if(count == 0){
-					min = 0;
+					convertCount = 0;
 					break;
 				}
-				if(min == 0){
-					min = count;
-				}else if(count < min){
-					min = count;
+				if(convertCount == 0){
+					convertCount = count;
+				}else if(count < convertCount){
+					convertCount = count;
 				}
 			}
 			int convertPriceCount = 0;
 			//1:每次 2:一次
 			if(pcalConditionBean.getConvertNumType() == 1){
-				convertPriceCount = (int)Double.parseDouble(pcalConditionBean.getConvertPrice()) * min;
+				convertPriceCount = (int)Double.parseDouble(pcalConditionBean.getConvertPrice()) * convertCount;
 			}else if(pcalConditionBean.getConvertNumType() == 2){
 				convertPriceCount = (int)Double.parseDouble(pcalConditionBean.getConvertPrice());
 			}
-			log.info("============="+convertConditionSet+" convert count:"+min);
+			pcalConditionBean.setConvertCount(convertCount);
+			log.info("============="+convertConditionSet+" convert count:"+convertCount);
 			keyOut.set(uuid);
 			convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getClickRangeDate());
 			convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getImpRangeDate());
@@ -184,6 +185,8 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getConvertPrice());
 			convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getConvertBelong());
 			convertWriteInfo.append(paclSymbol).append(convertSeq);
+			convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getConvertNumType());
+			convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getConvertCount());
 			valueOut.set(convertWriteInfo.toString());
 			log.info(">>>>>>write:"+convertWriteInfo.toString());
 			context.write(keyOut, valueOut);

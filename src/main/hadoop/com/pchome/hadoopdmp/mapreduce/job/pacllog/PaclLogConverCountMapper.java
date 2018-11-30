@@ -76,6 +76,7 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 						times = 0+times;
 					}
 					String formatDate = sdf2.format(sdf.parse(date));
+					String referer = arrayData[4];
 					String pfpCustomerInfoId = arrayData[6];
 					String pfbxCustomerInfoId = arrayData[25];
 					String pfbxPositionId = arrayData[26];
@@ -109,6 +110,7 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					kdclInfo.put("adType", adType);
 					kdclInfo.put("actionSeq", actionSeq);
 					kdclInfo.put("groupSeq", groupSeq);
+					kdclInfo.put("referer", referer);
 					kdclInfo.put("fileName", fileName);
 					keyOut.set(uuid);
 					context.write(keyOut, new Text(kdclInfo.toString()));
@@ -123,6 +125,9 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					String convertPrice = arrayData[4];
 					String convertBelong = arrayData[5];
 					String convertSeq = arrayData[6];
+					String convertNumType = arrayData[7];
+					String convertCount = arrayData[8];
+					
 					paclInfo.put("clickRangeDate",clickRangeDate);
 					paclInfo.put("impRangeDate",impRangeDate);
 					paclInfo.put("convertPriceCount",convertPriceCount);
@@ -130,6 +135,8 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					paclInfo.put("convertBelong",convertBelong);
 					paclInfo.put("convertSeq",convertSeq);
 					paclInfo.put("fileName",fileName);
+					paclInfo.put("convertNumType",convertNumType);
+					paclInfo.put("convertCount",convertCount);
 					keyOut.set(uuid);
 					context.write(keyOut, new Text(paclInfo.toString()));
 				}

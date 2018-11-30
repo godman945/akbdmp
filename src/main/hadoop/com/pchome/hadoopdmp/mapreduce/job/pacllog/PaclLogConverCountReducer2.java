@@ -1,5 +1,6 @@
 package com.pchome.hadoopdmp.mapreduce.job.pacllog;
 
+import java.sql.PreparedStatement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,28 +32,25 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	private Text valueOut = new Text();
 
 	private MysqlUtil mysqlUtil = null;
-	private StringBuffer convertWriteInfo = new StringBuffer();
+	private StringBuffer insertSqlStr = new StringBuffer();
 	private StringBuffer sql = new StringBuffer();
 	private static Date date = new Date();
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	private JSONParser jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
 	private static List<JSONObject> dataCkList = new ArrayList<JSONObject>();
 	private static List<JSONObject> dataPvList = new ArrayList<JSONObject>();
+	private static JSONObject paclJsonInfo = new JSONObject();
+	
+	
 	private static Map<String,JSONObject> saveDBMap = new HashMap<String,JSONObject>();
 	final static SimpleDateFormat sdfFormat =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private static boolean flagKdcl = false;
 	private static boolean flagPacl = false;
 	private static Long differenceDay = null;
-	private static String clickRangeDate = "";
-	private static String impRangeDate = "";
-	private static String convertPriceCount = "";
-	private static String convertPrice = "";
-	private static String convertBelong = "";
-	private static String convertSeq = "";
 	private static String kdclDate = "";
 	private static Iterator<JSONObject> iterator = null;
 	private static JSONObject iteratorJson = null;
-	
+	private static String rangrDate = null;
 	
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
@@ -62,6 +61,47 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			String password =  "K1y0nLine";
 			mysqlUtil = MysqlUtil.getInstance();
 			mysqlUtil.setConnection(url, user, password);
+			
+			insertSqlStr.append(" INSERT INTO `pfp_code_convert_trans`  ");
+			insertSqlStr.append("(uuid,");
+			insertSqlStr.append("convert_date,");
+			insertSqlStr.append("convert_seq,");
+			insertSqlStr.append("convert_trigger_type,");
+			insertSqlStr.append("convert_num_type,");
+			insertSqlStr.append("convert_belong, ");
+			insertSqlStr.append("convert_belong_date,");
+			insertSqlStr.append("convert_count,");
+			insertSqlStr.append("convert_price,");
+			insertSqlStr.append("ad_seq,");
+			insertSqlStr.append("ad_group_seq,");
+			insertSqlStr.append("ad_action_seq,");
+			insertSqlStr.append("ad_type,");
+			insertSqlStr.append("ad_pvclk_date,");
+			insertSqlStr.append("ad_pvclk_time,");
+			insertSqlStr.append("customer_info_id,");
+			insertSqlStr.append("pfbx_customer_info_id,");
+			insertSqlStr.append("pfbx_position_id,");
+			insertSqlStr.append("pfd_customer_info_id,");
+			insertSqlStr.append("pay_type,");
+			insertSqlStr.append("sex,");
+			insertSqlStr.append("age_code,");
+			insertSqlStr.append("time_code,");
+			insertSqlStr.append("template_ad_seq,");
+			insertSqlStr.append("ad_pvclk_website_classify,");
+			insertSqlStr.append("ad_pvclk_audience_classify,");
+			insertSqlStr.append("ad_url,");
+			insertSqlStr.append("style_no,");
+			insertSqlStr.append("ad_pvclk_device,");
+			insertSqlStr.append("ad_pvclk_os,");
+			insertSqlStr.append("ad_pvclk_brand,");
+			insertSqlStr.append("ad_pvclk_area,");
+			insertSqlStr.append("update_date,");
+			insertSqlStr.append("create_date) ");
+			insertSqlStr.append(" VALUES(  ");
+			insertSqlStr.append(" 	?,?,?,?,?,?,?,?,?,?, ");
+			insertSqlStr.append(" 	?,?,?,?,?,?,?,?,?,?, ");
+			insertSqlStr.append(" 	?,?,?,?,?,?,?,?,?,?, ");
+			insertSqlStr.append(" 	?,?,?,? )");
 			
 			log.info("mysqlUtil:"+mysqlUtil.getInstance());
 			
@@ -76,17 +116,11 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			String key = mapperKey.toString();
 			dataCkList.clear();
 			dataPvList.clear();
+			paclJsonInfo.clear();
 			iteratorJson = null;
 			iterator = null;
 			differenceDay = null;
-			convertSeq = "";
-			clickRangeDate = "";
-			impRangeDate = "";
-			convertPriceCount = "";
-			convertPrice = "";
-			kdclDate = "";
 			//1:最終 2:最初
-			convertBelong = "";
 			flagKdcl = false;
 			flagPacl = false;
 			if(key.equals("2f59086e290c6a4a513834ba16f563e6")){
@@ -108,12 +142,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 					}
 					if(logJson.getAsString("fileName").contains("part-r-00000")){
 						flagPacl = true;
-						clickRangeDate = logJson.getAsString("clickRangeDate");
-						impRangeDate = logJson.getAsString("impRangeDate");
-						convertPriceCount = logJson.getAsString("convertPriceCount");
-						convertPrice = logJson.getAsString("convertPrice");
-						convertBelong = logJson.getAsString("convertBelong");
-						convertSeq = logJson.getAsString("convertSeq");
+						paclJsonInfo = logJson;
 					}
 				}
 			}
@@ -131,35 +160,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				sortKdclDataList(dataPvList);
 				log.info("after sort kdclDate pv:"+ dataPvList);
 				processSaveDBInfo(dataPvList,"pv",key);
-				
-				
-				
-//				iterator = dataCkList.iterator();
-//				while (iterator.hasNext()) {
-//					iteratorJson = (JSONObject)iterator.next();
-//					kdclDate = iteratorJson.getAsString("kdclDate");
-//					differenceDay = (long) (date.getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
-//					log.info("kdclDate ck:"+kdclDate+" flag:"+(differenceDay <= Long.valueOf(clickRangeDate)) + " range:"+differenceDay);
-//					if(differenceDay > Long.valueOf(clickRangeDate)){
-//						iterator.remove();
-//					}
-//				}
-				
-				
-//				if(dataCkList.size() > 0){
-//					if(convertBelong.equals("1")){
-//						JSONObject saveJson = new JSONObject();
-//						saveJson = dataCkList.get(dataCkList.size() - 1);
-//						saveDBMap.put(key+"_ck", saveJson);
-//						log.info("final data:"+dataCkList.get(dataCkList.size() - 1));
-//					}
-//					if(convertBelong.equals("2")){
-//						JSONObject saveJson = new JSONObject();
-//						saveJson = dataCkList.get(0);
-//						saveDBMap.put(key+"_ck", saveJson);
-//						log.info("final data:"+dataCkList.get(0));
-//					}
-//				}
 			}
 			
 		} catch (Throwable e) {
@@ -169,17 +169,17 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	
 	private void processSaveDBInfo(List<JSONObject> data,String type,String uuid) throws Exception{
 		if(data.size() > 0){
-			
+			String convertBelong = ((JSONObject)data.get(0)).getAsString("convertBelong");
 			if(convertBelong.equals("1")){
 				JSONObject saveJson = new JSONObject();
 				saveJson = data.get(data.size() - 1);
-				saveDBMap.put(uuid+"<PCHOME_"+type.toUpperCase()+">", saveJson);
+				saveDBMap.put(uuid+"<PCHOME>"+type.toUpperCase(), saveJson);
 				log.info("final data:"+data.get(data.size() - 1));
 			}
 			if(convertBelong.equals("2")){
 				JSONObject saveJson = new JSONObject();
 				saveJson = data.get(0);
-				saveDBMap.put(uuid+"<PCHOME_"+type.toUpperCase()+">", saveJson);
+				saveDBMap.put(uuid+"<PCHOME>"+type.toUpperCase(), saveJson);
 				log.info("final data:"+data.get(0));
 			}
 		}
@@ -187,7 +187,15 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	
 	private void processOutOfRangeDay(List<JSONObject> data,String type) throws Exception{
 		log.info("processSaveDBInfo type:"+type);
-		String rangrDate = null;
+		String clickRangeDate = paclJsonInfo.getAsString("clickRangeDate");
+		String impRangeDate = paclJsonInfo.getAsString("impRangeDate");
+		String convertPriceCount = paclJsonInfo.getAsString("convertPriceCount");
+		String convertPrice = paclJsonInfo.getAsString("convertPrice");
+		String convertBelong = paclJsonInfo.getAsString("convertBelong");
+		String convertSeq = paclJsonInfo.getAsString("convertSeq");
+		String convertNumType = paclJsonInfo.getAsString("convertNumType");
+		String convertCount = paclJsonInfo.getAsString("convertCount");
+		rangrDate = null;
 		if(type.equals("ck")){
 			rangrDate = clickRangeDate;
 		}else if(type.equals("pv")){
@@ -201,6 +209,15 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			log.info("kdclDate:"+kdclDate+" flag:"+(differenceDay <= Long.valueOf(rangrDate)) + " range:"+differenceDay);
 			if(differenceDay > Long.valueOf(rangrDate)){
 				iterator.remove();
+			}else{
+				iteratorJson.put("clickRangeDate", clickRangeDate);
+				iteratorJson.put("impRangeDate", impRangeDate);
+				iteratorJson.put("convertPriceCount", convertPriceCount);
+				iteratorJson.put("convertPrice", convertPrice);
+				iteratorJson.put("convertBelong", convertBelong);
+				iteratorJson.put("convertSeq", convertSeq);
+				iteratorJson.put("convertNumType", convertNumType);
+				iteratorJson.put("convertCount", convertCount);
 			}
 		}
 	}
@@ -221,13 +238,68 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	
 	public void cleanup(Context context) {
 		try {
-			
 			log.info("cleanup:"+saveDBMap);
-			
+			for (Entry<String ,JSONObject> data : saveDBMap.entrySet()) {
+				
+				
+//				String clickRangeDate = paclJsonInfo.getAsString("clickRangeDate");
+//				String impRangeDate = paclJsonInfo.getAsString("impRangeDate");
+//				String convertPriceCount = paclJsonInfo.getAsString("convertPriceCount");
+//				String convertPrice = paclJsonInfo.getAsString("convertPrice");
+//				String convertBelong = paclJsonInfo.getAsString("convertBelong");
+//				String convertSeq = paclJsonInfo.getAsString("convertSeq");
+//				String convertNumType = paclJsonInfo.getAsString("convertNumType");
+//				String convertNumType = convertNumType
+				String type = data.getKey().split("<PCHOME>")[1];
+				String uuid = data.getKey().split("<PCHOME>")[0];
+				JSONObject json = data.getValue();
+				PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement(insertSqlStr.toString());
+				preparedStmt.setString(1, uuid);
+				preparedStmt.setString(2, sdf.format(date));
+				preparedStmt.setString(3, json.getAsString("convertSeq"));
+				preparedStmt.setString(4, type);
+				preparedStmt.setString(5, json.getAsString("convertNumType"));
+				preparedStmt.setString(6, json.getAsString("convertBelong"));
+				preparedStmt.setString(7, json.getAsString("kdclDate"));
+				preparedStmt.setInt(8, Integer.parseInt(json.getAsString("convertCount")));
+				preparedStmt.setInt(9,Integer.parseInt(json.getAsString("convertPriceCount")));
+				preparedStmt.setString(10,json.getAsString("adSeq") );
+				preparedStmt.setString(11,json.getAsString("groupSeq") );
+				preparedStmt.setString(12,json.getAsString("actionSeq"));
+				preparedStmt.setString(13,json.getAsString("adType") );
+				preparedStmt.setString(14,json.getAsString("kdclDate") );
+				preparedStmt.setString(15,json.getAsString("keclTime") );
+				preparedStmt.setString(16,json.getAsString("pfpCustomerInfoId") );
+				preparedStmt.setString(17,json.getAsString("pfbxCustomerInfoId") );
+				preparedStmt.setString(18,json.getAsString("pfbxPositionId") );
+				preparedStmt.setString(19,json.getAsString("pfdCustomerInfoId") );
+				preparedStmt.setString(20,json.getAsString("payType") );
+				preparedStmt.setString(21,json.getAsString("sex") );
+				preparedStmt.setString(22,json.getAsString("ageCode") );
+				preparedStmt.setString(23,json.getAsString("*****") );
+				preparedStmt.setString(24,json.getAsString("*****") );
+				preparedStmt.setString(25,json.getAsString("*****") );
+				preparedStmt.setString(26,json.getAsString("*****") );
+				preparedStmt.setString(27,json.getAsString("referer") );
+				preparedStmt.setString(28,json.getAsString("styleId") );
+				preparedStmt.setString(29,json.getAsString("*****") );
+				preparedStmt.setString(30,json.getAsString("*****") );
+				preparedStmt.setString(31,json.getAsString("*****"));
+				preparedStmt.setString(32,json.getAsString("*****"));
+				preparedStmt.setDate(33, java.sql.Date.valueOf(sdf.format(date)));
+				preparedStmt.setDate(34,java.sql.Date.valueOf(sdf.format(date)));
+//				PreparedStatement preparedStmt = connect.prepareStatement(sql);
+//				preparedStmt.setString (1, "Barney");
+//				preparedStmt.setString (2, "Rubble");
+//				preparedStmt.setDate   (3, startDate);
+//				preparedStmt.setBoolean(4, false);
+//				preparedStmt.setInt    (5, 5000);
+				
+				mysqlUtil.insert(preparedStmt);
+			}
 			
 			mysqlUtil.closeConnection();
 		} catch (Throwable e) {
-			convertWriteInfo.setLength(0);
 			sql.setLength(0);
 			log.error("reduce cleanup error>>>>>> " + e);
 		}
