@@ -178,12 +178,12 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			}
 			log.info("============="+convertConditionSet+" convert count:"+min);
 			keyOut.set(uuid);
-			convertWriteInfo.append(paclSymbol).append("clickRangeDate:").append(pcalConditionBean.getClickRangeDate()).append(paclSymbol);
-			convertWriteInfo.append("impRangeDate:").append(pcalConditionBean.getImpRangeDate()).append(paclSymbol);
-			convertWriteInfo.append("convertPriceCount:").append(convertPriceCount).append(paclSymbol);
-			convertWriteInfo.append("convertPric:").append(pcalConditionBean.getConvertPrice()).append(paclSymbol);
-			convertWriteInfo.append("convertBelong:").append(pcalConditionBean.getConvertBelong()).append(paclSymbol);
-			convertWriteInfo.append("convertSeq:").append(convertSeq);
+			convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getClickRangeDate());
+			convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getImpRangeDate());
+			convertWriteInfo.append(paclSymbol).append(convertPriceCount);
+			convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getConvertPrice());
+			convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getConvertBelong());
+			convertWriteInfo.append(paclSymbol).append(convertSeq);
 			valueOut.set(convertWriteInfo.toString());
 			log.info(">>>>>>write:"+convertWriteInfo.toString());
 			context.write(keyOut, valueOut);

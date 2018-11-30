@@ -3,6 +3,8 @@ package com.pchome.hadoopdmp.mapreduce.job.pacllog;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,6 +14,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.io.Text;
@@ -57,7 +60,11 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	private StringBuffer sql = new StringBuffer();
 	
 	
-	private static List<JSONObject> dataList = new ArrayList<JSONObject>();
+	private static List<JSONObject> dataCkList = new ArrayList<JSONObject>();
+	private static List<JSONObject> dataPvList = new ArrayList<JSONObject>();
+	
+	private static Map<String,JSONObject> saveDBMap = new HashMap<String,JSONObject>();
+	
 	
 	private static Date date = new Date();
 	
@@ -65,16 +72,20 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	
 //	private JSONObject logJson = new JSONObject();
 	
-	private static boolean flagKdcl = false;
-	
-	private static boolean flagPacl = false;
 	
 	private JSONParser jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
 	
-	
-	
-	
-	
+	final static SimpleDateFormat sdfFormat =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private static boolean flagKdcl = false;
+	private static boolean flagPacl = false;
+	private static Long differenceDay = null;
+	private static String clickRangeDate = "";
+	private static String impRangeDate = "";
+	private static String convertPriceCount = "";
+	private static String convertPrice = "";
+	private static String convertBelong = "";
+	private static String convertSeq = "";
+	private static String kdclDate = "";
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
 		try {
@@ -93,18 +104,17 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
 		try {
 			String key = mapperKey.toString();
-			dataList.clear();
-			
-			String clickRangeDate = "";
-			String impRangeDate = "";
-			String convertPriceCount = "";
-			String convertPrice = "";
+			dataCkList.clear();
+			dataPvList.clear();
+			differenceDay = null;
+			clickRangeDate = "";
+			impRangeDate = "";
+			convertPriceCount = "";
+			convertPrice = "";
+			kdclDate = "";
 			//1:最終 2:最初
-			String convertBelong = "";
-			String convertSeq = "";
-			String adDateBelong = "";
-			String adSeqBelong = "";
-			
+			convertBelong = "";
+			convertSeq = "";
 			flagKdcl = false;
 			flagPacl = false;
 			if(key.equals("2f59086e290c6a4a513834ba16f563e6")){
@@ -116,13 +126,19 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 					log.info("kdcl:"+logJson.getAsString("fileName").contains("kdcl"));
 					log.info("pacl:"+logJson.getAsString("fileName").contains("part-r-00000"));
 					if(logJson.getAsString("fileName").contains("kdcl")){
-						dataList.add(logJson);
 						flagKdcl = true;
+						
+						String kdclType = logJson.getAsString("kdclType");
+						if(kdclType.equals("ck")){
+							dataCkList.add(logJson);
+						}else if(kdclType.equals("pv")){
+							dataPvList.add(logJson);
+						}
+						
 					}
 					if(logJson.getAsString("fileName").contains("part-r-00000")){
 //						dataList.add(logJson);
 						flagPacl = true;
-						
 						clickRangeDate = logJson.getAsString("clickRangeDate");
 						impRangeDate = logJson.getAsString("impRangeDate");
 						convertPriceCount = logJson.getAsString("convertPriceCount");
@@ -134,59 +150,70 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			}
 			if(flagKdcl && flagPacl){
 				log.info("##>>>>>>key:"+key);
-				for (JSONObject json : dataList) {
-					String kdclDate = json.getAsString("kdclDate");
-					String kdclType = json.getAsString("kdclType");
-					long day = (long) (date.getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
-					long d = 0;
-					if(kdclType.equals("ck")){
-						d = Long.valueOf(clickRangeDate.split(":")[1]);
-					}else if(kdclType.equals("pv")){
-						d = Long.valueOf(impRangeDate.split(":")[1]);
-					}
-					log.info(">>>>>>>>>>>>>range day flag:"+(day <= d));
-					
+				for (JSONObject json : dataCkList) {
+					kdclDate = json.getAsString("kdclDate");
+					differenceDay = (long) (date.getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
+					log.info("kdclDate ck:"+kdclDate+" flag:"+(differenceDay <= Long.valueOf(clickRangeDate)) + " range:"+differenceDay);
 				}
-			}
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-//			if(flagKdcl && flagPart){
-//				log.info("##>>>>>>key:"+key);
-//				
-//				String clickRangeDate = convertConditionArray[0];
-//				String impRangeDate = convertConditionArray[1];
-//				String convertPriceCount = convertConditionArray[2];
-//				String convertPric = convertConditionArray[3];
-//				//1:最終 2:最初
-//				String convertBelong = convertConditionArray[4];
-//				String convertSeq = convertConditionArray[5];
-//				
-//				String adDateBelong = "";
-//				String adSeqBelong = "";
-//				
-//				
-//				
-//				for (String str : dataList) {
-//					String[] kdclDataArray = str.split(",");
-//					String kdclDate = kdclDataArray[0];
-//					String kdclAdseq = kdclDataArray[1];
-//					String kdclType = kdclDataArray[2];
+				
+				for (JSONObject json : dataCkList) {
+					kdclDate = json.getAsString("kdclDate");
+					differenceDay = (long) (date.getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
+					if(differenceDay > Long.valueOf(clickRangeDate)){
+						dataCkList.remove(json);
+					}
+				}
+				//排序時間
+				sortKdclDataList(dataCkList);
+				log.info("after sort kdclDate ck:"+ dataCkList);
+				if(convertBelong.equals("1")){
+					log.info("final data:"+dataCkList.get(0));
+				}
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+//				String belongAdDate = "";
+//				for (JSONObject json : dataCkList) {
+//					String kdclDate = json.getAsString("kdclDate");
 //					long day = (long) (date.getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
-//					log.info(">>>>>>>>>>>>>:"+str);
-//					log.info(">>>>>>>>>>>>>adseq:"+kdclAdseq);
-//					log.info(">>>>>>>>>>>>>kdclType:"+kdclType);
-//					log.info(">>>>>>>>>>>>>range day:"+day);
+//					long d = Long.valueOf(clickRangeDate.split(":")[1]);
+//					log.info(">>>>>>>>>>>>>range day flag:"+(day <= d) + " date:"+kdclDate);
+//					if(day <= d){
+//						if(StringUtils.isBlank(belongAdDate)){
+//							belongAdDate = kdclDate;
+//							continue;
+//						}
+//						
+//						if(convertBelong.equals("1") && sdf.parse(kdclDate).compareTo(sdf.parse(belongAdDate)) >= 0){
+//							belongAdDate = kdclDate;
+//						}
+////						if(convertBelong.equals("2") && sdf.parse(kdclDate).compareTo(sdf.parse(belongAdDate)) <= 0){
+////							belongAdDate = kdclDate;
+////						}
+//					}
+//				}
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+//				for (JSONObject json : dataCkList) {
+//					String kdclDate = json.getAsString("kdclDate");
+//					String kdclType = json.getAsString("kdclType");
+//					long day = (long) (date.getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
 //					long d = 0;
 //					if(kdclType.equals("ck")){
 //						d = Long.valueOf(clickRangeDate.split(":")[1]);
@@ -195,23 +222,46 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 //					}
 //					log.info(">>>>>>>>>>>>>range day flag:"+(day <= d));
 //					
+//					
 //					if(day <= d){
-//						if(convertBelong.equals("1") && sdf.parse(kdclDate).compareTo(anotherDate) >= 0){
+//						if(StringUtils.isBlank(adCkDateBelong)){
+//							adCkDateBelong = kdclDate;
+//						}
+//						if(StringUtils.isBlank(adPvDateBelong)){
+//							adPvDateBelong = kdclDate;
+//						}
+//						
+//						if(convertBelong.equals("1") && sdf.parse(kdclDate).compareTo(sdf.parse(adCkDateBelong)) >= 0){
 //							
 //						}
-//						if(convertBelong.equals("2")){
+//						if(convertBelong.equals("2") && sdf.parse(kdclDate).compareTo(sdf.parse(adCkDateBelong)) <= 0){
 //							
 //						}
 //					}
-					
-					
-//					log.info("***************************");
 //				}
-//			}
+			}
+			
 		} catch (Throwable e) {
 			log.error("reduce error>>>>>> " + e);
 		}
 	}
+	
+	
+	
+	public List<JSONObject> sortKdclDataList(List<JSONObject> data){
+		Collections.sort(dataCkList, new Comparator<JSONObject>() {
+			public int compare(JSONObject o1, JSONObject o2) {
+				try {
+					return sdf.parse(o2.getAsString("time")).compareTo(sdf.parse(o1.getAsString("time")));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				return 0;
+			}
+		});
+		return data;
+	}
+	
 	public void cleanup(Context context) {
 		try {
 			mysqlUtil.closeConnection();
