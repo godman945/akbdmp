@@ -285,10 +285,14 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				preparedStmt.setDate(33, java.sql.Date.valueOf(sdfFormat.format(date)));
 				preparedStmt.setDate(34,java.sql.Date.valueOf(sdfFormat.format(date)));
 				preparedStmt.addBatch();
+				
+				
+				log.info("count:"+count+" totalSize:"+totalSize);
 				if(count % 5000 == 0){
 					preparedStmt.executeBatch();
 					mysqlUtil.getConnect().commit();
 				}else if(count == totalSize){
+					log.info(">>>>>>> do commit");
 					preparedStmt.executeBatch();
 					mysqlUtil.getConnect().commit();
 					preparedStmt.close();
