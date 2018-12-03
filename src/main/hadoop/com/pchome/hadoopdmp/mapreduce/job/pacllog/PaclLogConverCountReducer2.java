@@ -242,11 +242,14 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	public void cleanup(Context context) {
 		try {
 			log.info("cleanup:"+saveDBMap);
+			int count = 0;
+			int totalSize = saveDBMap.size();
+			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement(insertSqlStr.toString());
 			for (Entry<String ,JSONObject> data : saveDBMap.entrySet()) {
+				count = count + 1;
 				String type = data.getKey().split("<PCHOME>")[1];
 				String uuid = data.getKey().split("<PCHOME>")[0];
 				JSONObject json = data.getValue();
-				PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement(insertSqlStr.toString());
 				preparedStmt.setString(1, uuid);
 				preparedStmt.setString(2, sdf.format(date));
 				preparedStmt.setString(3, json.getAsString("convertSeq"));
@@ -281,7 +284,13 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				preparedStmt.setString(32,json.getAsString("*****"));
 				preparedStmt.setDate(33, java.sql.Date.valueOf(sdf.format(date)));
 				preparedStmt.setDate(34,java.sql.Date.valueOf(sdf.format(date)));
-				mysqlUtil.insert(preparedStmt);
+				preparedStmt.addBatch();
+				if(count % 5000 == 0){
+					preparedStmt.executeBatch();
+				}else if(count == totalSize){
+					preparedStmt.executeBatch();
+					preparedStmt.close();
+				}
 			}
 			
 			mysqlUtil.closeConnection();

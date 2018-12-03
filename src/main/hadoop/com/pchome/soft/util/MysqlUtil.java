@@ -20,7 +20,6 @@ public class MysqlUtil {
 	private Statement statement = null;
 	private PreparedStatement preparedStatement = null;
 	private ResultSet resultSet = null;
-	
 	Log log = LogFactory.getLog(MysqlUtil.class);
 
 	synchronized static public MysqlUtil getInstance() {
@@ -29,6 +28,7 @@ public class MysqlUtil {
 	
 	public void setConnection(String url,String user,String password) throws Exception{
 		connect = DriverManager.getConnection(url, user, password);
+		connect.setAutoCommit(false); // 设置手动提交 
 		statement = connect.createStatement();
 	}
 	
@@ -55,10 +55,10 @@ public class MysqlUtil {
 
 	}
 	
-	public boolean insert(PreparedStatement preparedStmt) throws Exception{
-		return preparedStmt.execute();
-		
-	}
+//	public boolean insert(PreparedStatement preparedStmt) throws Exception{
+//		return preparedStmt.execute();
+//		
+//	}
 	
 	public Connection getConnect() {
 		return this.connect;
@@ -167,7 +167,7 @@ public class MysqlUtil {
 			
 			
 			
-			System.out.println(mysqlUtil.insert(preparedStmt));
+//			System.out.println(mysqlUtil.insert(preparedStmt));
 			
 			
 			
