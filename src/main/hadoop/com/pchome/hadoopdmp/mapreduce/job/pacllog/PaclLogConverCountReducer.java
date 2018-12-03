@@ -172,10 +172,19 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			}
 			int convertPriceCount = 0;
 			//1:每次 2:一次
-			if(pcalConditionBean.getConvertNumType() == 1){
-				convertPriceCount = (int)Double.parseDouble(pcalConditionBean.getConvertPrice()) * convertCount;
-			}else if(pcalConditionBean.getConvertNumType() == 2){
-				convertPriceCount = (int)Double.parseDouble(pcalConditionBean.getConvertPrice());
+//			if(pcalConditionBean.getConvertNumType() == 1){
+//				convertPriceCount = (int)Double.parseDouble(pcalConditionBean.getConvertPrice()) * convertCount;
+//			}else if(pcalConditionBean.getConvertNumType() == 2){
+//				convertPriceCount = (int)Double.parseDouble(pcalConditionBean.getConvertPrice());
+//			}
+			
+			if(convertCount > 0){
+				if(pcalConditionBean.getConvertNumType() == 1){
+					convertPriceCount = (int)Double.parseDouble(pcalConditionBean.getConvertPrice()) * convertCount;
+				}else if(pcalConditionBean.getConvertNumType() == 2){
+					convertCount = 1;
+					convertPriceCount = (int)Double.parseDouble(pcalConditionBean.getConvertPrice()) * convertCount;
+				}
 			}
 			pcalConditionBean.setConvertCount(convertCount);
 			log.info("============="+convertConditionSet+" convert count:"+convertCount);
