@@ -260,7 +260,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				preparedStmt.setString(6, json.getAsString("convertBelong"));
 				preparedStmt.setString(7, json.getAsString("kdclDate"));
 				preparedStmt.setInt(8, Integer.parseInt(json.getAsString("convertCount")));
-				preparedStmt.setInt(9,Integer.parseInt(json.getAsString("convertPriceCount")));
+				preparedStmt.setInt(9,Integer.parseInt(json.getAsString("convertPrice")));
 				preparedStmt.setString(10,json.getAsString("adSeq") );
 				preparedStmt.setString(11,json.getAsString("groupSeq") );
 				preparedStmt.setString(12,json.getAsString("actionSeq"));
