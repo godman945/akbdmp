@@ -282,8 +282,8 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				preparedStmt.setString(30,json.getAsString("*****") );
 				preparedStmt.setString(31,json.getAsString("*****"));
 				preparedStmt.setString(32,json.getAsString("*****"));
-				preparedStmt.setDate(33, java.sql.Date.valueOf(sdf.format(date)));
-				preparedStmt.setDate(34,java.sql.Date.valueOf(sdf.format(date)));
+				preparedStmt.setDate(33, java.sql.Date.valueOf(sdfFormat.format(date)));
+				preparedStmt.setDate(34,java.sql.Date.valueOf(sdfFormat.format(date)));
 				preparedStmt.addBatch();
 				if(count % 5000 == 0){
 					preparedStmt.executeBatch();
