@@ -287,8 +287,10 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				preparedStmt.addBatch();
 				if(count % 5000 == 0){
 					preparedStmt.executeBatch();
+					mysqlUtil.getConnect().commit();
 				}else if(count == totalSize){
 					preparedStmt.executeBatch();
+					mysqlUtil.getConnect().commit();
 					preparedStmt.close();
 				}
 			}
