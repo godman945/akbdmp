@@ -203,6 +203,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	public void cleanup(Context context) {
 		try {
 			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement( "DELETE FROM `pfp_code_convert_trans` where  1=1 and DATE_FORMAT(create_date,'%Y-%m-%d') = DATE_FORMAT(NOW(),'%Y-%m-%d') ");
+			preparedStmt.execute();
 			mysqlUtil.getConnect().commit();
 			mysqlUtil.closeConnection();
 		} catch (Throwable e) {
