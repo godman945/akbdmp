@@ -119,7 +119,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			iteratorJson = null;
 			iterator = null;
 			differenceDay = null;
-			//1:最終 2:最初
 			flagKdcl = false;
 			flagPacl = false;
 			if(key.equals("2f59086e290c6a4a513834ba16f563e6")){
@@ -168,18 +167,19 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	
 	private void processSaveDBInfo(List<JSONObject> data,String type,String uuid) throws Exception{
 		if(data.size() > 0){
+			//1:最終 2:最初
 			String convertBelong = ((JSONObject)data.get(0)).getAsString("convertBelong");
 			if(convertBelong.equals("1")){
-				JSONObject saveJson = new JSONObject();
-				saveJson = data.get(data.size() - 1);
-				saveDBMap.put(uuid+"<PCHOME>"+type.toUpperCase(), saveJson);
-				log.info("final data:"+data.get(data.size() - 1));
-			}
-			if(convertBelong.equals("2")){
 				JSONObject saveJson = new JSONObject();
 				saveJson = data.get(0);
 				saveDBMap.put(uuid+"<PCHOME>"+type.toUpperCase(), saveJson);
 				log.info("final data:"+data.get(0));
+			}
+			if(convertBelong.equals("2")){
+				JSONObject saveJson = new JSONObject();
+				saveJson = data.get(data.size() - 1);
+				saveDBMap.put(uuid+"<PCHOME>"+type.toUpperCase(), saveJson);
+				log.info("final data:"+data.get(data.size() - 1));
 			}
 		}
 	}
