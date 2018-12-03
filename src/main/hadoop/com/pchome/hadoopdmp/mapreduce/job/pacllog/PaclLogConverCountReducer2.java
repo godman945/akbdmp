@@ -124,11 +124,11 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			if(key.equals("2f59086e290c6a4a513834ba16f563e6")){
 				for (Text text : mapperValue) {
 					String value = text.toString();
-					log.info(">>>"+value);
+//					log.info(">>>"+value);
 					JSONObject logJson = (JSONObject) jsonParser.parse(value);
-					log.info("fileName:"+logJson.getAsString("fileName"));
-					log.info("kdcl:"+logJson.getAsString("fileName").contains("kdcl"));
-					log.info("pacl:"+logJson.getAsString("fileName").contains("part-r-00000"));
+//					log.info("fileName:"+logJson.getAsString("fileName"));
+//					log.info("kdcl:"+logJson.getAsString("fileName").contains("kdcl"));
+//					log.info("pacl:"+logJson.getAsString("fileName").contains("part-r-00000"));
 					if(logJson.getAsString("fileName").contains("kdcl")){
 						flagKdcl = true;
 						String kdclType = logJson.getAsString("kdclType");
@@ -149,14 +149,14 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				processOutOfRangeDay(dataCkList,"ck");
 				//排序時間
 				sortKdclDataList(dataCkList);
-				log.info("after sort kdclDate ck:"+ dataCkList);
+//				log.info("after sort kdclDate ck:"+ dataCkList);
 				//存入寫入DB map
 				processSaveDBInfo(dataCkList,"ck",key);
 				
 				
 				processOutOfRangeDay(dataPvList,"pv");
 				sortKdclDataList(dataPvList);
-				log.info("after sort kdclDate pv:"+ dataPvList);
+//				log.info("after sort kdclDate pv:"+ dataPvList);
 				processSaveDBInfo(dataPvList,"pv",key);
 			}
 			
@@ -232,6 +232,10 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				return 0;
 			}
 		});
+		
+		for (JSONObject jsonObject : data) {
+			log.info("kdclSourceDate:"+jsonObject.getAsString("kdclSourceDate") +" kdclType:"+jsonObject.getAsString("kdclType"));
+		}
 		return data;
 	}
 	
