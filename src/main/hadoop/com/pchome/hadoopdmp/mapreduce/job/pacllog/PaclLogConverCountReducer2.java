@@ -292,8 +292,8 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				
 				log.info(">>>>>>>>>>>4");
 				
-				preparedStmt.setDate(33, java.sql.Date.valueOf(sdfFormat.format(date)));
-				preparedStmt.setDate(34,java.sql.Date.valueOf(sdfFormat.format(date)));
+				preparedStmt.setString(33, sdfFormat.format(date));
+				preparedStmt.setString(34, sdfFormat.format(date));
 				preparedStmt.addBatch();
 				
 				log.info(">>>>>>>>>>>5");
