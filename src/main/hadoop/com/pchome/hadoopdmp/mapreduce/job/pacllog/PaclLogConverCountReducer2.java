@@ -121,27 +121,21 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			differenceDay = null;
 			flagKdcl = false;
 			flagPacl = false;
-			if(key.equals("2f59086e290c6a4a513834ba16f563e6")){
-				for (Text text : mapperValue) {
-					String value = text.toString();
-//					log.info(">>>"+value);
-					JSONObject logJson = (JSONObject) jsonParser.parse(value);
-//					log.info("fileName:"+logJson.getAsString("fileName"));
-//					log.info("kdcl:"+logJson.getAsString("fileName").contains("kdcl"));
-//					log.info("pacl:"+logJson.getAsString("fileName").contains("part-r-00000"));
-					if(logJson.getAsString("fileName").contains("kdcl")){
-						flagKdcl = true;
-						String kdclType = logJson.getAsString("kdclType");
-						if(kdclType.equals("ck")){
-							dataCkList.add(logJson);
-						}else if(kdclType.equals("pv")){
-							dataPvList.add(logJson);
-						}
+			for (Text text : mapperValue) {
+				String value = text.toString();
+				JSONObject logJson = (JSONObject) jsonParser.parse(value);
+				if(logJson.getAsString("fileName").contains("kdcl")){
+					flagKdcl = true;
+					String kdclType = logJson.getAsString("kdclType");
+					if(kdclType.equals("ck")){
+						dataCkList.add(logJson);
+					}else if(kdclType.equals("pv")){
+						dataPvList.add(logJson);
 					}
-					if(logJson.getAsString("fileName").contains("part-r-00000")){
-						flagPacl = true;
-						paclJsonInfo = logJson;
-					}
+				}
+				if(logJson.getAsString("fileName").contains("part-r-00000")){
+					flagPacl = true;
+					paclJsonInfo = logJson;
 				}
 			}
 			if(flagKdcl && flagPacl){
@@ -149,14 +143,11 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				processOutOfRangeDay(dataCkList,"ck");
 				//排序時間
 				sortKdclDataList(dataCkList);
-//				log.info("after sort kdclDate ck:"+ dataCkList);
 				//存入寫入DB map
 				processSaveDBInfo(dataCkList,"ck",key);
 				
-				
 				processOutOfRangeDay(dataPvList,"pv");
 				sortKdclDataList(dataPvList);
-//				log.info("after sort kdclDate pv:"+ dataPvList);
 				processSaveDBInfo(dataPvList,"pv",key);
 			}
 			
@@ -260,7 +251,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				preparedStmt.setString(6, json.getAsString("convertBelong"));
 				preparedStmt.setString(7, json.getAsString("kdclDate"));
 				preparedStmt.setInt(8, Integer.parseInt(json.getAsString("convertCount")));
-				preparedStmt.setInt(9,Integer.parseInt(json.getAsString("convertPrice")));
+				preparedStmt.setInt(9,(int)Double.parseDouble(json.getAsString(("convertPrice"))));
 				preparedStmt.setString(10,json.getAsString("adSeq") );
 				preparedStmt.setString(11,json.getAsString("groupSeq") );
 				preparedStmt.setString(12,json.getAsString("actionSeq"));
