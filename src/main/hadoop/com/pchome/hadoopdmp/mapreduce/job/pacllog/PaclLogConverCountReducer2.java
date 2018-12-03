@@ -244,12 +244,16 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			log.info("cleanup:"+saveDBMap);
 			int count = 0;
 			int totalSize = saveDBMap.size();
+			
+			JSONObject json = null;
+			log.info(">>>>>>>>>>>1");
 			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement(insertSqlStr.toString());
+			log.info(">>>>>>>>>>>2");
 			for (Entry<String ,JSONObject> data : saveDBMap.entrySet()) {
 				count = count + 1;
 				String type = data.getKey().split("<PCHOME>")[1];
 				String uuid = data.getKey().split("<PCHOME>")[0];
-				JSONObject json = data.getValue();
+				json = data.getValue();
 				preparedStmt.setString(1, uuid);
 				preparedStmt.setString(2, sdf.format(date));
 				preparedStmt.setString(3, json.getAsString("convertSeq"));
@@ -260,6 +264,9 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				preparedStmt.setInt(8, Integer.parseInt(json.getAsString("convertCount")));
 				preparedStmt.setInt(9,Integer.parseInt(json.getAsString("convertPriceCount")));
 				preparedStmt.setString(10,json.getAsString("adSeq") );
+				
+				log.info(">>>>>>>>>>>3");
+				
 				preparedStmt.setString(11,json.getAsString("groupSeq") );
 				preparedStmt.setString(12,json.getAsString("actionSeq"));
 				preparedStmt.setString(13,json.getAsString("adType") );
@@ -282,11 +289,14 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				preparedStmt.setString(30,json.getAsString("*****") );
 				preparedStmt.setString(31,json.getAsString("*****"));
 				preparedStmt.setString(32,json.getAsString("*****"));
+				
+				log.info(">>>>>>>>>>>4");
+				
 				preparedStmt.setDate(33, java.sql.Date.valueOf(sdfFormat.format(date)));
 				preparedStmt.setDate(34,java.sql.Date.valueOf(sdfFormat.format(date)));
 				preparedStmt.addBatch();
 				
-				
+				log.info(">>>>>>>>>>>5");
 				log.info("count:"+count+" totalSize:"+totalSize);
 				if(count % 5000 == 0){
 					preparedStmt.executeBatch();
