@@ -133,11 +133,13 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 						dataPvList.add(logJson);
 					}
 				}
-				if(logJson.getAsString("fileName").contains("part-r-00000")){
+				if(logJson.getAsString("fileName").contains("part-r-")){
 					flagPacl = true;
 					paclJsonInfo = logJson;
 				}
 			}
+			log.info("key:"+key+" flagKdcl:"+flagKdcl+" flagPacl:"+flagPacl);
+			
 			if(flagKdcl && flagPacl){
 				log.info("##>>>>>>key:"+key);
 				processOutOfRangeDay(dataCkList,"ck");
