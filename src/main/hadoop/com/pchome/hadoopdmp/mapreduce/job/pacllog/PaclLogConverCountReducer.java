@@ -223,8 +223,8 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			int convertPriceCount = 0;
 			
 			if("2f59086e290c6a4a513834ba16f563e6".equals(uuid)){
-				log.info("count:"+count+ "ConvertType:"+pcalConditionBean.getConvertType()+" userDefineConvertPrice:"+userDefineConvertPrice);
-				log.info("ConvertPrice():"+pcalConditionBean.getConvertPrice());
+				log.info("count:"+count+" ConvertType:"+pcalConditionBean.getConvertType()+" userDefineConvertPrice:"+userDefineConvertPrice);
+				log.info("ConvertPrice():"+pcalConditionBean.getConvertPrice()+" ConvertNumType:"+pcalConditionBean.getConvertNumType());
 			}
 			
 //			1:每次 2:一次
