@@ -221,7 +221,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			}
 			
 			int convertPriceCount = 0;
-			
 			if("2f59086e290c6a4a513834ba16f563e6".equals(uuid)){
 				log.info("count:"+count+" ConvertType:"+pcalConditionBean.getConvertType()+" userDefineConvertPrice:"+userDefineConvertPrice);
 				log.info("ConvertPrice():"+pcalConditionBean.getConvertPrice()+" ConvertNumType:"+pcalConditionBean.getConvertNumType());
@@ -229,22 +228,22 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			
 //			1:每次 2:一次
 			if(pcalConditionBean.getConvertNumType() == 1){
+				pcalConditionBean.setConvertCount(convertCount);
 				if(this.userDefineConvertPrice != null){
 					convertPriceCount = this.userDefineConvertPrice * convertCount;
 				}else{
 					convertPriceCount = (int)Double.parseDouble(pcalConditionBean.getConvertPrice()) * convertCount;
 				}
 			}else if(pcalConditionBean.getConvertNumType() == 2){
+				pcalConditionBean.setConvertCount(1);
 				if(this.userDefineConvertPrice != null){
 					convertPriceCount = this.userDefineConvertPrice;
 				}else{
 					convertPriceCount = (int)Double.parseDouble(pcalConditionBean.getConvertPrice());
 				}
 			}
-			pcalConditionBean.setConvertCount(convertCount);
 			log.info("============="+convertConditionSet+" convert count:"+convertCount);
 			keyOut.set(uuid);
-			
 			convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getClickRangeDate());
 			convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getImpRangeDate());
 			convertWriteInfo.append(paclSymbol).append(convertPriceCount);
