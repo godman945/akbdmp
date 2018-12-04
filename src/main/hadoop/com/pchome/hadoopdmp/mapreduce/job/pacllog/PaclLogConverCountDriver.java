@@ -121,7 +121,7 @@ public class PaclLogConverCountDriver {
 			
 			job.setOutputKeyClass(Text.class);
 			job.setOutputValueClass(Text.class);
-			job.setNumReduceTasks(1);//1個reduce 
+			job.setNumReduceTasks(5); 
 			job.setMapSpeculativeExecution(false);
 			job.setInputFormatClass(LzoTextInputFormat.class);
 			logInputPath = "/home/webuser/alex/pacl_log/pacl_2018_11_26.txt.lzo";

@@ -32,6 +32,9 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 	
 	private static JSONObject paclInfo = new JSONObject();
 	
+	private static JSONObject paclLogInfo = new JSONObject();
+	
+	
 	private static Calendar calendar = null;
 	@Override
 	public void setup(Context context) {
@@ -61,9 +64,16 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 				String paclType = arrayData[11];
 				String convId = arrayData[12];
 				String rouleId = arrayData[13];
+				String userDefineConvertPrice = arrayData[14];
+				
+				paclLogInfo.put("paclUuid", paclUuid);
+				paclLogInfo.put("paclType", paclType);
+				paclLogInfo.put("convId", convId);
+				paclLogInfo.put("rouleId", rouleId.replace(";", ""));
+				paclLogInfo.put("cat", userDefineConvertPrice);
 				if(paclType.equals("convert")){
-					keyOut.set(convId+"_"+paclUuid);
-					context.write(keyOut, new Text(rouleId.replace(";", "")));
+					keyOut.set(convId+"<PCHOME>"+paclUuid);
+					context.write(keyOut, new Text(paclLogInfo.toString()));
 				}
 			}else{
 				if(fileName.contains("kdcl")){
@@ -141,7 +151,7 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					context.write(keyOut, new Text(paclInfo.toString()));
 				}
 			}
-			
+			paclLogInfo.clear();
 			paclInfo.clear();
 			kdclInfo.clear();
 		} catch (Exception e) {

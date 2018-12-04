@@ -10,6 +10,8 @@ public class PcalConditionBean {
 	private int convertNumType = 0;
 	private String convertRule = "";
 	private int convertCount = 0;
+	private String convertType = "";
+	
 	public int getClickRangeDate() {
 		return clickRangeDate;
 	}
@@ -72,6 +74,14 @@ public class PcalConditionBean {
 
 	public void setConvertCount(int convertCount) {
 		this.convertCount = convertCount;
+	}
+
+	public String getConvertType() {
+		return convertType;
+	}
+
+	public void setConvertType(String convertType) {
+		this.convertType = convertType;
 	}
 
 
