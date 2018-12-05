@@ -87,6 +87,7 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					}
 					String formatDate = sdf2.format(sdf.parse(date));
 					String referer = arrayData[4];
+					String userAgent = arrayData[5];
 					String pfpCustomerInfoId = arrayData[6];
 					String pfbxCustomerInfoId = arrayData[25];
 					String pfbxPositionId = arrayData[26];
@@ -121,6 +122,7 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					kdclInfo.put("actionSeq", actionSeq);
 					kdclInfo.put("groupSeq", groupSeq);
 					kdclInfo.put("referer", referer);
+					kdclInfo.put("userAgent", userAgent);
 					kdclInfo.put("fileName", fileName);
 					keyOut.set(uuid);
 					context.write(keyOut, new Text(kdclInfo.toString()));

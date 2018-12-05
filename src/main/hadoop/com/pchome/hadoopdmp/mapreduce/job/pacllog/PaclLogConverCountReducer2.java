@@ -19,6 +19,7 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.springframework.stereotype.Component;
 
 import com.pchome.soft.util.MysqlUtil;
+import com.pchome.soft.util.UAgentInfo;
 
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
@@ -238,13 +239,29 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			int count = 0;
 			int totalSize = saveDBMap.size();
 			
-			JSONObject json = null;
 			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement(insertSqlStr.toString());
 			for (Entry<String ,JSONObject> data : saveDBMap.entrySet()) {
 				count = count + 1;
 				String type = data.getKey().split("<PCHOME>")[1];
 				String uuid = data.getKey().split("<PCHOME>")[0];
-				json = data.getValue();
+				JSONObject json = data.getValue();
+				 // device
+		        UAgentInfo uAgentInfo = new UAgentInfo(json.getAsString("userAgent"), null);
+		        String device = uAgentInfo.detectSmartphone() ? "mobile" : "PC";
+		        // os
+		        String os = "";
+		        if (uAgentInfo.detectAndroid()) {
+		            os = "Android";
+		        }
+		        else if (uAgentInfo.detectIphoneOrIpod()) {
+		            os = "IOS";
+		        }
+		        else if (uAgentInfo.detectWindowsMobile()) {
+		            os = "Windows";
+		        }
+		        else if (uAgentInfo.detectWindows()) {
+		            os = "Windows";
+		        }
 				preparedStmt.setString(1, uuid);
 				preparedStmt.setString(2, sdf.format(date));
 				preparedStmt.setString(3, json.getAsString("convertSeq"));
@@ -273,8 +290,8 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				preparedStmt.setString(26,json.getAsString("*****") );
 				preparedStmt.setString(27,json.getAsString("referer") );
 				preparedStmt.setString(28,json.getAsString("styleId") );
-				preparedStmt.setString(29,json.getAsString("*****") );
-				preparedStmt.setString(30,json.getAsString("*****") );
+				preparedStmt.setString(29,device);
+				preparedStmt.setString(30,os);
 				preparedStmt.setString(31,json.getAsString("*****"));
 				preparedStmt.setString(32,json.getAsString("*****"));
 				preparedStmt.setString(33, sdfFormat.format(date));
