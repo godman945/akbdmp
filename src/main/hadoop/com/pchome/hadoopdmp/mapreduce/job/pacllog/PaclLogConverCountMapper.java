@@ -104,10 +104,6 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					String actionSeq = arrayData[21];
 					String groupSeq = arrayData[22];
 					
-					if("2f59086e290c6a4a513834ba16f563e6".equals(uuid)){
-						log.info("#############>>>>userAgent:"+userAgent);
-					}
-					
 					kdclInfo.put("kdclSourceDate", date);
 					kdclInfo.put("kdclDate", formatDate);
 					kdclInfo.put("keclTime", times);
