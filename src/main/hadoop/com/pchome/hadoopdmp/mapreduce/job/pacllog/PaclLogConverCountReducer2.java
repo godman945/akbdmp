@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.io.Text;
@@ -273,6 +274,34 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
         return "";
 	}
 	
+	private String getAgeCode(int age){
+		if ((age >= 1) && (age <= 17)) {
+            return "A";
+        }
+        else if ((age >= 18) && (age <= 24)) {
+        	return "B";
+        }
+        else if ((age >= 25) && (age <= 34)) {
+        	return "C";
+        }
+        else if ((age >= 35) && (age <= 44)) {
+        	return "D";
+        }
+        else if ((age >= 45) && (age <= 54)) {
+        	return "E";
+        }
+        else if ((age >= 55) && (age <= 64)) {
+        	return "F";
+        }
+        else if ((age >= 65) && (age <= 74)) {
+        	return "G";
+        }
+        else if (age >= 75) {
+        	return "H";
+        }
+		return "";
+	}
+	
 	public void cleanup(Context context) {
 		try {
 			log.info("cleanup:"+saveDBMap);
@@ -294,6 +323,11 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 		        if((Pattern.compile("^[0-9]+$").matcher(json.getAsString("keclTime")).find())){
 		        	timeCode = getTimeCode(Integer.parseInt(json.getAsString("keclTime")));
 		        }
+		        String ageCode = "";
+		        if((Pattern.compile("^[0-9]+$").matcher(json.getAsString("age")).find())){
+		        	ageCode = getAgeCode(Integer.parseInt(json.getAsString("age")));
+		        }
+		        
 		        
 				preparedStmt.setString(1, uuid);
 				preparedStmt.setString(2, sdf.format(date));
@@ -316,7 +350,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				preparedStmt.setString(19,json.getAsString("pfdCustomerInfoId") );
 				preparedStmt.setString(20,json.getAsString("payType") );
 				preparedStmt.setString(21,json.getAsString("sex") );
-				preparedStmt.setString(22,json.getAsString("ageCode") );
+				preparedStmt.setString(22,ageCode );
 				preparedStmt.setString(23,timeCode );
 				preparedStmt.setString(24,json.getAsString("tproId") );
 				preparedStmt.setString(25,json.getAsString("categoryCode") );
