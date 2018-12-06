@@ -3,6 +3,7 @@ package com.pchome.hadoopdmp.mapreduce.job.pacllog;
 import java.sql.PreparedStatement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -11,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -233,6 +235,44 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 		return data;
 	}
 	
+	private String getOS(UAgentInfo uAgentInfo){
+		if (uAgentInfo.detectAndroid()) {
+			return "Android";
+        }
+        else if (uAgentInfo.detectIphoneOrIpod()) {
+        	return "IOS";
+        }
+        else if (uAgentInfo.detectWindowsMobile()) {
+        	return "Windows";
+        }
+        else if (uAgentInfo.detectWindows()) {
+        	return "Windows";
+        }
+		return "";
+	}
+	
+	private String getTimeCode(int hour){
+        if ((hour >= 0) && (hour <= 3)) {
+            return "A";
+        }
+        else if ((hour >= 4) && (hour <= 7)) {
+        	return "B";
+        }
+        else if ((hour >= 8) && (hour <= 11)) {
+        	return "C";
+        }
+        else if ((hour >= 12) && (hour <= 15)) {
+        	return "D";
+        }
+        else if ((hour >= 16) && (hour <= 19)) {
+        	return "E";
+        }
+        else if ((hour >= 20) && (hour <= 23)) {
+        	return "F";
+        }
+        return "";
+	}
+	
 	public void cleanup(Context context) {
 		try {
 			log.info("cleanup:"+saveDBMap);
@@ -248,20 +288,13 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				 // device
 		        UAgentInfo uAgentInfo = new UAgentInfo(json.getAsString("userAgent"), null);
 		        String device = uAgentInfo.detectSmartphone() ? "mobile" : "PC";
-		        // os
-		        String os = "";
-		        if (uAgentInfo.detectAndroid()) {
-		            os = "Android";
+		        String os = getOS(uAgentInfo);
+		        
+		        String timeCode = "";
+		        if((Pattern.compile("^[0-9]+$").matcher(json.getAsString("keclTime")).find())){
+		        	timeCode = getTimeCode(Integer.parseInt(json.getAsString("keclTime")));
 		        }
-		        else if (uAgentInfo.detectIphoneOrIpod()) {
-		            os = "IOS";
-		        }
-		        else if (uAgentInfo.detectWindowsMobile()) {
-		            os = "Windows";
-		        }
-		        else if (uAgentInfo.detectWindows()) {
-		            os = "Windows";
-		        }
+		        
 				preparedStmt.setString(1, uuid);
 				preparedStmt.setString(2, sdf.format(date));
 				preparedStmt.setString(3, json.getAsString("convertSeq"));
@@ -284,9 +317,9 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				preparedStmt.setString(20,json.getAsString("payType") );
 				preparedStmt.setString(21,json.getAsString("sex") );
 				preparedStmt.setString(22,json.getAsString("ageCode") );
-				preparedStmt.setString(23,json.getAsString("*****") );
+				preparedStmt.setString(23,timeCode );
 				preparedStmt.setString(24,json.getAsString("tproId") );
-				preparedStmt.setString(25,json.getAsString("*****") );
+				preparedStmt.setString(25,json.getAsString("categoryCode") );
 				preparedStmt.setString(26,json.getAsString("*****") );
 				preparedStmt.setString(27,json.getAsString("referer") );
 				preparedStmt.setString(28,json.getAsString("styleId") );

@@ -95,7 +95,9 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					String payType = arrayData[29];
 					String sex = arrayData[31];
 					String ageCode = arrayData[32];
-					String timeCode = arrayData[33];
+//					String timeCode = arrayData[33];
+					String categoryCode = arrayData[35];
+					String priceType = arrayData[36];
 					String styleId = arrayData[7];
 					String tproId = arrayData[8];
 					String uuid = arrayData[2];
@@ -115,7 +117,7 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					kdclInfo.put("payType", payType);
 					kdclInfo.put("sex",sex);
 					kdclInfo.put("ageCode", ageCode);
-					kdclInfo.put("timeCode",timeCode);
+//					kdclInfo.put("timeCode",timeCode);
 					kdclInfo.put("styleId",styleId);
 					kdclInfo.put("uuid",uuid);
 					kdclInfo.put("adSeq", adSeq);
@@ -127,6 +129,9 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					kdclInfo.put("userAgent", userAgent);
 					kdclInfo.put("fileName", fileName);
 					kdclInfo.put("tproId", tproId);
+					kdclInfo.put("categoryCode", categoryCode);
+					kdclInfo.put("priceType", priceType);
+					
 					keyOut.set(uuid);
 					context.write(keyOut, new Text(kdclInfo.toString()));
 				}else{
