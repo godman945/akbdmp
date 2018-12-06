@@ -285,7 +285,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				preparedStmt.setString(21,json.getAsString("sex") );
 				preparedStmt.setString(22,json.getAsString("ageCode") );
 				preparedStmt.setString(23,json.getAsString("*****") );
-				preparedStmt.setString(24,json.getAsString("*****") );
+				preparedStmt.setString(24,json.getAsString("tproId") );
 				preparedStmt.setString(25,json.getAsString("*****") );
 				preparedStmt.setString(26,json.getAsString("*****") );
 				preparedStmt.setString(27,json.getAsString("referer") );

@@ -97,6 +97,7 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					String ageCode = arrayData[32];
 					String timeCode = arrayData[33];
 					String styleId = arrayData[7];
+					String tproId = arrayData[8];
 					String uuid = arrayData[2];
 					String adSeq = arrayData[11];
 					String type = arrayData[13];
@@ -125,6 +126,7 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					kdclInfo.put("referer", referer);
 					kdclInfo.put("userAgent", userAgent);
 					kdclInfo.put("fileName", fileName);
+					kdclInfo.put("tproId", tproId);
 					keyOut.set(uuid);
 					context.write(keyOut, new Text(kdclInfo.toString()));
 				}else{
