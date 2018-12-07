@@ -87,7 +87,7 @@ public class AdController extends BaseController {
 			result.put("behavior", "");
 			result.put("sex", "");
 			result.put("age", "");
-			result.put("retargeting_prod", "");
+			result.put("retargeting_prod", "{}");
 			if(StringUtils.isBlank(memid) && StringUtils.isBlank(uuid)){
 				return result.toString();
 			}
