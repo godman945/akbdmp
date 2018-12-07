@@ -1,5 +1,6 @@
 package com.pchome.akbdmp.api.call.ad.controller;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
 
@@ -87,7 +88,7 @@ public class AdController extends BaseController {
 			result.put("behavior", "");
 			result.put("sex", "");
 			result.put("age", "");
-			result.put("retargeting_prod", "{}");
+			result.put("retargeting_prod", new HashMap<>());
 			if(StringUtils.isBlank(memid) && StringUtils.isBlank(uuid)){
 				return result.toString();
 			}
