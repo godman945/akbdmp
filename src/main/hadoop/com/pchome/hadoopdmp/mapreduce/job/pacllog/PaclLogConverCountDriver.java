@@ -11,6 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.filecache.DistributedCache;
+import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
@@ -131,7 +132,14 @@ public class PaclLogConverCountDriver {
 			job.setNumReduceTasks(5); 
 			job.setMapSpeculativeExecution(false);
 			job.setInputFormatClass(LzoTextInputFormat.class);
-			logInputPath = "/home/webuser/pa/storedata/alllog/"+sdf.format(new Date())+"/00";
+			logInputPath = "/home/webuser/pa/storedata/alllog/"+sdf.format(new Date())+"/*";
+			
+			
+			
+			
+			
+			
+			
 			
 //			logInputPath = akbPacLoglAll;
 			outPath = "/home/webuser/alex/pacl_output";
@@ -140,10 +148,15 @@ public class PaclLogConverCountDriver {
 				
 			log.info(">>>>>>Job1 INPUT PATH:"+logInputPath);
 			log.info(">>>>>>Job1 OUTPUT PATH:"+outPath);
-			FileInputFormat.addInputPaths(job, logInputPath);
-			FileOutputFormat.setOutputPath(job, new Path(outPath));
-			FileOutputFormat.setCompressOutput(job, true);
-			FileOutputFormat.setOutputCompressorClass(job, LzopCodec.class);
+//			FileInputFormat.addInputPaths(job, logInputPath);
+//			FileOutputFormat.setOutputPath(job, new Path(outPath));
+//			FileOutputFormat.setCompressOutput(job, true);
+//			FileOutputFormat.setOutputCompressorClass(job, LzopCodec.class);
+			
+			
+			
+			
+			
 //			int result = job.waitForCompletion(true) ? 0 : 1;
 //			LzoIndexer lzoIndexer = new LzoIndexer(conf);
 			
