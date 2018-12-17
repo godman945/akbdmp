@@ -3,9 +3,11 @@ package com.pchome.hadoopdmp.mapreduce.job.pacllog;
 import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -132,14 +134,22 @@ public class PaclLogConverCountDriver {
 			job.setNumReduceTasks(5); 
 			job.setMapSpeculativeExecution(false);
 			job.setInputFormatClass(LzoTextInputFormat.class);
-			logInputPath = "/home/webuser/pa/storedata/alllog/"+sdf.format(new Date())+"/*";
+//			logInputPath = "/home/webuser/pa/storedata/alllog/"+sdf.format(new Date())+"/00";
 			
+			Path inPath = new Path("/home/webuser/pa/storedata/alllog/");
+			FileStatus[] status = fs.listStatus(inPath);  
+			List<Path> list = new ArrayList<Path>();  
+			for (FileStatus fileStatus : status) {  
+			    if (fs.getFileStatus(fileStatus.getPath()).isDir()) {  
+			        list.add(fileStatus.getPath());  
+			    }  
+			}  
+			Path[] paths = new Path[list.size()];  
+			list.toArray(paths);  
 			
-			
-			
-			
-			
-			
+			for (Path path : paths) {
+				log.info("path:"+path.getName());
+			}
 			
 //			logInputPath = akbPacLoglAll;
 			outPath = "/home/webuser/alex/pacl_output";
