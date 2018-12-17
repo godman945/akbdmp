@@ -136,7 +136,7 @@ public class PaclLogConverCountDriver {
 			job.setInputFormatClass(LzoTextInputFormat.class);
 //			logInputPath = "/home/webuser/pa/storedata/alllog/"+sdf.format(new Date())+"/00";
 			
-			Path inPath = new Path("/home/webuser/pa/storedata/alllog/");
+			Path inPath = new Path("/home/webuser/pa/storedata/alllog/"+sdf.format(new Date()));
 			FileStatus[] status = fs.listStatus(inPath);  
 			List<Path> list = new ArrayList<Path>();  
 			for (FileStatus fileStatus : status) {  
