@@ -148,7 +148,7 @@ public class PaclLogConverCountDriver {
 			list.toArray(paths);  
 			
 			for (Path path : paths) {
-				log.info("path:"+path.getName());
+				log.info("path:"+"/home/webuser/pa/storedata/alllog/"+sdf.format(new Date())+"/"+path.getName());
 			}
 			
 //			logInputPath = akbPacLoglAll;
@@ -158,10 +158,10 @@ public class PaclLogConverCountDriver {
 				
 			log.info(">>>>>>Job1 INPUT PATH:"+logInputPath);
 			log.info(">>>>>>Job1 OUTPUT PATH:"+outPath);
-//			FileInputFormat.addInputPaths(job, logInputPath);
-//			FileOutputFormat.setOutputPath(job, new Path(outPath));
-//			FileOutputFormat.setCompressOutput(job, true);
-//			FileOutputFormat.setOutputCompressorClass(job, LzopCodec.class);
+			FileInputFormat.setInputPaths(job, paths);
+			FileOutputFormat.setOutputPath(job, new Path(outPath));
+			FileOutputFormat.setCompressOutput(job, true);
+			FileOutputFormat.setOutputCompressorClass(job, LzopCodec.class);
 			
 			
 			
