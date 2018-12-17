@@ -5,6 +5,7 @@ import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -61,7 +62,13 @@ public class PaclLogConverCountDriver {
 	@Value("${akb.pacl.all}")
 	private String akbPacLoglAll;
 	
+	
+	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	
+	private final static int convertDay = 2;
+	
 	String logInputPath;
+	
 	String outPath;
 	
 	public void drive(String env) throws Exception {
@@ -124,7 +131,8 @@ public class PaclLogConverCountDriver {
 			job.setNumReduceTasks(5); 
 			job.setMapSpeculativeExecution(false);
 			job.setInputFormatClass(LzoTextInputFormat.class);
-			logInputPath = "/home/webuser/alex/pacl_log/pacl_2018_11_26.txt.lzo";
+			logInputPath = "/home/webuser/pa/storedata/alllog/"+sdf.format(new Date())+"/";
+			
 //			logInputPath = akbPacLoglAll;
 			outPath = "/home/webuser/alex/pacl_output";
 			//hdfs存在則刪除
@@ -138,13 +146,6 @@ public class PaclLogConverCountDriver {
 			FileOutputFormat.setOutputCompressorClass(job, LzopCodec.class);
 //			int result = job.waitForCompletion(true) ? 0 : 1;
 //			LzoIndexer lzoIndexer = new LzoIndexer(conf);
-			
-			
-			
-			
-			
-			
-			
 			
 //			FileInputFormat.addInputPaths(job, logInputPath);
 //			FileOutputFormat.setOutputPath(job, new Path(outPath));
@@ -211,7 +212,22 @@ public class PaclLogConverCountDriver {
 			job2.setOutputValueClass(Text.class);
 			job2.setNumReduceTasks(5);//1個reduce 
 			job2.setMapSpeculativeExecution(false);
-			String paths = "/home/webuser/alex/pacl_log/kdcl1_07_03_log.lzo,/home/webuser/alex/pacl_log/kdcl2_07_03_log.lzo,/home/webuser/alex/pacl_output/";
+			
+			Calendar cal = Calendar.getInstance();  
+			cal.setTime(new Date());
+			String paths = "";
+			for (int j = 0; j < convertDay; j++) {
+				cal.add(Calendar.DATE, -1);  
+				if(j != convertDay-1){
+					cal.add(Calendar.DATE, -1);  
+					System.out.println(sdf.format(cal.getTime()));  
+					paths = paths+"/home/webuser/analyzer/storedata/alllog/"+sdf.format(cal.getTime())+"/,";
+				}else{
+					paths = paths+"/home/webuser/analyzer/storedata/alllog/"+sdf.format(cal.getTime())+"/,/home/webuser/alex/pacl_output/";
+				}
+			}
+			
+//			String paths = "/home/webuser/alex/pacl_log/kdcl1_07_03_log.lzo,/home/webuser/alex/pacl_log/kdcl2_07_03_log.lzo,/home/webuser/alex/pacl_output/";
 //			String paths = "/home/webuser/alex/pacl_output/part-r-00000.lzo";
 			FileInputFormat.addInputPaths(job2, paths);
 			outPath = "/home/webuser/alex/pacl_output2";
@@ -225,16 +241,6 @@ public class PaclLogConverCountDriver {
 			} else {
 				log.info("Job2 is Failed");
 			}
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
 		 } catch (Exception e) {
 			 log.error("drive error>>>>>> "+ e);
 	     }
@@ -261,18 +267,39 @@ public class PaclLogConverCountDriver {
 
 	public static void main(String[] args) throws Exception {
 		log.info("====driver start====");
-		if(args.length > 0 && (args[0].equals("prd") || args[0].equals("stg")) ){
-			if(args[0].equals("prd")){
-				System.setProperty("spring.profiles.active", "prd");
+		
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		int i = 28;
+		Calendar cal = Calendar.getInstance();  
+		cal.setTime(new Date()); 
+		String a="";
+		for (int j = 0; j < i; j++) {
+			if(j != i-1){
+				cal.add(Calendar.DATE, -1);  
+				System.out.println(sdf.format(cal.getTime()));  
+				a= a+"/home/webuser/analyzer/storedata/alllog/"+sdf.format(cal.getTime())+",";
 			}else{
-				System.setProperty("spring.profiles.active", "stg");
+				a= a+"/home/webuser/analyzer/storedata/alllog/"+sdf.format(cal.getTime());
 			}
-			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-			PaclLogConverCountDriver paclLogConverCountDriver = (PaclLogConverCountDriver) ctx.getBean(PaclLogConverCountDriver.class);
-			paclLogConverCountDriver.drive(args[0]);
-			log.info("====driver end====");
-		}else{
-			log.info("==== args[0] must be 'prd' or 'stg' ====");
 		}
+		
+		System.out.println(a);
+		
+		
+		
+//		if(args.length > 0 && (args[0].equals("prd") || args[0].equals("stg")) ){
+//			if(args[0].equals("prd")){
+//				System.setProperty("spring.profiles.active", "prd");
+//			}else{
+//				System.setProperty("spring.profiles.active", "stg");
+//			}
+//			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//			PaclLogConverCountDriver paclLogConverCountDriver = (PaclLogConverCountDriver) ctx.getBean(PaclLogConverCountDriver.class);
+//			paclLogConverCountDriver.drive(args[0]);
+//			log.info("====driver end====");
+//		}else{
+//			log.info("==== args[0] must be 'prd' or 'stg' ====");
+//		}
 	}
 }
