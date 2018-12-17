@@ -113,12 +113,12 @@ public class PaclLogConverCountDriver {
 			conf.set("spring.profiles.active", env);
 			FileSystem fs = FileSystem.get(conf);
 	
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Date date = new Date();
 			// job
 			log.info("----job1 start----");
 	
-			Job job = new Job(jobConf, "dmp_conv_count_"+ env + "_" + sdf.format(date));
+			Job job = new Job(jobConf, "dmp_conv_count_"+ env + "_" + sdf2.format(date));
 			job.setJarByClass(PaclLogConverCountDriver.class);
 			job.setMapperClass(PaclLogConverCountMapper.class);
 			job.setReducerClass(PaclLogConverCountReducer.class);
@@ -200,7 +200,7 @@ public class PaclLogConverCountDriver {
 			
 			
 			
-			Job job2 = new Job(jobConf, "dmp_conv2_"+ env + "_" + sdf.format(date));
+			Job job2 = new Job(jobConf, "dmp_conv2_"+ env + "_" + sdf2.format(date));
 			job2.setJarByClass(PaclLogConverCountDriver.class);
 			job2.setMapperClass(PaclLogConverCountMapper.class);
 			job2.setReducerClass(PaclLogConverCountReducer2.class);
