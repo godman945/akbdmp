@@ -39,7 +39,6 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 	public void setup(Context context) {
 		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
 		try {
-			Configuration conf = context.getConfiguration();
 		} catch (Exception e) {
 			log.error("Mapper setup error>>>>>> " +e);
 		}

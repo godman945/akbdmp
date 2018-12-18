@@ -85,7 +85,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
 		try {
 			jobDate = context.getConfiguration().get("job.date");
-			log.info(" jobDate:"+jobDate);
+			log.info(">>>>>>>>>>>jobDate:"+jobDate);
 			
 			String url = "jdbc:mysql://kddbdev.mypchome.com.tw:3306/akb_video";
 			String jdbcDriver = "com.mysql.jdbc.Driver";
