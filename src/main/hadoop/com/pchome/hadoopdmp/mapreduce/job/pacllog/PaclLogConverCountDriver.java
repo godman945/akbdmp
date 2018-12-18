@@ -157,7 +157,6 @@ public class PaclLogConverCountDriver {
 			for (FileStatus fileStatus : status) {  
 			    if (fs.getFileStatus(fileStatus.getPath()).isDir()) {  
 			        list.add(fileStatus.getPath());
-			        break;
 			    }  
 			}  
 			Path[] paths = new Path[list.size()];  
