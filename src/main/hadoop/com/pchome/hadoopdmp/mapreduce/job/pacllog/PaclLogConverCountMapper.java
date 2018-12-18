@@ -6,6 +6,7 @@ import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.InputSplit;
@@ -34,15 +35,11 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 	
 	private static JSONObject paclLogInfo = new JSONObject();
 	
-	
-	private static Calendar calendar = null;
 	@Override
 	public void setup(Context context) {
 		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
 		try {
-			calendar = Calendar.getInstance();
-			calendar.setTime(new Date());
-			calendar.add(Calendar.DAY_OF_MONTH, -1); 
+			Configuration conf = context.getConfiguration();
 		} catch (Exception e) {
 			log.error("Mapper setup error>>>>>> " +e);
 		}
@@ -62,10 +59,9 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 //			log.info("value:"+value);
 			if(fileName.contains("pacl")){
 //				log.info("raw_data : " + valueStr);
-				log.info("arrayData size : " + arrayData.length);
-				
+//				log.info("arrayData size : " + arrayData.length);
 				String paclType = arrayData[11];
-				log.info("paclType:"+paclType);
+//				log.info("paclType:"+paclType);
 				if(paclType.equals("tracking")){
 					
 				}else if(paclType.equals("page_view")){
@@ -85,8 +81,8 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 				}
 			}else{
 				if(fileName.contains("kdcl")){
-					log.info(">>>>>>kdcl log");
-					log.info("raw_data : " + value);
+//					log.info(">>>>>>kdcl log");
+//					log.info("raw_data : " + value);
 //					log.info("arrayData size : " + arrayData.length);
 					String date = arrayData[0];
 					String times = String.valueOf(sdf.parse(date).getHours());
@@ -139,12 +135,11 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					kdclInfo.put("tproId", tproId);
 					kdclInfo.put("categoryCode", categoryCode);
 					kdclInfo.put("priceType", priceType);
-					
 					keyOut.set(uuid);
 					context.write(keyOut, new Text(kdclInfo.toString()));
 				}else{
-					log.info(">>>>>>conv log");
-					log.info("raw_data : " + value);
+//					log.info(">>>>>>conv log");
+//					log.info("raw_data : " + value);
 //					log.info("arrayData size : " + arrayData.length);
 					String uuid = arrayData[0].trim();
 					String clickRangeDate = arrayData[1];

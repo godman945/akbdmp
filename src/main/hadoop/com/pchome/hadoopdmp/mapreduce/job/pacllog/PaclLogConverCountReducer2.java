@@ -19,7 +19,6 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.springframework.stereotype.Component;
 
-//import com.pchome.soft.util.HBaseUtil;
 import com.pchome.soft.util.MysqlUtil;
 import com.pchome.soft.util.UAgentInfo;
 
@@ -54,14 +53,14 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	private static JSONObject iteratorJson = null;
 	private static JSONObject saveHbaseJson = null;
 	private static String rangrDate = null;
-//	private static HBaseUtil hbaseUtil = null;
+	private static String jobDate = null;
 	
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
 		try {
 			
 //			hbaseUtil = new HBaseUtil();
-			
+			jobDate = context.getConfiguration().get("job.date");
 			String url = "jdbc:mysql://kddbdev.mypchome.com.tw:3306/akb_video";
 			String jdbcDriver = "com.mysql.jdbc.Driver";
 			String user = "keyword";
@@ -334,7 +333,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 		        
 		        
 				preparedStmt.setString(1, uuid);
-				preparedStmt.setString(2, sdf.format(date));
+				preparedStmt.setString(2, jobDate);
 				preparedStmt.setString(3, json.getAsString("convertSeq"));
 				preparedStmt.setString(4, type);
 				preparedStmt.setString(5, json.getAsString("convertNumType"));

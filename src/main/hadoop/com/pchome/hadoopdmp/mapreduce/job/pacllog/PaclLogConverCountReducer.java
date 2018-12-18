@@ -79,9 +79,12 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	
 	private static String paclType = null;
 	
+	private static String jobDate = null;
+	
 	public void setup(Context context) {
-		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
+		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active")+" jobDate:"+jobDate);
 		try {
+			jobDate = context.getConfiguration().get("job.date");
 			String url = "jdbc:mysql://kddbdev.mypchome.com.tw:3306/akb_video";
 			String jdbcDriver = "com.mysql.jdbc.Driver";
 			String user = "keyword";
@@ -102,7 +105,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			convertConditionArray = null;
 			
 			String key = mapperKey.toString();
-			log.info(">>>>>>init mapperKey:"+key);
+//			log.info(">>>>>>init mapperKey:"+key);
 			
 			convertSeq = key.split("<PCHOME>")[0];
 			uuid = key.split("<PCHOME>")[1];
@@ -239,7 +242,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 						convertPriceCount = (int)Double.parseDouble(pcalConditionBean.getConvertPrice());
 					}
 				}
-				log.info("============="+convertConditionSet+" convert count:"+convertCount);
+//				log.info("============="+convertConditionSet+" convert count:"+convertCount);
 				keyOut.set(uuid);
 				convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getClickRangeDate());
 				convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getImpRangeDate());
@@ -249,8 +252,9 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 				convertWriteInfo.append(paclSymbol).append(convertSeq);
 				convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getConvertNumType());
 				convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getConvertCount());
-				valueOut.set(convertWriteInfo.toString());
-				log.info(">>>>>>write:"+convertWriteInfo.toString());
+				convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getConvertCount());
+				convertWriteInfo.append(paclSymbol).append(jobDate);
+//				log.info(">>>>>>write:"+convertWriteInfo.toString());
 				context.write(keyOut, valueOut);
 			}
 			
@@ -272,10 +276,9 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 		
 	}
 	
-	
 	public void cleanup(Context context) {
 		try {
-			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement( "DELETE FROM `pfp_code_convert_trans` where  1=1 and DATE_FORMAT(create_date,'%Y-%m-%d') = DATE_FORMAT(NOW(),'%Y-%m-%d') ");
+			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement( "DELETE FROM `pfp_code_convert_trans` where  1=1 and convert_date = "+jobDate);
 			preparedStmt.execute();
 			mysqlUtil.getConnect().commit();
 			mysqlUtil.closeConnection();

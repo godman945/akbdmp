@@ -112,6 +112,7 @@ public class PaclLogConverCountDriver {
 //			conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 			// file system
 			conf.set("spring.profiles.active", env);
+			
 			FileSystem fs = FileSystem.get(conf);
 	
 			SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -136,7 +137,9 @@ public class PaclLogConverCountDriver {
 			
 			Calendar cal = Calendar.getInstance();  
 			cal.setTime(new Date());
-//			cal.add(Calendar.DATE, -1);  
+			cal.add(Calendar.DATE, -1);
+			conf.set("job.date", sdf.format(cal.getTime()));
+			
 			Path inPath = new Path("/home/webuser/pa/storedata/alllog/"+sdf.format(cal.getTime()));
 			FileStatus[] status = fs.listStatus(inPath);  
 			List<Path> list = new ArrayList<Path>();  
@@ -147,7 +150,6 @@ public class PaclLogConverCountDriver {
 			}  
 			Path[] paths = new Path[list.size()];  
 			list.toArray(paths);  
-			
 			for (Path path : paths) {
 				log.info("path:"+"/home/webuser/pa/storedata/alllog/"+sdf.format(cal.getTime())+"/"+path.getName());
 			}
