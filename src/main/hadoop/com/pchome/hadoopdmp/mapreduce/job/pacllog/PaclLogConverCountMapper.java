@@ -75,16 +75,13 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					String convId = arrayData[12];
 					String rouleId = arrayData[13];
 					String userDefineConvertPrice = arrayData[14];
-					
 					paclLogInfo.put("paclUuid", paclUuid);
 					paclLogInfo.put("paclType", paclType);
 					paclLogInfo.put("convId", convId);
 					paclLogInfo.put("rouleId", rouleId.replace(";", ""));
 					paclLogInfo.put("cat", userDefineConvertPrice);
-					if(paclType.equals("convert")){
-						keyOut.set(convId+"<PCHOME>"+paclUuid);
-						context.write(keyOut, new Text(paclLogInfo.toString()));
-					}
+					keyOut.set(convId+"<PCHOME>"+paclUuid+"<PCHOME>"+paclType);
+					context.write(keyOut, new Text(paclLogInfo.toString()));
 				}
 			}else{
 				if(fileName.contains("kdcl")){
