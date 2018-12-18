@@ -69,7 +69,7 @@ public class PaclLogConverCountDriver {
 	
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	
-	private final static int convertDay = 2;
+	private final static int convertDay = 28;
 	
 	String logInputPath;
 	
@@ -129,10 +129,6 @@ public class PaclLogConverCountDriver {
 			}
 			
 			FileSystem fs = FileSystem.get(conf);
-	
-			
-			
-			
 			SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Date date = new Date();
 			// job
@@ -152,8 +148,6 @@ public class PaclLogConverCountDriver {
 			job.setMapSpeculativeExecution(false);
 			job.setInputFormatClass(LzoTextInputFormat.class);
 //			logInputPath = "/home/webuser/pa/storedata/alllog/"+sdf.format(new Date())+"/00";
-			
-			
 //			Path inPath = new Path("/home/webuser/pa/storedata/alllog/"+sdf.format(cal.getTime()));
 			//STG
 			Path inPath = new Path("/home/webuser/akbstg/storedata/alllog/"+sdf.format(cal.getTime()));
@@ -163,6 +157,7 @@ public class PaclLogConverCountDriver {
 			for (FileStatus fileStatus : status) {  
 			    if (fs.getFileStatus(fileStatus.getPath()).isDir()) {  
 			        list.add(fileStatus.getPath());
+			        break;
 			    }  
 			}  
 			Path[] paths = new Path[list.size()];  
@@ -229,50 +224,50 @@ public class PaclLogConverCountDriver {
 				log.info("Job1 is Failed");
 			}
 
-			log.info("----job2 start----");
-			
-			
-			
-			Job job2 = new Job(jobConf, "dmp_conv2_"+ env + "_" + sdf2.format(date));
-			job2.setJarByClass(PaclLogConverCountDriver.class);
-			job2.setMapperClass(PaclLogConverCountMapper.class);
-			job2.setReducerClass(PaclLogConverCountReducer2.class);
-//			job2.setCombinerClass(PaclLogConvertCombiner.class);
-			job2.setMapOutputKeyClass(Text.class);
-			job2.setMapOutputValueClass(Text.class);
-			job2.setInputFormatClass(LzoTextInputFormat.class);
-			job2.setOutputKeyClass(Text.class);
-			job2.setOutputValueClass(Text.class);
-			job2.setNumReduceTasks(20);//1個reduce 
-			job2.setMapSpeculativeExecution(false);
-			
-			String kdclPaths = "";
-			for (int j = 0; j < convertDay; j++) {
-				cal.add(Calendar.DATE, -1);  
-				if(j != convertDay-1){
-					cal.add(Calendar.DATE, -1);  
-					kdclPaths = kdclPaths+"/home/webuser/analyzer/storedata/alllog/"+sdf.format(cal.getTime())+"/,";
-				}else{
-					kdclPaths = kdclPaths+"/home/webuser/analyzer/storedata/alllog/"+sdf.format(cal.getTime())+"/,/home/webuser/alex/pacl_output/";
-				}
-			}
-			
-			log.info("job2 input paths:"+kdclPaths);
-			
-//			String paths = "/home/webuser/alex/pacl_log/kdcl1_07_03_log.lzo,/home/webuser/alex/pacl_log/kdcl2_07_03_log.lzo,/home/webuser/alex/pacl_output/";
-//			String paths = "/home/webuser/alex/pacl_output/part-r-00000.lzo";
-			FileInputFormat.addInputPaths(job2, kdclPaths);
-			outPath = "/home/webuser/alex/pacl_output2";
-			//hdfs存在則刪除
-			deleteExistedDir(fs, new Path(outPath), true);
-			FileOutputFormat.setOutputPath(job2, new Path(outPath));
-	
-			if (job2.waitForCompletion(true)) {
-				log.info("Job2 is OK");
-				
-			} else {
-				log.info("Job2 is Failed");
-			}
+//			log.info("----job2 start----");
+//			
+//			
+//			
+//			Job job2 = new Job(jobConf, "dmp_conv2_"+ env + "_" + sdf2.format(date));
+//			job2.setJarByClass(PaclLogConverCountDriver.class);
+//			job2.setMapperClass(PaclLogConverCountMapper.class);
+//			job2.setReducerClass(PaclLogConverCountReducer2.class);
+////			job2.setCombinerClass(PaclLogConvertCombiner.class);
+//			job2.setMapOutputKeyClass(Text.class);
+//			job2.setMapOutputValueClass(Text.class);
+//			job2.setInputFormatClass(LzoTextInputFormat.class);
+//			job2.setOutputKeyClass(Text.class);
+//			job2.setOutputValueClass(Text.class);
+//			job2.setNumReduceTasks(20);//1個reduce 
+//			job2.setMapSpeculativeExecution(false);
+//			
+//			String kdclPaths = "";
+//			for (int j = 0; j < convertDay; j++) {
+//				cal.add(Calendar.DATE, -1);  
+//				if(j != convertDay-1){
+//					cal.add(Calendar.DATE, -1);  
+//					kdclPaths = kdclPaths+"/home/webuser/analyzer/storedata/alllog/"+sdf.format(cal.getTime())+"/,";
+//				}else{
+//					kdclPaths = kdclPaths+"/home/webuser/analyzer/storedata/alllog/"+sdf.format(cal.getTime())+"/,/home/webuser/alex/pacl_output/";
+//				}
+//			}
+//			
+//			log.info("job2 input paths:"+kdclPaths);
+//			
+////			String paths = "/home/webuser/alex/pacl_log/kdcl1_07_03_log.lzo,/home/webuser/alex/pacl_log/kdcl2_07_03_log.lzo,/home/webuser/alex/pacl_output/";
+////			String paths = "/home/webuser/alex/pacl_output/part-r-00000.lzo";
+//			FileInputFormat.addInputPaths(job2, kdclPaths);
+//			outPath = "/home/webuser/alex/pacl_output2";
+//			//hdfs存在則刪除
+//			deleteExistedDir(fs, new Path(outPath), true);
+//			FileOutputFormat.setOutputPath(job2, new Path(outPath));
+//	
+//			if (job2.waitForCompletion(true)) {
+//				log.info("Job2 is OK");
+//				
+//			} else {
+//				log.info("Job2 is Failed");
+//			}
 		 } catch (Exception e) {
 			 log.error("drive error>>>>>> "+ e);
 	     }
