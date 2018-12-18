@@ -257,6 +257,10 @@ public class PaclLogConverCountDriver {
 			}
 			Path paclPath = new Path("/home/webuser/alex/pacl_output/");  
 			list.add(paclPath);
+			
+			
+			paths = new Path[list.size()];  
+			list.toArray(paths);  
 			for (Path path : list) {
 				log.info("path:"+path.getName());
 			}
