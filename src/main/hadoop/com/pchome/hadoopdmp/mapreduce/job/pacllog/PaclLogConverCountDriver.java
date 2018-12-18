@@ -242,21 +242,31 @@ public class PaclLogConverCountDriver {
 			
 			//STG
 //			Path inPath = new Path("/home/webuser/akbstg/storedata/alllog/"+sdf.format(cal.getTime()));
+			list = new ArrayList<Path>();  
 			for (int j = 0; j < convertDay; j++) {
 				cal.add(Calendar.DATE, -1);  
-				if(j != convertDay-1){
-					cal.add(Calendar.DATE, -1);  
-					kdclPaths = kdclPaths+"/home/webuser/akbstg/storedata/alllog/"+sdf.format(cal.getTime())+"/,";
-				}else{
-					kdclPaths = kdclPaths+"/home/webuser/akbstg/storedata/alllog/"+sdf.format(cal.getTime())+"/,/home/webuser/alex/pacl_output/";
+				if(j < convertDay){
+					inPath = new Path("/home/webuser/akbstg/storedata/alllog/"+sdf.format(cal.getTime()));
+					status = fs.listStatus(inPath);  
+					for (FileStatus fileStatus : status) {  
+					    if (fs.getFileStatus(fileStatus.getPath()).isDir()) {  
+					        list.add(fileStatus.getPath());
+					    }  
+					}  
 				}
 			}
-			
-			log.info("job2 input paths:"+kdclPaths);
+			Path paclPath = new Path("/home/webuser/alex/pacl_output/");  
+			list.add(paclPath);
+			for (Path path : list) {
+				log.info("path:"+path.getName());
+			}
+//				kdclPaths = kdclPaths+"/home/webuser/akbstg/storedata/alllog/"+sdf.format(cal.getTime())+"/,/home/webuser/alex/pacl_output/";
+//			}
+//			log.info("job2 input paths:"+kdclPaths);
 			
 //			String paths = "/home/webuser/alex/pacl_log/kdcl1_07_03_log.lzo,/home/webuser/alex/pacl_log/kdcl2_07_03_log.lzo,/home/webuser/alex/pacl_output/";
 //			String paths = "/home/webuser/alex/pacl_output/part-r-00000.lzo";
-			FileInputFormat.addInputPaths(job2, kdclPaths);
+			FileInputFormat.setInputPaths(job2, paths);
 			outPath = "/home/webuser/alex/pacl_output2";
 			//hdfs存在則刪除
 			deleteExistedDir(fs, new Path(outPath), true);
