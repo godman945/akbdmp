@@ -251,7 +251,7 @@ public class PaclLogConverCountDriver {
 					for (FileStatus fileStatus : status) {  
 					    if (fs.getFileStatus(fileStatus.getPath()).isDir()) {  
 					        list.add(fileStatus.getPath());
-//					        log.info("path:"+"/home/webuser/akbstg/storedata/alllog/"+sdf.format(cal.getTime())+"/"+);
+					        log.info("path:"+"/home/webuser/akbstg/storedata/alllog/"+sdf.format(cal.getTime())+"/"+fileStatus.getPath());
 					    }  
 					}  
 				}
