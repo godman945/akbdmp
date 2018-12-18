@@ -76,14 +76,12 @@ public class PaclLogConverCountDriver {
 	
 	public void drive(String env) throws Exception {
 		try {
-			Calendar calendar = Calendar.getInstance();
-			
 			JobConf jobConf = new JobConf();
 			
-			jobConf.setNumMapTasks(8);
+//			jobConf.setNumMapTasks(8);
 			
-			jobConf.set("mapred.max.split.size","5045728"); //3045728 49 //3045728000 7
-			jobConf.set("mapred.min.split.size","2015544"); //1015544 49 //1015544000 7
+			jobConf.set("mapred.max.split.size","50045728"); //3045728 49 //3045728000 7
+			jobConf.set("mapred.min.split.size","10015544"); //1015544 49 //1015544000 7
 			
 			//ask推测执行
 			jobConf.set("mapred.map.tasks.speculative.execution","true");
@@ -246,12 +244,13 @@ public class PaclLogConverCountDriver {
 				cal.add(Calendar.DATE, -1);  
 				if(j != convertDay-1){
 					cal.add(Calendar.DATE, -1);  
-					System.out.println(sdf.format(cal.getTime()));  
 					kdclPaths = kdclPaths+"/home/webuser/analyzer/storedata/alllog/"+sdf.format(cal.getTime())+"/,";
 				}else{
 					kdclPaths = kdclPaths+"/home/webuser/analyzer/storedata/alllog/"+sdf.format(cal.getTime())+"/,/home/webuser/alex/pacl_output/";
 				}
 			}
+			
+			log.info("job2 input paths:"+kdclPaths);
 			
 //			String paths = "/home/webuser/alex/pacl_log/kdcl1_07_03_log.lzo,/home/webuser/alex/pacl_log/kdcl2_07_03_log.lzo,/home/webuser/alex/pacl_output/";
 //			String paths = "/home/webuser/alex/pacl_output/part-r-00000.lzo";
