@@ -54,7 +54,7 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 			InputSplit inputSplit=(InputSplit)context.getInputSplit(); 
 			String fileName = ((FileSplit)inputSplit).getPath().getName();
 			String valueStr = value.toString();
-			String arrayData[] = valueStr.split(paclSymbol);
+			String arrayData[] = valueStr.split(paclSymbol,-1);
 //			log.info("Path:"+((FileSplit)inputSplit).getPath());
 			
 //			log.info("filename:"+fileName);
@@ -178,4 +178,9 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 			log.error("Mapper error>>>>>> " +e); 
 		}
 	}
+	
+	
+	
+	
+	
 }
