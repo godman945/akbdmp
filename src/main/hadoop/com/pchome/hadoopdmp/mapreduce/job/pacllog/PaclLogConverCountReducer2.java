@@ -393,7 +393,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			
 			mysqlUtil.closeConnection();
 		} catch (Throwable e) {
-			sql.setLength(0);
+//			sql.setLength(0);
 			log.error("reduce cleanup error>>>>>> " + e);
 		}
 	}

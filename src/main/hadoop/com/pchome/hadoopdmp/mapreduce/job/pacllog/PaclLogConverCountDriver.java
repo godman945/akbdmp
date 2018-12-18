@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -74,7 +75,7 @@ public class PaclLogConverCountDriver {
 	
 	String outPath;
 	
-	public void drive(String env) throws Exception {
+	public void drive(String env,String jobDate) throws Exception {
 		try {
 			JobConf jobConf = new JobConf();
 			
@@ -118,6 +119,17 @@ public class PaclLogConverCountDriver {
 			// file system
 			conf.set("spring.profiles.active", env);
 			
+			
+			
+			Calendar cal = Calendar.getInstance();  
+			if(StringUtils.isNotBlank(jobDate)){
+				cal.setTime(sdf.parse(jobDate));
+				conf.set("spring.profiles.active", jobDate);
+			}else{
+				cal.setTime(new Date());
+				conf.set("spring.profiles.active", sdf.format(new Date()));
+			}
+			
 			FileSystem fs = FileSystem.get(conf);
 	
 			SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -140,10 +152,6 @@ public class PaclLogConverCountDriver {
 			job.setInputFormatClass(LzoTextInputFormat.class);
 //			logInputPath = "/home/webuser/pa/storedata/alllog/"+sdf.format(new Date())+"/00";
 			
-			Calendar cal = Calendar.getInstance();  
-			cal.setTime(new Date());
-			cal.add(Calendar.DATE, -1);
-			conf.set("job.date", sdf.format(cal.getTime()));
 			
 			Path inPath = new Path("/home/webuser/pa/storedata/alllog/"+sdf.format(cal.getTime()));
 			FileStatus[] status = fs.listStatus(inPath);  
@@ -293,9 +301,15 @@ public class PaclLogConverCountDriver {
 			}else{
 				System.setProperty("spring.profiles.active", "stg");
 			}
+			
+			String jobDate ="";
+			if(args.length == 2){
+				jobDate = args[1];
+			}
+			
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			PaclLogConverCountDriver paclLogConverCountDriver = (PaclLogConverCountDriver) ctx.getBean(PaclLogConverCountDriver.class);
-			paclLogConverCountDriver.drive(args[0]);
+			paclLogConverCountDriver.drive(args[0],jobDate);
 			log.info("====driver end====");
 		}else{
 			log.info("==== args[0] must be 'prd' or 'stg' ====");
