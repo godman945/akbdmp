@@ -135,7 +135,8 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 					sql.append(" 	c.convert_status,  ");
 					sql.append(" 	c.convert_belong,  ");
 					sql.append(" 	c.convert_num_type,  ");
-					sql.append(" 	Group_concat(convert_rule_id SEPARATOR ':')convert_rule_id  ");
+					sql.append(" 	Group_concat(convert_rule_id SEPARATOR ':')convert_rule_id,  ");
+					sql.append(" 	c.pfp_customer_info_id  ");
 					sql.append(" FROM   pfp_code_convert c  ");
 					sql.append(" LEFT JOIN pfp_code_convert_rule r  ");
 					sql.append(" ON( c.convert_seq = r.convert_seq )  ");
@@ -153,6 +154,8 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 						int convertNumType = resultSet.getInt("convert_num_type");
 						String convertRule = resultSet.getString("convert_rule_id");
 						String convertType = resultSet.getString("convert_type");
+						String pfpCustomerInfoId = resultSet.getString("pfp_customer_info_id");
+						
 						
 						pcalConditionBean = new PcalConditionBean();
 						pcalConditionBean.setClickRangeDate(clickRangeDate);
@@ -164,7 +167,11 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 						pcalConditionBean.setConvertRule(convertRule);
 						pcalConditionBean.setConvertType(convertType);
 						convertConditionMap.put(convertSeq, pcalConditionBean);
-						log.info(">>>>>>convertConditionMap:"+convertConditionMap);
+						
+						
+						PaclLogConverCountDriver.paclPfpUserMap.put(pfpCustomerInfoId, "Y");
+						
+//						log.info(">>>>>>convertConditionMap:"+convertConditionMap);
 					}
 				}else{
 					log.info(">>>>>>convertConditionMap data exist!!");

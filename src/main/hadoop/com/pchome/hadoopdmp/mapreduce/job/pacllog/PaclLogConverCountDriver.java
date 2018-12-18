@@ -6,8 +6,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -21,20 +22,14 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.hadoop.compression.lzo.LzoIndexer;
 import com.hadoop.compression.lzo.LzopCodec;
-import com.hadoop.mapreduce.LzoIndexOutputFormat;
 import com.hadoop.mapreduce.LzoTextInputFormat;
-import com.pchome.hadoopdmp.mapreduce.job.thirdcategorylog.ThirdCategoryLogMapper;
-import com.pchome.hadoopdmp.mapreduce.job.thirdcategorylog.ThirdCategoryLogReducer;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 
 @Component
@@ -71,9 +66,12 @@ public class PaclLogConverCountDriver {
 	
 	private final static int convertDay = 28;
 	
-	String logInputPath;
+	private String logInputPath;
 	
-	String outPath;
+	private String outPath;
+	
+	
+	public static Map<String,String> paclPfpUserMap = new HashMap<String,String>(); 
 	
 	public void drive(String env,String jobDate) throws Exception {
 		try {
@@ -222,6 +220,7 @@ public class PaclLogConverCountDriver {
 			}
 
 			log.info("----job2 start----");
+			log.info("paclPfpUserMap:"+paclPfpUserMap);
 			
 			
 			
