@@ -222,7 +222,7 @@ public class PaclLogConverCountDriver {
 
 			log.info("----job2 start----");
 			log.info("paclPfpUserMap:"+paclPfpUserMap);
-			
+			log.info(jobConf.get("alex"));
 			
 			
 //			Job job2 = new Job(jobConf, "dmp_conv2_"+ env + "_" + sdf2.format(date));
