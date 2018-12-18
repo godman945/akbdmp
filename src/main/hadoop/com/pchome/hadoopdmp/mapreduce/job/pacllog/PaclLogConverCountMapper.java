@@ -162,6 +162,9 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					paclInfo.put("convertCount",convertCount);
 					keyOut.set(uuid);
 					context.write(keyOut, new Text(paclInfo.toString()));
+					
+					log.info("write pacl:"+paclInfo.toString());
+					
 				}
 			}
 			paclLogInfo.clear();
