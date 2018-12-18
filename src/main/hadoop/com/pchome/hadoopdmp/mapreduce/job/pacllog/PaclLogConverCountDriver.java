@@ -88,6 +88,10 @@ public class PaclLogConverCountDriver {
 			jobConf.set("mapred.reduce.tasks.speculative.execution","true");
 //			//JVM
 			jobConf.set("mapred.child.java.opts", "-Xmx4048M");
+			
+			jobConf.set("mapreduce.map.memory.mb", "4096");
+			jobConf.set("mapreduce.reduce.memory.mb", "8192");
+			
 //		    jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 			
 			jobConf.set("spring.profiles.active", env);
