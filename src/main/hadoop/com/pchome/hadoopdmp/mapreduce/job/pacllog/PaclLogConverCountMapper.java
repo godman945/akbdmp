@@ -57,28 +57,34 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 			String arrayData[] = valueStr.split(paclSymbol);
 //			log.info("Path:"+((FileSplit)inputSplit).getPath());
 			
-			log.info("filename:"+fileName);
-			log.info("size:"+arrayData.length);
-			log.info("value:"+value);
-			
-			
+//			log.info("filename:"+fileName);
+//			log.info("size:"+arrayData.length);
+//			log.info("value:"+value);
 			if(fileName.contains("pacl")){
 //				log.info("raw_data : " + valueStr);
 //				log.info("arrayData size : " + arrayData.length);
-				String paclUuid = arrayData[2];
-				String paclType = arrayData[11];
-				String convId = arrayData[12];
-				String rouleId = arrayData[13];
-				String userDefineConvertPrice = arrayData[14];
 				
-				paclLogInfo.put("paclUuid", paclUuid);
-				paclLogInfo.put("paclType", paclType);
-				paclLogInfo.put("convId", convId);
-				paclLogInfo.put("rouleId", rouleId.replace(";", ""));
-				paclLogInfo.put("cat", userDefineConvertPrice);
-				if(paclType.equals("convert")){
-					keyOut.set(convId+"<PCHOME>"+paclUuid);
-					context.write(keyOut, new Text(paclLogInfo.toString()));
+				String paclType = arrayData[11];
+				log.info("paclType:"+paclType);
+				if(paclType.equals("tracking")){
+					
+				}else if(paclType.equals("page_view")){
+					
+				}else{
+					String paclUuid = arrayData[2];
+					String convId = arrayData[12];
+					String rouleId = arrayData[13];
+					String userDefineConvertPrice = arrayData[14];
+					
+					paclLogInfo.put("paclUuid", paclUuid);
+					paclLogInfo.put("paclType", paclType);
+					paclLogInfo.put("convId", convId);
+					paclLogInfo.put("rouleId", rouleId.replace(";", ""));
+					paclLogInfo.put("cat", userDefineConvertPrice);
+					if(paclType.equals("convert")){
+						keyOut.set(convId+"<PCHOME>"+paclUuid);
+						context.write(keyOut, new Text(paclLogInfo.toString()));
+					}
 				}
 			}else{
 				if(fileName.contains("kdcl")){

@@ -151,7 +151,7 @@ public class PaclLogConverCountDriver {
 			list.toArray(paths);  
 			
 			for (Path path : paths) {
-				log.info("path:"+"/home/webuser/pa/storedata/alllog/"+sdf.format(new Date())+"/"+path.getName());
+				log.info("path:"+"/home/webuser/pa/storedata/alllog/"+sdf.format(cal.getTime())+"/"+path.getName());
 			}
 			
 //			logInputPath = akbPacLoglAll;
