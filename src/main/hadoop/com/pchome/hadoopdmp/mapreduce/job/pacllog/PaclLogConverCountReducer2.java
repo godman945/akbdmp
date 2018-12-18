@@ -3,7 +3,6 @@ package com.pchome.hadoopdmp.mapreduce.job.pacllog;
 import java.sql.PreparedStatement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -14,16 +13,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.hbase.client.Get;
-import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.springframework.stereotype.Component;
 
-import com.pchome.soft.util.HBaseUtil;
+//import com.pchome.soft.util.HBaseUtil;
 import com.pchome.soft.util.MysqlUtil;
 import com.pchome.soft.util.UAgentInfo;
 
@@ -58,13 +54,13 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	private static JSONObject iteratorJson = null;
 	private static JSONObject saveHbaseJson = null;
 	private static String rangrDate = null;
-	private static HBaseUtil hbaseUtil = null;
+//	private static HBaseUtil hbaseUtil = null;
 	
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
 		try {
 			
-			hbaseUtil = new HBaseUtil();
+//			hbaseUtil = new HBaseUtil();
 			
 			String url = "jdbc:mysql://kddbdev.mypchome.com.tw:3306/akb_video";
 			String jdbcDriver = "com.mysql.jdbc.Driver";
