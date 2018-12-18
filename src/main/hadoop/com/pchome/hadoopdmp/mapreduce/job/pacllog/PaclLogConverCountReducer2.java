@@ -309,9 +309,11 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	
 	public void cleanup(Context context) {
 		try {
-			log.info("cleanup:"+saveDBMap);
 			int count = 0;
 			int totalSize = saveDBMap.size();
+			log.info("cleanup saveDBMap size:"+totalSize);
+			
+			
 			
 			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement(insertSqlStr.toString());
 			for (Entry<String ,JSONObject> data : saveDBMap.entrySet()) {

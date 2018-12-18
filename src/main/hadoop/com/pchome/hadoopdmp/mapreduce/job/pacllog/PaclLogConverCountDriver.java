@@ -170,16 +170,6 @@ public class PaclLogConverCountDriver {
 			FileOutputFormat.setCompressOutput(job, true);
 			FileOutputFormat.setOutputCompressorClass(job, LzopCodec.class);
 			
-			
-			
-			
-			
-//			int result = job.waitForCompletion(true) ? 0 : 1;
-//			LzoIndexer lzoIndexer = new LzoIndexer(conf);
-			
-//			FileInputFormat.addInputPaths(job, logInputPath);
-//			FileOutputFormat.setOutputPath(job, new Path(outPath));
-				
 			//load jar path
 			String[] jarPaths = {
 					"/home/webuser/dmp/webapps/analyzer/lib/commons-lang-2.6.jar",
@@ -240,7 +230,7 @@ public class PaclLogConverCountDriver {
 			job2.setInputFormatClass(LzoTextInputFormat.class);
 			job2.setOutputKeyClass(Text.class);
 			job2.setOutputValueClass(Text.class);
-			job2.setNumReduceTasks(5);//1個reduce 
+			job2.setNumReduceTasks(10);//1個reduce 
 			job2.setMapSpeculativeExecution(false);
 			
 			String kdclPaths = "";
