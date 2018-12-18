@@ -251,31 +251,24 @@ public class PaclLogConverCountDriver {
 					for (FileStatus fileStatus : status) {  
 					    if (fs.getFileStatus(fileStatus.getPath()).isDir()) {  
 					        list.add(fileStatus.getPath());
+					        
+					        
+					        log.info("path:"+"/home/webuser/akbstg/storedata/alllog/"+sdf.format(cal.getTime())+inPath.getName());
+					        
 					    }  
 					}  
 				}
 			}
 			Path paclPath = new Path("/home/webuser/alex/pacl_output/");  
 			list.add(paclPath);
-			
-			
+			log.info("path:/home/webuser/alex/pacl_output/");
 			paths = new Path[list.size()];  
 			list.toArray(paths);  
-			for (Path path : list) {
-				log.info("path:"+path.getName());
-			}
-//				kdclPaths = kdclPaths+"/home/webuser/akbstg/storedata/alllog/"+sdf.format(cal.getTime())+"/,/home/webuser/alex/pacl_output/";
-//			}
-//			log.info("job2 input paths:"+kdclPaths);
-			
-//			String paths = "/home/webuser/alex/pacl_log/kdcl1_07_03_log.lzo,/home/webuser/alex/pacl_log/kdcl2_07_03_log.lzo,/home/webuser/alex/pacl_output/";
-//			String paths = "/home/webuser/alex/pacl_output/part-r-00000.lzo";
 			FileInputFormat.setInputPaths(job2, paths);
 			outPath = "/home/webuser/alex/pacl_output2";
 			//hdfs存在則刪除
 			deleteExistedDir(fs, new Path(outPath), true);
 			FileOutputFormat.setOutputPath(job2, new Path(outPath));
-	
 			if (job2.waitForCompletion(true)) {
 				log.info("Job2 is OK");
 				
