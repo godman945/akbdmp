@@ -153,6 +153,7 @@ public class PaclLogConverCountDriver {
 			for (FileStatus fileStatus : status) {  
 			    if (fs.getFileStatus(fileStatus.getPath()).isDir()) {  
 			        list.add(fileStatus.getPath());
+			        break;
 			    }  
 			}  
 			Path[] paths = new Path[list.size()];  
@@ -224,18 +225,18 @@ public class PaclLogConverCountDriver {
 			
 			
 			
-			Job job2 = new Job(jobConf, "dmp_conv2_"+ env + "_" + sdf2.format(date));
-			job2.setJarByClass(PaclLogConverCountDriver.class);
-			job2.setMapperClass(PaclLogConverCountMapper.class);
-			job2.setReducerClass(PaclLogConverCountReducer2.class);
-//			job2.setCombinerClass(PaclLogConvertCombiner.class);
-			job2.setMapOutputKeyClass(Text.class);
-			job2.setMapOutputValueClass(Text.class);
-			job2.setInputFormatClass(LzoTextInputFormat.class);
-			job2.setOutputKeyClass(Text.class);
-			job2.setOutputValueClass(Text.class);
-			job2.setNumReduceTasks(20);//1個reduce 
-			job2.setMapSpeculativeExecution(false);
+//			Job job2 = new Job(jobConf, "dmp_conv2_"+ env + "_" + sdf2.format(date));
+//			job2.setJarByClass(PaclLogConverCountDriver.class);
+//			job2.setMapperClass(PaclLogConverCountMapper.class);
+//			job2.setReducerClass(PaclLogConverCountReducer2.class);
+////			job2.setCombinerClass(PaclLogConvertCombiner.class);
+//			job2.setMapOutputKeyClass(Text.class);
+//			job2.setMapOutputValueClass(Text.class);
+//			job2.setInputFormatClass(LzoTextInputFormat.class);
+//			job2.setOutputKeyClass(Text.class);
+//			job2.setOutputValueClass(Text.class);
+//			job2.setNumReduceTasks(20);//1個reduce 
+//			job2.setMapSpeculativeExecution(false);
 			
 			String kdclPaths = "";
 			
@@ -250,27 +251,27 @@ public class PaclLogConverCountDriver {
 					for (FileStatus fileStatus : status) {  
 					    if (fs.getFileStatus(fileStatus.getPath()).isDir()) {  
 					        list.add(fileStatus.getPath());
-					        log.info("path:"+"/home/webuser/akbstg/storedata/alllog/"+sdf.format(cal.getTime())+"/"+inPath.getName());
+//					        log.info("path:"+"/home/webuser/akbstg/storedata/alllog/"+sdf.format(cal.getTime())+"/"+);
 					    }  
 					}  
 				}
 			}
-			Path paclPath = new Path("/home/webuser/alex/pacl_output/");  
-			list.add(paclPath);
-			log.info("path:/home/webuser/alex/pacl_output/");
-			paths = new Path[list.size()];  
-			list.toArray(paths);  
-			FileInputFormat.setInputPaths(job2, paths);
-			outPath = "/home/webuser/alex/pacl_output2";
-			//hdfs存在則刪除
-			deleteExistedDir(fs, new Path(outPath), true);
-			FileOutputFormat.setOutputPath(job2, new Path(outPath));
-			if (job2.waitForCompletion(true)) {
-				log.info("Job2 is OK");
-				
-			} else {
-				log.info("Job2 is Failed");
-			}
+//			Path paclPath = new Path("/home/webuser/alex/pacl_output/");  
+//			list.add(paclPath);
+//			log.info("path:/home/webuser/alex/pacl_output/");
+//			paths = new Path[list.size()];  
+//			list.toArray(paths);  
+//			FileInputFormat.setInputPaths(job2, paths);
+//			outPath = "/home/webuser/alex/pacl_output2";
+//			//hdfs存在則刪除
+//			deleteExistedDir(fs, new Path(outPath), true);
+//			FileOutputFormat.setOutputPath(job2, new Path(outPath));
+//			if (job2.waitForCompletion(true)) {
+//				log.info("Job2 is OK");
+//				
+//			} else {
+//				log.info("Job2 is Failed");
+//			}
 		 } catch (Exception e) {
 			 log.error("drive error>>>>>> "+ e);
 	     }
