@@ -159,7 +159,7 @@ public class PaclLogConverCountDriver {
 			Path[] paths = new Path[list.size()];  
 			list.toArray(paths);  
 			for (Path path : paths) {
-				log.info("path:"+"/home/webuser/pa/storedata/alllog/"+sdf.format(cal.getTime())+"/"+path.getName());
+				log.info("path:"+path.getName());
 			}
 			
 //			logInputPath = akbPacLoglAll;
@@ -251,7 +251,7 @@ public class PaclLogConverCountDriver {
 					for (FileStatus fileStatus : status) {  
 					    if (fs.getFileStatus(fileStatus.getPath()).isDir()) {  
 					        list.add(fileStatus.getPath());
-					        log.info("path:"+"/home/webuser/akbstg/storedata/alllog/"+sdf.format(cal.getTime())+"/"+fileStatus.getPath());
+					        log.info("path:"+fileStatus.getPath());
 					    }  
 					}  
 				}
