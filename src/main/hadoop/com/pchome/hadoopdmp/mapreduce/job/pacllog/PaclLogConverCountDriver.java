@@ -116,20 +116,16 @@ public class PaclLogConverCountDriver {
 			//JVM
 			conf.set("mapred.child.java.opts", "-Xmx4048M");
 //			conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
-			// file system
-			conf.set("spring.profiles.active", env);
 			
 			
 			
 			Calendar cal = Calendar.getInstance();  
 			if(StringUtils.isNotBlank(jobDate)){
 				cal.setTime(sdf.parse(jobDate));
-				conf.set("job.date", jobDate);
-				System.setProperty("job.date", jobDate);
+				jobConf.set("job.date", jobDate);
 			}else{
 				cal.setTime(new Date());
-				conf.set("job.date", sdf.format(new Date()));
-				System.setProperty("job.date", sdf.format(new Date()));
+				jobConf.set("job.date", sdf.format(new Date()));
 			}
 			
 			FileSystem fs = FileSystem.get(conf);
