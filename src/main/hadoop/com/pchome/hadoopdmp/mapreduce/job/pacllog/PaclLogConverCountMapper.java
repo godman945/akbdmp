@@ -53,13 +53,15 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 			String arrayData[] = valueStr.split(paclSymbol,-1);
 //			log.info("Path:"+((FileSplit)inputSplit).getPath());
 			
-//			log.info("filename:"+fileName);
 //			log.info("size:"+arrayData.length);
 //			log.info("value:"+value);
+			String paclType = arrayData[11];
+			log.info("filename:"+fileName);
+			log.info("paclType:"+paclType);
 			if(fileName.contains("pacl")){
 //				log.info("raw_data : " + valueStr);
 //				log.info("arrayData size : " + arrayData.length);
-				String paclType = arrayData[11];
+				
 //				log.info("paclType:"+paclType);
 				if(paclType.equals("tracking")){
 					
@@ -161,9 +163,6 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					paclInfo.put("convertCount",convertCount);
 					keyOut.set(uuid);
 					context.write(keyOut, new Text(paclInfo.toString()));
-					
-					log.info("write pacl:"+paclInfo.toString());
-					
 				}
 			}
 			paclLogInfo.clear();
