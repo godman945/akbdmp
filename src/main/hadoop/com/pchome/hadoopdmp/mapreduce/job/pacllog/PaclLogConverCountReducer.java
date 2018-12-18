@@ -96,6 +96,9 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			
 			
 			PaclLogConverCountDriver.paclPfpUserMap.put("alex", "Y");
+			
+			
+			log.info(">>>>>>>>>>>>>>>>>>>paclPfpUserMap:"+PaclLogConverCountDriver.paclPfpUserMap);
 		} catch (Throwable e) {
 			log.error("reduce setup error>>>>>> " + e);
 		}
