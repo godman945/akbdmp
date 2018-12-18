@@ -17,10 +17,13 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.hbase.client.Get;
+import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.springframework.stereotype.Component;
 
+import com.pchome.soft.util.HBaseUtil;
 import com.pchome.soft.util.MysqlUtil;
 import com.pchome.soft.util.UAgentInfo;
 
@@ -53,18 +56,22 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	private static String kdclDate = "";
 	private static Iterator<JSONObject> iterator = null;
 	private static JSONObject iteratorJson = null;
+	private static JSONObject saveHbaseJson = null;
 	private static String rangrDate = null;
+	private static HBaseUtil hbaseUtil = null;
 	
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
 		try {
+			
+			hbaseUtil = new HBaseUtil();
+			
 			String url = "jdbc:mysql://kddbdev.mypchome.com.tw:3306/akb_video";
 			String jdbcDriver = "com.mysql.jdbc.Driver";
 			String user = "keyword";
 			String password =  "K1y0nLine";
 			mysqlUtil = MysqlUtil.getInstance();
 			mysqlUtil.setConnection(url, user, password);
-			
 			insertSqlStr.append(" INSERT INTO `pfp_code_convert_trans`  ");
 			insertSqlStr.append("(uuid,");
 			insertSqlStr.append("convert_date,");
@@ -310,6 +317,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			
 			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement(insertSqlStr.toString());
 			for (Entry<String ,JSONObject> data : saveDBMap.entrySet()) {
+				//寫入mysql
 				count = count + 1;
 				String type = data.getKey().split("<PCHOME>")[1];
 				String uuid = data.getKey().split("<PCHOME>")[0];
@@ -366,6 +374,13 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				preparedStmt.addBatch();
 				
 				log.info("count:"+count+" totalSize:"+totalSize);
+				
+				
+				//寫入hbbase
+//				saveHbaseJson = new JSONObject();
+//				saveHbaseJson.put(key, value)
+//				hbaseUtil.putData("pacl_retargeting",uuid,"type","retargeting",json.toString());
+				
 				if(count % 5000 == 0){
 					preparedStmt.executeBatch();
 					mysqlUtil.getConnect().commit();
