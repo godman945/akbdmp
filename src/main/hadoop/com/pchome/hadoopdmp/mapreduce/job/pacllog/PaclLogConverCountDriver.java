@@ -243,8 +243,6 @@ public class PaclLogConverCountDriver {
 			job2.setNumReduceTasks(5);//1個reduce 
 			job2.setMapSpeculativeExecution(false);
 			
-			cal = Calendar.getInstance();  
-			cal.setTime(new Date());
 			String kdclPaths = "";
 			for (int j = 0; j < convertDay; j++) {
 				cal.add(Calendar.DATE, -1);  

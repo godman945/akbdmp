@@ -108,7 +108,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			insertSqlStr.append(" 	?,?,?,?,?,?,?,?,?,?, ");
 			insertSqlStr.append(" 	?,?,?,? )");
 			
-			log.info("mysqlUtil:"+mysqlUtil.getInstance());
+//			log.info("mysqlUtil:"+mysqlUtil.getInstance());
 			
 		} catch (Throwable e) {
 			log.error("reduce setup error>>>>>> " + e);
@@ -175,19 +175,19 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				JSONObject saveJson = new JSONObject();
 				saveJson = data.get(0);
 				saveDBMap.put(uuid+"<PCHOME>"+type.toUpperCase(), saveJson);
-				log.info("final data:"+data.get(0));
+//				log.info("final data:"+data.get(0));
 			}
 			if(convertBelong.equals("2")){
 				JSONObject saveJson = new JSONObject();
 				saveJson = data.get(data.size() - 1);
 				saveDBMap.put(uuid+"<PCHOME>"+type.toUpperCase(), saveJson);
-				log.info("final data:"+data.get(data.size() - 1));
+//				log.info("final data:"+data.get(data.size() - 1));
 			}
 		}
 	}
 	
 	private void processOutOfRangeDay(List<JSONObject> data,String type) throws Exception{
-		log.info("processSaveDBInfo type:"+type);
+//		log.info("processSaveDBInfo type:"+type);
 		String clickRangeDate = paclJsonInfo.getAsString("clickRangeDate");
 		String impRangeDate = paclJsonInfo.getAsString("impRangeDate");
 		String convertPriceCount = paclJsonInfo.getAsString("convertPriceCount");
@@ -206,8 +206,8 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 		while (iterator.hasNext()) {
 			iteratorJson = (JSONObject)iterator.next();
 			kdclDate = iteratorJson.getAsString("kdclDate");
-			differenceDay = (long) (date.getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
-			log.info("kdclDate:"+kdclDate+" flag:"+(differenceDay <= Long.valueOf(rangrDate)) + " range:"+differenceDay);
+			differenceDay = (long) (sdf.parse(jobDate).getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
+//			log.info("kdclDate:"+kdclDate+" flag:"+(differenceDay <= Long.valueOf(rangrDate)) + " range:"+differenceDay);
 			if(differenceDay > Long.valueOf(rangrDate)){
 				iterator.remove();
 			}else{
