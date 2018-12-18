@@ -56,8 +56,8 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 //			log.info("size:"+arrayData.length);
 //			log.info("value:"+value);
 			String paclType = arrayData[11];
-			log.info("filename:"+fileName);
-			log.info("paclType:"+paclType);
+			log.info(">>>>>filename:"+fileName);
+			log.info(">>>>>paclType:"+paclType);
 			if(fileName.contains("pacl")){
 //				log.info("raw_data : " + valueStr);
 //				log.info("arrayData size : " + arrayData.length);
