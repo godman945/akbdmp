@@ -1,32 +1,32 @@
 package com.pchome.soft.util;
 
-import java.io.File;
-import java.util.Iterator;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.HColumnDescriptor;
-import org.apache.hadoop.hbase.HTableDescriptor;
-import org.apache.hadoop.hbase.KeyValue;
-import org.apache.hadoop.hbase.TableName;
-import org.apache.hadoop.hbase.client.Connection;
-import org.apache.hadoop.hbase.client.ConnectionFactory;
-import org.apache.hadoop.hbase.client.Get;
-import org.apache.hadoop.hbase.client.HBaseAdmin;
-import org.apache.hadoop.hbase.client.HTable;
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.client.Result;
-import org.apache.hadoop.hbase.client.ResultScanner;
-import org.apache.hadoop.hbase.client.Scan;
-import org.apache.hadoop.hbase.util.Bytes;
-import org.json.JSONObject;
-import org.springframework.stereotype.Component;
-
-
-
-@Component
+//import java.io.File;
+//import java.util.Iterator;
+//
+//import org.apache.commons.logging.Log;
+//import org.apache.commons.logging.LogFactory;
+//import org.apache.hadoop.conf.Configuration;
+//import org.apache.hadoop.hbase.HBaseConfiguration;
+//import org.apache.hadoop.hbase.HColumnDescriptor;
+//import org.apache.hadoop.hbase.HTableDescriptor;
+//import org.apache.hadoop.hbase.KeyValue;
+//import org.apache.hadoop.hbase.TableName;
+//import org.apache.hadoop.hbase.client.Connection;
+//import org.apache.hadoop.hbase.client.ConnectionFactory;
+//import org.apache.hadoop.hbase.client.Get;
+//import org.apache.hadoop.hbase.client.HBaseAdmin;
+//import org.apache.hadoop.hbase.client.HTable;
+//import org.apache.hadoop.hbase.client.Put;
+//import org.apache.hadoop.hbase.client.Result;
+//import org.apache.hadoop.hbase.client.ResultScanner;
+//import org.apache.hadoop.hbase.client.Scan;
+//import org.apache.hadoop.hbase.util.Bytes;
+//import org.json.JSONObject;
+//import org.springframework.stereotype.Component;
+//
+//
+//
+//@Component
 public class HBaseUtil {
 //	Log log = LogFactory.getLog(KafkaUtil.class);
 //	private Configuration config;
