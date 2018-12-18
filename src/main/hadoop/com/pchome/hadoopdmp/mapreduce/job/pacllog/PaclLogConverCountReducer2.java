@@ -144,10 +144,13 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 					paclJsonInfo = logJson;
 				}
 			}
-			log.info("key:"+key+" flagKdcl:"+flagKdcl+" flagPacl:"+flagPacl);
 			
 			if(flagKdcl && flagPacl){
-				log.info("##>>>>>>key:"+key);
+				log.info("key:"+key+" flagKdcl:"+flagKdcl+" flagPacl:"+flagPacl);
+				log.info("dataCkList:"+dataCkList);
+				log.info("dataCkList:"+dataCkList);
+				log.info("dataPvList:"+dataPvList);
+				
 				processOutOfRangeDay(dataCkList,"ck");
 				//排序時間
 				sortKdclDataList(dataCkList);
