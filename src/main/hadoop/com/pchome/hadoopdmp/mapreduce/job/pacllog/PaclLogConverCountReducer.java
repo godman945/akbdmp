@@ -172,7 +172,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 						convertConditionMap.put(convertSeq, pcalConditionBean);
 						
 						PaclLogConverCountDriver.paclPfpUserMap.put(pfpCustomerInfoId, "Y");
-//						log.info(">>>>>>convertConditionMap:"+convertConditionMap);
+						log.info(">>>>>>convertConditionMap:"+pfpCustomerInfoId);
 					}
 				}else{
 					log.info(">>>>>>convertConditionMap data exist!!");
