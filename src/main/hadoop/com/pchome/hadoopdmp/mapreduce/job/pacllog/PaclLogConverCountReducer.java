@@ -107,7 +107,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			convertConditionArray = null;
 			
 			String key = mapperKey.toString();
-//			log.info(">>>>>>init mapperKey:"+key);
+			log.info(">>>>>>init mapperKey:"+key);
 			
 			convertSeq = key.split("<PCHOME>")[0];
 			uuid = key.split("<PCHOME>")[1];
