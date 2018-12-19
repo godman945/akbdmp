@@ -136,7 +136,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 					log.info(">>>>>>>>logJson:"+logJson.toString());
 				}
 				
-				if(logJson.getAsString("fileName").contains("kdcl")){
+				if(logJson.getAsString("fileName").contains("kdcl") || logJson.getAsString("fileName").contains("kwstg")){
 					flagKdcl = true;
 					String kdclType = logJson.getAsString("kdclType");
 					if(kdclType.equals("ck")){
