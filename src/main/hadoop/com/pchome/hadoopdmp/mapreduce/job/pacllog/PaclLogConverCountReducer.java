@@ -283,7 +283,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	
 	public void cleanup(Context context) {
 		try {
-			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement( "DELETE FROM `pfp_code_convert_trans` where  1=1 and convert_date = "+jobDate);
+			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement( "DELETE FROM `pfp_code_convert_trans` where  1=1 and convert_date = '"+jobDate+"'");
 			preparedStmt.execute();
 			mysqlUtil.getConnect().commit();
 			mysqlUtil.closeConnection();
