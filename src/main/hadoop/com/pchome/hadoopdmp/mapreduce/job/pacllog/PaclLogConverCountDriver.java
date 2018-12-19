@@ -28,10 +28,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Iterators;
 import com.hadoop.compression.lzo.LzopCodec;
 import com.hadoop.mapreduce.LzoTextInputFormat;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 import com.pchome.soft.util.MysqlUtil;
+
+import net.minidev.json.JSONObject;
 
 @Component
 public class PaclLogConverCountDriver {
@@ -321,24 +324,54 @@ public class PaclLogConverCountDriver {
 
 	public static void main(String[] args) throws Exception {
 		log.info("====driver start====");
-		if(args.length > 0 && (args[0].equals("prd") || args[0].equals("stg")) ){
-			if(args[0].equals("prd")){
-				System.setProperty("spring.profiles.active", "prd");
-			}else{
-				System.setProperty("spring.profiles.active", "stg");
+		
+		
+		List a = new ArrayList<>();
+		a.add("a");
+		a.add("b");
+		a.add("a");
+		a.add("a");
+		a.add("a");
+		
+		Iterator iterator = a.iterator();
+		while (iterator.hasNext()) {
+			if(iterator.next().equals("b")){
+				iterator.remove();
 			}
-			
-			String jobDate ="";
-			if(args.length == 2){
-				jobDate = args[1];
-			}
-			
-			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-			PaclLogConverCountDriver paclLogConverCountDriver = (PaclLogConverCountDriver) ctx.getBean(PaclLogConverCountDriver.class);
-			paclLogConverCountDriver.drive(args[0],jobDate);
-			log.info("====driver end====");
-		}else{
-			log.info("==== args[0] must be 'prd' or 'stg' ====");
 		}
+		for (Object object : a) {
+			System.out.println(object);
+		}
+		
+		JSONObject g = new JSONObject();
+		
+		g.put("alex", 5);
+		
+		
+		int gh = Integer.parseInt(g.getAsString("alex"));
+		System.out.println(gh);
+		
+		
+		
+		
+//		if(args.length > 0 && (args[0].equals("prd") || args[0].equals("stg")) ){
+//			if(args[0].equals("prd")){
+//				System.setProperty("spring.profiles.active", "prd");
+//			}else{
+//				System.setProperty("spring.profiles.active", "stg");
+//			}
+//			
+//			String jobDate ="";
+//			if(args.length == 2){
+//				jobDate = args[1];
+//			}
+//			
+//			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//			PaclLogConverCountDriver paclLogConverCountDriver = (PaclLogConverCountDriver) ctx.getBean(PaclLogConverCountDriver.class);
+//			paclLogConverCountDriver.drive(args[0],jobDate);
+//			log.info("====driver end====");
+//		}else{
+//			log.info("==== args[0] must be 'prd' or 'stg' ====");
+//		}
 	}
 }

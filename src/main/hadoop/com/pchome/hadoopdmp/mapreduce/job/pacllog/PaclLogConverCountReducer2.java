@@ -19,6 +19,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Iterators;
 import com.pchome.soft.util.MysqlUtil;
 import com.pchome.soft.util.UAgentInfo;
 
@@ -185,7 +186,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	}
 	
 	private void processOutOfRangeDay(List<JSONObject> data,String type) throws Exception{
-//		log.info("processSaveDBInfo type:"+type);
 		String clickRangeDate = paclJsonInfo.getAsString("clickRangeDate");
 		String impRangeDate = paclJsonInfo.getAsString("impRangeDate");
 		String convertPriceCount = paclJsonInfo.getAsString("convertPriceCount");
@@ -205,7 +205,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			iteratorJson = (JSONObject)iterator.next();
 			kdclDate = iteratorJson.getAsString("kdclDate");
 			differenceDay = (long) (sdf.parse(jobDate).getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
-//			log.info("kdclDate:"+kdclDate+" flag:"+(differenceDay <= Long.valueOf(rangrDate)) + " range:"+differenceDay);
 			if(differenceDay > Long.valueOf(rangrDate)){
 				iterator.remove();
 			}else{
@@ -217,6 +216,14 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				iteratorJson.put("convertSeq", convertSeq);
 				iteratorJson.put("convertNumType", convertNumType);
 				iteratorJson.put("convertCount", convertCount);
+			}
+		}
+		//資料來源ck/pv log數量小於轉換數
+		int dataSize = data.size();
+		for (JSONObject jsonObject : data) {
+			int dataConvertCount = Integer.parseInt(jsonObject.getAsString("convertCount"));
+			if(dataSize < dataConvertCount){
+				jsonObject.put("convertCount", dataConvertCount);
 			}
 		}
 	}
