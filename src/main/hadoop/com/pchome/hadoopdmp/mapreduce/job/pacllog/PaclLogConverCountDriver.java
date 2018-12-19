@@ -252,7 +252,7 @@ public class PaclLogConverCountDriver {
 			job2.setInputFormatClass(LzoTextInputFormat.class);
 			job2.setOutputKeyClass(Text.class);
 			job2.setOutputValueClass(Text.class);
-			job2.setNumReduceTasks(1);//1個reduce 
+			job2.setNumReduceTasks(5);//1個reduce 
 			job2.setMapSpeculativeExecution(false);
 			
 			
