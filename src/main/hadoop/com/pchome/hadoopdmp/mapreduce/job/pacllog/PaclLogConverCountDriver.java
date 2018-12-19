@@ -7,9 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -72,8 +70,7 @@ public class PaclLogConverCountDriver {
 	
 	private String outPath;
 	
-	
-	public static Map<String,String> paclPfpUserMap = new HashMap<String,String>(); 
+	public static StringBuffer effectPaclPfpUser = new StringBuffer(); 
 	
 	public void drive(String env,String jobDate) throws Exception {
 		try {
@@ -230,13 +227,16 @@ public class PaclLogConverCountDriver {
 			String password =  "K1y0nLine";
 			MysqlUtil mysqlUtil = MysqlUtil.getInstance();
 			mysqlUtil.setConnection(url, user, password);
-			
+			Calendar effectCalendar = Calendar.getInstance();
+			effectCalendar.setTime(cal.getTime());
+			effectCalendar.add(Calendar.DATE, - convertDay);
+			String effectDate = sdf.format(effectCalendar.getTime());
 			StringBuffer sql = new StringBuffer();
 			sql.append(" SELECT c.pfp_customer_info_id  ");
 			sql.append(" FROM   (SELECT customer_info_id  ");
 			sql.append(" FROM   pfp_ad_action_report  ");
 			sql.append(" WHERE  1 = 1  ");
-			sql.append(" AND ad_pvclk_date >= '2018-12-13'  ");
+			sql.append(" AND ad_pvclk_date >= '").append(effectDate).append("'");
 			sql.append(" GROUP  BY customer_info_id)a  ");
 			sql.append(" RIGHT JOIN pfp_code_convert c  ");
 			sql.append(" ON a.customer_info_id = c.pfp_customer_info_id  ");
@@ -245,32 +245,24 @@ public class PaclLogConverCountDriver {
 			ResultSet resultSet = mysqlUtil.query(sql.toString());
 			while(resultSet.next()){
 				String pfpCustomerInfoId = resultSet.getString("pfp_customer_info_id");
-				PaclLogConverCountDriver.paclPfpUserMap.put(pfpCustomerInfoId, "Y");
+				effectPaclPfpUser.append(pfpCustomerInfoId).append(",");
 			}
-			log.info(">>>>>>convertConditionMap:"+paclPfpUserMap);
+			mysqlUtil.closeConnection();
+			jobConf.set("effectPaclPfpUser", effectPaclPfpUser.toString());
 			
+			Job job2 = new Job(jobConf, "dmp_conv2_"+ env + "_" + sdf2.format(date));
+			job2.setJarByClass(PaclLogConverCountDriver.class);
+			job2.setMapperClass(PaclLogConverCountMapper.class);
+			job2.setReducerClass(PaclLogConverCountReducer2.class);
+//			job2.setCombinerClass(PaclLogConvertCombiner.class);
+			job2.setMapOutputKeyClass(Text.class);
+			job2.setMapOutputValueClass(Text.class);
+			job2.setInputFormatClass(LzoTextInputFormat.class);
+			job2.setOutputKeyClass(Text.class);
+			job2.setOutputValueClass(Text.class);
+			job2.setNumReduceTasks(20);//1個reduce 
+			job2.setMapSpeculativeExecution(false);
 			
-			
-			
-			
-			
-			
-			
-			
-//			Job job2 = new Job(jobConf, "dmp_conv2_"+ env + "_" + sdf2.format(date));
-//			job2.setJarByClass(PaclLogConverCountDriver.class);
-//			job2.setMapperClass(PaclLogConverCountMapper.class);
-//			job2.setReducerClass(PaclLogConverCountReducer2.class);
-////			job2.setCombinerClass(PaclLogConvertCombiner.class);
-//			job2.setMapOutputKeyClass(Text.class);
-//			job2.setMapOutputValueClass(Text.class);
-//			job2.setInputFormatClass(LzoTextInputFormat.class);
-//			job2.setOutputKeyClass(Text.class);
-//			job2.setOutputValueClass(Text.class);
-//			job2.setNumReduceTasks(20);//1個reduce 
-//			job2.setMapSpeculativeExecution(false);
-			
-			String kdclPaths = "";
 			
 			//STG
 //			Path inPath = new Path("/home/webuser/akbstg/storedata/alllog/"+sdf.format(cal.getTime()));
@@ -288,22 +280,22 @@ public class PaclLogConverCountDriver {
 					}  
 				}
 			}
-//			Path paclPath = new Path("/home/webuser/alex/pacl_output/");  
-//			list.add(paclPath);
-//			log.info("path:/home/webuser/alex/pacl_output/");
-//			paths = new Path[list.size()];  
-//			list.toArray(paths);  
-//			FileInputFormat.setInputPaths(job2, paths);
-//			outPath = "/home/webuser/alex/pacl_output2";
-//			//hdfs存在則刪除
-//			deleteExistedDir(fs, new Path(outPath), true);
-//			FileOutputFormat.setOutputPath(job2, new Path(outPath));
-//			if (job2.waitForCompletion(true)) {
-//				log.info("Job2 is OK");
-//				
-//			} else {
-//				log.info("Job2 is Failed");
-//			}
+			Path paclPath = new Path("/home/webuser/alex/pacl_output/");  
+			list.add(paclPath);
+			log.info("path:/home/webuser/alex/pacl_output/");
+			paths = new Path[list.size()];  
+			list.toArray(paths);  
+			FileInputFormat.setInputPaths(job2, paths);
+			outPath = "/home/webuser/alex/pacl_output2";
+			//hdfs存在則刪除
+			deleteExistedDir(fs, new Path(outPath), true);
+			FileOutputFormat.setOutputPath(job2, new Path(outPath));
+			if (job2.waitForCompletion(true)) {
+				log.info("Job2 is OK");
+				
+			} else {
+				log.info("Job2 is Failed");
+			}
 		 } catch (Exception e) {
 			 log.error("drive error>>>>>> "+ e);
 	     }

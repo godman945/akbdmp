@@ -35,10 +35,15 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 	
 	private static JSONObject paclLogInfo = new JSONObject();
 	
+	public static StringBuffer effectPaclPfpUser = new StringBuffer(); 
+	
 	@Override
 	public void setup(Context context) {
 		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
 		try {
+			effectPaclPfpUser.append(context.getConfiguration().get("effectPaclPfpUser"));
+			log.info(">>>>>>>>>effectPaclPfpUser:"+effectPaclPfpUser.toString());
+		
 		} catch (Exception e) {
 			log.error("Mapper setup error>>>>>> " +e);
 		}
@@ -85,59 +90,62 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 //					log.info(">>>>>>kdcl log");
 //					log.info("raw_data : " + value);
 //					log.info("arrayData size : " + arrayData.length);
-					String date = arrayData[0];
-					String times = String.valueOf(sdf.parse(date).getHours());
-					if(times.length() == 1){
-						times = 0+times;
-					}
-					String formatDate = sdf2.format(sdf.parse(date));
-					String referer = arrayData[4];
-					String userAgent = arrayData[5];
-					String pfpCustomerInfoId = arrayData[6];
-					String pfbxCustomerInfoId = arrayData[25];
-					String pfbxPositionId = arrayData[26];
-					String pfdCustomerInfoId = arrayData[23];
-					String payType = arrayData[29];
-					String sex = arrayData[31];
-					String age = arrayData[32];
-//					String timeCode = arrayData[33];
-					String categoryCode = arrayData[35];
-					String priceType = arrayData[36];
-					String styleId = arrayData[7];
-					String tproId = arrayData[8];
-					String uuid = arrayData[2];
-					String adSeq = arrayData[11];
-					String type = arrayData[13];
-					String adType = arrayData[14];
-					String actionSeq = arrayData[21];
-					String groupSeq = arrayData[22];
 					
-					kdclInfo.put("kdclSourceDate", date);
-					kdclInfo.put("kdclDate", formatDate);
-					kdclInfo.put("keclTime", times);
-					kdclInfo.put("pfpCustomerInfoId", pfpCustomerInfoId);
-					kdclInfo.put("pfbxCustomerInfoId",pfbxCustomerInfoId );
-					kdclInfo.put("pfbxPositionId", pfbxPositionId);
-					kdclInfo.put("pfdCustomerInfoId", pfdCustomerInfoId);
-					kdclInfo.put("payType", payType);
-					kdclInfo.put("sex",sex);
-					kdclInfo.put("age", age);
-//					kdclInfo.put("timeCode",timeCode);
-					kdclInfo.put("styleId",styleId);
-					kdclInfo.put("uuid",uuid);
-					kdclInfo.put("adSeq", adSeq);
-					kdclInfo.put("kdclType", type);
-					kdclInfo.put("adType", adType);
-					kdclInfo.put("actionSeq", actionSeq);
-					kdclInfo.put("groupSeq", groupSeq);
-					kdclInfo.put("referer", referer);
-					kdclInfo.put("userAgent", userAgent);
-					kdclInfo.put("fileName", fileName);
-					kdclInfo.put("tproId", tproId);
-					kdclInfo.put("categoryCode", categoryCode);
-					kdclInfo.put("priceType", priceType);
-					keyOut.set(uuid);
-					context.write(keyOut, new Text(kdclInfo.toString()));
+					String pfpCustomerInfoId = arrayData[6];
+					if(effectPaclPfpUser.toString().contains(pfpCustomerInfoId)){
+						String date = arrayData[0];
+						String times = String.valueOf(sdf.parse(date).getHours());
+						if(times.length() == 1){
+							times = 0+times;
+						}
+						String formatDate = sdf2.format(sdf.parse(date));
+						String referer = arrayData[4];
+						String userAgent = arrayData[5];
+						String pfbxCustomerInfoId = arrayData[25];
+						String pfbxPositionId = arrayData[26];
+						String pfdCustomerInfoId = arrayData[23];
+						String payType = arrayData[29];
+						String sex = arrayData[31];
+						String age = arrayData[32];
+//						String timeCode = arrayData[33];
+						String categoryCode = arrayData[35];
+						String priceType = arrayData[36];
+						String styleId = arrayData[7];
+						String tproId = arrayData[8];
+						String uuid = arrayData[2];
+						String adSeq = arrayData[11];
+						String type = arrayData[13];
+						String adType = arrayData[14];
+						String actionSeq = arrayData[21];
+						String groupSeq = arrayData[22];
+						
+						kdclInfo.put("kdclSourceDate", date);
+						kdclInfo.put("kdclDate", formatDate);
+						kdclInfo.put("keclTime", times);
+						kdclInfo.put("pfpCustomerInfoId", pfpCustomerInfoId);
+						kdclInfo.put("pfbxCustomerInfoId",pfbxCustomerInfoId );
+						kdclInfo.put("pfbxPositionId", pfbxPositionId);
+						kdclInfo.put("pfdCustomerInfoId", pfdCustomerInfoId);
+						kdclInfo.put("payType", payType);
+						kdclInfo.put("sex",sex);
+						kdclInfo.put("age", age);
+//						kdclInfo.put("timeCode",timeCode);
+						kdclInfo.put("styleId",styleId);
+						kdclInfo.put("uuid",uuid);
+						kdclInfo.put("adSeq", adSeq);
+						kdclInfo.put("kdclType", type);
+						kdclInfo.put("adType", adType);
+						kdclInfo.put("actionSeq", actionSeq);
+						kdclInfo.put("groupSeq", groupSeq);
+						kdclInfo.put("referer", referer);
+						kdclInfo.put("userAgent", userAgent);
+						kdclInfo.put("fileName", fileName);
+						kdclInfo.put("tproId", tproId);
+						kdclInfo.put("categoryCode", categoryCode);
+						kdclInfo.put("priceType", priceType);
+						keyOut.set(uuid);
+						context.write(keyOut, new Text(kdclInfo.toString()));
+					}
 				}else{
 //					log.info(">>>>>>conv log");
 //					log.info("raw_data : " + value);

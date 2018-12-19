@@ -93,7 +93,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			String password =  "K1y0nLine";
 			mysqlUtil = MysqlUtil.getInstance();
 			mysqlUtil.setConnection(url, user, password);
-			log.info(">>>>>>>>>>>>>>>>>>>paclPfpUserMap:"+PaclLogConverCountDriver.paclPfpUserMap);
 		} catch (Throwable e) {
 			log.error("reduce setup error>>>>>> " + e);
 		}
@@ -168,8 +167,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 						pcalConditionBean.setConvertRule(convertRule);
 						pcalConditionBean.setConvertType(convertType);
 						convertConditionMap.put(convertSeq, pcalConditionBean);
-						
-						PaclLogConverCountDriver.paclPfpUserMap.put(pfpCustomerInfoId, "Y");
 						log.info(">>>>>>convertConditionMap:"+pfpCustomerInfoId);
 					}
 				}else{
