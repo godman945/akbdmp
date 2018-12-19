@@ -274,8 +274,8 @@ public class PaclLogConverCountDriver {
 					status = fs.listStatus(inPath);  
 					for (FileStatus fileStatus : status) {  
 					    if (fs.getFileStatus(fileStatus.getPath()).isDir()) {  
-					        list.add(fileStatus.getPath());
-					        log.info("path:"+fileStatus.getPath());
+//					        list.add(fileStatus.getPath());
+//					        log.info("path:"+fileStatus.getPath());
 					    }  
 					}  
 				}
@@ -283,6 +283,12 @@ public class PaclLogConverCountDriver {
 			Path paclPath = new Path("/home/webuser/alex/pacl_output/");  
 			list.add(paclPath);
 			log.info("path:/home/webuser/alex/pacl_output/");
+			
+			Path paclPath2 = new Path("/home/webuser/akbstg/storedata/alllog/2018-12-12/07");
+			list.add(paclPath2);
+			log.info("path:/home/webuser/akbstg/storedata/alllog/2018-12-12/07");
+			
+			
 			paths = new Path[list.size()];  
 			list.toArray(paths);  
 			FileInputFormat.setInputPaths(job2, paths);
