@@ -257,7 +257,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 				convertWriteInfo.append(paclSymbol).append(convertSeq);
 				convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getConvertNumType());
 				convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getConvertCount());
-				convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getConvertCount());
 				convertWriteInfo.append(paclSymbol).append(jobDate);
 				log.info(">>>>>>write:"+convertWriteInfo.toString());
 				context.write(keyOut, new Text(convertWriteInfo.toString()));
