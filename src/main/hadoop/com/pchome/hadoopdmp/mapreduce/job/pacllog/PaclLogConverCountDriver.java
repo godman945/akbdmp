@@ -89,7 +89,6 @@ public class PaclLogConverCountDriver {
 			
 			jobConf.set("mapreduce.map.memory.mb", "4096");
 			jobConf.set("mapreduce.reduce.memory.mb", "8192");
-			jobConf.set("mapreduce.job.ubertask.enable", "true");
 			
 //		    jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 			

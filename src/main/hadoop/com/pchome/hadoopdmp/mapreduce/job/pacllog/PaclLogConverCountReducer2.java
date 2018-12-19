@@ -180,13 +180,11 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				JSONObject saveJson = new JSONObject();
 				saveJson = data.get(0);
 				saveDBMap.put(uuid+"<PCHOME>"+type.toUpperCase(), saveJson);
-//				log.info("final data:"+data.get(0));
 			}
 			if(convertBelong.equals("2")){
 				JSONObject saveJson = new JSONObject();
 				saveJson = data.get(data.size() - 1);
 				saveDBMap.put(uuid+"<PCHOME>"+type.toUpperCase(), saveJson);
-//				log.info("final data:"+data.get(data.size() - 1));
 			}
 		}
 	}
