@@ -2,6 +2,7 @@ package com.pchome.hadoopdmp.mapreduce.job.pacllog;
 
 import java.io.IOException;
 import java.net.URI;
+import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Component;
 import com.hadoop.compression.lzo.LzopCodec;
 import com.hadoop.mapreduce.LzoTextInputFormat;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
+import com.pchome.soft.util.MysqlUtil;
 
 @Component
 public class PaclLogConverCountDriver {
@@ -221,8 +223,38 @@ public class PaclLogConverCountDriver {
 			}
 
 			log.info("----job2 start----");
-			log.info("paclPfpUserMap:"+paclPfpUserMap);
-			log.info(jobConf.get("alex"));
+			
+			String url = "jdbc:mysql://kddbdev.mypchome.com.tw:3306/akb_video";
+			String jdbcDriver = "com.mysql.jdbc.Driver";
+			String user = "keyword";
+			String password =  "K1y0nLine";
+			MysqlUtil mysqlUtil = MysqlUtil.getInstance();
+			mysqlUtil.setConnection(url, user, password);
+			
+			StringBuffer sql = new StringBuffer();
+			sql.append(" SELECT c.pfp_customer_info_id  ");
+			sql.append(" FROM   (SELECT customer_info_id  ");
+			sql.append(" FROM   pfp_ad_action_report  ");
+			sql.append(" WHERE  1 = 1  ");
+			sql.append(" AND ad_pvclk_date >= '2018-12-13'  ");
+			sql.append(" GROUP  BY customer_info_id)a  ");
+			sql.append(" RIGHT JOIN pfp_code_convert c  ");
+			sql.append(" ON a.customer_info_id = c.pfp_customer_info_id  ");
+			sql.append(" AND c.convert_status = 1  ");
+			sql.append(" GROUP  BY pfp_customer_info_id  ");
+			ResultSet resultSet = mysqlUtil.query(sql.toString());
+			while(resultSet.next()){
+				String pfpCustomerInfoId = resultSet.getString("pfp_customer_info_id");
+				PaclLogConverCountDriver.paclPfpUserMap.put(pfpCustomerInfoId, "Y");
+			}
+			log.info(">>>>>>convertConditionMap:"+paclPfpUserMap);
+			
+			
+			
+			
+			
+			
+			
 			
 			
 //			Job job2 = new Job(jobConf, "dmp_conv2_"+ env + "_" + sdf2.format(date));

@@ -93,11 +93,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			String password =  "K1y0nLine";
 			mysqlUtil = MysqlUtil.getInstance();
 			mysqlUtil.setConnection(url, user, password);
-			
-			
-			PaclLogConverCountDriver.paclPfpUserMap.put("alex", "Y");
-			context.getConfiguration().set("alex", "CCCCCCCCCCCcc");
-			
 			log.info(">>>>>>>>>>>>>>>>>>>paclPfpUserMap:"+PaclLogConverCountDriver.paclPfpUserMap);
 		} catch (Throwable e) {
 			log.error("reduce setup error>>>>>> " + e);
