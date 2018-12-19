@@ -19,7 +19,6 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.Iterators;
 import com.pchome.soft.util.MysqlUtil;
 import com.pchome.soft.util.UAgentInfo;
 
@@ -219,11 +218,13 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			}
 		}
 		//資料來源ck/pv log數量小於轉換數
+		
 		int dataSize = data.size();
 		for (JSONObject jsonObject : data) {
 			int dataConvertCount = Integer.parseInt(jsonObject.getAsString("convertCount"));
+			log.info("process count dataSize:"+dataSize+" type:"+type +" dataConvertCount:"+dataConvertCount);
 			if(dataSize < dataConvertCount){
-				jsonObject.put("convertCount", dataConvertCount);
+				jsonObject.put("convertCount", dataSize);
 			}
 		}
 	}
@@ -239,10 +240,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				return 0;
 			}
 		});
-		
-		for (JSONObject jsonObject : data) {
-			log.info("kdclSourceDate:"+jsonObject.getAsString("kdclSourceDate") +" kdclType:"+jsonObject.getAsString("kdclType"));
-		}
 		return data;
 	}
 	
