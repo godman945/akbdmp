@@ -83,8 +83,8 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 			}else if(fileName.contains("kdcl") || fileName.contains("kwstg")){
 					String pfpCustomerInfoId = arrayData[6];
 					if(effectPaclPfpUser.toString().contains(pfpCustomerInfoId)){
-//						log.info(">>>>>>kdcl log");
-//						log.info("raw_data : " + value);
+						log.info(">>>>>>kdcl log");
+						log.info("raw_data : " + value);
 						
 						String date = arrayData[0];
 						String times = String.valueOf(sdf.parse(date).getHours());
@@ -139,9 +139,9 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 						keyOut.set(uuid);
 						context.write(keyOut, new Text(kdclInfo.toString()));
 					}
-				}else if(fileName.contains("part-r")){
-//					log.info(">>>>>>conv log");
-//					log.info("raw_data : " + value);
+				}else if(fileName.contains("part")){
+					log.info(">>>>>>conv log");
+					log.info("raw_data : " + value);
 					String uuid = arrayData[0].trim();
 					String clickRangeDate = arrayData[1];
 					String impRangeDate = arrayData[2];
