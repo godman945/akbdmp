@@ -57,8 +57,8 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 			String valueStr = value.toString();
 			String arrayData[] = valueStr.split(paclSymbol,-1);
 			String paclType = arrayData[11];
-//			log.info(">>>>>filename:"+fileName);
-//			log.info(">>>>>paclType:"+paclType);
+			log.info(">>>>>filename:"+fileName);
+			log.info(">>>>>paclType:"+paclType);
 			if(fileName.contains("pacl")){
 //				log.info("raw_data : " + valueStr);
 //				log.info("arrayData size : " + arrayData.length);
@@ -80,7 +80,7 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					keyOut.set(convId+"<PCHOME>"+paclUuid+"<PCHOME>"+paclType);
 					context.write(keyOut, new Text(paclLogInfo.toString()));
 				}
-			}else if(fileName.contains("kdcl")){
+			}else if(fileName.contains("kdcl") || fileName.contains("kwstg")){
 //					log.info(">>>>>>kdcl log");
 //					log.info("raw_data : " + value);
 //					log.info("arrayData size : " + arrayData.length);
