@@ -152,15 +152,11 @@ public class PaclLogConverCountDriver {
 			for (FileStatus fileStatus : status) {  
 			    if (fs.getFileStatus(fileStatus.getPath()).isDir()) {  
 			        list.add(fileStatus.getPath());
+			        log.info("path:"+fileStatus.getPath());
 			    }  
 			}  
 			Path[] paths = new Path[list.size()];  
 			list.toArray(paths);  
-			for (Path path : paths) {
-				log.info("path:"+path.getName());
-			}
-			
-//			logInputPath = akbPacLoglAll;
 			outPath = "/home/webuser/alex/pacl_output";
 			//hdfs存在則刪除
 			deleteExistedDir(fs, new Path(outPath), true);
