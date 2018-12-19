@@ -119,6 +119,10 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
 		try {
 			String key = mapperKey.toString();
+			
+			log.info(">>>>>>>>key:"+key);
+			
+			
 			dataCkList.clear();
 			dataPvList.clear();
 			paclJsonInfo.clear();
@@ -144,6 +148,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 					paclJsonInfo = logJson;
 				}
 			}
+			
 			
 			if(flagKdcl && flagPacl){
 				log.info("key:"+key+" flagKdcl:"+flagKdcl+" flagPacl:"+flagPacl);
