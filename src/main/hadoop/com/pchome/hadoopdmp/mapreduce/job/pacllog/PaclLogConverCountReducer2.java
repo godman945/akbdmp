@@ -119,10 +119,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
 		try {
 			String key = mapperKey.toString();
-			
-			log.info(">>>>>>>>key:"+key);
-			
-			
 			dataCkList.clear();
 			dataPvList.clear();
 			paclJsonInfo.clear();
@@ -134,6 +130,12 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			for (Text text : mapperValue) {
 				String value = text.toString();
 				JSONObject logJson = (JSONObject) jsonParser.parse(value);
+				
+				if(key.equals("0c77104fc0a71b63afc34b557e11e1d5")){
+					log.info(">>>>>>>>key:"+key);
+					log.info(">>>>>>>>logJson:"+logJson.toString());
+				}
+				
 				if(logJson.getAsString("fileName").contains("kdcl")){
 					flagKdcl = true;
 					String kdclType = logJson.getAsString("kdclType");
@@ -148,7 +150,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 					paclJsonInfo = logJson;
 				}
 			}
-			
 			
 			if(flagKdcl && flagPacl){
 				log.info("key:"+key+" flagKdcl:"+flagKdcl+" flagPacl:"+flagPacl);

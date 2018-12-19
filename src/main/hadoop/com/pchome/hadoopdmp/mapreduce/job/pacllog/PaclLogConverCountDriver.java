@@ -78,8 +78,8 @@ public class PaclLogConverCountDriver {
 			
 //			jobConf.setNumMapTasks(8);
 			
-			jobConf.set("mapred.max.split.size","3045728000"); //3045728 49 //3045728000 7
-			jobConf.set("mapred.min.split.size","1015544000"); //1015544 49 //1015544000 7
+			jobConf.set("mapred.max.split.size","30457280000"); //3045728 49 //3045728000 7
+			jobConf.set("mapred.min.split.size","10155440000"); //1015544 49 //1015544000 7
 			
 			//ask推测执行
 			jobConf.set("mapred.map.tasks.speculative.execution","true");
@@ -130,22 +130,22 @@ public class PaclLogConverCountDriver {
 			// job
 			log.info("----job1 start---- jobDate:"+jobDate);
 	
-			Job job = new Job(jobConf, "dmp_conv_count_"+ env + "_" + sdf2.format(date));
-			job.setJarByClass(PaclLogConverCountDriver.class);
-			job.setMapperClass(PaclLogConverCountMapper.class);
-			job.setReducerClass(PaclLogConverCountReducer.class);
-			job.setMapOutputKeyClass(Text.class);
-			job.setMapOutputValueClass(Text.class);
-			
-			
-			job.setOutputKeyClass(Text.class);
-			job.setOutputValueClass(Text.class);
-			job.setNumReduceTasks(5); 
-			job.setMapSpeculativeExecution(false);
-			job.setInputFormatClass(LzoTextInputFormat.class);
-//			logInputPath = "/home/webuser/pa/storedata/alllog/"+sdf.format(new Date())+"/00";
+//			Job job = new Job(jobConf, "dmp_conv_count_"+ env + "_" + sdf2.format(date));
+//			job.setJarByClass(PaclLogConverCountDriver.class);
+//			job.setMapperClass(PaclLogConverCountMapper.class);
+//			job.setReducerClass(PaclLogConverCountReducer.class);
+//			job.setMapOutputKeyClass(Text.class);
+//			job.setMapOutputValueClass(Text.class);
+//			
+//			
+//			job.setOutputKeyClass(Text.class);
+//			job.setOutputValueClass(Text.class);
+//			job.setNumReduceTasks(5); 
+//			job.setMapSpeculativeExecution(false);
+//			job.setInputFormatClass(LzoTextInputFormat.class);
+////			logInputPath = "/home/webuser/pa/storedata/alllog/"+sdf.format(new Date())+"/00";
 			Path inPath = new Path("/home/webuser/pa/storedata/alllog/"+sdf.format(cal.getTime()));
-			
+//			
 			FileStatus[] status = fs.listStatus(inPath);  
 			List<Path> list = new ArrayList<Path>();  
 			for (FileStatus fileStatus : status) {  
@@ -155,19 +155,19 @@ public class PaclLogConverCountDriver {
 			    }  
 			}  
 			Path[] paths = new Path[list.size()];  
-			list.toArray(paths);  
-			outPath = "/home/webuser/alex/pacl_output";
-			//hdfs存在則刪除
-			deleteExistedDir(fs, new Path(outPath), true);
-				
-			log.info(">>>>>>Job1 INPUT PATH:"+logInputPath);
-			log.info(">>>>>>Job1 OUTPUT PATH:"+outPath);
-			FileInputFormat.setInputPaths(job, paths);
-			FileOutputFormat.setOutputPath(job, new Path(outPath));
-			FileOutputFormat.setCompressOutput(job, true);
-			FileOutputFormat.setOutputCompressorClass(job, LzopCodec.class);
-			
-			//load jar path
+//			list.toArray(paths);  
+//			outPath = "/home/webuser/alex/pacl_output";
+//			//hdfs存在則刪除
+//			deleteExistedDir(fs, new Path(outPath), true);
+//				
+//			log.info(">>>>>>Job1 INPUT PATH:"+logInputPath);
+//			log.info(">>>>>>Job1 OUTPUT PATH:"+outPath);
+//			FileInputFormat.setInputPaths(job, paths);
+//			FileOutputFormat.setOutputPath(job, new Path(outPath));
+//			FileOutputFormat.setCompressOutput(job, true);
+//			FileOutputFormat.setOutputCompressorClass(job, LzopCodec.class);
+//			
+//			//load jar path
 			String[] jarPaths = {
 					"/home/webuser/dmp/webapps/analyzer/lib/commons-lang-2.6.jar",
 					"/home/webuser/dmp/webapps/analyzer/lib/commons-logging-1.1.1.jar",
@@ -189,10 +189,10 @@ public class PaclLogConverCountDriver {
 					"/home/webuser/dmp/webapps/analyzer/lib/json-smart-2.3.jar",
 					"/home/webuser/dmp/webapps/analyzer/lib/asm-1.0.2.jar" 
 			}; 
-			for (String jarPath : jarPaths) {
-				DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fs);
-			}
-	
+//			for (String jarPath : jarPaths) {
+//				DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fs);
+//			}
+//	
 			String[] filePaths = {
 					hdfsPath + "/home/webuser/dmp/crawlBreadCrumb/data/pfp_ad_category_new.csv",
 					hdfsPath + "/home/webuser/dmp/readingdata/ClsfyGndAgeCrspTable.txt",
@@ -202,19 +202,18 @@ public class PaclLogConverCountDriver {
 					hdfsPath + "/home/webuser/dmp/jobfile/GeoLite2-City.mmdb",
 					hdfsPath + "/home/webuser/dmp/jobfile/ThirdAdClassTable.txt"
 			};
-			for (String filePath : filePaths) {
-				DistributedCache.addCacheFile(new URI(filePath), job.getConfiguration());
-			}
-	
-			if (job.waitForCompletion(true)) {
-				log.info("Job1 is OK");
-				
-			} else {
-				log.info("Job1 is Failed");
-			}
+//			for (String filePath : filePaths) {
+//				DistributedCache.addCacheFile(new URI(filePath), job.getConfiguration());
+//			}
+//	
+//			if (job.waitForCompletion(true)) {
+//				log.info("Job1 is OK");
+//				
+//			} else {
+//				log.info("Job1 is Failed");
+//			}
 
 			log.info("----job2 start----");
-			
 			String url = "jdbc:mysql://kddbdev.mypchome.com.tw:3306/akb_video";
 			String jdbcDriver = "com.mysql.jdbc.Driver";
 			String user = "keyword";
@@ -245,6 +244,13 @@ public class PaclLogConverCountDriver {
 			jobConf.set("effectPaclPfpUser", effectPaclPfpUser.toString());
 			
 			Job job2 = new Job(jobConf, "dmp_conv2_"+ env + "_" + sdf2.format(date));
+			for (String jarPath : jarPaths) {
+				DistributedCache.addArchiveToClassPath(new Path(jarPath), job2.getConfiguration(), fs);
+			}
+			for (String filePath : filePaths) {
+				DistributedCache.addCacheFile(new URI(filePath), job2.getConfiguration());
+			}
+			
 			job2.setJarByClass(PaclLogConverCountDriver.class);
 			job2.setMapperClass(PaclLogConverCountMapper.class);
 			job2.setReducerClass(PaclLogConverCountReducer2.class);
@@ -254,7 +260,7 @@ public class PaclLogConverCountDriver {
 			job2.setInputFormatClass(LzoTextInputFormat.class);
 			job2.setOutputKeyClass(Text.class);
 			job2.setOutputValueClass(Text.class);
-			job2.setNumReduceTasks(20);//1個reduce 
+			job2.setNumReduceTasks(1);//1個reduce 
 			job2.setMapSpeculativeExecution(false);
 			
 			
