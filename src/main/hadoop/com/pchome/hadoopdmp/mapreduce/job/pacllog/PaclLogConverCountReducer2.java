@@ -217,16 +217,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				iteratorJson.put("convertCount", convertCount);
 			}
 		}
-		//資料來源ck/pv log數量小於轉換數
-		
-		int dataSize = data.size();
-		for (JSONObject jsonObject : data) {
-			int dataConvertCount = Integer.parseInt(jsonObject.getAsString("convertCount"));
-			log.info("process count dataSize:"+dataSize+" type:"+type +" dataConvertCount:"+dataConvertCount);
-			if(dataSize < dataConvertCount){
-				jsonObject.put("convertCount", dataSize);
-			}
-		}
 	}
 	
 	private List<JSONObject> sortKdclDataList(List<JSONObject> data){
@@ -374,10 +364,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				preparedStmt.setString(33, sdfFormat.format(date));
 				preparedStmt.setString(34, sdfFormat.format(date));
 				preparedStmt.addBatch();
-				
-				log.info("count:"+count+" totalSize:"+totalSize);
-				
-				
+
 				//寫入hbbase
 //				saveHbaseJson = new JSONObject();
 //				saveHbaseJson.put(key, value)

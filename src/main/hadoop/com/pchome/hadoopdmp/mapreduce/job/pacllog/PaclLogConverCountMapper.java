@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -19,7 +20,7 @@ import net.minidev.json.JSONObject;
 
 @Component
 public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, Text> {
-	Log log = LogFactory.getLog("DmpLogMapper");
+	Log log = LogFactory.getLog("PaclLogConverCountMapper");
 	
 	private Text keyOut = new Text();
 
@@ -67,7 +68,7 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 				}else if(paclType.equals("page_view")){
 					
 				}else{
-					String paclUuid = arrayData[2];
+					String paclUuid = StringUtils.isNotBlank(arrayData[3]) ? arrayData[3] : arrayData[2];
 					String convId = arrayData[12];
 					String rouleId = arrayData[13];
 					String userDefineConvertPrice = arrayData[14];

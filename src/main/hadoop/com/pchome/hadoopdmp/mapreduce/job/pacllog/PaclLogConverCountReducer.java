@@ -27,7 +27,7 @@ import net.minidev.json.parser.JSONParser;
 @Component
 public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 
-	private static Log log = LogFactory.getLog("DmpLogReducer");
+	private static Log log = LogFactory.getLog("PaclLogConverCountReducer");
 
 	private Text keyOut = new Text();
 
