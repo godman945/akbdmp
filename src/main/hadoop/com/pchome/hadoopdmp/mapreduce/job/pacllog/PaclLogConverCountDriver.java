@@ -7,7 +7,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -28,18 +27,15 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.Iterators;
 import com.hadoop.compression.lzo.LzopCodec;
 import com.hadoop.mapreduce.LzoTextInputFormat;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 import com.pchome.soft.util.MysqlUtil;
 
-import net.minidev.json.JSONObject;
-
 @Component
 public class PaclLogConverCountDriver {
 
-	private static Log log = LogFactory.getLog("DmpLogDriver");
+	private static Log log = LogFactory.getLog("PaclLogConverCountDriver");
 
 	@Value("${hpd11.fs.default.name}")
 	private String hdfsPath;

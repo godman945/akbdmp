@@ -154,7 +154,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 						int convertNumType = resultSet.getInt("convert_num_type");
 						String convertRule = resultSet.getString("convert_rule_id");
 						String convertType = resultSet.getString("convert_type");
-						String pfpCustomerInfoId = resultSet.getString("pfp_customer_info_id");
+//						String pfpCustomerInfoId = resultSet.getString("pfp_customer_info_id");
 						
 						
 						pcalConditionBean = new PcalConditionBean();
@@ -167,7 +167,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 						pcalConditionBean.setConvertRule(convertRule);
 						pcalConditionBean.setConvertType(convertType);
 						convertConditionMap.put(convertSeq, pcalConditionBean);
-						log.info(">>>>>>convertConditionMap:"+pfpCustomerInfoId);
+//						log.info(">>>>>>convertConditionMap:"+pfpCustomerInfoId);
 					}
 				}else{
 					log.info(">>>>>>convertConditionMap data exist!!");
@@ -185,6 +185,9 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 						convertConditionSet.add(rouleId+"_0");
 					}
 				}
+				
+				
+				log.info("convertSeq:"+convertSeq+">>>>>>>convertConditionSet:"+convertConditionSet.toString());
 				
 //				開始計算條件出現次數
 				for (JSONObject paclLogJson : paclLogList) {
@@ -209,6 +212,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 						}
 					}
 				}
+				log.info("convertSeq:"+convertSeq+">>>>>>>convertConditionSet:"+convertConditionSet.toString());
 				
 //				統計轉換次數
 				int convertCount = 0;
