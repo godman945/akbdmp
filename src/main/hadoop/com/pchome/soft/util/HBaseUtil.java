@@ -22,11 +22,9 @@ import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.json.JSONObject;
-import org.springframework.stereotype.Component;
 
 
 
-@Component
 public class HBaseUtil {
 	Log log = LogFactory.getLog(KafkaUtil.class);
 	private Configuration config;
