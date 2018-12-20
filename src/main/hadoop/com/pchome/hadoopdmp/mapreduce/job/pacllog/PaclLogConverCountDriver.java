@@ -178,7 +178,8 @@ public class PaclLogConverCountDriver {
 					"/home/webuser/dmp/webapps/analyzer/lib/httpclient-4.2.3.jar",
 					"/home/webuser/dmp/webapps/analyzer/lib/httpmime-4.2.3.jar",
 					"/home/webuser/dmp/webapps/analyzer/lib/mysql-connector-java-5.1.12-bin.jar",
-	
+					"/home/webuser/dmp/webapps/analyzer/lib/json-20160810.jar",
+					
 					// add kafka jar
 					"/home/webuser/dmp/webapps/analyzer/lib/kafka-clients-0.9.0.0.jar",
 					"/home/webuser/dmp/webapps/analyzer/lib/kafka_2.11-0.9.0.0.jar",
