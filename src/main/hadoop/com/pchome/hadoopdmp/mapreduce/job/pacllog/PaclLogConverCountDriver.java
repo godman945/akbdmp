@@ -185,7 +185,9 @@ public class PaclLogConverCountDriver {
 					"/home/webuser/dmp/webapps/analyzer/lib/slf4j-api-1.7.19.jar",
 					"/home/webuser/dmp/webapps/analyzer/lib/slf4j-log4j12-1.7.6.jar",
 					"/home/webuser/dmp/webapps/analyzer/lib/json-smart-2.3.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/asm-1.0.2.jar" 
+					"/home/webuser/dmp/webapps/analyzer/lib/asm-1.0.2.jar",
+					// add hbase jar
+					"/home/webuser/dmp/webapps/analyzer/lib/hbase-client-1.4.5.jar"
 			}; 
 			for (String jarPath : jarPaths) {
 				DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fs);
