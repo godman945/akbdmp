@@ -299,7 +299,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
         else if (age >= 75) {
         	return "H";
         }
-		return "";
+		return "I";
 	}
 	
 	public void cleanup(Context context) {
