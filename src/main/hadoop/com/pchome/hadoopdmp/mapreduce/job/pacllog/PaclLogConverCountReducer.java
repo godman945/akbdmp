@@ -181,13 +181,15 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 					convertConditionSet.add("ALL_0");
 				}else if(pcalConditionBean.getConvertType().equals("2")){
 					convertConditionArray = pcalConditionBean.getConvertRule().split(":");
-					log.info("convertConditionArray:"+convertConditionArray);
 					for (String rouleId : convertConditionArray) {
 						convertConditionSet.add(rouleId+"_0");
 					}
 				}
 				
 				log.info("convertSeq:"+convertSeq+">>>>>>>convertConditionSet:"+convertConditionSet.toString());
+				log.info("paclLogList:"+paclLogList.toString());
+				
+				
 //				開始計算條件出現次數
 				for (JSONObject paclLogJson : paclLogList) {
 					for (String convertConditionStr : convertConditionSet) {

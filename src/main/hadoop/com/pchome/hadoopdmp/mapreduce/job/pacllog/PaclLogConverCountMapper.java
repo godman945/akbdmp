@@ -76,7 +76,7 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					paclLogInfo.put("paclType", paclType);
 					paclLogInfo.put("convId", convId);
 					paclLogInfo.put("rouleId", rouleId.replace(";", ""));
-					paclLogInfo.put("cat", userDefineConvertPrice);
+					paclLogInfo.put("userDefineConvertPrice", userDefineConvertPrice);
 					keyOut.set(convId+"<PCHOME>"+paclUuid+"<PCHOME>"+paclType);
 					context.write(keyOut, new Text(paclLogInfo.toString()));
 				}
