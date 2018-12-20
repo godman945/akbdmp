@@ -54,6 +54,9 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 
 	private MysqlUtil mysqlUtil = null;
 	
+	private HBaseUtil hbaseUtil = null;
+	
+	
 	private StringBuffer convertWriteInfo = new StringBuffer();
 	
 	private StringBuffer sql = new StringBuffer();
@@ -95,17 +98,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			mysqlUtil = MysqlUtil.getInstance();
 			mysqlUtil.setConnection(url, user, password);
 			
-			
-			
-			 HBaseUtil hbaseUtil = HBaseUtil.getInstance();
-			 log.info("hbaseUtil:"+hbaseUtil);
-			 
-			 
-			 
-			 org.json.JSONObject hbaseValue = hbaseUtil.getData("pacl_retargeting", "alex", "type", "retargeting");
-    		 log.info(">>>>>>>>>>>>>>>>hbaseValue:"+hbaseValue);
-			
-			
+			hbaseUtil = HBaseUtil.getInstance();
 		} catch (Throwable e) {
 			log.error("reduce setup error>>>>>> " + e);
 		}
@@ -114,6 +107,15 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	@Override
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
 		try {
+			
+			log.info("hbaseUtil:"+hbaseUtil);
+   		 	log.info(">>>>>>>>>>>>>>>>hbaseValue:"+hbaseUtil.getData("pacl_retargeting", "alex", "type", "retargeting"));
+			
+			
+			
+			
+			
+			
 			this.context = context;
 			
 			uuid = null;
