@@ -98,7 +98,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			
 			
 			 HBaseUtil hbaseUtil = new HBaseUtil();
-			 org.json.JSONObject hbaseValue = hbaseUtil.getData("pacl_retargeting", "980d7bcb73a0ab329a93ad1148c1d50d", "type", "retargeting");
+			 org.json.JSONObject hbaseValue = hbaseUtil.getData("pacl_retargeting", "alex", "type", "retargeting");
     		 log.info(">>>>>>>>>>>>>>>>hbaseValue:"+hbaseValue);
 			
 			
