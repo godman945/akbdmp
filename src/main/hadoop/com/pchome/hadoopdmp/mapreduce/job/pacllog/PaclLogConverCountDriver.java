@@ -190,6 +190,16 @@ public class PaclLogConverCountDriver {
 					"/home/webuser/dmp/webapps/analyzer/lib/hbase-client-1.4.5.jar"
 			}; 
 			for (String jarPath : jarPaths) {
+				Path hadoopJarPath = new Path(jarPath);
+				
+				
+				FileStatus[] files = fs.listStatus(hadoopJarPath);
+				for (FileStatus fileStatus : files) {
+					log.info("hadoopJarPath:"+fileStatus.getPath());
+				}
+				
+			
+				
 				DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fs);
 			}
 			String[] filePaths = {
