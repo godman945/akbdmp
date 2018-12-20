@@ -82,8 +82,8 @@ public class PaclLogConverCountDriver {
 			
 			jobConf.setNumMapTasks(5);
 			
-			jobConf.set("mapred.max.split.size","100457280000"); //3045728 49 //3045728000 7
-			jobConf.set("mapred.min.split.size","100457280000"); //1015544 49 //1015544000 7
+			jobConf.set("mapred.max.split.size","900457280000"); //3045728 49 //3045728000 7
+			jobConf.set("mapred.min.split.size","900457280000"); //1015544 49 //1015544000 7
 			
 			//ask推测执行
 			jobConf.set("mapred.map.tasks.speculative.execution","true");

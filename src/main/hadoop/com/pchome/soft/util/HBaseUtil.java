@@ -26,23 +26,35 @@ import org.json.JSONObject;
 
 
 public class HBaseUtil {
+	
+	private static HBaseUtil singleton = new HBaseUtil();
+	
 	Log log = LogFactory.getLog(KafkaUtil.class);
 	private Configuration config;
 	HBaseAdmin admin = null;
 	Configuration conf = HBaseConfiguration.create();
-	public HBaseUtil() throws Exception {  
-		conf = HBaseConfiguration.create();
-		conf.set("hbase.zookeeper.quorum", "192.168.2.150,192.168.2.151,192.168.2.152");
-		conf.set("hbase.zookeeper.property.clientPort", "3333");
-		conf.set("hbase.master", "192.168.2.149:16010");   
-		File workaround = new File(".");         
-		System.getProperties().put("hadoop.home.dir", workaround.getAbsolutePath());         
-		new File("./bin").mkdirs();         
-		new File("./bin/winutils.exe").createNewFile();
-		conf = HBaseConfiguration.create(conf);
-		Connection connection = ConnectionFactory.createConnection(conf);
-		admin = (HBaseAdmin) connection.getAdmin();
-	}  
+	
+	HBaseUtil() {
+		try{
+			conf = HBaseConfiguration.create();
+			conf.set("hbase.zookeeper.quorum", "192.168.2.150,192.168.2.151,192.168.2.152");
+			conf.set("hbase.zookeeper.property.clientPort", "3333");
+			conf.set("hbase.master", "192.168.2.149:16010");   
+			File workaround = new File(".");         
+			System.getProperties().put("hadoop.home.dir", workaround.getAbsolutePath());         
+			new File("./bin").mkdirs();         
+			new File("./bin/winutils.exe").createNewFile();
+			conf = HBaseConfiguration.create(conf);
+			Connection connection = ConnectionFactory.createConnection(conf);
+			admin = (HBaseAdmin) connection.getAdmin();
+		}catch(Exception e){
+			log.error(e.getMessage());
+		}
+	}
+	
+	synchronized static public HBaseUtil getInstance() {
+		return singleton;
+	}
 	
 	
 	 /**
@@ -142,7 +154,7 @@ public class HBaseUtil {
 	 
 	    public static void main(String args[]){
 	    	 try {
-	    		 HBaseUtil hbaseUtil = new HBaseUtil();
+	    		 HBaseUtil hbaseUtil = HBaseUtil.getInstance();
 	    		 
 	    		 JSONObject json = new JSONObject();
 	    		 json.put("traceId001_prodId008", "2018-08-10");
@@ -150,7 +162,7 @@ public class HBaseUtil {
 	    		 
 	    		 
 	    		 
-	    		 org.json.JSONObject hbaseValue = hbaseUtil.getData("pacl_retargeting", "980d7bcb73a0ab329a93ad1148c1d50d", "type", "retargeting");
+	    		 org.json.JSONObject hbaseValue = hbaseUtil.getData("pacl_retargeting", "alex", "type", "retargeting");
 	    		 System.out.println(hbaseValue);
 	    		 
 	    		 
