@@ -147,9 +147,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			
 			if(flagKdcl && flagPacl){
 				log.info("key:"+key+" flagKdcl:"+flagKdcl+" flagPacl:"+flagPacl);
-				log.info("dataCkList:"+dataCkList);
-				log.info("dataPvList:"+dataPvList);
-				log.info("paclJsonInfo:"+paclJsonInfo);
 				
 				processOutOfRangeDay(dataCkList,"ck");
 				//排序時間
@@ -217,6 +214,12 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				iteratorJson.put("convertCount", convertCount);
 			}
 		}
+		
+		log.info("type:"+type);
+		log.info("dataCkList:"+dataCkList);
+		log.info("dataPvList:"+dataPvList);
+		log.info("paclJsonInfo:"+paclJsonInfo);
+		
 	}
 	
 	private List<JSONObject> sortKdclDataList(List<JSONObject> data){
