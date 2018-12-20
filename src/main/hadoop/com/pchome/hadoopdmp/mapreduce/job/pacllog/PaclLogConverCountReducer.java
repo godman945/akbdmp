@@ -65,8 +65,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	
 	private static String paclSymbol = String.valueOf(new char[] { 9, 31 });
 	
-	private static JSONObject paclLogInfo = new JSONObject();
-	
 	private static List<JSONObject> paclLogList = new ArrayList<JSONObject>();
 	
 	private static String[] convertConditionArray = null;
@@ -235,42 +233,40 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 					}
 				}
 				
-				int convertPriceCount = 0;
-//				1:每次 2:一次
-				if(pcalConditionBean.getConvertNumType() == 1){
-					pcalConditionBean.setConvertCount(convertCount);
-					if(this.userDefineConvertPrice != null){
-						convertPriceCount = this.userDefineConvertPrice * convertCount;
-					}else{
-						convertPriceCount = (int)Double.parseDouble(pcalConditionBean.getConvertPrice()) * convertCount;
+				//轉換數須大於0才輸出lzo
+				if(convertCount > 0){
+					int convertPriceCount = 0;
+					//1:每次 2:一次
+					if(pcalConditionBean.getConvertNumType() == 1){
+						pcalConditionBean.setConvertCount(convertCount);
+						if(this.userDefineConvertPrice != null){
+							convertPriceCount = this.userDefineConvertPrice * convertCount;
+						}else{
+							convertPriceCount = (int)Double.parseDouble(pcalConditionBean.getConvertPrice()) * convertCount;
+						}
+					}else if(pcalConditionBean.getConvertNumType() == 2){
+						pcalConditionBean.setConvertCount(1);
+						if(this.userDefineConvertPrice != null){
+							convertPriceCount = this.userDefineConvertPrice;
+						}else{
+							convertPriceCount = (int)Double.parseDouble(pcalConditionBean.getConvertPrice());
+						}
 					}
-				}else if(pcalConditionBean.getConvertNumType() == 2){
-					pcalConditionBean.setConvertCount(1);
-					if(this.userDefineConvertPrice != null){
-						convertPriceCount = this.userDefineConvertPrice;
-					}else{
-						convertPriceCount = (int)Double.parseDouble(pcalConditionBean.getConvertPrice());
-					}
+//					log.info("============="+convertConditionSet+" convert count:"+convertCount);
+					keyOut.set(uuid);
+					convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getClickRangeDate());
+					convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getImpRangeDate());
+					convertWriteInfo.append(paclSymbol).append(convertPriceCount);
+					convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getConvertPrice());
+					convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getConvertBelong());
+					convertWriteInfo.append(paclSymbol).append(convertSeq);
+					convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getConvertNumType());
+					convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getConvertCount());
+					convertWriteInfo.append(paclSymbol).append(jobDate);
+					log.info(">>>>>>write:"+convertWriteInfo.toString());
+					context.write(keyOut, new Text(convertWriteInfo.toString()));
 				}
-//				log.info("============="+convertConditionSet+" convert count:"+convertCount);
-				keyOut.set(uuid);
-				convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getClickRangeDate());
-				convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getImpRangeDate());
-				convertWriteInfo.append(paclSymbol).append(convertPriceCount);
-				convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getConvertPrice());
-				convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getConvertBelong());
-				convertWriteInfo.append(paclSymbol).append(convertSeq);
-				convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getConvertNumType());
-				convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getConvertCount());
-				convertWriteInfo.append(paclSymbol).append(jobDate);
-				log.info(">>>>>>write:"+convertWriteInfo.toString());
-				context.write(keyOut, new Text(convertWriteInfo.toString()));
 			}
-			
-			
-			
-			
-			
 			paclLogList.clear();
 			convertConditionSet.clear();
 			convertWriteInfo.setLength(0);
