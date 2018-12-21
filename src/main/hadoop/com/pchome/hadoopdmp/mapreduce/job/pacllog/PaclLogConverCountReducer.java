@@ -309,34 +309,34 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			log.info("************************************************");
 			
 			
-			HBaseAdmin admin = null;
-			Configuration conf = HBaseConfiguration.create();
-			
-			conf = HBaseConfiguration.create();
-			conf.set("hbase.zookeeper.quorum", "192.168.2.150,192.168.2.151,192.168.2.152");
-			conf.set("hbase.zookeeper.property.clientPort", "3333");
-			conf.set("hbase.master", "192.168.2.149:16010");   
-			conf = HBaseConfiguration.create(conf);
-			Connection connection = ConnectionFactory.createConnection(conf);
-			admin = (HBaseAdmin) connection.getAdmin();
-			
-			String tableName = "pacl_retargeting";
-			String rowKey = "alex";
-			String family = "type";
-			String qualifier = "retargeting";
-			
-			 HTable table = new HTable(conf, Bytes.toBytes(tableName));
-			 int region = Math.abs(rowKey.hashCode()) % 10;
-			 rowKey = "0"+region+"|"+rowKey;
-			 Get get = new Get(Bytes.toBytes(rowKey));
-			 get.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier));
-			 Result result = table.get(get);
-			 String row = Bytes.toString(result.getRow());
-			
-			 log.info("************************************************"+Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
-			 log.info("-----------------------");
-			 org.json.JSONObject ja = new org.json.JSONObject(Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
-			 log.info("-----------------------"+ja);
+//			HBaseAdmin admin = null;
+//			Configuration conf = HBaseConfiguration.create();
+//			
+//			conf = HBaseConfiguration.create();
+//			conf.set("hbase.zookeeper.quorum", "192.168.2.150,192.168.2.151,192.168.2.152");
+//			conf.set("hbase.zookeeper.property.clientPort", "3333");
+//			conf.set("hbase.master", "192.168.2.149:16010");   
+//			conf = HBaseConfiguration.create(conf);
+//			Connection connection = ConnectionFactory.createConnection(conf);
+//			admin = (HBaseAdmin) connection.getAdmin();
+//			
+//			String tableName = "pacl_retargeting";
+//			String rowKey = "alex";
+//			String family = "type";
+//			String qualifier = "retargeting";
+//			
+//			 HTable table = new HTable(conf, Bytes.toBytes(tableName));
+//			 int region = Math.abs(rowKey.hashCode()) % 10;
+//			 rowKey = "0"+region+"|"+rowKey;
+//			 Get get = new Get(Bytes.toBytes(rowKey));
+//			 get.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier));
+//			 Result result = table.get(get);
+//			 String row = Bytes.toString(result.getRow());
+//			
+//			 log.info("************************************************"+Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
+//			 log.info("-----------------------");
+//			 org.json.JSONObject ja = new org.json.JSONObject(Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
+//			 log.info("-----------------------"+ja);
 			
 			hbaseUtil = HBaseUtil.getInstance();
    		 	log.info(">>>>>>>>>>>>>>>>hbaseValue:"+hbaseUtil.getData("pacl_retargeting", "alex", "type", "retargeting"));
