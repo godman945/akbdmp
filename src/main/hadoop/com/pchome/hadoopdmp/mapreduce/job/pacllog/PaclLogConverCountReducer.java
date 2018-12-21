@@ -97,12 +97,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			String password =  "K1y0nLine";
 			mysqlUtil = MysqlUtil.getInstance();
 			mysqlUtil.setConnection(url, user, password);
-			
-			hbaseUtil = HBaseUtil.getInstance();
-			
-			log.info("hbaseUtil:"+hbaseUtil);
-   		 	log.info(">>>>>>>>>>>>>>>>hbaseValue:"+hbaseUtil.getData("pacl_retargeting", "alex", "type", "retargeting"));
-			
 		} catch (Throwable e) {
 			log.error("reduce setup error>>>>>> " + e);
 		}
@@ -301,6 +295,13 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	
 	public void cleanup(Context context) {
 		try {
+			hbaseUtil = HBaseUtil.getInstance();
+			
+			log.info("hbaseUtil:"+hbaseUtil);
+   		 	log.info(">>>>>>>>>>>>>>>>hbaseValue:"+hbaseUtil.getData("pacl_retargeting", "alex", "type", "retargeting"));
+			
+			
+			
 //			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement( "DELETE FROM `pfp_code_convert_trans` where  1=1 and convert_date = '"+jobDate+"'");
 //			preparedStmt.execute();
 //			mysqlUtil.getConnect().commit();
