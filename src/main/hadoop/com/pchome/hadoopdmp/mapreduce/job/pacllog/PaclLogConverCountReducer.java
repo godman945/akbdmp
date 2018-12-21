@@ -5,8 +5,10 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -20,6 +22,7 @@ import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
 import org.apache.hadoop.hbase.client.HTable;
+import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.Text;
@@ -94,18 +97,31 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	
 	private Context context = null;
 	
+	private HBaseAdmin admin = null;
+	
+	private Configuration conf = null;
+	
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
 		try {
 			jobDate = context.getConfiguration().get("job.date");
 			log.info(">>>>>>>>>>>jobDate:"+jobDate);
-			
+			//MySql
 			String url = "jdbc:mysql://kddbdev.mypchome.com.tw:3306/akb_video";
 			String jdbcDriver = "com.mysql.jdbc.Driver";
 			String user = "keyword";
 			String password =  "K1y0nLine";
 			mysqlUtil = MysqlUtil.getInstance();
 			mysqlUtil.setConnection(url, user, password);
+			//HBASE
+			Configuration conf = HBaseConfiguration.create();
+			conf = HBaseConfiguration.create();
+			conf.set("hbase.zookeeper.quorum", "192.168.2.150,192.168.2.151,192.168.2.152");
+			conf.set("hbase.zookeeper.property.clientPort", "3333");
+			conf.set("hbase.master", "192.168.2.149:16010");   
+			conf = HBaseConfiguration.create(conf);
+			Connection connection = ConnectionFactory.createConnection(conf);
+			admin = (HBaseAdmin) connection.getAdmin();
 		} catch (Throwable e) {
 			log.error("reduce setup error>>>>>> " + e);
 		}
@@ -302,28 +318,61 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 		}
 	}
 	
+	public void processTrackingLog() throws Exception{
+		
+	}
+	
+	
+	
+	 public void putData(String tableName,String rowKey,String family,String qualifier,JSONObject logJson) throws Exception{
+		 HTable table = new HTable(conf, Bytes.toBytes(tableName));
+		 int region = Math.abs(rowKey.hashCode()) % 10;
+		 rowKey = "0"+region+"|"+rowKey;
+		 Get get = new Get(Bytes.toBytes(rowKey));
+		 get.addColumn(Bytes.toBytes("type"), Bytes.toBytes("retargeting"));
+		 Result result = table.get(get);
+		 String row = Bytes.toString(result.getRow());
+		 
+		 //row存在更新value否則建立一筆新row
+		 if(row != null){
+			 JSONObject hbaseValueJson = (JSONObject) jsonParser.parse(Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
+			 for (Entry<String, Object> entry : logJson.entrySet()) {
+				 String logkey = entry.getKey();
+				 String logValue = (String) entry.getValue();
+				 hbaseValueJson.put(logkey, logValue);
+			 }
+			 Put put = new Put(Bytes.toBytes(rowKey));
+			 put.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier), Bytes.toBytes(hbaseValueJson.toString()));
+			 table.put(put);
+		 }else{
+			 Put put = new Put(Bytes.toBytes(rowKey));
+			 put.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier), Bytes.toBytes(logJson.toString()));
+			 table.put(put);
+		 }
+	 }
+	 
+	 public JSONObject getData(String tableName,String rowKey,String family,String qualifier) throws Exception{
+		 HTable table = new HTable(conf, Bytes.toBytes(tableName));
+		 int region = Math.abs(rowKey.hashCode()) % 10;
+		 rowKey = "0"+region+"|"+rowKey;
+		 Get get = new Get(Bytes.toBytes(rowKey));
+		 get.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier));
+		 Result result = table.get(get);
+		 String row = Bytes.toString(result.getRow());
+		 if(row == null){
+			 return null;
+		 }else{
+			 return (JSONObject) jsonParser.parse(Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
+		 }
+	 }
+	
+	
+	
+	
 	public void cleanup(Context context) {
 		try {
 			
 			
-			log.info("************************************************");
-			
-			
-//			HBaseAdmin admin = null;
-//			Configuration conf = HBaseConfiguration.create();
-//			
-//			conf = HBaseConfiguration.create();
-//			conf.set("hbase.zookeeper.quorum", "192.168.2.150,192.168.2.151,192.168.2.152");
-//			conf.set("hbase.zookeeper.property.clientPort", "3333");
-//			conf.set("hbase.master", "192.168.2.149:16010");   
-//			conf = HBaseConfiguration.create(conf);
-//			Connection connection = ConnectionFactory.createConnection(conf);
-//			admin = (HBaseAdmin) connection.getAdmin();
-//			
-//			String tableName = "pacl_retargeting";
-//			String rowKey = "alex";
-//			String family = "type";
-//			String qualifier = "retargeting";
 //			
 //			 HTable table = new HTable(conf, Bytes.toBytes(tableName));
 //			 int region = Math.abs(rowKey.hashCode()) % 10;
