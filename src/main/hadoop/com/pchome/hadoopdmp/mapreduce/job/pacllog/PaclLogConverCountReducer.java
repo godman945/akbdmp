@@ -122,6 +122,10 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			conf = HBaseConfiguration.create(conf);
 			Connection connection = ConnectionFactory.createConnection(conf);
 			admin = (HBaseAdmin) connection.getAdmin();
+			
+			
+			
+			log.info(">>>>>>>>>>>>>>>>hbaseValue:"+hbaseUtil.getData("pacl_retargeting", "alex", "type", "retargeting"));
 		} catch (Throwable e) {
 			log.error("reduce setup error>>>>>> " + e);
 		}
@@ -371,31 +375,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	
 	public void cleanup(Context context) {
 		try {
-			
-			
-//			
-//			 HTable table = new HTable(conf, Bytes.toBytes(tableName));
-//			 int region = Math.abs(rowKey.hashCode()) % 10;
-//			 rowKey = "0"+region+"|"+rowKey;
-//			 Get get = new Get(Bytes.toBytes(rowKey));
-//			 get.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier));
-//			 Result result = table.get(get);
-//			 String row = Bytes.toString(result.getRow());
-//			
-//			 log.info("************************************************"+Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
-//			 log.info("-----------------------");
-//			 org.json.JSONObject ja = new org.json.JSONObject(Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
-//			 log.info("-----------------------"+ja);
-			
-			hbaseUtil = HBaseUtil.getInstance();
-//			String a = "192.168.2.150,192.168.2.151,192.168.2.152";
-//			String b = "3333";
-//			String c = "192.168.2.149:16010";
-//			hbaseUtil.initHbaseConfig(a,b,c);
-//   		 	log.info(">>>>>>>>>>>>>>>>hbaseValue:"+hbaseUtil.getData("pacl_retargeting", "alex", "type", "retargeting"));
-			
-			
-			
 //			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement( "DELETE FROM `pfp_code_convert_trans` where  1=1 and convert_date = '"+jobDate+"'");
 //			preparedStmt.execute();
 //			mysqlUtil.getConnect().commit();
