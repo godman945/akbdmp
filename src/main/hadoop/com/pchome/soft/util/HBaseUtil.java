@@ -37,6 +37,9 @@ public class HBaseUtil {
 	
 	HBaseUtil() {
 		try{
+			
+			log.info("**********HBASE INIT 2*********");
+			
 			conf = HBaseConfiguration.create();
 			conf.set("hbase.zookeeper.quorum", "192.168.2.150,192.168.2.151,192.168.2.152");
 			conf.set("hbase.zookeeper.property.clientPort", "3333");
@@ -52,6 +55,7 @@ public class HBaseUtil {
 	}
 	
 	synchronized static public HBaseUtil getInstance() {
+		log.info("**********HBASE INIT 1*********");
 		return singleton;
 	}
 	
@@ -128,9 +132,7 @@ public class HBaseUtil {
 		 if(row == null){
 			 return null;
 		 }else{
-			 
 			 log.info("HBASE:"+Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
-			 
 			 return new JSONObject(Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
 		 }
 	 }
