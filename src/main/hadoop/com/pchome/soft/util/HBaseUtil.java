@@ -30,7 +30,6 @@ public class HBaseUtil {
 	private static HBaseUtil singleton = new HBaseUtil();
 	
 	Log log = LogFactory.getLog(KafkaUtil.class);
-	private Configuration config;
 	HBaseAdmin admin = null;
 	Configuration conf = HBaseConfiguration.create();
 	
@@ -40,10 +39,8 @@ public class HBaseUtil {
 			conf.set("hbase.zookeeper.quorum", "192.168.2.150,192.168.2.151,192.168.2.152");
 			conf.set("hbase.zookeeper.property.clientPort", "3333");
 			conf.set("hbase.master", "192.168.2.149:16010");   
-			File workaround = new File(".");         
-			System.getProperties().put("hadoop.home.dir", workaround.getAbsolutePath());         
-			new File("./bin").mkdirs();         
-			new File("./bin/winutils.exe").createNewFile();
+//			File workaround = new File(".");         
+//			System.getProperties().put("hadoop.home.dir", workaround.getAbsolutePath());         
 			conf = HBaseConfiguration.create(conf);
 			Connection connection = ConnectionFactory.createConnection(conf);
 			admin = (HBaseAdmin) connection.getAdmin();
@@ -129,6 +126,9 @@ public class HBaseUtil {
 		 if(row == null){
 			 return null;
 		 }else{
+			 
+			 log.info("HBASE:"+Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
+			 
 			 return new JSONObject(Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
 		 }
 	 }

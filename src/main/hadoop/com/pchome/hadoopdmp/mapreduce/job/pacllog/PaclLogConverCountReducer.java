@@ -99,6 +99,10 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			mysqlUtil.setConnection(url, user, password);
 			
 			hbaseUtil = HBaseUtil.getInstance();
+			
+			log.info("hbaseUtil:"+hbaseUtil);
+   		 	log.info(">>>>>>>>>>>>>>>>hbaseValue:"+hbaseUtil.getData("pacl_retargeting", "alex", "type", "retargeting"));
+			
 		} catch (Throwable e) {
 			log.error("reduce setup error>>>>>> " + e);
 		}
@@ -107,17 +111,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	@Override
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
 		try {
-			
-			log.info("hbaseUtil:"+hbaseUtil);
-   		 	log.info(">>>>>>>>>>>>>>>>hbaseValue:"+hbaseUtil.getData("pacl_retargeting", "alex", "type", "retargeting"));
-			
-			
-			
-			
-			
-			
 			this.context = context;
-			
 			uuid = null;
 			convertSeq = null;
 			userDefineConvertPrice = null;
