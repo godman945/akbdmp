@@ -13,6 +13,15 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.client.Connection;
+import org.apache.hadoop.hbase.client.ConnectionFactory;
+import org.apache.hadoop.hbase.client.Get;
+import org.apache.hadoop.hbase.client.HBaseAdmin;
+import org.apache.hadoop.hbase.client.HTable;
+import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.kafka.clients.producer.Producer;
@@ -295,10 +304,43 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	
 	public void cleanup(Context context) {
 		try {
-			hbaseUtil = HBaseUtil.getInstance();
 			
-			log.info("hbaseUtil:"+hbaseUtil);
-   		 	log.info(">>>>>>>>>>>>>>>>hbaseValue:"+hbaseUtil.getData("pacl_retargeting", "alex", "type", "retargeting"));
+			
+			log.info("************************************************");
+			
+			
+			HBaseAdmin admin = null;
+			Configuration conf = HBaseConfiguration.create();
+			
+			conf = HBaseConfiguration.create();
+			conf.set("hbase.zookeeper.quorum", "192.168.2.150,192.168.2.151,192.168.2.152");
+			conf.set("hbase.zookeeper.property.clientPort", "3333");
+			conf.set("hbase.master", "192.168.2.149:16010");   
+			conf = HBaseConfiguration.create(conf);
+			Connection connection = ConnectionFactory.createConnection(conf);
+			admin = (HBaseAdmin) connection.getAdmin();
+			
+			String tableName = "pacl_retargeting";
+			String rowKey = "alex";
+			String family = "type";
+			String qualifier = "retargeting";
+			
+			 HTable table = new HTable(conf, Bytes.toBytes(tableName));
+			 int region = Math.abs(rowKey.hashCode()) % 10;
+			 rowKey = "0"+region+"|"+rowKey;
+			 Get get = new Get(Bytes.toBytes(rowKey));
+			 get.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier));
+			 Result result = table.get(get);
+			 String row = Bytes.toString(result.getRow());
+			
+			 log.info("************************************************"+Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
+			 
+			
+			
+			
+//			hbaseUtil = HBaseUtil.getInstance();
+//			log.info("hbaseUtil:"+hbaseUtil);
+//   		 	log.info(">>>>>>>>>>>>>>>>hbaseValue:"+hbaseUtil.getData("pacl_retargeting", "alex", "type", "retargeting"));
 			
 			
 			
