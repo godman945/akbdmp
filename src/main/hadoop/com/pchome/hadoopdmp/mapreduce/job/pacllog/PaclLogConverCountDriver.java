@@ -113,6 +113,10 @@ public class PaclLogConverCountDriver {
 			conf.set("mapred.map.tasks.speculative.execution","true");
 			conf.set("mapred.reduce.tasks.speculative.execution","true");
 			
+			
+			conf.set("dfs.block.size","900457280000");
+			
+			
 			//JVM
 			conf.set("mapred.child.java.opts", "-Xmx4048M");
 //			conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
