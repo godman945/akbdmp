@@ -339,11 +339,11 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 //			 log.info("-----------------------"+ja);
 			
 			hbaseUtil = HBaseUtil.getInstance();
-			String a = "192.168.2.150,192.168.2.151,192.168.2.152";
-			String b = "3333";
-			String c = "192.168.2.149:16010";
-			hbaseUtil.initHbaseConfig(a,b,c);
-   		 	log.info(">>>>>>>>>>>>>>>>hbaseValue:"+hbaseUtil.getData("pacl_retargeting", "alex", "type", "retargeting"));
+//			String a = "192.168.2.150,192.168.2.151,192.168.2.152";
+//			String b = "3333";
+//			String c = "192.168.2.149:16010";
+//			hbaseUtil.initHbaseConfig(a,b,c);
+//   		 	log.info(">>>>>>>>>>>>>>>>hbaseValue:"+hbaseUtil.getData("pacl_retargeting", "alex", "type", "retargeting"));
 			
 			
 			
