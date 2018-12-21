@@ -29,8 +29,10 @@ public class HBaseUtil {
 	
 	private static HBaseUtil singleton = new HBaseUtil();
 	
-	Log log = LogFactory.getLog(KafkaUtil.class);
+	private static Log log = LogFactory.getLog("HBaseUtil");
+	
 	HBaseAdmin admin = null;
+	
 	Configuration conf = HBaseConfiguration.create();
 	
 	HBaseUtil() {
