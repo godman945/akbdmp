@@ -498,13 +498,8 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			log.info("saveHbaseTrackingMap:"+saveHbaseTrackingMap);
 			
 			
-			
-			
-			
-			
 			HBaseAdmin admin = null;
 			Configuration conf = HBaseConfiguration.create();
-			
 			conf = HBaseConfiguration.create();
 			conf.set("hbase.zookeeper.quorum", "192.168.2.150,192.168.2.151,192.168.2.152");
 			conf.set("hbase.zookeeper.property.clientPort", "3333");
@@ -527,12 +522,8 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			 String row = Bytes.toString(result.getRow());
 			
 			 log.info("************************************************"+Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
-			 log.info("-----------------------");
-			 org.json.JSONObject ja = new org.json.JSONObject(Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
-			 log.info("-----------------------"+ja);
 			
-			
-			
+			 log.info(">>>>>>>>>>>>>>>>hbaseValue:"+getData("pacl_retargeting", "alex", "type", "retargeting"));
 			
 //			hbaseUtil = HBaseUtil.getInstance();
 //			hbaseUtil.initHbaseConfig("192.168.2.150,192.168.2.151,192.168.2.152", "3333", "192.168.2.149:16010");
