@@ -218,11 +218,16 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 					while(resultSet.next()){
 						String adOperatingRule = resultSet.getString("ad_operating_rule");
 						this.pfpCustomerInfoId = resultSet.getString("pfp_customer_info_id");
+						
+						log.info("adOperatingRule:"+adOperatingRule+" pfpCustomerInfoId:"+pfpCustomerInfoId);
+						
+						
+						
 						//非商品廣告
 						if(StringUtils.isBlank(this.prodId) && StringUtils.isNotBlank(adOperatingRule)){
 							notProdAdFlag = true;
 							
-							log.info(">>>>>>>>>>NOT PROD: prodAdFlag:"+this.prodAdFlag+" pfpCustomerInfoId:"+this.pfpCustomerInfoId);
+							log.info(">>>>>>>>>>NOT PROD: prodAdFlag:"+this.notProdAdFlag+" pfpCustomerInfoId:"+this.pfpCustomerInfoId);
 							
 						}
 						//商品廣告
@@ -466,6 +471,9 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 		 get.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier));
 		 Result result = table.get(get);
 		 String row = Bytes.toString(result.getRow());
+		 
+		 log.info(">>>>>>>>>>>>>>>>>>QQQ:"+Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
+		 
 		 if(row == null){
 			 return null;
 		 }else{
