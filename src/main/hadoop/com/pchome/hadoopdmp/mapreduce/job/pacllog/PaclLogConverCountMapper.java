@@ -1,6 +1,9 @@
 package com.pchome.hadoopdmp.mapreduce.job.pacllog;
 
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -32,7 +35,7 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 	
 	private static JSONObject paclLogInfo = new JSONObject();
 	
-	public static StringBuffer effectPaclPfpUser = new StringBuffer(); 
+	public static StringBuffer effectPaclPfpUser = new StringBuffer();
 	
 	@Override
 	public void setup(Context context) {
@@ -61,12 +64,10 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 //				log.info("paclType:"+paclType);
 				if(paclType.equals("tracking")){
 					String paclUuid = StringUtils.isNotBlank(arrayData[3]) ? arrayData[3] : arrayData[2];
-					
-					log.info("tracking:"+arrayData[12]);
-					
-					
-					
-					
+					String trackingId = arrayData[12];
+					String prodId = arrayData[13];
+					keyOut.set(trackingId+"<PCHOME>"+paclUuid+"<PCHOME>"+paclType);
+					context.write(keyOut, new Text(prodId));
 				}else if(paclType.equals("page_view")){
 					
 				}else if(paclType.equals("convert")){

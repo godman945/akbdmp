@@ -61,12 +61,8 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 //			hbaseUtil = new HBaseUtil();
 			jobDate = context.getConfiguration().get("job.date");
 			log.info(" jobDate:"+jobDate);
-			String url = "jdbc:mysql://kddbdev.mypchome.com.tw:3306/akb_video";
-			String jdbcDriver = "com.mysql.jdbc.Driver";
-			String user = "keyword";
-			String password =  "K1y0nLine";
 			mysqlUtil = MysqlUtil.getInstance();
-			mysqlUtil.setConnection(url, user, password);
+			mysqlUtil.setConnection(context.getConfiguration().get("spring.profiles.active"));
 			insertSqlStr.append(" INSERT INTO `pfp_code_convert_trans`  ");
 			insertSqlStr.append("(uuid,");
 			insertSqlStr.append("convert_date,");
@@ -367,7 +363,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				preparedStmt.setString(33, sdfFormat.format(date));
 				preparedStmt.setString(34, sdfFormat.format(date));
 				preparedStmt.addBatch();
-
 				//寫入hbbase
 //				saveHbaseJson = new JSONObject();
 //				saveHbaseJson.put(key, value)

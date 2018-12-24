@@ -89,6 +89,12 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	
 	private static String convertSeq = null;
 	
+	private static String trackingSeq = null;
+	
+	private static Map<String,Set<String>> trackingResultMap = new HashMap<>();
+	
+	private static Set<String> trackingProdSet = new HashSet<String>();
+	
 	private static String uuid = null;
 	
 	private static String paclType = null;
@@ -101,18 +107,26 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	
 	private Configuration conf = null;
 	
+	private static StringBuffer trackingSql = new StringBuffer();
+	
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
 		try {
 			jobDate = context.getConfiguration().get("job.date");
 			log.info(">>>>>>>>>>>jobDate:"+jobDate);
+			
+			
+			String pfpAdactionReportUser = context.getConfiguration().get("pfpAdactionReportUser");
+			log.info(">>>>>>>>>>>pfpAdactionReportUser:"+pfpAdactionReportUser);
+			
+			
+			
+			
+			
+			
 			//MySql
-			String url = "jdbc:mysql://kddbdev.mypchome.com.tw:3306/akb_video";
-			String jdbcDriver = "com.mysql.jdbc.Driver";
-			String user = "keyword";
-			String password =  "K1y0nLine";
 			mysqlUtil = MysqlUtil.getInstance();
-			mysqlUtil.setConnection(url, user, password);
+			mysqlUtil.setConnection(context.getConfiguration().get("spring.profiles.active"));
 			//HBASE
 			Configuration conf = HBaseConfiguration.create();
 			conf = HBaseConfiguration.create();
@@ -123,7 +137,23 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			Connection connection = ConnectionFactory.createConnection(conf);
 			admin = (HBaseAdmin) connection.getAdmin();
 			
-			
+			trackingSql.append("SELECT ec.catalog_prod_seq ");
+			trackingSql.append(" FROM   (SELECT ca.catalog_seq ");
+			trackingSql.append(" FROM   (SELECT DISTINCT c.customer_info_id ");
+			trackingSql.append(" FROM   pfp_ad_action_report c  ");
+			trackingSql.append(" WHERE  c.customer_info_id = (SELECT t.pfp_customer_info_id  ");
+			trackingSql.append(" FROM   pfp_code_tracking t  ");
+			trackingSql.append(" WHERE  ");
+			trackingSql.append(" t.tracking_seq = 'REPLACE_TRACKING')  ");
+			trackingSql.append(" AND ad_pvclk_date = '").append(jobDate).append("')c ");
+			trackingSql.append(" LEFT JOIN pfp_catalog ca  ");
+			trackingSql.append(" ON ca.pfp_customer_info_id = c.customer_info_id  ");
+			trackingSql.append(" AND ca.catalog_delete_status = '0'  ");
+			trackingSql.append(" AND upload_status = '2')c  ");
+			trackingSql.append(" LEFT JOIN pfp_catalog_prod_ec ec  ");
+			trackingSql.append(" ON ec.catalog_seq = c.catalog_seq  ");
+			trackingSql.append(" WHERE  ec.ec_status = '1'  ");
+			trackingSql.append(" AND ec.ec_check_status = '1'  ");
 			
 			log.info(">>>>>>>>>>>>>>>>hbaseValue:"+hbaseUtil.getData("pacl_retargeting", "alex", "type", "retargeting"));
 		} catch (Throwable e) {
@@ -136,19 +166,16 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 		try {
 			this.context = context;
 			uuid = null;
-			convertSeq = null;
-			userDefineConvertPrice = null;
-			convertConditionArray = null;
 			
 			String key = mapperKey.toString();
 			log.info(">>>>>>init mapperKey:"+key);
-			
-			convertSeq = key.split("<PCHOME>")[0];
-			uuid = key.split("<PCHOME>")[1];
-			paclType = key.split("<PCHOME>")[2];
-			
+			uuid = key.split("<PCHOME>",-1)[1];
+			paclType = key.split("<PCHOME>",-1)[2];
 			//處理轉換資料
 			if(paclType.equals("convert")){
+				convertSeq = key.split("<PCHOME>",-1)[0];
+				userDefineConvertPrice = null;
+				convertConditionArray = null;
 				for (Text text : mapperValue) {
 					String value = text.toString();
 					JSONObject logJson = (JSONObject) jsonParser.parse(value);
@@ -160,17 +187,39 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 				}
 				processConvertLog();
 			}
-			
+			//處理追蹤資料
 			if(paclType.equals("tracking")){
+				trackingSeq = key.split("<PCHOME>",-1)[0];
+				for (Text text : mapperValue) {
+					String prodId = text.toString();
+					if(StringUtils.isBlank(prodId)){
+						
+					}else{
+						
+					}
+					trackingProdSet.add(prodId);
+				}
 				
+				//檢查比對是否有追蹤ID的商品列表
+				if(trackingResultMap.containsKey(trackingSeq)){
+					
+				}else{
+					ResultSet resultSet = mysqlUtil.query(trackingSql.toString().replace("REPLACE_TRACKING", trackingSeq));
+					while(resultSet.next()){
+						String catalog_prod_seq = resultSet.getString("catalog_prod_seq");
+						
+					}
+					
+					
+				}
 			}
-			
 			
 			paclLogList.clear();
 			convertConditionSet.clear();
 			convertWriteInfo.setLength(0);
 			sql.setLength(0);
 			convertResultMap.clear();
+			
 		} catch (Throwable e) {
 			log.error("reduce error>>>>>> " + e);
 		}

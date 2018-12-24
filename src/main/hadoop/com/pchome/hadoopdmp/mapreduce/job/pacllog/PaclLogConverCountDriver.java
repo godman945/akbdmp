@@ -2,13 +2,16 @@ package com.pchome.hadoopdmp.mapreduce.job.pacllog;
 
 import java.io.IOException;
 import java.net.URI;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -76,27 +79,39 @@ public class PaclLogConverCountDriver {
 	
 	public static StringBuffer effectPaclPfpUser = new StringBuffer(); 
 	
+	public static Set<String> pfpAdactionReportUser = new HashSet<String>();
+	
 	public void drive(String env,String jobDate) throws Exception {
 		try {
 			JobConf jobConf = new JobConf();
-			
 			jobConf.setNumMapTasks(5);
-			
 			jobConf.set("mapred.max.split.size","900457280000"); //3045728 49 //3045728000 7
 			jobConf.set("mapred.min.split.size","900457280000"); //1015544 49 //1015544000 7
-			
 			//ask推测执行
 			jobConf.set("mapred.map.tasks.speculative.execution","true");
 			jobConf.set("mapred.reduce.tasks.speculative.execution","true");
 //			//JVM
 			jobConf.set("mapred.child.java.opts", "-Xmx4048M");
-			
 			jobConf.set("mapreduce.map.memory.mb", "4096");
 			jobConf.set("mapreduce.reduce.memory.mb", "8192");
-			
 //		    jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
-			
 			jobConf.set("spring.profiles.active", env);
+			
+			//查詢前一天有效的tracking id pfp user
+			MysqlUtil mysqlUtil = MysqlUtil.getInstance();
+			mysqlUtil.setConnection(env);
+			PreparedStatement preStatement = mysqlUtil.getConnect().prepareStatement(" SELECT customer_info_id FROM pfp_ad_action_report WHERE 1 = 1 and ad_pvclk_date  = ?  and ad_operating_rule = 'PROD' ");
+			preStatement.setString(1, jobDate);		
+			ResultSet resultSet = preStatement.executeQuery();
+			while(resultSet.next()){
+				pfpAdactionReportUser.add(resultSet.getString("customer_info_id"));
+			}
+			jobConf.set("pfpAdactionReportUser", pfpAdactionReportUser.toString());
+			preStatement.close();
+			resultSet.close();
+			mysqlUtil.closeConnection();
+			
+			
 			
 			// hdfs
 			Configuration conf = new Configuration();
