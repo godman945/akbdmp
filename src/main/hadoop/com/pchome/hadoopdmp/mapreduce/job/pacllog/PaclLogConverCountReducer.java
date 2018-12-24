@@ -477,36 +477,33 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 		log.info(">>>>>>>>>>>>>family:"+family);
 		log.info(">>>>>>>>>>>>>qualifier:"+qualifier);
 		 
-		 
 		 HTable table = new HTable(conf, Bytes.toBytes(tableName));
 		 
-		 log.info(">>>>>>>>>>>>>table:"+table);
-		 
-		 
+		 log.info(">>>>>>>>>>>table:"+table);
 		 
 		 int region = Math.abs(rowKey.hashCode()) % 10;
 		 rowKey = "0"+region+"|"+rowKey;
+		 
+		 log.info(">>>>>>>>>>>rowKey:"+rowKey);
+		 
+		 
 		 Get get = new Get(Bytes.toBytes(rowKey));
 		 
-		 
-		 log.info(">>>>>>>>>>>>>get:"+get);
-		 
+		 log.info(">>>>>>>>>>>get:"+get);
 		 
 		 get.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier));
 		 Result result = table.get(get);
 		 
+		 log.info(">>>>>>>>>>>result:"+result);
 		 
-		 log.info(">>>>>>>>>>>>>result:"+result);
 		 
-		 String row = Bytes.toString(result.getRow());
+		 log.info(">>>>>>>>>>>string:"+Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
 		 
-		 log.info(">>>>>>>>>>>>>>>>>>QQQ:"+Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
+		 return (JSONObject) jsonParser.parse(Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
 		 
-		 if(row == null){
-			 return null;
-		 }else{
-			 return (JSONObject) jsonParser.parse(Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
-		 }
+		 
+		 
+		 
 	 }
 	
 	
