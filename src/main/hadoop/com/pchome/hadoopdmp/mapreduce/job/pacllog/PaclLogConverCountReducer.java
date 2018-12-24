@@ -502,8 +502,9 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			
 			
 			
-			//HBASE
+			HBaseAdmin admin = null;
 			Configuration conf = HBaseConfiguration.create();
+			
 			conf = HBaseConfiguration.create();
 			conf.set("hbase.zookeeper.quorum", "192.168.2.150,192.168.2.151,192.168.2.152");
 			conf.set("hbase.zookeeper.property.clientPort", "3333");
@@ -511,9 +512,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			conf = HBaseConfiguration.create(conf);
 			Connection connection = ConnectionFactory.createConnection(conf);
 			admin = (HBaseAdmin) connection.getAdmin();
-			log.info(">>>>>>>>>>>>>>>>hbaseValue:"+getData("pacl_retargeting", "alex", "type", "retargeting"));
-			
-			
 			
 			String tableName = "pacl_retargeting";
 			String rowKey = "alex";
