@@ -138,15 +138,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			mysqlUtil = MysqlUtil.getInstance();
 			mysqlUtil.setConnection(context.getConfiguration().get("spring.profiles.active"));
 			
-			//HBASE
-			Configuration conf = HBaseConfiguration.create();
-			conf = HBaseConfiguration.create();
-			conf.set("hbase.zookeeper.quorum", "192.168.2.150,192.168.2.151,192.168.2.152");
-			conf.set("hbase.zookeeper.property.clientPort", "3333");
-			conf.set("hbase.master", "192.168.2.149:16010");   
-			conf = HBaseConfiguration.create(conf);
-			Connection connection = ConnectionFactory.createConnection(conf);
-			admin = (HBaseAdmin) connection.getAdmin();
 			
 			findAdactionReportUserSql.append(" SELECT  ");
 			findAdactionReportUserSql.append(" tracking_seq, ");
@@ -226,7 +217,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 					ResultSet resultSet = mysqlUtil.query(findAdactionReportUserSql.toString().replace("REPLACE_TRACKING_ID", trackingSeq));
 					while(resultSet.next()){
 						String adOperatingRule = resultSet.getString("ad_operating_rule");
-						this.pfpCustomerInfoId = resultSet.getString("pfpCustomerInfoId");
+						this.pfpCustomerInfoId = resultSet.getString("pfp_customer_info_id");
 						//非商品廣告
 						if(StringUtils.isBlank(this.prodId) && StringUtils.isNotBlank(adOperatingRule)){
 							notProdAdFlag = true;
@@ -297,7 +288,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	
 	public void processConvertLog() throws Exception{
 		if(convertConditionMap.get(convertSeq) == null){
-			log.info(">>>>>>convertConditionMap data not exist!!");
+//			log.info(">>>>>>convertConditionMap data not exist!!");
 			sql.append(" SELECT   ");
 			sql.append(" 	c.convert_type,  ");
 			sql.append(" 	c.convert_seq,  ");
@@ -340,7 +331,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 //				log.info(">>>>>>convertConditionMap:"+pfpCustomerInfoId);
 			}
 		}else{
-			log.info(">>>>>>convertConditionMap data exist!!");
+//			log.info(">>>>>>convertConditionMap data exist!!");
 			pcalConditionBean = convertConditionMap.get(convertSeq);
 		}
 		
@@ -495,8 +486,15 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			
 			
 			
-			
-			
+			//HBASE
+			Configuration conf = HBaseConfiguration.create();
+			conf = HBaseConfiguration.create();
+			conf.set("hbase.zookeeper.quorum", "192.168.2.150,192.168.2.151,192.168.2.152");
+			conf.set("hbase.zookeeper.property.clientPort", "3333");
+			conf.set("hbase.master", "192.168.2.149:16010");   
+			conf = HBaseConfiguration.create(conf);
+			Connection connection = ConnectionFactory.createConnection(conf);
+			admin = (HBaseAdmin) connection.getAdmin();
 			log.info(">>>>>>>>>>>>>>>>hbaseValue:"+getData("pacl_retargeting", "alex", "type", "retargeting"));
 			
 			
