@@ -138,7 +138,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			mysqlUtil = MysqlUtil.getInstance();
 			mysqlUtil.setConnection(context.getConfiguration().get("spring.profiles.active"));
 			//HBASE
-			Configuration conf = HBaseConfiguration.create();
+			conf = HBaseConfiguration.create();
 			conf = HBaseConfiguration.create();
 			conf.set("hbase.zookeeper.quorum", "192.168.2.150,192.168.2.151,192.168.2.152");
 			conf.set("hbase.zookeeper.property.clientPort", "3333");
