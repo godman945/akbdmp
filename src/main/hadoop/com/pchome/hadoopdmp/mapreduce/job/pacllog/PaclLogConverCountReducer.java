@@ -530,17 +530,21 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			String family = "type";
 			String qualifier = "retargeting";
 			
-			 HTable table = new HTable(conf, Bytes.toBytes(tableName));
-			 int region = Math.abs(rowKey.hashCode()) % 10;
-			 rowKey = "0"+region+"|"+rowKey;
-			 Get get = new Get(Bytes.toBytes(rowKey));
-			 get.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier));
-			 Result result = table.get(get);
-			 String row = Bytes.toString(result.getRow());
+			HTable table = new HTable(conf, Bytes.toBytes(tableName));
+			int region = Math.abs(rowKey.hashCode()) % 10;
+			rowKey = "0"+region+"|"+rowKey;
+			Get get = new Get(Bytes.toBytes(rowKey));
+			get.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier));
+			Result result = table.get(get);
 			
-			 log.info("************************************************"+Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
 			
-			 log.info(">>>>>>>>>>>>>>>>hbaseValue:"+getData("pacl_retargeting", "alex", "type", "retargeting"));
+			log.info(">>>>>>>>>>>table:"+table);
+			log.info(">>>>>>>>>>>result:"+result);
+			
+			
+			log.info("************************************************"+Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
+			
+			log.info(">>>>>>>>>>>>>>>>hbaseValue:"+getData("pacl_retargeting", "alex", "type", "retargeting"));
 			
 			 
 			 
