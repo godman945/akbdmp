@@ -472,12 +472,32 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	 }
 	 
 	 public JSONObject getData(String tableName,String rowKey,String family,String qualifier) throws Exception{
+		log.info(">>>>>>>>>>>>>tableName:"+tableName);
+		log.info(">>>>>>>>>>>>>rowKey:"+rowKey);
+		log.info(">>>>>>>>>>>>>family:"+family);
+		log.info(">>>>>>>>>>>>>qualifier:"+qualifier);
+		 
+		 
 		 HTable table = new HTable(conf, Bytes.toBytes(tableName));
+		 
+		 log.info(">>>>>>>>>>>>>table:"+table);
+		 
+		 
+		 
 		 int region = Math.abs(rowKey.hashCode()) % 10;
 		 rowKey = "0"+region+"|"+rowKey;
 		 Get get = new Get(Bytes.toBytes(rowKey));
+		 
+		 
+		 log.info(">>>>>>>>>>>>>get:"+get);
+		 
+		 
 		 get.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier));
 		 Result result = table.get(get);
+		 
+		 
+		 log.info(">>>>>>>>>>>>>result:"+result);
+		 
 		 String row = Bytes.toString(result.getRow());
 		 
 		 log.info(">>>>>>>>>>>>>>>>>>QQQ:"+Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
@@ -525,6 +545,23 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			
 			 log.info(">>>>>>>>>>>>>>>>hbaseValue:"+getData("pacl_retargeting", "alex", "type", "retargeting"));
 			
+			 
+			 
+			 
+			 
+			 
+			 
+			 
+			 
+			 
+			 
+			 
+			 
+			 
+			 
+			 
+			 
+			 
 //			hbaseUtil = HBaseUtil.getInstance();
 //			hbaseUtil.initHbaseConfig("192.168.2.150,192.168.2.151,192.168.2.152", "3333", "192.168.2.149:16010");
 //   		 	log.info(">>>>>>>>>>>>>>>>hbaseValue:"+hbaseUtil.getData("pacl_retargeting", "alex", "type", "retargeting"));
@@ -544,3 +581,4 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	
 	
 }
+
