@@ -108,7 +108,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	
 	private Configuration conf = null;
 	
-	private static StringBuffer trackingSql = new StringBuffer();
 	
 	private static StringBuffer findAdactionReportUserSql = new StringBuffer();
 	
@@ -134,34 +133,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			//MySql
 			mysqlUtil = MysqlUtil.getInstance();
 			mysqlUtil.setConnection(context.getConfiguration().get("spring.profiles.active"));
-			//HBASE
-			Configuration conf = HBaseConfiguration.create();
-			conf = HBaseConfiguration.create();
-			conf.set("hbase.zookeeper.quorum", "192.168.2.150,192.168.2.151,192.168.2.152");
-			conf.set("hbase.zookeeper.property.clientPort", "3333");
-			conf.set("hbase.master", "192.168.2.149:16010");   
-			conf = HBaseConfiguration.create(conf);
-			Connection connection = ConnectionFactory.createConnection(conf);
-			admin = (HBaseAdmin) connection.getAdmin();
-			
-			trackingSql.append("SELECT ec.catalog_prod_seq ");
-			trackingSql.append(" FROM   (SELECT ca.catalog_seq ");
-			trackingSql.append(" FROM   (SELECT DISTINCT c.customer_info_id ");
-			trackingSql.append(" FROM   pfp_ad_action_report c  ");
-			trackingSql.append(" WHERE  c.customer_info_id = (SELECT t.pfp_customer_info_id  ");
-			trackingSql.append(" FROM   pfp_code_tracking t  ");
-			trackingSql.append(" WHERE  ");
-			trackingSql.append(" t.tracking_seq = 'REPLACE_TRACKING')  ");
-			trackingSql.append(" AND ad_pvclk_date = '").append(jobDate).append("')c ");
-			trackingSql.append(" LEFT JOIN pfp_catalog ca  ");
-			trackingSql.append(" ON ca.pfp_customer_info_id = c.customer_info_id  ");
-			trackingSql.append(" AND ca.catalog_delete_status = '0'  ");
-			trackingSql.append(" AND upload_status = '2')c  ");
-			trackingSql.append(" LEFT JOIN pfp_catalog_prod_ec ec  ");
-			trackingSql.append(" ON ec.catalog_seq = c.catalog_seq  ");
-			trackingSql.append(" WHERE  ec.ec_status = '1'  ");
-			trackingSql.append(" AND ec.ec_check_status = '1'  ");
-			
 			
 			findAdactionReportUserSql.append(" SELECT  ");
 			findAdactionReportUserSql.append(" tracking_seq, ");
@@ -173,8 +144,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			findAdactionReportUserSql.append(" AND r.ad_pvclk_date = '").append(jobDate).append("'");
 			findAdactionReportUserSql.append(" WHERE  1 = 1  ");
 			findAdactionReportUserSql.append(" AND t.tracking_seq = 'REPLACE_TRACKING_ID'  ");
-			
-			
 			
 			findEcProdrSql.append(" SELECT ec.catalog_prod_seq, ");
 			findEcProdrSql.append(" ca.pfp_customer_info_id ");
@@ -202,7 +171,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			uuid = null;
 			
 			String key = mapperKey.toString();
-			log.info(">>>>>>init mapperKey:"+key);
+//			log.info(">>>>>>init mapperKey:"+key);
 			uuid = key.split("<PCHOME>",-1)[1];
 			paclType = key.split("<PCHOME>",-1)[2];
 			//處理轉換資料
@@ -223,6 +192,8 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			}
 			//處理追蹤資料
 			if(paclType.equals("tracking")){
+				log.info(">>>>>>init mapperKey:"+key);
+				
 				prodAdFlag = false;
 				notProdAdFlag = false;
 				operatingRule = "";
@@ -234,14 +205,22 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 				String pfpCustomerInfoId = "";
 				while(resultSet.next()){
 					adOperatingRule = resultSet.getString("ad_operating_rule");
+					
+					//商品廣告
 					if(StringUtils.isNotBlank(adOperatingRule) && adOperatingRule.equals("PROD")){
 						prodAdFlag = true;
 						pfpCustomerInfoId = resultSet.getString("pfp_customer_info_id");
+						
+						log.info(">>>>>>>>>>PROD: prodAdFlag:"+prodAdFlag+" pfpCustomerInfoId:"+pfpCustomerInfoId);
+						
 					}
 					
+					//非商品廣告
 					if(StringUtils.isNotBlank(adOperatingRule) && !adOperatingRule.equals("PROD")){
 						notProdAdFlag = true;
 						operatingRule = resultSet.getString("ad_operating_rule");
+						
+						log.info(">>>>>>>>>>NOT PROD: prodAdFlag:"+prodAdFlag+" pfpCustomerInfoId:"+pfpCustomerInfoId);
 					}
 				}
 				
@@ -351,8 +330,8 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			}
 		}
 		
-		log.info("convertSeq:"+convertSeq+">>>>>>>convertConditionSet:"+convertConditionSet.toString());
-		log.info("paclLogList:"+paclLogList.toString());
+//		log.info("convertSeq:"+convertSeq+">>>>>>>convertConditionSet:"+convertConditionSet.toString());
+//		log.info("paclLogList:"+paclLogList.toString());
 		
 		
 //		開始計算條件出現次數
@@ -378,7 +357,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 				}
 			}
 		}
-		log.info("convertSeq:"+convertSeq+">>>>>>>convertConditionSet:"+convertConditionSet.toString());
+//		log.info("convertSeq:"+convertSeq+">>>>>>>convertConditionSet:"+convertConditionSet.toString());
 		
 		//統計轉換次數
 		int convertCount = 0;
@@ -430,15 +409,10 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getConvertNumType());
 			convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getConvertCount());
 			convertWriteInfo.append(paclSymbol).append(jobDate);
-			log.info(">>>>>>write:"+convertWriteInfo.toString());
+//			log.info(">>>>>>write:"+convertWriteInfo.toString());
 			context.write(keyOut, new Text(convertWriteInfo.toString()));
 		}
 	}
-	
-	public void processTrackingLog() throws Exception{
-		
-	}
-	
 	
 	
 	 public void putData(String tableName,String rowKey,String family,String qualifier,JSONObject logJson) throws Exception{
@@ -490,6 +464,18 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 		try {
 			
 			log.info("saveHbaseTrackingMap:"+saveHbaseTrackingMap);
+			
+			
+			
+			//HBASE
+			Configuration conf = HBaseConfiguration.create();
+			conf = HBaseConfiguration.create();
+			conf.set("hbase.zookeeper.quorum", "192.168.2.150,192.168.2.151,192.168.2.152");
+			conf.set("hbase.zookeeper.property.clientPort", "3333");
+			conf.set("hbase.master", "192.168.2.149:16010");   
+			conf = HBaseConfiguration.create(conf);
+			Connection connection = ConnectionFactory.createConnection(conf);
+			admin = (HBaseAdmin) connection.getAdmin();
 			log.info(">>>>>>>>>>>>>>>>hbaseValue:"+hbaseUtil.getData("pacl_retargeting", "alex", "type", "retargeting"));
 			
 			
