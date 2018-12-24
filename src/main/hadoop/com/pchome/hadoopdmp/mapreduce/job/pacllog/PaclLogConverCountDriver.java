@@ -97,22 +97,6 @@ public class PaclLogConverCountDriver {
 //		    jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 			jobConf.set("spring.profiles.active", env);
 			
-			//查詢前一天有效的tracking id pfp user
-			MysqlUtil mysqlUtil = MysqlUtil.getInstance();
-			mysqlUtil.setConnection(env);
-			PreparedStatement preStatement = mysqlUtil.getConnect().prepareStatement(" SELECT customer_info_id FROM pfp_ad_action_report WHERE 1 = 1 and ad_pvclk_date  = ?  and ad_operating_rule = 'PROD' ");
-			preStatement.setString(1, jobDate);		
-			ResultSet resultSet = preStatement.executeQuery();
-			while(resultSet.next()){
-				pfpAdactionReportUser.add(resultSet.getString("customer_info_id"));
-			}
-			jobConf.set("pfpAdactionReportUser", pfpAdactionReportUser.toString());
-			preStatement.close();
-			resultSet.close();
-			mysqlUtil.closeConnection();
-			
-			
-			
 			// hdfs
 			Configuration conf = new Configuration();
 			conf.set("hadoop.job.ugi", jobUgi);

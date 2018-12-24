@@ -91,9 +91,10 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	
 	private static String trackingSeq = null;
 	
-	private static Map<String,Set<String>> trackingResultMap = new HashMap<>();
 	
-	private static Set<String> trackingProdSet = new HashSet<String>();
+	private static Map<String,String> saveHbaseTrackingMap = new HashMap<>();
+	
+	private static Map<String,Set<String>> trackingProdIdMap = new HashMap<String,Set<String>>();
 	
 	private static String uuid = null;
 	
@@ -109,20 +110,26 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	
 	private static StringBuffer trackingSql = new StringBuffer();
 	
+	private static StringBuffer findAdactionReportUserSql = new StringBuffer();
+	
+	private static StringBuffer findEcProdrSql = new StringBuffer();
+	
+	
+	private static boolean prodAdFlag = false;
+	
+	private static boolean notProdAdFlag = false;
+	
+	private static String operatingRule	 = "";
+	
+	
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
 		try {
 			jobDate = context.getConfiguration().get("job.date");
 			log.info(">>>>>>>>>>>jobDate:"+jobDate);
 			
-			
 			String pfpAdactionReportUser = context.getConfiguration().get("pfpAdactionReportUser");
 			log.info(">>>>>>>>>>>pfpAdactionReportUser:"+pfpAdactionReportUser);
-			
-			
-			
-			
-			
 			
 			//MySql
 			mysqlUtil = MysqlUtil.getInstance();
@@ -155,7 +162,34 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			trackingSql.append(" WHERE  ec.ec_status = '1'  ");
 			trackingSql.append(" AND ec.ec_check_status = '1'  ");
 			
-			log.info(">>>>>>>>>>>>>>>>hbaseValue:"+hbaseUtil.getData("pacl_retargeting", "alex", "type", "retargeting"));
+			
+			findAdactionReportUserSql.append(" SELECT  ");
+			findAdactionReportUserSql.append(" tracking_seq, ");
+			findAdactionReportUserSql.append(" pfp_customer_info_id, ");
+			findAdactionReportUserSql.append(" r.ad_operating_rule ");
+			findAdactionReportUserSql.append(" FROM   pfp_code_tracking t  ");
+			findAdactionReportUserSql.append(" LEFT JOIN pfp_ad_action_report r ");
+			findAdactionReportUserSql.append(" ON t.pfp_customer_info_id = r.customer_info_id  ");
+			findAdactionReportUserSql.append(" AND r.ad_pvclk_date = '").append(jobDate).append("'");
+			findAdactionReportUserSql.append(" WHERE  1 = 1  ");
+			findAdactionReportUserSql.append(" AND t.tracking_seq = 'REPLACE_TRACKING_ID'  ");
+			
+			
+			
+			findEcProdrSql.append(" SELECT ec.catalog_prod_seq, ");
+			findEcProdrSql.append(" ca.pfp_customer_info_id ");
+			findEcProdrSql.append(" FROM   pfp_catalog ca ");
+			findEcProdrSql.append(" RIGHT JOIN pfp_catalog_prod_ec ec ");
+			findEcProdrSql.append(" ON ca.catalog_seq = ec.catalog_seq ");
+			findEcProdrSql.append(" AND ec.ec_status = '1' ");
+			findEcProdrSql.append("  AND ec.ec_check_status = '1' ");
+			findEcProdrSql.append(" WHERE  1 = 1 ");
+			findEcProdrSql.append(" AND ca.pfp_customer_info_id = 'REPLACE_CUSTOMER_ID'  ");
+			findEcProdrSql.append(" AND ca.catalog_delete_status = '0'  ");
+			findEcProdrSql.append(" AND ca.upload_status = '2'  ");
+			
+			
+			
 		} catch (Throwable e) {
 			log.error("reduce setup error>>>>>> " + e);
 		}
@@ -189,28 +223,58 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			}
 			//處理追蹤資料
 			if(paclType.equals("tracking")){
+				prodAdFlag = false;
+				notProdAdFlag = false;
+				operatingRule = "";
+				
 				trackingSeq = key.split("<PCHOME>",-1)[0];
-				for (Text text : mapperValue) {
-					String prodId = text.toString();
-					if(StringUtils.isBlank(prodId)){
-						
-					}else{
-						
+				
+				ResultSet resultSet = mysqlUtil.query(findAdactionReportUserSql.toString().replace("REPLACE_TRACKING_ID", trackingSeq));
+				String adOperatingRule = "";
+				String pfpCustomerInfoId = "";
+				while(resultSet.next()){
+					adOperatingRule = resultSet.getString("ad_operating_rule");
+					if(StringUtils.isNotBlank(adOperatingRule) && adOperatingRule.equals("PROD")){
+						prodAdFlag = true;
+						pfpCustomerInfoId = resultSet.getString("pfp_customer_info_id");
 					}
-					trackingProdSet.add(prodId);
+					
+					if(StringUtils.isNotBlank(adOperatingRule) && !adOperatingRule.equals("PROD")){
+						notProdAdFlag = true;
+						operatingRule = resultSet.getString("ad_operating_rule");
+					}
 				}
 				
-				//檢查比對是否有追蹤ID的商品列表
-				if(trackingResultMap.containsKey(trackingSeq)){
-					
-				}else{
-					ResultSet resultSet = mysqlUtil.query(trackingSql.toString().replace("REPLACE_TRACKING", trackingSeq));
-					while(resultSet.next()){
-						String catalog_prod_seq = resultSet.getString("catalog_prod_seq");
-						
+				for (Text text : mapperValue) {
+					String prodId = text.toString();
+					//商品廣告
+					if(StringUtils.isNotBlank(prodId) && prodAdFlag){
+						//檢查比對是否有追蹤ID的商品列表
+						if(trackingProdIdMap.containsKey(pfpCustomerInfoId)){
+							Set<String> prodSet = trackingProdIdMap.get(pfpCustomerInfoId);
+							for (String ecProdId : prodSet) {
+								if(prodId.equals(ecProdId)){
+									saveHbaseTrackingMap.put(trackingSeq+"_"+prodId, jobDate);
+								}
+							}
+						}else{
+							resultSet = mysqlUtil.query(findEcProdrSql.toString().replace("REPLACE_CUSTOMER_ID", pfpCustomerInfoId));
+							Set prodSet = new HashSet<>();
+							while(resultSet.next()){
+								String ecProdId = resultSet.getString("catalog_prod_seq");
+								prodSet.add(ecProdId);
+								if(prodId.equals(ecProdId)){
+									saveHbaseTrackingMap.put(trackingSeq+"_"+prodId, jobDate);
+								}
+							}
+							trackingProdIdMap.put(pfpCustomerInfoId, prodSet);
+						}
 					}
 					
-					
+					//非商品廣告
+					if(StringUtils.isBlank(prodId) && notProdAdFlag){
+						saveHbaseTrackingMap.put(trackingSeq+"_"+operatingRule, jobDate);
+					}
 				}
 			}
 			
@@ -424,6 +488,13 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	
 	public void cleanup(Context context) {
 		try {
+			
+			log.info("saveHbaseTrackingMap:"+saveHbaseTrackingMap);
+			log.info(">>>>>>>>>>>>>>>>hbaseValue:"+hbaseUtil.getData("pacl_retargeting", "alex", "type", "retargeting"));
+			
+			
+			
+			
 //			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement( "DELETE FROM `pfp_code_convert_trans` where  1=1 and convert_date = '"+jobDate+"'");
 //			preparedStmt.execute();
 //			mysqlUtil.getConnect().commit();
