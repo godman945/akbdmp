@@ -26,12 +26,19 @@ public class MysqlUtil {
 		return singleton;
 	}
 	
-	public void setConnection(String url,String user,String password) throws Exception{
-		connect = DriverManager.getConnection(url, user, password);
-		connect.setAutoCommit(false); // 设置手动提交 
-		statement = connect.createStatement();
+	public void setConnection(String env) throws Exception{
+		if(env.equals("prd")){
+			
+		}else{
+			String url = "jdbc:mysql://kddbdev.mypchome.com.tw:3306/akb_video";
+			String jdbcDriver = "com.mysql.jdbc.Driver";
+			String user = "keyword";
+			String password =  "K1y0nLine";
+			connect = DriverManager.getConnection(url, user, password);
+			connect.setAutoCommit(false); // 设置手动提交 
+			statement = connect.createStatement();
+		}
 	}
-	
 	
 	public void closeConnection() throws Exception{
 		if(connect != null){
@@ -68,12 +75,36 @@ public class MysqlUtil {
 			String user = "keyword";
 			String password =  "K1y0nLine";
 			MysqlUtil mysqlUtil = MysqlUtil.getInstance();
-			mysqlUtil.setConnection(url, user, password);
+			mysqlUtil.setConnection("stg");
 			
-			ResultSet resultSet = mysqlUtil.query(" select * from pfp_code_convert_trans where 1 = 1 and  ");
+			
+			String jobDate ="2018-12-19";
+			
+			StringBuffer trackingSql = new StringBuffer();
+			trackingSql.append("SELECT ec.catalog_prod_seq ");
+			trackingSql.append(" FROM   (SELECT ca.catalog_seq ");
+			trackingSql.append(" FROM   (SELECT DISTINCT c.customer_info_id ");
+			trackingSql.append(" FROM   pfp_ad_action_report c  ");
+			trackingSql.append(" WHERE  c.customer_info_id = (SELECT t.pfp_customer_info_id  ");
+			trackingSql.append(" FROM   pfp_code_tracking t  ");
+			trackingSql.append(" WHERE  ");
+			trackingSql.append(" t.tracking_seq = 'REPLACE_TRACKING')  ");
+			trackingSql.append(" AND ad_pvclk_date = '").append(jobDate).append("')c ");
+			trackingSql.append(" LEFT JOIN pfp_catalog ca  ");
+			trackingSql.append(" ON ca.pfp_customer_info_id = c.customer_info_id  ");
+			trackingSql.append(" AND ca.catalog_delete_status = '0'  ");
+			trackingSql.append(" AND upload_status = '2')c  ");
+			trackingSql.append(" LEFT JOIN pfp_catalog_prod_ec ec  ");
+			trackingSql.append(" ON ec.catalog_seq = c.catalog_seq  ");
+			trackingSql.append(" WHERE  ec.ec_status = '1'  ");
+			trackingSql.append(" AND ec.ec_check_status = '1'  ");
+			
+			
+						
+			ResultSet resultSet = mysqlUtil.query(trackingSql.toString().replace("REPLACE_TRACKING", "TAC20181210000000001"));
 			while(resultSet.next()){
-				String rouleId = resultSet.getString("convert_rule_id");
-			
+				String catalog_prod_seq = resultSet.getString("catalog_prod_seq");
+				System.out.println(catalog_prod_seq);
 			}
 			
 			
