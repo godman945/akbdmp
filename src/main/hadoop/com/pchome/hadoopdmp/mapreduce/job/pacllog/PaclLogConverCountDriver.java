@@ -237,6 +237,12 @@ public class PaclLogConverCountDriver {
 			sql.append(" ON a.customer_info_id = c.pfp_customer_info_id  ");
 			sql.append(" AND c.convert_status = 1  ");
 			sql.append(" GROUP  BY pfp_customer_info_id  ");
+			ResultSet resultSet = mysqlUtil.query(sql.toString());
+			while(resultSet.next()){
+				String pfpCustomerInfoId = resultSet.getString("pfp_customer_info_id");
+				effectPaclPfpUser.append(pfpCustomerInfoId).append(",");
+			}
+			mysqlUtil.closeConnection();
 			jobConf.set("effectPaclPfpUser", effectPaclPfpUser.toString());
 			
 			Job job2 = new Job(jobConf, "dmp_conv2_"+ env + "_" + sdf2.format(date));
