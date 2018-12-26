@@ -219,26 +219,25 @@ public class PaclLogConverCountDriver {
 			}
 
 			log.info("----job2 start----");
-//			MysqlUtil mysqlUtil = MysqlUtil.getInstance();
-//			mysqlUtil.setConnection(env);
-//			
-//			
-//			Calendar effectCalendar = Calendar.getInstance();
-//			effectCalendar.setTime(cal.getTime());
-//			effectCalendar.add(Calendar.DATE, - convertDay);
-//			String effectDate = sdf.format(effectCalendar.getTime());
-//			StringBuffer sql = new StringBuffer();
-//			sql.append(" SELECT c.pfp_customer_info_id  ");
-//			sql.append(" FROM   (SELECT customer_info_id  ");
-//			sql.append(" FROM   pfp_ad_action_report  ");
-//			sql.append(" WHERE  1 = 1  ");
-//			sql.append(" AND ad_pvclk_date >= '").append(effectDate).append("'");
-//			sql.append(" GROUP  BY customer_info_id)a  ");
-//			sql.append(" RIGHT JOIN pfp_code_convert c  ");
-//			sql.append(" ON a.customer_info_id = c.pfp_customer_info_id  ");
-//			sql.append(" AND c.convert_status = 1  ");
-//			sql.append(" GROUP  BY pfp_customer_info_id  ");
-//			jobConf.set("effectPaclPfpUser", effectPaclPfpUser.toString());
+			MysqlUtil mysqlUtil = MysqlUtil.getInstance();
+			mysqlUtil.setConnection(env);
+			
+			Calendar effectCalendar = Calendar.getInstance();
+			effectCalendar.setTime(cal.getTime());
+			effectCalendar.add(Calendar.DATE, - convertDay);
+			String effectDate = sdf.format(effectCalendar.getTime());
+			StringBuffer sql = new StringBuffer();
+			sql.append(" SELECT c.pfp_customer_info_id  ");
+			sql.append(" FROM   (SELECT customer_info_id  ");
+			sql.append(" FROM   pfp_ad_action_report  ");
+			sql.append(" WHERE  1 = 1  ");
+			sql.append(" AND ad_pvclk_date >= '").append(effectDate).append("'");
+			sql.append(" GROUP  BY customer_info_id)a  ");
+			sql.append(" RIGHT JOIN pfp_code_convert c  ");
+			sql.append(" ON a.customer_info_id = c.pfp_customer_info_id  ");
+			sql.append(" AND c.convert_status = 1  ");
+			sql.append(" GROUP  BY pfp_customer_info_id  ");
+			jobConf.set("effectPaclPfpUser", effectPaclPfpUser.toString());
 			
 			Job job2 = new Job(jobConf, "dmp_conv2_"+ env + "_" + sdf2.format(date));
 			for (String jarPath : jarPaths) {
