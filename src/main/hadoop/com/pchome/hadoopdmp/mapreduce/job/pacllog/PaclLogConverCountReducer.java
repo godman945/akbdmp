@@ -1,8 +1,11 @@
 package com.pchome.hadoopdmp.mapreduce.job.pacllog;
 
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -67,6 +70,10 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	private MysqlUtil mysqlUtil = null;
 	
 	private HBaseUtil hbaseUtil = null;
+	
+	private final static SimpleDateFormat sdfFormat =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	
+	private static Date now =  new Date();
 	
 	
 	private StringBuffer convertWriteInfo = new StringBuffer();
@@ -447,6 +454,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	}
 	
 	
+	
 	 public void putData(String tableName,String rowKey,String family,String qualifier,JSONObject logJson) throws Exception{
 		 HTable table = new HTable(conf, Bytes.toBytes(tableName));
 		 int region = Math.abs(rowKey.hashCode()) % 10;
@@ -456,16 +464,26 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 		 Result result = table.get(get);
 		 String row = Bytes.toString(result.getRow());
 		 
-		 //row存在更新value否則建立一筆新row
 		 if(row != null){
 			 JSONObject hbaseValueJson = (JSONObject) jsonParser.parse(Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
+			 //刪除超過28天資料
+			 for (Entry<String, Object> entry : hbaseValueJson.entrySet()) {
+				 System.out.println(entry.getKey());
+				 System.out.println(entry.getValue());
+				 double days = (double) ((now.getTime() - sdfFormat.parse(entry.getValue().toString()).getTime()) / (1000*3600*24));
+				 if(days > 28){
+					 hbaseValueJson.remove(entry.getKey());
+				 }
+			 }
+			 //資料天數小於28天才會寫入更新
 			 for (Entry<String, Object> entry : logJson.entrySet()) {
-				 String logkey = entry.getKey();
-				 String logValue = (String) entry.getValue();
-				 hbaseValueJson.put(logkey, logValue);
+				 double days = (double) ((now.getTime() - sdfFormat.parse(entry.getValue().toString()).getTime()) / (1000*3600*24));
+				 if(days <= 28){
+					 hbaseValueJson.put(entry.getKey(), entry.getValue().toString());
+				 }
 			 }
 			 Put put = new Put(Bytes.toBytes(rowKey));
-			 put.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier), Bytes.toBytes(hbaseValueJson.toString()));
+			 put.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier), Bytes.toBytes(logJson.toString()));
 			 table.put(put);
 		 }else{
 			 Put put = new Put(Bytes.toBytes(rowKey));
@@ -484,10 +502,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 		 return (JSONObject) jsonParser.parse(Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
 	 }
 	
-	
-	
-	
-	public void cleanup(Context context) {
+	 public void cleanup(Context context) {
 		try {
 			log.info("saveHbaseTrackingMap:"+saveHbaseTrackingMap);
 			JSONObject data = new JSONObject();
@@ -511,8 +526,4 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			log.error("reduce cleanup error>>>>>> " + e);
 		}
 	}
-	
-	
-	
 }
-

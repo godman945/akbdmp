@@ -363,11 +363,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				preparedStmt.setString(33, sdfFormat.format(date));
 				preparedStmt.setString(34, sdfFormat.format(date));
 				preparedStmt.addBatch();
-				//寫入hbbase
-//				saveHbaseJson = new JSONObject();
-//				saveHbaseJson.put(key, value)
-//				hbaseUtil.putData("pacl_retargeting",uuid,"type","retargeting",json.toString());
-				
 				if(count % 5000 == 0){
 					preparedStmt.executeBatch();
 					mysqlUtil.getConnect().commit();
