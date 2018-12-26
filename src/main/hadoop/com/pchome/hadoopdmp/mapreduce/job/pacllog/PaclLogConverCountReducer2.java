@@ -58,11 +58,11 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
 		try {
-//			hbaseUtil = new HBaseUtil();
 			jobDate = context.getConfiguration().get("job.date");
 			log.info(" jobDate:"+jobDate);
 			mysqlUtil = MysqlUtil.getInstance();
 			mysqlUtil.setConnection(context.getConfiguration().get("spring.profiles.active"));
+			
 			insertSqlStr.append(" INSERT INTO `pfp_code_convert_trans`  ");
 			insertSqlStr.append("(uuid,");
 			insertSqlStr.append("convert_date,");
@@ -103,8 +103,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			insertSqlStr.append(" 	?,?,?,?,?,?,?,?,?,?, ");
 			insertSqlStr.append(" 	?,?,?,?,?,?,?,?,?,?, ");
 			insertSqlStr.append(" 	?,?,?,? )");
-			
-//			log.info("mysqlUtil:"+mysqlUtil.getInstance());
 			
 		} catch (Throwable e) {
 			log.error("reduce setup error>>>>>> " + e);

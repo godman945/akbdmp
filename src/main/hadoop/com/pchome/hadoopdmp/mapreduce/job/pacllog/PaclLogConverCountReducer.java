@@ -131,9 +131,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			jobDate = context.getConfiguration().get("job.date");
 			log.info(">>>>>>>>>>>jobDate:"+jobDate);
 			
-			String pfpAdactionReportUser = context.getConfiguration().get("pfpAdactionReportUser");
-			log.info(">>>>>>>>>>>pfpAdactionReportUser:"+pfpAdactionReportUser);
-			
 			//MySql
 			mysqlUtil = MysqlUtil.getInstance();
 			mysqlUtil.setConnection(context.getConfiguration().get("spring.profiles.active"));

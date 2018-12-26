@@ -2,6 +2,7 @@ package com.pchome.hadoopdmp.mapreduce.job.pacllog;
 
 import java.io.IOException;
 import java.net.URI;
+import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Component;
 import com.hadoop.compression.lzo.LzopCodec;
 import com.hadoop.mapreduce.LzoTextInputFormat;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
+import com.pchome.soft.util.MysqlUtil;
 
 @Component
 public class PaclLogConverCountDriver {
@@ -71,8 +73,6 @@ public class PaclLogConverCountDriver {
 	private String outPath;
 	
 	public static StringBuffer effectPaclPfpUser = new StringBuffer(); 
-	
-	public static Set<String> pfpAdactionReportUser = new HashSet<String>();
 	
 	public void drive(String env,String jobDate) throws Exception {
 		try {
@@ -219,26 +219,26 @@ public class PaclLogConverCountDriver {
 			}
 
 			log.info("----job2 start----");
-			String url = "jdbc:mysql://kddbdev.mypchome.com.tw:3306/akb_video";
-			String jdbcDriver = "com.mysql.jdbc.Driver";
-			String user = "keyword";
-			String password =  "K1y0nLine";
-			Calendar effectCalendar = Calendar.getInstance();
-			effectCalendar.setTime(cal.getTime());
-			effectCalendar.add(Calendar.DATE, - convertDay);
-			String effectDate = sdf.format(effectCalendar.getTime());
-			StringBuffer sql = new StringBuffer();
-			sql.append(" SELECT c.pfp_customer_info_id  ");
-			sql.append(" FROM   (SELECT customer_info_id  ");
-			sql.append(" FROM   pfp_ad_action_report  ");
-			sql.append(" WHERE  1 = 1  ");
-			sql.append(" AND ad_pvclk_date >= '").append(effectDate).append("'");
-			sql.append(" GROUP  BY customer_info_id)a  ");
-			sql.append(" RIGHT JOIN pfp_code_convert c  ");
-			sql.append(" ON a.customer_info_id = c.pfp_customer_info_id  ");
-			sql.append(" AND c.convert_status = 1  ");
-			sql.append(" GROUP  BY pfp_customer_info_id  ");
-			jobConf.set("effectPaclPfpUser", effectPaclPfpUser.toString());
+//			MysqlUtil mysqlUtil = MysqlUtil.getInstance();
+//			mysqlUtil.setConnection(env);
+//			
+//			
+//			Calendar effectCalendar = Calendar.getInstance();
+//			effectCalendar.setTime(cal.getTime());
+//			effectCalendar.add(Calendar.DATE, - convertDay);
+//			String effectDate = sdf.format(effectCalendar.getTime());
+//			StringBuffer sql = new StringBuffer();
+//			sql.append(" SELECT c.pfp_customer_info_id  ");
+//			sql.append(" FROM   (SELECT customer_info_id  ");
+//			sql.append(" FROM   pfp_ad_action_report  ");
+//			sql.append(" WHERE  1 = 1  ");
+//			sql.append(" AND ad_pvclk_date >= '").append(effectDate).append("'");
+//			sql.append(" GROUP  BY customer_info_id)a  ");
+//			sql.append(" RIGHT JOIN pfp_code_convert c  ");
+//			sql.append(" ON a.customer_info_id = c.pfp_customer_info_id  ");
+//			sql.append(" AND c.convert_status = 1  ");
+//			sql.append(" GROUP  BY pfp_customer_info_id  ");
+//			jobConf.set("effectPaclPfpUser", effectPaclPfpUser.toString());
 			
 			Job job2 = new Job(jobConf, "dmp_conv2_"+ env + "_" + sdf2.format(date));
 			for (String jarPath : jarPaths) {
