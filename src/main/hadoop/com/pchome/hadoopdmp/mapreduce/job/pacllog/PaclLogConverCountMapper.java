@@ -66,8 +66,10 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					String paclUuid = StringUtils.isNotBlank(arrayData[3]) ? arrayData[3] : arrayData[2];
 					String trackingId = arrayData[12];
 					String prodId = arrayData[13];
+					String date = arrayData[0];
+					
 					keyOut.set(trackingId+"<PCHOME>"+paclUuid+"<PCHOME>"+paclType);
-					context.write(keyOut, new Text(prodId));
+					context.write(keyOut, new Text(prodId+"<PCHOME>"+date));
 				}else if(paclType.equals("page_view")){
 					
 				}else if(paclType.equals("convert")){

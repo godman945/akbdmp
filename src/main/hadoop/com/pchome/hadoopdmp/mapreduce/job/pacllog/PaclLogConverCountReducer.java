@@ -242,7 +242,8 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 				
 				//	saveHbaseTrackingMap
 				for (Text text : mapperValue) {
-					String prodId = text.toString();
+					String prodId = text.toString().split("<PCHOME>",-1)[0];
+					String trackingDate = text.toString().split("<PCHOME>",-1)[1];
 					this.prodFlag = false;
 					this.prodAdFlag = (boolean) trackingDeatilMap.get("adProdOperatingFlag");
 					this.notProdAdFlag = (boolean) trackingDeatilMap.get("adNotProdOperatingFlag");
@@ -250,10 +251,10 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 					if(StringUtils.isBlank(prodId) && this.notProdAdFlag){
 						if(saveHbaseTrackingMap.containsKey(uuid)){
 							Map<String,String> saveHbaseTrackingDetail = saveHbaseTrackingMap.get(uuid);
-							saveHbaseTrackingDetail.put(this.trackingSeq+"_ALL", jobDate);
+							saveHbaseTrackingDetail.put(this.trackingSeq+"_ALL", trackingDate);
 						}else{
 							Map<String,String> saveHbaseTrackingDetail = new HashMap<String,String>();
-							saveHbaseTrackingDetail.put(this.trackingSeq+"_ALL", jobDate);
+							saveHbaseTrackingDetail.put(this.trackingSeq+"_ALL", trackingDate);
 							saveHbaseTrackingMap.put(uuid, saveHbaseTrackingDetail);
 						}
 					}else if(StringUtils.isNotBlank(prodId) && this.prodAdFlag){ 	//1.商品廣告資料 2.判斷商品存在
@@ -279,10 +280,10 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 						if(prodFlag){
 							if(saveHbaseTrackingMap.containsKey(uuid)){
 								Map<String,String> saveHbaseTrackingDetail = saveHbaseTrackingMap.get(uuid);
-								saveHbaseTrackingDetail.put(this.trackingSeq+"_"+prodId, jobDate);
+								saveHbaseTrackingDetail.put(this.trackingSeq+"_"+prodId, trackingDate);
 							}else{
 								Map<String,String> saveHbaseTrackingDetail = new HashMap<String,String>();
-								saveHbaseTrackingDetail.put(this.trackingSeq+"_"+prodId, jobDate);
+								saveHbaseTrackingDetail.put(this.trackingSeq+"_"+prodId, trackingDate);
 								saveHbaseTrackingMap.put(uuid, saveHbaseTrackingDetail);
 							}
 						}
