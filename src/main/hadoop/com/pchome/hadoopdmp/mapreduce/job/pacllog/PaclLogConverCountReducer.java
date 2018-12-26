@@ -94,7 +94,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	private static String prodId = null;
 	
 	
-	private static Map<String,JSONObject> saveHbaseTrackingMap = new HashMap<String,JSONObject>();
+	private static Map<String,Map<String,String>> saveHbaseTrackingMap = new HashMap<String,Map<String,String>>();
 	
 	private static Map<String,Map<String,Object>> trackingMap = new HashMap<String,Map<String,Object>>();
 	
@@ -215,193 +215,59 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 				this.pfpCustomerInfoId = "";
 				this.trackingSeq = key.split("<PCHOME>",-1)[0];
 				
-				
-				
 				Map<String,Object> trackingDeatilMap = null;
 				if(trackingMap.containsKey(trackingSeq)){
 					trackingDeatilMap = trackingMap.get(trackingSeq);
 				}else{
 					ResultSet resultSet = mysqlUtil.query(findAdactionReportUserSql.toString().replace("REPLACE_TRACKING_ID", trackingSeq));
-					boolean adProdOperatingFlag = false;
-					boolean adNotProdOperatingFlag = false;
 					while(resultSet.next()){
 						String adOperatingRule = resultSet.getString("ad_operating_rule");
 						String pfpCustomerInfoId = resultSet.getString("pfp_customer_info_id");
 						if(StringUtils.isNotBlank(adOperatingRule)){
-							if(adOperatingRule.equals("PROD")){
-								adProdOperatingFlag = true;
-							}else{
-								adNotProdOperatingFlag = true;
+							if(StringUtils.isNotBlank(adOperatingRule) && adOperatingRule.equals("PROD")){
+								prodAdFlag = true;
+							}else if(StringUtils.isNotBlank(adOperatingRule) && !adOperatingRule.equals("PROD")){
+								notProdAdFlag = true;
 							}
 						}
 					}
 					trackingDeatilMap = new HashMap<String,Object>();
-					trackingDeatilMap.put("adProdOperatingFlag", adProdOperatingFlag);
-					trackingDeatilMap.put("adNotProdOperatingFlag", adNotProdOperatingFlag);
+					trackingDeatilMap.put("adProdOperatingFlag", prodAdFlag);
+					trackingDeatilMap.put("adNotProdOperatingFlag", notProdAdFlag);
 					trackingDeatilMap.put("pfpCustomerInfoId", pfpCustomerInfoId);
 					trackingMap.put(trackingSeq, trackingDeatilMap);
 				}
 				
 				
-//				saveHbaseTrackingMap
+				//	saveHbaseTrackingMap
 				for (Text text : mapperValue) {
 					String prodId = text.toString();
 					this.prodAdFlag = (boolean) trackingDeatilMap.get("adProdOperatingFlag");
 					this.notProdAdFlag = (boolean) trackingDeatilMap.get("adNotProdOperatingFlag");
 					
-					//非商品廣告資料
+					//1.非商品廣告資料 2.pfp_adaction_report有資料
 					if(StringUtils.isBlank(prodId) && this.notProdAdFlag){
 						if(saveHbaseTrackingMap.containsKey(uuid)){
-							JSONObject json = saveHbaseTrackingMap.get(uuid);
-							json.put(this.trackingSeq+"_ALL", jobDate);
+							Map<String,String> saveHbaseTrackingDetail = saveHbaseTrackingMap.get(uuid);
+							saveHbaseTrackingDetail.put(this.trackingSeq+"_ALL", jobDate);
 						}else{
-							JSONObject json = new JSONObject();
-							json.put(this.trackingSeq+"_ALL", jobDate);
+							Map<String,String> saveHbaseTrackingDetail = new HashMap<String,String>();
+							saveHbaseTrackingDetail.put(this.trackingSeq+"_ALL", jobDate);
+							saveHbaseTrackingMap.put(uuid, saveHbaseTrackingDetail);
 						}
 					}
 					//商品廣告資料
-					if(StringUtils.isNotBlank(prodId) && this.notProdAdFlag){
-						
+					if(StringUtils.isNotBlank(prodId) && this.prodAdFlag){
+						if(saveHbaseTrackingMap.containsKey(uuid)){
+							Map<String,String> saveHbaseTrackingDetail = saveHbaseTrackingMap.get(uuid);
+							saveHbaseTrackingDetail.put(this.trackingSeq+"_"+prodId, jobDate);
+						}else{
+							Map<String,String> saveHbaseTrackingDetail = new HashMap<String,String>();
+							saveHbaseTrackingDetail.put(this.trackingSeq+"_"+prodId, jobDate);
+							saveHbaseTrackingMap.put(uuid, saveHbaseTrackingDetail);
+						}
 					}
-			
-				
-					
-					
-					
-					
-					
 				}
-				
-				
-				
-				
-////				for (Text text : mapperValue) {
-////					String prodId = text.toString();
-////					
-////					
-////					ResultSet resultSet = mysqlUtil.query(findAdactionReportUserSql.toString().replace("REPLACE_TRACKING_ID", trackingSeq));
-////					while(resultSet.next()){
-////						String adOperatingRule = resultSet.getString("ad_operating_rule");
-////						this.pfpCustomerInfoId = resultSet.getString("pfp_customer_info_id");
-////						log.info("adOperatingRule:"+adOperatingRule+" pfpCustomerInfoId:"+pfpCustomerInfoId);
-////						//非商品廣告
-////						if(StringUtils.isBlank(this.prodId) && StringUtils.isNotBlank(adOperatingRule)){
-////							notProdAdFlag = true;
-////							log.info(">>>>>>>>>>NOT PROD: prodAdFlag:"+this.notProdAdFlag+" pfpCustomerInfoId:"+this.pfpCustomerInfoId);
-////						}
-////						//商品廣告
-////						if(StringUtils.isNotBlank(this.prodId) && StringUtils.isNotBlank(adOperatingRule)){
-////							prodAdFlag = true;
-////							log.info(">>>>>>>>>>PROD: prodAdFlag:"+this.prodAdFlag+" pfpCustomerInfoId:"+this.pfpCustomerInfoId);
-////						}
-////					}
-////					
-//					
-//					
-//					
-//					
-//					
-//					
-//					
-//					
-//					
-//					
-//					//非商品廣告
-//					if(StringUtils.isBlank(prodId)){
-//						
-//					}else{//商品廣告
-//						
-//					}
-					
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-//				Map<String,Object> trackingDeatilMap = null;
-//				if(trackingMap.containsKey(trackingSeq)){
-//					trackingDeatilMap = trackingMap.get(trackingSeq);
-//					notProdAdFlag = (boolean) trackingDeatilMap.get("notProdAdFlag");
-//					prodAdFlag = (boolean) trackingDeatilMap.get("prodAdFlag");
-//					this.pfpCustomerInfoId = (String) trackingDeatilMap.get("pfpCustomerInfoId");
-//				}else{
-//					ResultSet resultSet = mysqlUtil.query(findAdactionReportUserSql.toString().replace("REPLACE_TRACKING_ID", trackingSeq));
-//					while(resultSet.next()){
-//						String adOperatingRule = resultSet.getString("ad_operating_rule");
-//						this.pfpCustomerInfoId = resultSet.getString("pfp_customer_info_id");
-//						log.info("adOperatingRule:"+adOperatingRule+" pfpCustomerInfoId:"+pfpCustomerInfoId);
-//						//非商品廣告
-//						if(StringUtils.isBlank(this.prodId) && StringUtils.isNotBlank(adOperatingRule)){
-//							notProdAdFlag = true;
-//							log.info(">>>>>>>>>>NOT PROD: prodAdFlag:"+this.notProdAdFlag+" pfpCustomerInfoId:"+this.pfpCustomerInfoId);
-//						}
-//						//商品廣告
-//						if(StringUtils.isNotBlank(this.prodId) && StringUtils.isNotBlank(adOperatingRule)){
-//							prodAdFlag = true;
-//							log.info(">>>>>>>>>>PROD: prodAdFlag:"+this.prodAdFlag+" pfpCustomerInfoId:"+this.pfpCustomerInfoId);
-//						}
-//					}
-//					
-//					trackingDeatilMap = new HashMap<String,Object>();
-//					trackingDeatilMap.put("notProdAdFlag", notProdAdFlag);
-//					trackingDeatilMap.put("prodAdFlag", prodAdFlag);
-//					trackingDeatilMap.put("pfpCustomerInfoId", pfpCustomerInfoId);
-//					trackingMap.put(trackingSeq, trackingDeatilMap);
-//				}
-//				
-//				
-//				for (Text text : mapperValue) {
-//					String uuid = text.toString();
-//					uuidSet.add(uuid);
-//				}
-//				
-//				if(this.notProdAdFlag){
-//					saveHbaseTrackingMap.put(trackingSeq+"_ALL", uuidSet);
-//				}
-//				
-//				if(this.prodAdFlag){
-//					//是商品廣告需要再判斷商品id是否存在
-//					boolean prodCheckFlag = false;
-//					if(trackingProdIdMap.containsKey(this.pfpCustomerInfoId)){
-//						Set<String> prodSet = trackingProdIdMap.get(this.pfpCustomerInfoId);
-//						for (String ecProdId : prodSet) {
-//							if(ecProdId.equals(this.prodId)){
-//								prodCheckFlag = true;
-//								break;
-//							}
-//						}
-//					}else{
-//						ResultSet resultSet = mysqlUtil.query(findEcProdrSql.toString().replace("REPLACE_CUSTOMER_ID", this.pfpCustomerInfoId));
-//						Set<String> prodSet = new HashSet<String>();
-//						while(resultSet.next()){
-//							String ecProdId = resultSet.getString("catalog_prod_seq");
-//							prodSet.add(ecProdId);
-//							if(this.prodId.equals(ecProdId)){
-//								prodCheckFlag = true;
-//							}
-//						}
-//						trackingProdIdMap.put(this.pfpCustomerInfoId, prodSet);
-//					}
-//					
-//					if(prodCheckFlag){
-//
-//						saveHbaseTrackingMap.put(trackingSeq+"_"+this.prodId, uuidSet);
-//					}
-//				}
 			}
 			
 			paclLogList.clear();
