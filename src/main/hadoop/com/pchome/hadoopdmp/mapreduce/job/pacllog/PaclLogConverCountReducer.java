@@ -491,56 +491,17 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	
 	public void cleanup(Context context) {
 		try {
-			
 			log.info("saveHbaseTrackingMap:"+saveHbaseTrackingMap);
-			
-			//1.取的hbase資料
-			
-			
-			
-			
-			String tableName = "pacl_retargeting";
-			String rowKey = "alex";
-			String family = "type";
-			String qualifier = "retargeting";
-			
-			HTable table = new HTable(conf, Bytes.toBytes(tableName));
-			int region = Math.abs(rowKey.hashCode()) % 10;
-			rowKey = "0"+region+"|"+rowKey;
-			Get get = new Get(Bytes.toBytes(rowKey));
-			get.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier));
-			Result result = table.get(get);
-			
-			
-			log.info(">>>>>>>>>>>table:"+table);
-			log.info(">>>>>>>>>>>result:"+result);
-			
-			
-			log.info("************************************************"+Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
-			
-			log.info(">>>>>>>>>>>>>>>>hbaseValue:"+getData("pacl_retargeting", "alex", "type", "retargeting"));
-			
-			 
-			 
-			 
-			 
-			 
-			 
-			 
-			 
-			 
-			 
-			 
-			 
-			 
-			 
-			 
-			 
-			 
-//			hbaseUtil = HBaseUtil.getInstance();
-//			hbaseUtil.initHbaseConfig("192.168.2.150,192.168.2.151,192.168.2.152", "3333", "192.168.2.149:16010");
-//   		 	log.info(">>>>>>>>>>>>>>>>hbaseValue:"+hbaseUtil.getData("pacl_retargeting", "alex", "type", "retargeting"));
-			
+			JSONObject data = new JSONObject();
+			for (Entry<String, Map<String, String>> entry : saveHbaseTrackingMap.entrySet()) {
+				String rowKey = entry.getKey();
+				Map<String,String> saveHbaseTrackingDetail = entry.getValue();
+				for (Entry<String, String> saveHbaseTrackingData : saveHbaseTrackingDetail.entrySet()) {
+					data.clear();
+					data.put(saveHbaseTrackingData.getKey(), saveHbaseTrackingData.getValue());
+					putData("pacl_retargeting",rowKey,"type","retargeting",data);
+				}
+			}
 //			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement( "DELETE FROM `pfp_code_convert_trans` where  1=1 and convert_date = '"+jobDate+"'");
 //			preparedStmt.execute();
 //			mysqlUtil.getConnect().commit();
