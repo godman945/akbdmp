@@ -207,7 +207,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			}
 			//處理追蹤資料
 			if(paclType.equals("tracking")){
-				log.info(">>>>>>init mapperKey:"+key);
+//				log.info(">>>>>>init mapperKey:"+key);
 				
 				this.prodFlag = false;
 				this.prodAdFlag = false;
@@ -243,7 +243,10 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 				//	saveHbaseTrackingMap
 				for (Text text : mapperValue) {
 					String prodId = text.toString();
-					
+					this.prodFlag = false;
+					if("8f3505e4a4e28f323903c171aa68d1ba".equals(uuid)){
+						log.info(uuid+":"+prodId+":"+this.pfpCustomerInfoId);
+					}
 					this.prodAdFlag = (boolean) trackingDeatilMap.get("adProdOperatingFlag");
 					this.notProdAdFlag = (boolean) trackingDeatilMap.get("adNotProdOperatingFlag");
 					//1.非商品廣告資料 2.pfp_adaction_report有資料
