@@ -244,9 +244,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 				for (Text text : mapperValue) {
 					String prodId = text.toString();
 					this.prodFlag = false;
-					if("8f3505e4a4e28f323903c171aa68d1ba".equals(uuid)){
-						log.info(uuid+":"+prodId+":"+this.pfpCustomerInfoId);
-					}
 					this.prodAdFlag = (boolean) trackingDeatilMap.get("adProdOperatingFlag");
 					this.notProdAdFlag = (boolean) trackingDeatilMap.get("adNotProdOperatingFlag");
 					//1.非商品廣告資料 2.pfp_adaction_report有資料
@@ -505,10 +502,10 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 					putData("pacl_retargeting",rowKey,"type","retargeting",data);
 				}
 			}
-//			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement( "DELETE FROM `pfp_code_convert_trans` where  1=1 and convert_date = '"+jobDate+"'");
-//			preparedStmt.execute();
-//			mysqlUtil.getConnect().commit();
-//			mysqlUtil.closeConnection();
+			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement( "DELETE FROM `pfp_code_convert_trans` where  1=1 and convert_date = '"+jobDate+"'");
+			preparedStmt.execute();
+			mysqlUtil.getConnect().commit();
+			mysqlUtil.closeConnection();
 		} catch (Throwable e) {
 			convertConditionSet.clear();
 			convertWriteInfo.setLength(0);
