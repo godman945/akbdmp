@@ -212,13 +212,11 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			//處理追蹤資料
 			if(paclType.equals("tracking")){
 //				log.info(">>>>>>init mapperKey:"+key);
-				
 				this.prodFlag = false;
 				this.prodAdFlag = false;
 				this.notProdAdFlag = false;
 				this.pfpCustomerInfoId = "";
 				this.trackingSeq = key.split("<PCHOME>",-1)[0];
-				
 				Map<String,Object> trackingDeatilMap = null;
 				if(trackingMap.containsKey(trackingSeq)){
 					trackingDeatilMap = trackingMap.get(trackingSeq);
@@ -242,7 +240,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 					trackingDeatilMap.put("pfpCustomerInfoId", pfpCustomerInfoId);
 					trackingMap.put(trackingSeq, trackingDeatilMap);
 				}
-				
 				
 				//	saveHbaseTrackingMap
 				for (Text text : mapperValue) {
@@ -351,10 +348,10 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 				pcalConditionBean.setConvertRule(convertRule);
 				pcalConditionBean.setConvertType(convertType);
 				convertConditionMap.put(convertSeq, pcalConditionBean);
-//				log.info(">>>>>>convertConditionMap:"+pfpCustomerInfoId);
+				log.info(">>>>>>convertConditionMap:"+pfpCustomerInfoId);
 			}
 		}else{
-//			log.info(">>>>>>convertConditionMap data exist!!");
+			log.info(">>>>>>convertConditionMap data exist!!");
 			pcalConditionBean = convertConditionMap.get(convertSeq);
 		}
 		
@@ -396,7 +393,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 				}
 			}
 		}
-//		log.info("convertSeq:"+convertSeq+">>>>>>>convertConditionSet:"+convertConditionSet.toString());
+		log.info("convertSeq:"+convertSeq+">>>>>>>convertConditionSet:"+convertConditionSet.toString());
 		
 		//統計轉換次數
 		int convertCount = 0;
@@ -448,7 +445,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getConvertNumType());
 			convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getConvertCount());
 			convertWriteInfo.append(paclSymbol).append(jobDate);
-//			log.info(">>>>>>write:"+convertWriteInfo.toString());
+			log.info(">>>>>>write>>>>>>>>key:"+keyOut+" value:"+convertWriteInfo.toString());
 			context.write(keyOut, new Text(convertWriteInfo.toString()));
 		}
 	}
