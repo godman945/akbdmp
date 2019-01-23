@@ -83,13 +83,12 @@ public class PaclLogConverCountDriver {
 			//ask推测执行
 			jobConf.set("mapred.map.tasks.speculative.execution","true");
 			jobConf.set("mapred.reduce.tasks.speculative.execution","true");
-//			//JVM
+			//JVM
 			jobConf.set("mapred.child.java.opts", "-Xmx4048M");
 			jobConf.set("mapreduce.map.memory.mb", "4096");
 			jobConf.set("mapreduce.reduce.memory.mb", "8192");
 //		    jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 			jobConf.set("spring.profiles.active", env);
-			
 			// hdfs
 			Configuration conf = new Configuration();
 			conf.set("hadoop.job.ugi", jobUgi);
@@ -101,11 +100,8 @@ public class PaclLogConverCountDriver {
 			conf.set("mapreduce.map.speculative", mapredExecution);
 			conf.set("mapreduce.reduce.speculative", mapredReduceExecution);
 			conf.set("mapreduce.task.timeout", mapredTimeout);
-			
 			conf.set("mapred.map.tasks.speculative.execution","true");
 			conf.set("mapred.reduce.tasks.speculative.execution","true");
-			
-			
 			conf.set("dfs.block.size","900457280000");
 			
 			
@@ -133,13 +129,13 @@ public class PaclLogConverCountDriver {
 			job.setReducerClass(PaclLogConverCountReducer.class);
 			job.setMapOutputKeyClass(Text.class);
 			job.setMapOutputValueClass(Text.class);
-			
-			
 			job.setOutputKeyClass(Text.class);
 			job.setOutputValueClass(Text.class);
 			job.setNumReduceTasks(1); 
 			job.setMapSpeculativeExecution(false);
 			job.setInputFormatClass(LzoTextInputFormat.class);
+			
+			//載入pacl所有lzo資料
 			Path inPath = new Path("/home/webuser/pa/storedata/alllog/"+sdf.format(cal.getTime()));
 			FileStatus[] status = fs.listStatus(inPath);  
 			List<Path> list = new ArrayList<Path>();  
@@ -150,7 +146,8 @@ public class PaclLogConverCountDriver {
 			    }  
 			}  
 			Path[] paths = new Path[list.size()];  
-			list.toArray(paths);  
+			list.toArray(paths);
+			//輸出pacl整理後資料(lzo)
 			outPath = "/home/webuser/alex/pacl_output";
 			//hdfs存在則刪除
 			deleteExistedDir(fs, new Path(outPath), true);
@@ -175,7 +172,6 @@ public class PaclLogConverCountDriver {
 					"/home/webuser/dmp/webapps/analyzer/lib/httpmime-4.2.3.jar",
 					"/home/webuser/dmp/webapps/analyzer/lib/mysql-connector-java-5.1.12-bin.jar",
 					"/home/webuser/dmp/webapps/analyzer/lib/json-20160810.jar",
-					
 					// add kafka jar
 					"/home/webuser/dmp/webapps/analyzer/lib/kafka-clients-0.9.0.0.jar",
 					"/home/webuser/dmp/webapps/analyzer/lib/kafka_2.11-0.9.0.0.jar",
@@ -188,15 +184,10 @@ public class PaclLogConverCountDriver {
 			}; 
 			for (String jarPath : jarPaths) {
 				Path hadoopJarPath = new Path(jarPath);
-				
-				
 				FileStatus[] files = fs.listStatus(hadoopJarPath);
 				for (FileStatus fileStatus : files) {
 					log.info("hadoopJarPath:"+fileStatus.getPath());
 				}
-				
-			
-				
 				DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fs);
 			}
 			String[] filePaths = {
@@ -244,7 +235,6 @@ public class PaclLogConverCountDriver {
 			}
 			mysqlUtil.closeConnection();
 			jobConf.set("effectPaclPfpUser", effectPaclPfpUser.toString());
-			
 			Job job2 = new Job(jobConf, "dmp_conv2_"+ env + "_" + sdf2.format(date));
 			for (String jarPath : jarPaths) {
 				DistributedCache.addArchiveToClassPath(new Path(jarPath), job2.getConfiguration(), fs);
@@ -252,7 +242,6 @@ public class PaclLogConverCountDriver {
 			for (String filePath : filePaths) {
 				DistributedCache.addCacheFile(new URI(filePath), job2.getConfiguration());
 			}
-			
 			job2.setJarByClass(PaclLogConverCountDriver.class);
 			job2.setMapperClass(PaclLogConverCountMapper.class);
 			job2.setReducerClass(PaclLogConverCountReducer2.class);
@@ -264,11 +253,10 @@ public class PaclLogConverCountDriver {
 			job2.setOutputValueClass(Text.class);
 			job2.setNumReduceTasks(1);//1個reduce 
 			job2.setMapSpeculativeExecution(false);
-			
-			
 			//STG
 //			Path inPath = new Path("/home/webuser/akbstg/storedata/alllog/"+sdf.format(cal.getTime()));
 			list = new ArrayList<Path>();  
+			cal = Calendar.getInstance();
 			for (int j = 0; j < convertDay; j++) {
 				cal.add(Calendar.DATE, -1);  
 				if(j < convertDay){
