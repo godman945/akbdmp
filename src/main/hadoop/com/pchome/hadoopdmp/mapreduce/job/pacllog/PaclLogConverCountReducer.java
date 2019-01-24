@@ -198,6 +198,8 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 				convertSeq = key.split("<PCHOME>",-1)[0];
 				userDefineConvertPrice = null;
 				convertConditionArray = null;
+				log.info(">>>>>>>>>>convertSeq:"+convertSeq);
+				
 				for (Text text : mapperValue) {
 					String value = text.toString();
 					JSONObject logJson = (JSONObject) jsonParser.parse(value);
@@ -305,7 +307,11 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	}
 	
 	
-	
+	/**
+	 * 1.取得轉換條件
+	 * 2.根據轉換條件各自需踩過一次log
+	 * 3.
+	 * */
 	public void processConvertLog() throws Exception{
 		if(convertConditionMap.get(convertSeq) == null){
 //			log.info(">>>>>>convertConditionMap data not exist!!");
@@ -348,10 +354,9 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 				pcalConditionBean.setConvertRule(convertRule);
 				pcalConditionBean.setConvertType(convertType);
 				convertConditionMap.put(convertSeq, pcalConditionBean);
-				log.info(">>>>>>convertConditionMap:"+pfpCustomerInfoId);
 			}
 		}else{
-			log.info(">>>>>>convertConditionMap data exist!!");
+//			log.info(">>>>>>convertConditionMap data exist!!");
 			pcalConditionBean = convertConditionMap.get(convertSeq);
 		}
 		
@@ -367,7 +372,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 		}
 		
 //		log.info("convertSeq:"+convertSeq+">>>>>>>convertConditionSet:"+convertConditionSet.toString());
-//		log.info("paclLogList:"+paclLogList.toString());
+		log.info("paclLogList:"+paclLogList.toString());
 		
 		
 //		開始計算條件出現次數
