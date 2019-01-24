@@ -439,7 +439,16 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 					convertPriceCount = (int)Double.parseDouble(pcalConditionBean.getConvertPrice());
 				}
 			}
-//			log.info("============="+convertConditionSet+" convert count:"+convertCount);
+			
+			if(uuid.equals("fe06708897d46cdba71d80826f3fae20")){
+				log.info("ConvertNumType:"+pcalConditionBean.getConvertNumType());
+				log.info("convertCount:"+convertCount);
+				log.info("userDefineConvertPrice:"+this.userDefineConvertPrice);
+				log.info("convertPriceCount:"+convertPriceCount);
+				
+			}
+			
+//			log.info(uuid+"============="+convertConditionSet+" convertCount:"+convertCount+" convertPriceCount:"+convertPriceCount);
 			keyOut.set(uuid);
 			convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getClickRangeDate());
 			convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getImpRangeDate());
