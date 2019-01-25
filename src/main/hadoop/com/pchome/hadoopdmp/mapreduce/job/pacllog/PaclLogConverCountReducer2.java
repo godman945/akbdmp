@@ -39,9 +39,17 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	private JSONParser jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
 	private static List<JSONObject> dataCkList = new ArrayList<JSONObject>();
+	
+	
+	//比對用ck物件
+	private static List<JSONObject> comparisonDataList = new ArrayList<JSONObject>();
+	
 	private static List<JSONObject> dataPvList = new ArrayList<JSONObject>();
 	private static JSONObject paclJsonInfo = new JSONObject();
 	
+	
+	//pacl整理後的log資訊
+	private static List<JSONObject> paclJsonInfoList = new ArrayList<JSONObject>();
 	
 	private static Map<String,JSONObject> saveDBMap = new HashMap<String,JSONObject>();
 	final static SimpleDateFormat sdfFormat =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -116,6 +124,8 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			dataCkList.clear();
 			dataPvList.clear();
 			paclJsonInfo.clear();
+			paclJsonInfoList.clear();
+			comparisonDataList.clear();
 			iteratorJson = null;
 			iterator = null;
 			differenceDay = null;
@@ -136,23 +146,45 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				if(logJson.getAsString("fileName").contains("part-r-")){
 					flagPacl = true;
 					paclJsonInfo = logJson;
+					
+					paclJsonInfoList.add(logJson);
 				}
 			}
 			
-			
 			log.info("key:"+key+" flagKdcl:"+flagKdcl+" flagPacl:"+flagPacl);
 			if(flagKdcl && flagPacl){
-				log.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+				log.info(">>>>>>>>>paclJsonInfoList:"+paclJsonInfoList);
+				for (JSONObject paclJson : paclJsonInfoList) {
+					this.paclJsonInfo = paclJson;
+					comparisonDataList.clear();
+					for (JSONObject ckJson : dataCkList) {
+						JSONObject comparisonJson = (net.minidev.json.JSONObject) jsonParser.parse(ckJson.toString());
+						comparisonDataList.add(comparisonJson);
+					}
+					log.info("remove date before:"+comparisonDataList);
+					processOutOfRangeDay(comparisonDataList,"ck");
+					log.info("remove date after:"+comparisonDataList);
+					//排序時間
+					sortKdclDataList(comparisonDataList);
+					log.info("sort date after:"+comparisonDataList);
+					//存入寫入DB map
+					processSaveDBInfo(comparisonDataList,"ck",key);
+					
+					
+				}
 				
-				processOutOfRangeDay(dataCkList,"ck");
-				//排序時間
-				sortKdclDataList(dataCkList);
-				//存入寫入DB map
-				processSaveDBInfo(dataCkList,"ck",key);
 				
-				processOutOfRangeDay(dataPvList,"pv");
-				sortKdclDataList(dataPvList);
-				processSaveDBInfo(dataPvList,"pv",key);
+				
+				
+//				processOutOfRangeDay(dataCkList,"ck");
+//				//排序時間
+//				sortKdclDataList(dataCkList);
+//				//存入寫入DB map
+//				processSaveDBInfo(dataCkList,"ck",key);
+//				
+//				processOutOfRangeDay(dataPvList,"pv");
+//				sortKdclDataList(dataPvList);
+//				processSaveDBInfo(dataPvList,"pv",key);
 			}
 			
 		} catch (Throwable e) {
@@ -160,22 +192,23 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 		}
 	}
 	
-	private void processSaveDBInfo(List<JSONObject> data,String type,String uuid) throws Exception{
-		if(data.size() > 0){
-			//1:最終 2:最初
-			String convertBelong = ((JSONObject)data.get(0)).getAsString("convertBelong");
-			if(convertBelong.equals("1")){
-				JSONObject saveJson = new JSONObject();
-				saveJson = data.get(0);
-				saveDBMap.put(uuid+"<PCHOME>"+type.toUpperCase(), saveJson);
-			}
-			if(convertBelong.equals("2")){
-				JSONObject saveJson = new JSONObject();
-				saveJson = data.get(data.size() - 1);
-				saveDBMap.put(uuid+"<PCHOME>"+type.toUpperCase(), saveJson);
-			}
-		}
-	}
+//	private void processSaveDBInfo(List<JSONObject> data,String type,String uuid) throws Exception{
+//		if(data.size() > 0){
+//			//1:最終 2:最初
+//			String convertBelong = ((JSONObject)data.get(0)).getAsString("convertBelong");
+//			if(convertBelong.equals("1")){
+//				JSONObject saveJson = new JSONObject();
+//				saveJson = data.get(0);
+//				saveDBMap.put(uuid+"<PCHOME>"+type.toUpperCase(), saveJson);
+//			}
+//			if(convertBelong.equals("2")){
+//				JSONObject saveJson = new JSONObject();
+//				saveJson = data.get(data.size() - 1);
+//				saveDBMap.put(uuid+"<PCHOME>"+type.toUpperCase(), saveJson);
+//			}
+//		}
+//	}
+	
 	
 	private void processOutOfRangeDay(List<JSONObject> data,String type) throws Exception{
 		String clickRangeDate = paclJsonInfo.getAsString("clickRangeDate");
@@ -186,6 +219,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 		String convertSeq = paclJsonInfo.getAsString("convertSeq");
 		String convertNumType = paclJsonInfo.getAsString("convertNumType");
 		String convertCount = paclJsonInfo.getAsString("convertCount");
+		
 		rangrDate = null;
 		if(type.equals("ck")){
 			rangrDate = clickRangeDate;
@@ -210,16 +244,14 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				iteratorJson.put("convertCount", convertCount);
 			}
 		}
-		
-		log.info("type:"+type);
-		log.info("dataCkList:"+dataCkList);
-		log.info("dataPvList:"+dataPvList);
-		log.info("paclJsonInfo:"+paclJsonInfo);
-		
+//		log.info("type:"+type);
+//		log.info("dataCkList:"+dataCkList);
+//		log.info("dataPvList:"+dataPvList);
+//		log.info("paclJsonInfo:"+paclJsonInfo);
 	}
 	
 	private List<JSONObject> sortKdclDataList(List<JSONObject> data){
-		Collections.sort(dataCkList, new Comparator<JSONObject>() {
+		Collections.sort(comparisonDataList, new Comparator<JSONObject>() {
 			public int compare(JSONObject o1, JSONObject o2) {
 				try {
 					return sdf.parse(o2.getAsString("kdclSourceDate")).compareTo(sdf.parse(o1.getAsString("kdclSourceDate")));
@@ -231,6 +263,100 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 		});
 		return data;
 	}
+	
+	private void processSaveDBInfo(List<JSONObject> data,String type,String uuid) throws Exception{
+		if(data.size() > 0){
+			//1:最終 2:最初
+			String convertBelong = ((JSONObject)data.get(0)).getAsString("convertBelong");
+			if(convertBelong.equals("1")){
+				JSONObject saveJson = new JSONObject();
+				saveJson = data.get(0);
+				saveDBMap.put(uuid+"<PCHOME>"+type.toUpperCase(), saveJson);
+			}
+			if(convertBelong.equals("2")){
+				JSONObject saveJson = new JSONObject();
+				saveJson = data.get(data.size() - 1);
+				saveDBMap.put(uuid+"<PCHOME>"+type.toUpperCase(), saveJson);
+			}
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+//	private void processOutOfRangeDay(List<JSONObject> data,String type) throws Exception{
+//		String clickRangeDate = paclJsonInfo.getAsString("clickRangeDate");
+//		String impRangeDate = paclJsonInfo.getAsString("impRangeDate");
+//		String convertPriceCount = paclJsonInfo.getAsString("convertPriceCount");
+//		String convertPrice = paclJsonInfo.getAsString("convertPrice");
+//		String convertBelong = paclJsonInfo.getAsString("convertBelong");
+//		String convertSeq = paclJsonInfo.getAsString("convertSeq");
+//		String convertNumType = paclJsonInfo.getAsString("convertNumType");
+//		String convertCount = paclJsonInfo.getAsString("convertCount");
+//		rangrDate = null;
+//		if(type.equals("ck")){
+//			rangrDate = clickRangeDate;
+//		}else if(type.equals("pv")){
+//			rangrDate = impRangeDate;
+//		}
+//		iterator = data.iterator();
+//		while (iterator.hasNext()) {
+//			iteratorJson = (JSONObject)iterator.next();
+//			kdclDate = iteratorJson.getAsString("kdclDate");
+//			differenceDay = (long) (sdf.parse(jobDate).getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
+//			if(differenceDay > Long.valueOf(rangrDate)){
+//				iterator.remove();
+//			}else{
+//				iteratorJson.put("clickRangeDate", clickRangeDate);
+//				iteratorJson.put("impRangeDate", impRangeDate);
+//				iteratorJson.put("convertPriceCount", convertPriceCount);
+//				iteratorJson.put("convertPrice", convertPrice);
+//				iteratorJson.put("convertBelong", convertBelong);
+//				iteratorJson.put("convertSeq", convertSeq);
+//				iteratorJson.put("convertNumType", convertNumType);
+//				iteratorJson.put("convertCount", convertCount);
+//			}
+//		}
+//		
+//		log.info("type:"+type);
+//		log.info("dataCkList:"+dataCkList);
+//		log.info("dataPvList:"+dataPvList);
+//		log.info("paclJsonInfo:"+paclJsonInfo);
+//		
+//	}
+	
+//	private List<JSONObject> sortKdclDataList(List<JSONObject> data){
+//		Collections.sort(dataCkList, new Comparator<JSONObject>() {
+//			public int compare(JSONObject o1, JSONObject o2) {
+//				try {
+//					return sdf.parse(o2.getAsString("kdclSourceDate")).compareTo(sdf.parse(o1.getAsString("kdclSourceDate")));
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//				return 0;
+//			}
+//		});
+//		return data;
+//	}
 	
 	private String getOS(UAgentInfo uAgentInfo){
 		if (uAgentInfo.detectAndroid()) {
@@ -303,77 +429,77 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			int count = 0;
 			int totalSize = saveDBMap.size();
 			log.info("cleanup saveDBMap size:"+totalSize);
+			log.info("saveDBMap:"+saveDBMap);
 			
 			
-			
-			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement(insertSqlStr.toString());
-			for (Entry<String ,JSONObject> data : saveDBMap.entrySet()) {
-				//寫入mysql
-				count = count + 1;
-				String type = data.getKey().split("<PCHOME>")[1];
-				String uuid = data.getKey().split("<PCHOME>")[0];
-				JSONObject json = data.getValue();
-				 // device
-		        UAgentInfo uAgentInfo = new UAgentInfo(json.getAsString("userAgent"), null);
-		        String device = uAgentInfo.detectSmartphone() ? "mobile" : "PC";
-		        String os = getOS(uAgentInfo);
-		        
-		        String timeCode = "";
-		        if((Pattern.compile("^[0-9]+$").matcher(json.getAsString("keclTime")).find())){
-		        	timeCode = getTimeCode(Integer.parseInt(json.getAsString("keclTime")));
-		        }
-		        String ageCode = "";
-		        if((Pattern.compile("^[0-9]+$").matcher(json.getAsString("age")).find())){
-		        	ageCode = getAgeCode(Integer.parseInt(json.getAsString("age")));
-		        }
-		        
-		        
-				preparedStmt.setString(1, uuid);
-				preparedStmt.setString(2, jobDate);
-				preparedStmt.setString(3, json.getAsString("convertSeq"));
-				preparedStmt.setString(4, type);
-				preparedStmt.setString(5, json.getAsString("convertNumType"));
-				preparedStmt.setString(6, json.getAsString("convertBelong"));
-				preparedStmt.setString(7, json.getAsString("kdclDate"));
-				preparedStmt.setInt(8, Integer.parseInt(json.getAsString("convertCount")));
-				preparedStmt.setInt(9,(int)Double.parseDouble(json.getAsString(("convertPrice"))));
-				preparedStmt.setString(10,json.getAsString("adSeq") );
-				preparedStmt.setString(11,json.getAsString("groupSeq") );
-				preparedStmt.setString(12,json.getAsString("actionSeq"));
-				preparedStmt.setString(13,json.getAsString("adType") );
-				preparedStmt.setString(14,json.getAsString("kdclDate") );
-				preparedStmt.setString(15,json.getAsString("keclTime") );
-				preparedStmt.setString(16,json.getAsString("pfpCustomerInfoId") );
-				preparedStmt.setString(17,json.getAsString("pfbxCustomerInfoId") );
-				preparedStmt.setString(18,json.getAsString("pfbxPositionId") );
-				preparedStmt.setString(19,json.getAsString("pfdCustomerInfoId") );
-				preparedStmt.setString(20,json.getAsString("payType") );
-				preparedStmt.setString(21,json.getAsString("sex") );
-				preparedStmt.setString(22,ageCode );
-				preparedStmt.setString(23,timeCode );
-				preparedStmt.setString(24,json.getAsString("tproId") );
-				preparedStmt.setString(25,json.getAsString("categoryCode") );
-				preparedStmt.setString(26,json.getAsString("*****") );
-				preparedStmt.setString(27,json.getAsString("referer") );
-				preparedStmt.setString(28,json.getAsString("styleId") );
-				preparedStmt.setString(29,device);
-				preparedStmt.setString(30,os);
-				preparedStmt.setString(31,json.getAsString("*****"));
-				preparedStmt.setString(32,json.getAsString("*****"));
-				preparedStmt.setString(33, sdfFormat.format(date));
-				preparedStmt.setString(34, sdfFormat.format(date));
-				preparedStmt.addBatch();
-				if(count % 5000 == 0){
-					preparedStmt.executeBatch();
-					mysqlUtil.getConnect().commit();
-				}else if(count == totalSize){
-					preparedStmt.executeBatch();
-					mysqlUtil.getConnect().commit();
-					preparedStmt.close();
-				}
-			}
-			
-			mysqlUtil.closeConnection();
+//			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement(insertSqlStr.toString());
+//			for (Entry<String ,JSONObject> data : saveDBMap.entrySet()) {
+//				//寫入mysql
+//				count = count + 1;
+//				String type = data.getKey().split("<PCHOME>")[1];
+//				String uuid = data.getKey().split("<PCHOME>")[0];
+//				JSONObject json = data.getValue();
+//				 // device
+//		        UAgentInfo uAgentInfo = new UAgentInfo(json.getAsString("userAgent"), null);
+//		        String device = uAgentInfo.detectSmartphone() ? "mobile" : "PC";
+//		        String os = getOS(uAgentInfo);
+//		        
+//		        String timeCode = "";
+//		        if((Pattern.compile("^[0-9]+$").matcher(json.getAsString("keclTime")).find())){
+//		        	timeCode = getTimeCode(Integer.parseInt(json.getAsString("keclTime")));
+//		        }
+//		        String ageCode = "";
+//		        if((Pattern.compile("^[0-9]+$").matcher(json.getAsString("age")).find())){
+//		        	ageCode = getAgeCode(Integer.parseInt(json.getAsString("age")));
+//		        }
+//		        
+//		        
+//				preparedStmt.setString(1, uuid);
+//				preparedStmt.setString(2, jobDate);
+//				preparedStmt.setString(3, json.getAsString("convertSeq"));
+//				preparedStmt.setString(4, type);
+//				preparedStmt.setString(5, json.getAsString("convertNumType"));
+//				preparedStmt.setString(6, json.getAsString("convertBelong"));
+//				preparedStmt.setString(7, json.getAsString("kdclDate"));
+//				preparedStmt.setInt(8, Integer.parseInt(json.getAsString("convertCount")));
+//				preparedStmt.setInt(9,(int)Double.parseDouble(json.getAsString(("convertPrice"))));
+//				preparedStmt.setString(10,json.getAsString("adSeq") );
+//				preparedStmt.setString(11,json.getAsString("groupSeq") );
+//				preparedStmt.setString(12,json.getAsString("actionSeq"));
+//				preparedStmt.setString(13,json.getAsString("adType") );
+//				preparedStmt.setString(14,json.getAsString("kdclDate") );
+//				preparedStmt.setString(15,json.getAsString("keclTime") );
+//				preparedStmt.setString(16,json.getAsString("pfpCustomerInfoId") );
+//				preparedStmt.setString(17,json.getAsString("pfbxCustomerInfoId") );
+//				preparedStmt.setString(18,json.getAsString("pfbxPositionId") );
+//				preparedStmt.setString(19,json.getAsString("pfdCustomerInfoId") );
+//				preparedStmt.setString(20,json.getAsString("payType") );
+//				preparedStmt.setString(21,json.getAsString("sex") );
+//				preparedStmt.setString(22,ageCode );
+//				preparedStmt.setString(23,timeCode );
+//				preparedStmt.setString(24,json.getAsString("tproId") );
+//				preparedStmt.setString(25,json.getAsString("categoryCode") );
+//				preparedStmt.setString(26,json.getAsString("*****") );
+//				preparedStmt.setString(27,json.getAsString("referer") );
+//				preparedStmt.setString(28,json.getAsString("styleId") );
+//				preparedStmt.setString(29,device);
+//				preparedStmt.setString(30,os);
+//				preparedStmt.setString(31,json.getAsString("*****"));
+//				preparedStmt.setString(32,json.getAsString("*****"));
+//				preparedStmt.setString(33, sdfFormat.format(date));
+//				preparedStmt.setString(34, sdfFormat.format(date));
+//				preparedStmt.addBatch();
+//				if(count % 5000 == 0){
+//					preparedStmt.executeBatch();
+//					mysqlUtil.getConnect().commit();
+//				}else if(count == totalSize){
+//					preparedStmt.executeBatch();
+//					mysqlUtil.getConnect().commit();
+//					preparedStmt.close();
+//				}
+//			}
+//			
+//			mysqlUtil.closeConnection();
 		} catch (Throwable e) {
 //			sql.setLength(0);
 			log.error("reduce cleanup error>>>>>> " + e);
