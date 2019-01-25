@@ -155,7 +155,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 						if(StringUtils.isBlank((actionSeq))){
 							continue;
 						}
-						if(StringUtils.isBlank(actionPfpCodeMergeMap.get(actionSeq))){
+						if(actionPfpCodeMergeMap.get(actionSeq) == null || StringUtils.isBlank(actionPfpCodeMergeMap.get(actionSeq))){
 							String pfpCode = findPfpCodeAdactionMerge(actionSeq);
 							if(StringUtils.isNotBlank(pfpCode)){
 								comparisonJson.put("pfp_code", pfpCode);
@@ -167,14 +167,23 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 						}
 						comparisonDataList.add(comparisonJson);
 					}
+					
+					
+					log.info(">>>>>>>> dataCkList:"+dataCkList);
+					log.info(">>>>>>>> dataPvList:"+dataPvList);
+					log.info(">>>>>>>> comparisonDataList:"+comparisonDataList);
+					log.info(">>>>>>>> actionPfpCodeMergeMap:"+actionPfpCodeMergeMap);
+					
+					
 					//刪除不在追蹤時間內資料與活動綁定轉換代碼不一致資料
 					processOutOfRangeDay(comparisonDataList,"ck");
+					log.info(">>>>>>> processOutOfRangeDay end");
 					//排序時間
 					sortKdclDataList(comparisonDataList);
+					log.info(">>>>>>> sortKdclDataList end");
 					//存入寫入DB map
 					processSaveDBInfo(comparisonDataList,"ck",key);
-					
-					log.info(">>>>>>>> comparisonDataList:"+comparisonDataList);
+					log.info(">>>>>>> processSaveDBInfo end");
 					
 					comparisonDataList.clear();
 					for (JSONObject pvJson : dataPvList) {
@@ -184,7 +193,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 						if(StringUtils.isBlank((actionSeq))){
 							continue;
 						}
-						if(StringUtils.isBlank(actionPfpCodeMergeMap.get(actionSeq))){
+						if(actionPfpCodeMergeMap.get(actionSeq) == null || StringUtils.isBlank(actionPfpCodeMergeMap.get(actionSeq))){
 							String pfpCode = findPfpCodeAdactionMerge(actionSeq);
 							if(StringUtils.isNotBlank(pfpCode)){
 								comparisonJson.put("pfp_code", pfpCode);
@@ -197,8 +206,11 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 						comparisonDataList.add(comparisonJson);
 					}
 					processOutOfRangeDay(comparisonDataList,"pv");
+					log.info(">>>>>>> processOutOfRangeDay end");
 					sortKdclDataList(comparisonDataList);
+					log.info(">>>>>>> sortKdclDataList end");
 					processSaveDBInfo(comparisonDataList,"pv",key);
+					log.info(">>>>>>> processSaveDBInfo end");
 				}
 			}
 		} catch (Throwable e) {
@@ -208,7 +220,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	
 	private String findPfpCodeAdactionMerge(String actionSeq) throws Exception{
 		querySqlStr.setLength(0);
-		querySqlStr.append(" SELECT code_id FROM pfp_code_adaction_merge where 1=1 and ad_action_seq = '").append(actionSeq).append("'");
+		querySqlStr.append(" SELECT code_id FROM pfp_code_adaction_merge where 1=1 and code_type = 'C' and ad_action_seq = '").append(actionSeq).append("'");
 		ResultSet resultSet = mysqlUtil.query(querySqlStr.toString());
 		String code = null;
 		while(resultSet.next()){
