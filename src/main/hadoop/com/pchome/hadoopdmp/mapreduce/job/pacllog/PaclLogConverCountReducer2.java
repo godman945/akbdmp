@@ -271,12 +271,12 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			if(convertBelong.equals("1")){
 				JSONObject saveJson = new JSONObject();
 				saveJson = data.get(0);
-				saveDBMap.put(uuid+"<PCHOME>"+type.toUpperCase(), saveJson);
+				saveDBMap.put(uuid+"<PCHOME>"+type.toUpperCase()+"<PCHOME>"+saveJson.getAsString("convertSeq"), saveJson);
 			}
 			if(convertBelong.equals("2")){
 				JSONObject saveJson = new JSONObject();
 				saveJson = data.get(data.size() - 1);
-				saveDBMap.put(uuid+"<PCHOME>"+type.toUpperCase(), saveJson);
+				saveDBMap.put(uuid+"<PCHOME>"+type.toUpperCase()+"<PCHOME>"+saveJson.getAsString("convertSeq"), saveJson);
 			}
 		}
 	}
