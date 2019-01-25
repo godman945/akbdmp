@@ -152,18 +152,21 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 						JSONObject comparisonJson = ((net.minidev.json.JSONObject) jsonParser.parse(ckJson.toString()));
 						//根據廣告活動查詢對應的轉換代碼
 						String actionSeq = comparisonJson.getAsString("actionSeq");
+						log.info("actionSeq:"+actionSeq);
 						if(StringUtils.isBlank((actionSeq))){
 							continue;
 						}
-						if(actionPfpCodeMergeMap.get(actionSeq) == null || StringUtils.isBlank(actionPfpCodeMergeMap.get(actionSeq))){
+						if(StringUtils.isBlank(actionPfpCodeMergeMap.get(actionSeq))){
 							String pfpCode = findPfpCodeAdactionMerge(actionSeq);
 							if(StringUtils.isNotBlank(pfpCode)){
 								comparisonJson.put("pfp_code", pfpCode);
 								actionPfpCodeMergeMap.put(actionSeq, pfpCode);
 							}
+							log.info("pfpCode:"+pfpCode);
 						}else{
 							String pfpCode = actionPfpCodeMergeMap.get(actionSeq);
 							comparisonJson.put("pfp_code", pfpCode);
+							log.info("pfpCode:"+pfpCode);
 						}
 						comparisonDataList.add(comparisonJson);
 					}
@@ -185,23 +188,34 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 					processSaveDBInfo(comparisonDataList,"ck",key);
 					log.info(">>>>>>> processSaveDBInfo end");
 					
+					log.info(">>>>>>>> saveDBMap:"+saveDBMap);
 					comparisonDataList.clear();
+					
+					log.info(">>>>>>>> dataCkList:"+dataCkList);
+					log.info(">>>>>>>> dataPvList:"+dataPvList);
+					log.info(">>>>>>>> comparisonDataList:"+comparisonDataList);
+					log.info(">>>>>>>> actionPfpCodeMergeMap:"+actionPfpCodeMergeMap);
+					
+					log.info("******START PV*******");
 					for (JSONObject pvJson : dataPvList) {
 						JSONObject comparisonJson = ((net.minidev.json.JSONObject) jsonParser.parse(pvJson.toString()));
 						//根據廣告活動查詢對應的轉換代碼
 						String actionSeq = comparisonJson.getAsString("actionSeq");
+						log.info("actionSeq:"+actionSeq);
 						if(StringUtils.isBlank((actionSeq))){
 							continue;
 						}
-						if(actionPfpCodeMergeMap.get(actionSeq) == null || StringUtils.isBlank(actionPfpCodeMergeMap.get(actionSeq))){
+						if(StringUtils.isBlank(actionPfpCodeMergeMap.get(actionSeq))){
 							String pfpCode = findPfpCodeAdactionMerge(actionSeq);
 							if(StringUtils.isNotBlank(pfpCode)){
 								comparisonJson.put("pfp_code", pfpCode);
 								actionPfpCodeMergeMap.put(actionSeq, pfpCode);
+								log.info("pfpCode:"+pfpCode);
 							}
 						}else{
 							String pfpCode = actionPfpCodeMergeMap.get(actionSeq);
 							comparisonJson.put("pfp_code", pfpCode);
+							log.info("pfpCode:"+pfpCode);
 						}
 						comparisonDataList.add(comparisonJson);
 					}
