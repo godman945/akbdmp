@@ -150,8 +150,8 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				}
 			}
 			
-			log.info("key:"+key+" flagKdcl:"+flagKdcl+" flagPacl:"+flagPacl);
 			if(flagKdcl && flagPacl){
+				log.info("key:"+key+" flagKdcl:"+flagKdcl+" flagPacl:"+flagPacl);
 				log.info(">>>>>>>>>paclJsonInfoList:"+paclJsonInfoList);
 				for (JSONObject paclJson : paclJsonInfoList) {
 					this.paclJsonInfo = paclJson;
@@ -169,7 +169,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 					//存入寫入DB map
 					processSaveDBInfo(comparisonDataList,"ck",key);
 					
-					
+					log.info("SAVE MAP:"+saveDBMap);
 				}
 				
 				
@@ -271,12 +271,16 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				JSONObject saveJson = new JSONObject();
 				saveJson = data.get(0);
 				saveDBMap.put(uuid+"<PCHOME>"+type.toUpperCase()+"<PCHOME>"+saveJson.getAsString("convertSeq"), saveJson);
-			}
-			if(convertBelong.equals("2")){
+				log.info("SAVE>>>>>>>>>:"+uuid+"<PCHOME>"+type.toUpperCase()+"<PCHOME>"+saveJson.getAsString("convertSeq"));
+				log.info("SAVE DATA>>>>>>>>>:"+saveJson);
+			}else if(convertBelong.equals("2")){
 				JSONObject saveJson = new JSONObject();
 				saveJson = data.get(data.size() - 1);
 				saveDBMap.put(uuid+"<PCHOME>"+type.toUpperCase()+"<PCHOME>"+saveJson.getAsString("convertSeq"), saveJson);
+				log.info("SAVE>>>>>>>>>:"+uuid+"<PCHOME>"+type.toUpperCase()+"<PCHOME>"+saveJson.getAsString("convertSeq"));
+				log.info("SAVE DATA>>>>>>>>>:"+saveJson);
 			}
+			log.info("SAVE END");
 		}
 	}
 	
