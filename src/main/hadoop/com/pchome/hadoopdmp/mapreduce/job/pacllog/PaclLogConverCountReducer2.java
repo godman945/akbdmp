@@ -168,13 +168,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 						comparisonDataList.add(comparisonJson);
 					}
 					
-					
-					log.info(">>>>>>>> dataCkList:"+dataCkList);
-					log.info(">>>>>>>> dataPvList:"+dataPvList);
-					log.info(">>>>>>>> comparisonDataList:"+comparisonDataList);
-					log.info(">>>>>>>> actionPfpCodeMergeMap:"+actionPfpCodeMergeMap);
-					
-					
 					//刪除不在追蹤時間內資料與活動綁定轉換代碼不一致資料
 					processOutOfRangeDay(comparisonDataList,"ck");
 					//排序時間
@@ -182,8 +175,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 					//存入寫入DB map
 					processSaveDBInfo(comparisonDataList,"ck",key);
 					comparisonDataList.clear();
-					
-					log.info("******START PV*******");
+
 					for (JSONObject pvJson : dataPvList) {
 						JSONObject comparisonJson = ((net.minidev.json.JSONObject) jsonParser.parse(pvJson.toString()));
 						//根據廣告活動查詢對應的轉換代碼
@@ -204,18 +196,9 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 						comparisonDataList.add(comparisonJson);
 					}
 					
-					
-					log.info(">>>>>>>> dataCkList:"+dataCkList);
-					log.info(">>>>>>>> dataPvList:"+dataPvList);
-					log.info(">>>>>>>> comparisonDataList:"+comparisonDataList);
-					log.info(">>>>>>>> actionPfpCodeMergeMap:"+actionPfpCodeMergeMap);
-					
 					processOutOfRangeDay(comparisonDataList,"pv");
-					log.info(">>>>>>> processOutOfRangeDay end");
 					sortKdclDataList(comparisonDataList);
-					log.info(">>>>>>> sortKdclDataList end");
 					processSaveDBInfo(comparisonDataList,"pv",key);
-					log.info(">>>>>>> processSaveDBInfo end");
 				}
 			}
 		} catch (Throwable e) {
@@ -253,20 +236,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 		iterator = data.iterator();
 		while (iterator.hasNext()) {
 			iteratorJson = (JSONObject)iterator.next();
-			
-			log.info("iteratorJson:"+iteratorJson);
-			
-			
-			kdclDate = iteratorJson.getAsString("kdclDate");
-			differenceDay = (long) (sdf.parse(jobDate).getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
-			if(differenceDay > Long.valueOf(rangrDate)){
-				iterator.remove();
-				continue;
-			}
-			if(!iteratorJson.getAsString("pfp_code").equals(convertSeq)){
-				iterator.remove();
-				continue;
-			}
 			iteratorJson.put("clickRangeDate", clickRangeDate);
 			iteratorJson.put("impRangeDate", impRangeDate);
 			iteratorJson.put("convertPriceCount", convertPriceCount);
@@ -275,6 +244,14 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			iteratorJson.put("convertSeq", convertSeq);
 			iteratorJson.put("convertNumType", convertNumType);
 			iteratorJson.put("convertCount", convertCount);
+			kdclDate = iteratorJson.getAsString("kdclDate");
+			differenceDay = (long) (sdf.parse(jobDate).getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
+			if(differenceDay > Long.valueOf(rangrDate)){
+				iterator.remove();
+			}
+			if(!iteratorJson.getAsString("pfp_code").equals(convertSeq)){
+				iterator.remove();
+			}
 		}
 	}
 	
