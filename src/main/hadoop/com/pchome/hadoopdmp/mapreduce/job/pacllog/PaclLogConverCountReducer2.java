@@ -152,7 +152,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 						JSONObject comparisonJson = ((net.minidev.json.JSONObject) jsonParser.parse(ckJson.toString()));
 						//根據廣告活動查詢對應的轉換代碼
 						String actionSeq = comparisonJson.getAsString("actionSeq");
-						log.info("actionSeq:"+actionSeq);
 						if(StringUtils.isBlank((actionSeq))){
 							continue;
 						}
@@ -162,11 +161,9 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 								comparisonJson.put("pfp_code", pfpCode);
 								actionPfpCodeMergeMap.put(actionSeq, pfpCode);
 							}
-							log.info("pfpCode:"+pfpCode);
 						}else{
 							String pfpCode = actionPfpCodeMergeMap.get(actionSeq);
 							comparisonJson.put("pfp_code", pfpCode);
-							log.info("pfpCode:"+pfpCode);
 						}
 						comparisonDataList.add(comparisonJson);
 					}
@@ -180,28 +177,17 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 					
 					//刪除不在追蹤時間內資料與活動綁定轉換代碼不一致資料
 					processOutOfRangeDay(comparisonDataList,"ck");
-					log.info(">>>>>>> processOutOfRangeDay end");
 					//排序時間
 					sortKdclDataList(comparisonDataList);
-					log.info(">>>>>>> sortKdclDataList end");
 					//存入寫入DB map
 					processSaveDBInfo(comparisonDataList,"ck",key);
-					log.info(">>>>>>> processSaveDBInfo end");
-					
-					log.info(">>>>>>>> saveDBMap:"+saveDBMap);
 					comparisonDataList.clear();
-					
-					log.info(">>>>>>>> dataCkList:"+dataCkList);
-					log.info(">>>>>>>> dataPvList:"+dataPvList);
-					log.info(">>>>>>>> comparisonDataList:"+comparisonDataList);
-					log.info(">>>>>>>> actionPfpCodeMergeMap:"+actionPfpCodeMergeMap);
 					
 					log.info("******START PV*******");
 					for (JSONObject pvJson : dataPvList) {
 						JSONObject comparisonJson = ((net.minidev.json.JSONObject) jsonParser.parse(pvJson.toString()));
 						//根據廣告活動查詢對應的轉換代碼
 						String actionSeq = comparisonJson.getAsString("actionSeq");
-						log.info("actionSeq:"+actionSeq);
 						if(StringUtils.isBlank((actionSeq))){
 							continue;
 						}
@@ -210,15 +196,20 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 							if(StringUtils.isNotBlank(pfpCode)){
 								comparisonJson.put("pfp_code", pfpCode);
 								actionPfpCodeMergeMap.put(actionSeq, pfpCode);
-								log.info("pfpCode:"+pfpCode);
 							}
 						}else{
 							String pfpCode = actionPfpCodeMergeMap.get(actionSeq);
 							comparisonJson.put("pfp_code", pfpCode);
-							log.info("pfpCode:"+pfpCode);
 						}
 						comparisonDataList.add(comparisonJson);
 					}
+					
+					
+					log.info(">>>>>>>> dataCkList:"+dataCkList);
+					log.info(">>>>>>>> dataPvList:"+dataPvList);
+					log.info(">>>>>>>> comparisonDataList:"+comparisonDataList);
+					log.info(">>>>>>>> actionPfpCodeMergeMap:"+actionPfpCodeMergeMap);
+					
 					processOutOfRangeDay(comparisonDataList,"pv");
 					log.info(">>>>>>> processOutOfRangeDay end");
 					sortKdclDataList(comparisonDataList);
@@ -262,6 +253,10 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 		iterator = data.iterator();
 		while (iterator.hasNext()) {
 			iteratorJson = (JSONObject)iterator.next();
+			
+			log.info("iteratorJson:"+iteratorJson);
+			
+			
 			kdclDate = iteratorJson.getAsString("kdclDate");
 			differenceDay = (long) (sdf.parse(jobDate).getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
 			if(differenceDay > Long.valueOf(rangrDate)){
