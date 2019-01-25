@@ -56,7 +56,8 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 			String fileName = ((FileSplit)inputSplit).getPath().getName();
 			String valueStr = value.toString();
 			String arrayData[] = valueStr.split(paclSymbol,-1);
-			log.info(">>>>>filename:"+fileName);
+//			log.info(">>>>>filename:"+fileName);
+			//載入的檔案為pacl(排程1)
 			if(fileName.contains("pacl")){
 				String paclType = arrayData[11];
 //				log.info("raw_data : " + valueStr);
@@ -88,9 +89,8 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 			}else if(fileName.contains("kdcl") || fileName.contains("kwstg")){
 					String pfpCustomerInfoId = arrayData[6];
 					if(effectPaclPfpUser.toString().contains(pfpCustomerInfoId)){
-						log.info(">>>>>>kdcl log");
-						log.info("raw_data : " + value);
-						
+//						log.info(">>>>>>kdcl log");
+//						log.info("raw_data : " + value);
 						String date = arrayData[0];
 						String times = String.valueOf(sdf.parse(date).getHours());
 						if(times.length() == 1){
@@ -145,8 +145,8 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 						context.write(keyOut, new Text(kdclInfo.toString()));
 					}
 				}else if(fileName.contains("part")){
-					log.info(">>>>>>conv log");
-					log.info("raw_data : " + value);
+//					log.info(">>>>>>conv log");
+//					log.info("raw_data : " + value);
 					String uuid = arrayData[0].trim();
 					String clickRangeDate = arrayData[1];
 					String impRangeDate = arrayData[2];

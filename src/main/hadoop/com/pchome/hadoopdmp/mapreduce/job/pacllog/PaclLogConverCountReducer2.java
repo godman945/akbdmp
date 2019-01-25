@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -145,7 +146,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				}
 				if(logJson.getAsString("fileName").contains("part-r-")){
 					flagPacl = true;
-					log.info(key+">>>>>>>>>>ADD logJson:"+logJson);
 					paclJsonInfoList.add(logJson);
 				}
 			}
@@ -157,56 +157,31 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 					this.paclJsonInfo = paclJson;
 					comparisonDataList.clear();
 					for (JSONObject ckJson : dataCkList) {
-						JSONObject comparisonJson = (net.minidev.json.JSONObject) jsonParser.parse(ckJson.toString());
+						JSONObject comparisonJson = ((net.minidev.json.JSONObject) jsonParser.parse(ckJson.toString()));
 						comparisonDataList.add(comparisonJson);
 					}
-					log.info("remove date before:"+comparisonDataList);
+					//刪除不在追蹤時間內資料
 					processOutOfRangeDay(comparisonDataList,"ck");
-					log.info("remove date after:"+comparisonDataList);
 					//排序時間
 					sortKdclDataList(comparisonDataList);
-					log.info("sort date after:"+comparisonDataList);
 					//存入寫入DB map
 					processSaveDBInfo(comparisonDataList,"ck",key);
 					
-					log.info("SAVE MAP:"+saveDBMap);
+					comparisonDataList.clear();
+					for (JSONObject ckJson : dataCkList) {
+						JSONObject comparisonJson = ((net.minidev.json.JSONObject) jsonParser.parse(ckJson.toString()));
+						comparisonDataList.add(comparisonJson);
+					}
+					processOutOfRangeDay(comparisonDataList,"pv");
+					sortKdclDataList(comparisonDataList);
+					processSaveDBInfo(comparisonDataList,"pv",key);
 				}
-				
-				
-				
-				
-//				processOutOfRangeDay(dataCkList,"ck");
-//				//排序時間
-//				sortKdclDataList(dataCkList);
-//				//存入寫入DB map
-//				processSaveDBInfo(dataCkList,"ck",key);
-//				
-//				processOutOfRangeDay(dataPvList,"pv");
-//				sortKdclDataList(dataPvList);
-//				processSaveDBInfo(dataPvList,"pv",key);
 			}
-			
 		} catch (Throwable e) {
 			log.error("reduce error>>>>>> " + e);
 		}
 	}
 	
-//	private void processSaveDBInfo(List<JSONObject> data,String type,String uuid) throws Exception{
-//		if(data.size() > 0){
-//			//1:最終 2:最初
-//			String convertBelong = ((JSONObject)data.get(0)).getAsString("convertBelong");
-//			if(convertBelong.equals("1")){
-//				JSONObject saveJson = new JSONObject();
-//				saveJson = data.get(0);
-//				saveDBMap.put(uuid+"<PCHOME>"+type.toUpperCase(), saveJson);
-//			}
-//			if(convertBelong.equals("2")){
-//				JSONObject saveJson = new JSONObject();
-//				saveJson = data.get(data.size() - 1);
-//				saveDBMap.put(uuid+"<PCHOME>"+type.toUpperCase(), saveJson);
-//			}
-//		}
-//	}
 	
 	
 	private void processOutOfRangeDay(List<JSONObject> data,String type) throws Exception{
@@ -243,10 +218,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				iteratorJson.put("convertCount", convertCount);
 			}
 		}
-//		log.info("type:"+type);
-//		log.info("dataCkList:"+dataCkList);
-//		log.info("dataPvList:"+dataPvList);
-//		log.info("paclJsonInfo:"+paclJsonInfo);
 	}
 	
 	private List<JSONObject> sortKdclDataList(List<JSONObject> data){
@@ -271,95 +242,13 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				JSONObject saveJson = new JSONObject();
 				saveJson = data.get(0);
 				saveDBMap.put(uuid+"<PCHOME>"+type.toUpperCase()+"<PCHOME>"+saveJson.getAsString("convertSeq"), saveJson);
-				log.info("SAVE>>>>>>>>>:"+uuid+"<PCHOME>"+type.toUpperCase()+"<PCHOME>"+saveJson.getAsString("convertSeq"));
-				log.info("SAVE DATA>>>>>>>>>:"+saveJson);
 			}else if(convertBelong.equals("2")){
 				JSONObject saveJson = new JSONObject();
 				saveJson = data.get(data.size() - 1);
 				saveDBMap.put(uuid+"<PCHOME>"+type.toUpperCase()+"<PCHOME>"+saveJson.getAsString("convertSeq"), saveJson);
-				log.info("SAVE>>>>>>>>>:"+uuid+"<PCHOME>"+type.toUpperCase()+"<PCHOME>"+saveJson.getAsString("convertSeq"));
-				log.info("SAVE DATA>>>>>>>>>:"+saveJson);
 			}
-			log.info("SAVE END");
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-//	private void processOutOfRangeDay(List<JSONObject> data,String type) throws Exception{
-//		String clickRangeDate = paclJsonInfo.getAsString("clickRangeDate");
-//		String impRangeDate = paclJsonInfo.getAsString("impRangeDate");
-//		String convertPriceCount = paclJsonInfo.getAsString("convertPriceCount");
-//		String convertPrice = paclJsonInfo.getAsString("convertPrice");
-//		String convertBelong = paclJsonInfo.getAsString("convertBelong");
-//		String convertSeq = paclJsonInfo.getAsString("convertSeq");
-//		String convertNumType = paclJsonInfo.getAsString("convertNumType");
-//		String convertCount = paclJsonInfo.getAsString("convertCount");
-//		rangrDate = null;
-//		if(type.equals("ck")){
-//			rangrDate = clickRangeDate;
-//		}else if(type.equals("pv")){
-//			rangrDate = impRangeDate;
-//		}
-//		iterator = data.iterator();
-//		while (iterator.hasNext()) {
-//			iteratorJson = (JSONObject)iterator.next();
-//			kdclDate = iteratorJson.getAsString("kdclDate");
-//			differenceDay = (long) (sdf.parse(jobDate).getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
-//			if(differenceDay > Long.valueOf(rangrDate)){
-//				iterator.remove();
-//			}else{
-//				iteratorJson.put("clickRangeDate", clickRangeDate);
-//				iteratorJson.put("impRangeDate", impRangeDate);
-//				iteratorJson.put("convertPriceCount", convertPriceCount);
-//				iteratorJson.put("convertPrice", convertPrice);
-//				iteratorJson.put("convertBelong", convertBelong);
-//				iteratorJson.put("convertSeq", convertSeq);
-//				iteratorJson.put("convertNumType", convertNumType);
-//				iteratorJson.put("convertCount", convertCount);
-//			}
-//		}
-//		
-//		log.info("type:"+type);
-//		log.info("dataCkList:"+dataCkList);
-//		log.info("dataPvList:"+dataPvList);
-//		log.info("paclJsonInfo:"+paclJsonInfo);
-//		
-//	}
-	
-//	private List<JSONObject> sortKdclDataList(List<JSONObject> data){
-//		Collections.sort(dataCkList, new Comparator<JSONObject>() {
-//			public int compare(JSONObject o1, JSONObject o2) {
-//				try {
-//					return sdf.parse(o2.getAsString("kdclSourceDate")).compareTo(sdf.parse(o1.getAsString("kdclSourceDate")));
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//				return 0;
-//			}
-//		});
-//		return data;
-//	}
 	
 	private String getOS(UAgentInfo uAgentInfo){
 		if (uAgentInfo.detectAndroid()) {
@@ -432,15 +321,13 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			int count = 0;
 			int totalSize = saveDBMap.size();
 			log.info("cleanup saveDBMap size:"+totalSize);
-			log.info("saveDBMap:"+saveDBMap);
-			
-			
+//			log.info("saveDBMap:"+saveDBMap);
 			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement(insertSqlStr.toString());
 			for (Entry<String ,JSONObject> data : saveDBMap.entrySet()) {
 				//寫入mysql
 				count = count + 1;
-				String type = data.getKey().split("<PCHOME>")[1];
 				String uuid = data.getKey().split("<PCHOME>")[0];
+				String type = data.getKey().split("<PCHOME>")[1];
 				JSONObject json = data.getValue();
 				 // device
 		        UAgentInfo uAgentInfo = new UAgentInfo(json.getAsString("userAgent"), null);
@@ -507,7 +394,4 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			log.error("reduce cleanup error>>>>>> " + e);
 		}
 	}
-	
-	
-	
 }
