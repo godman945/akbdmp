@@ -176,29 +176,29 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 					processSaveDBInfo(comparisonDataList,"ck",key);
 					comparisonDataList.clear();
 
-					for (JSONObject pvJson : dataPvList) {
-						JSONObject comparisonJson = ((net.minidev.json.JSONObject) jsonParser.parse(pvJson.toString()));
-						//根據廣告活動查詢對應的轉換代碼
-						String actionSeq = comparisonJson.getAsString("actionSeq");
-						if(StringUtils.isBlank((actionSeq))){
-							continue;
-						}
-						if(StringUtils.isBlank(actionPfpCodeMergeMap.get(actionSeq))){
-							String pfpCode = findPfpCodeAdactionMerge(actionSeq);
-							if(StringUtils.isNotBlank(pfpCode)){
-								comparisonJson.put("pfp_code", pfpCode);
-								actionPfpCodeMergeMap.put(actionSeq, pfpCode);
-							}
-						}else{
-							String pfpCode = actionPfpCodeMergeMap.get(actionSeq);
-							comparisonJson.put("pfp_code", pfpCode);
-						}
-						comparisonDataList.add(comparisonJson);
-					}
-					
-					processOutOfRangeDay(comparisonDataList,"pv");
-					sortKdclDataList(comparisonDataList);
-					processSaveDBInfo(comparisonDataList,"pv",key);
+//					for (JSONObject pvJson : dataPvList) {
+//						JSONObject comparisonJson = ((net.minidev.json.JSONObject) jsonParser.parse(pvJson.toString()));
+//						//根據廣告活動查詢對應的轉換代碼
+//						String actionSeq = comparisonJson.getAsString("actionSeq");
+//						if(StringUtils.isBlank((actionSeq))){
+//							continue;
+//						}
+//						if(StringUtils.isBlank(actionPfpCodeMergeMap.get(actionSeq))){
+//							String pfpCode = findPfpCodeAdactionMerge(actionSeq);
+//							if(StringUtils.isNotBlank(pfpCode)){
+//								comparisonJson.put("pfp_code", pfpCode);
+//								actionPfpCodeMergeMap.put(actionSeq, pfpCode);
+//							}
+//						}else{
+//							String pfpCode = actionPfpCodeMergeMap.get(actionSeq);
+//							comparisonJson.put("pfp_code", pfpCode);
+//						}
+//						comparisonDataList.add(comparisonJson);
+//					}
+//					
+//					processOutOfRangeDay(comparisonDataList,"pv");
+//					sortKdclDataList(comparisonDataList);
+//					processSaveDBInfo(comparisonDataList,"pv",key);
 				}
 			}
 		} catch (Throwable e) {
