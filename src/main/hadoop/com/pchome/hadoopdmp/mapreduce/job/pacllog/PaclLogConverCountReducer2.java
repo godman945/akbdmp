@@ -1,6 +1,7 @@
 package com.pchome.hadoopdmp.mapreduce.job.pacllog;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,12 +9,12 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.io.Text;
@@ -30,29 +31,21 @@ import net.minidev.json.parser.JSONParser;
 public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> {
 
 	private static Log log = LogFactory.getLog("PaclLogConverCountReducer2");
-	private Text keyOut = new Text();
-	private Text valueOut = new Text();
-
 	private MysqlUtil mysqlUtil = null;
 	private StringBuffer insertSqlStr = new StringBuffer();
-	private StringBuffer sql = new StringBuffer();
+	private StringBuffer querySqlStr = new StringBuffer();
 	private static Date date = new Date();
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	private JSONParser jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
 	private static List<JSONObject> dataCkList = new ArrayList<JSONObject>();
-	
-	
 	//比對用ck物件
 	private static List<JSONObject> comparisonDataList = new ArrayList<JSONObject>();
-	
 	private static List<JSONObject> dataPvList = new ArrayList<JSONObject>();
-	private static JSONObject paclJsonInfo = new JSONObject();
-	
-	
+	private JSONObject paclJsonInfo = new JSONObject();
 	//pacl整理後的log資訊
 	private static List<JSONObject> paclJsonInfoList = new ArrayList<JSONObject>();
-	
 	private static Map<String,JSONObject> saveDBMap = new HashMap<String,JSONObject>();
+	private static Map<String,String> actionPfpCodeMergeMap = new HashMap<String,String>();
 	final static SimpleDateFormat sdfFormat =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private static boolean flagKdcl = false;
 	private static boolean flagPacl = false;
@@ -60,7 +53,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	private static String kdclDate = "";
 	private static Iterator<JSONObject> iterator = null;
 	private static JSONObject iteratorJson = null;
-	private static JSONObject saveHbaseJson = null;
 	private static String rangrDate = null;
 	private static String jobDate = null;
 	
@@ -158,18 +150,50 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 					comparisonDataList.clear();
 					for (JSONObject ckJson : dataCkList) {
 						JSONObject comparisonJson = ((net.minidev.json.JSONObject) jsonParser.parse(ckJson.toString()));
+						//根據廣告活動查詢對應的轉換代碼
+						String actionSeq = comparisonJson.getAsString("actionSeq");
+						if(StringUtils.isBlank((actionSeq))){
+							continue;
+						}
+						if(StringUtils.isBlank(actionPfpCodeMergeMap.get(actionSeq))){
+							String pfpCode = findPfpCodeAdactionMerge(actionSeq);
+							if(StringUtils.isNotBlank(pfpCode)){
+								comparisonJson.put("pfp_code", pfpCode);
+								actionPfpCodeMergeMap.put(actionSeq, pfpCode);
+							}
+						}else{
+							String pfpCode = actionPfpCodeMergeMap.get(actionSeq);
+							comparisonJson.put("pfp_code", pfpCode);
+						}
 						comparisonDataList.add(comparisonJson);
 					}
-					//刪除不在追蹤時間內資料
+					//刪除不在追蹤時間內資料與活動綁定轉換代碼不一致資料
 					processOutOfRangeDay(comparisonDataList,"ck");
 					//排序時間
 					sortKdclDataList(comparisonDataList);
 					//存入寫入DB map
 					processSaveDBInfo(comparisonDataList,"ck",key);
 					
+					log.info(">>>>>>>> comparisonDataList:"+comparisonDataList);
+					
 					comparisonDataList.clear();
-					for (JSONObject ckJson : dataCkList) {
-						JSONObject comparisonJson = ((net.minidev.json.JSONObject) jsonParser.parse(ckJson.toString()));
+					for (JSONObject pvJson : dataPvList) {
+						JSONObject comparisonJson = ((net.minidev.json.JSONObject) jsonParser.parse(pvJson.toString()));
+						//根據廣告活動查詢對應的轉換代碼
+						String actionSeq = comparisonJson.getAsString("actionSeq");
+						if(StringUtils.isBlank((actionSeq))){
+							continue;
+						}
+						if(StringUtils.isBlank(actionPfpCodeMergeMap.get(actionSeq))){
+							String pfpCode = findPfpCodeAdactionMerge(actionSeq);
+							if(StringUtils.isNotBlank(pfpCode)){
+								comparisonJson.put("pfp_code", pfpCode);
+								actionPfpCodeMergeMap.put(actionSeq, pfpCode);
+							}
+						}else{
+							String pfpCode = actionPfpCodeMergeMap.get(actionSeq);
+							comparisonJson.put("pfp_code", pfpCode);
+						}
 						comparisonDataList.add(comparisonJson);
 					}
 					processOutOfRangeDay(comparisonDataList,"pv");
@@ -182,7 +206,16 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 		}
 	}
 	
-	
+	private String findPfpCodeAdactionMerge(String actionSeq) throws Exception{
+		querySqlStr.setLength(0);
+		querySqlStr.append(" SELECT code_id FROM pfp_code_adaction_merge where 1=1 and ad_action_seq = '").append(actionSeq).append("'");
+		ResultSet resultSet = mysqlUtil.query(querySqlStr.toString());
+		String code = null;
+		while(resultSet.next()){
+			code = resultSet.getString("code_id");
+		}
+		return code;
+	}
 	
 	private void processOutOfRangeDay(List<JSONObject> data,String type) throws Exception{
 		String clickRangeDate = paclJsonInfo.getAsString("clickRangeDate");
@@ -207,16 +240,20 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			differenceDay = (long) (sdf.parse(jobDate).getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
 			if(differenceDay > Long.valueOf(rangrDate)){
 				iterator.remove();
-			}else{
-				iteratorJson.put("clickRangeDate", clickRangeDate);
-				iteratorJson.put("impRangeDate", impRangeDate);
-				iteratorJson.put("convertPriceCount", convertPriceCount);
-				iteratorJson.put("convertPrice", convertPrice);
-				iteratorJson.put("convertBelong", convertBelong);
-				iteratorJson.put("convertSeq", convertSeq);
-				iteratorJson.put("convertNumType", convertNumType);
-				iteratorJson.put("convertCount", convertCount);
+				continue;
 			}
+			if(!iteratorJson.getAsString("pfp_code").equals(convertSeq)){
+				iterator.remove();
+				continue;
+			}
+			iteratorJson.put("clickRangeDate", clickRangeDate);
+			iteratorJson.put("impRangeDate", impRangeDate);
+			iteratorJson.put("convertPriceCount", convertPriceCount);
+			iteratorJson.put("convertPrice", convertPrice);
+			iteratorJson.put("convertBelong", convertBelong);
+			iteratorJson.put("convertSeq", convertSeq);
+			iteratorJson.put("convertNumType", convertNumType);
+			iteratorJson.put("convertCount", convertCount);
 		}
 	}
 	
