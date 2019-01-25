@@ -145,8 +145,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				}
 				if(logJson.getAsString("fileName").contains("part-r-")){
 					flagPacl = true;
-					paclJsonInfo = logJson;
-					
+					log.info(key+">>>>>>>>>>ADD logJson:"+logJson);
 					paclJsonInfoList.add(logJson);
 				}
 			}
@@ -432,76 +431,75 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			log.info("saveDBMap:"+saveDBMap);
 			
 			
-//			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement(insertSqlStr.toString());
-//			for (Entry<String ,JSONObject> data : saveDBMap.entrySet()) {
-//				//寫入mysql
-//				count = count + 1;
-//				String type = data.getKey().split("<PCHOME>")[1];
-//				String uuid = data.getKey().split("<PCHOME>")[0];
-//				JSONObject json = data.getValue();
-//				 // device
-//		        UAgentInfo uAgentInfo = new UAgentInfo(json.getAsString("userAgent"), null);
-//		        String device = uAgentInfo.detectSmartphone() ? "mobile" : "PC";
-//		        String os = getOS(uAgentInfo);
-//		        
-//		        String timeCode = "";
-//		        if((Pattern.compile("^[0-9]+$").matcher(json.getAsString("keclTime")).find())){
-//		        	timeCode = getTimeCode(Integer.parseInt(json.getAsString("keclTime")));
-//		        }
-//		        String ageCode = "";
-//		        if((Pattern.compile("^[0-9]+$").matcher(json.getAsString("age")).find())){
-//		        	ageCode = getAgeCode(Integer.parseInt(json.getAsString("age")));
-//		        }
-//		        
-//		        
-//				preparedStmt.setString(1, uuid);
-//				preparedStmt.setString(2, jobDate);
-//				preparedStmt.setString(3, json.getAsString("convertSeq"));
-//				preparedStmt.setString(4, type);
-//				preparedStmt.setString(5, json.getAsString("convertNumType"));
-//				preparedStmt.setString(6, json.getAsString("convertBelong"));
-//				preparedStmt.setString(7, json.getAsString("kdclDate"));
-//				preparedStmt.setInt(8, Integer.parseInt(json.getAsString("convertCount")));
-//				preparedStmt.setInt(9,(int)Double.parseDouble(json.getAsString(("convertPrice"))));
-//				preparedStmt.setString(10,json.getAsString("adSeq") );
-//				preparedStmt.setString(11,json.getAsString("groupSeq") );
-//				preparedStmt.setString(12,json.getAsString("actionSeq"));
-//				preparedStmt.setString(13,json.getAsString("adType") );
-//				preparedStmt.setString(14,json.getAsString("kdclDate") );
-//				preparedStmt.setString(15,json.getAsString("keclTime") );
-//				preparedStmt.setString(16,json.getAsString("pfpCustomerInfoId") );
-//				preparedStmt.setString(17,json.getAsString("pfbxCustomerInfoId") );
-//				preparedStmt.setString(18,json.getAsString("pfbxPositionId") );
-//				preparedStmt.setString(19,json.getAsString("pfdCustomerInfoId") );
-//				preparedStmt.setString(20,json.getAsString("payType") );
-//				preparedStmt.setString(21,json.getAsString("sex") );
-//				preparedStmt.setString(22,ageCode );
-//				preparedStmt.setString(23,timeCode );
-//				preparedStmt.setString(24,json.getAsString("tproId") );
-//				preparedStmt.setString(25,json.getAsString("categoryCode") );
-//				preparedStmt.setString(26,json.getAsString("*****") );
-//				preparedStmt.setString(27,json.getAsString("referer") );
-//				preparedStmt.setString(28,json.getAsString("styleId") );
-//				preparedStmt.setString(29,device);
-//				preparedStmt.setString(30,os);
-//				preparedStmt.setString(31,json.getAsString("*****"));
-//				preparedStmt.setString(32,json.getAsString("*****"));
-//				preparedStmt.setString(33, sdfFormat.format(date));
-//				preparedStmt.setString(34, sdfFormat.format(date));
-//				preparedStmt.addBatch();
-//				if(count % 5000 == 0){
-//					preparedStmt.executeBatch();
-//					mysqlUtil.getConnect().commit();
-//				}else if(count == totalSize){
-//					preparedStmt.executeBatch();
-//					mysqlUtil.getConnect().commit();
-//					preparedStmt.close();
-//				}
-//			}
-//			
-//			mysqlUtil.closeConnection();
+			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement(insertSqlStr.toString());
+			for (Entry<String ,JSONObject> data : saveDBMap.entrySet()) {
+				//寫入mysql
+				count = count + 1;
+				String type = data.getKey().split("<PCHOME>")[1];
+				String uuid = data.getKey().split("<PCHOME>")[0];
+				JSONObject json = data.getValue();
+				 // device
+		        UAgentInfo uAgentInfo = new UAgentInfo(json.getAsString("userAgent"), null);
+		        String device = uAgentInfo.detectSmartphone() ? "mobile" : "PC";
+		        String os = getOS(uAgentInfo);
+		        
+		        String timeCode = "";
+		        if((Pattern.compile("^[0-9]+$").matcher(json.getAsString("keclTime")).find())){
+		        	timeCode = getTimeCode(Integer.parseInt(json.getAsString("keclTime")));
+		        }
+		        String ageCode = "";
+		        if((Pattern.compile("^[0-9]+$").matcher(json.getAsString("age")).find())){
+		        	ageCode = getAgeCode(Integer.parseInt(json.getAsString("age")));
+		        }
+		        
+		        
+				preparedStmt.setString(1, uuid);
+				preparedStmt.setString(2, jobDate);
+				preparedStmt.setString(3, json.getAsString("convertSeq"));
+				preparedStmt.setString(4, type);
+				preparedStmt.setString(5, json.getAsString("convertNumType"));
+				preparedStmt.setString(6, json.getAsString("convertBelong"));
+				preparedStmt.setString(7, json.getAsString("kdclDate"));
+				preparedStmt.setInt(8, Integer.parseInt(json.getAsString("convertCount")));
+				preparedStmt.setInt(9,(int)Double.parseDouble(json.getAsString(("convertPriceCount"))));
+				preparedStmt.setString(10,json.getAsString("adSeq") );
+				preparedStmt.setString(11,json.getAsString("groupSeq") );
+				preparedStmt.setString(12,json.getAsString("actionSeq"));
+				preparedStmt.setString(13,json.getAsString("adType") );
+				preparedStmt.setString(14,json.getAsString("kdclDate") );
+				preparedStmt.setString(15,json.getAsString("keclTime") );
+				preparedStmt.setString(16,json.getAsString("pfpCustomerInfoId") );
+				preparedStmt.setString(17,json.getAsString("pfbxCustomerInfoId") );
+				preparedStmt.setString(18,json.getAsString("pfbxPositionId") );
+				preparedStmt.setString(19,json.getAsString("pfdCustomerInfoId") );
+				preparedStmt.setString(20,json.getAsString("payType") );
+				preparedStmt.setString(21,json.getAsString("sex") );
+				preparedStmt.setString(22,ageCode );
+				preparedStmt.setString(23,timeCode );
+				preparedStmt.setString(24,json.getAsString("tproId") );
+				preparedStmt.setString(25,json.getAsString("categoryCode") );
+				preparedStmt.setString(26,json.getAsString("*****") );
+				preparedStmt.setString(27,json.getAsString("referer") );
+				preparedStmt.setString(28,json.getAsString("styleId") );
+				preparedStmt.setString(29,device);
+				preparedStmt.setString(30,os);
+				preparedStmt.setString(31,json.getAsString("*****"));
+				preparedStmt.setString(32,json.getAsString("*****"));
+				preparedStmt.setString(33, sdfFormat.format(date));
+				preparedStmt.setString(34, sdfFormat.format(date));
+				preparedStmt.addBatch();
+				if(count % 5000 == 0){
+					preparedStmt.executeBatch();
+					mysqlUtil.getConnect().commit();
+				}else if(count == totalSize){
+					preparedStmt.executeBatch();
+					mysqlUtil.getConnect().commit();
+					preparedStmt.close();
+				}
+			}
+			
+			mysqlUtil.closeConnection();
 		} catch (Throwable e) {
-//			sql.setLength(0);
 			log.error("reduce cleanup error>>>>>> " + e);
 		}
 	}
