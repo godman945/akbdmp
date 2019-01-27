@@ -194,12 +194,9 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 						}
 					}
 					
-					log.info(">>>>>>>>>actionPfpCodeMergeMap:"+actionPfpCodeMergeMap);
-					log.info(">>>>>>>>>>>>>1");
+//					log.info(">>>>>>>>>actionPfpCodeMergeMap:"+actionPfpCodeMergeMap);
 					processOutOfRangeDay(comparisonDataList,"pv");
-					log.info(">>>>>>>>>>>>>2");
 					sortKdclDataList(comparisonDataList);
-					log.info(">>>>>>>>>>>>>3");
 					processSaveDBInfo(comparisonDataList,"pv",key);
 				}
 			}
@@ -234,6 +231,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			rangrDate = clickRangeDate;
 		}else if(type.equals("pv")){
 			rangrDate = impRangeDate;
+			log.info(">>>>>>>>>data pv list:"+data);
 		}
 		iterator = data.iterator();
 		while (iterator.hasNext()) {
@@ -259,13 +257,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				log.info(">>>>>>>>>convertSeq:"+convertSeq);
 			}
 			
-			
 			if(differenceDay > Long.valueOf(rangrDate)){
-				iterator.remove();
-				continue;
-			}
-			
-			if(StringUtils.isBlank(iteratorJson.getAsString("pfp_code"))){
 				iterator.remove();
 				continue;
 			}
