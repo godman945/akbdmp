@@ -162,6 +162,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 							pfpCode = actionPfpCodeMergeMap.get(actionSeq);
 						}
 						if(StringUtils.isNotBlank(pfpCode)){
+							comparisonJson.put("pfp_code", pfpCode);
 							comparisonDataList.add(comparisonJson);
 						}
 					}
@@ -188,6 +189,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 							pfpCode = actionPfpCodeMergeMap.get(actionSeq);
 						}
 						if(StringUtils.isNotBlank(pfpCode)){
+							comparisonJson.put("pfp_code", pfpCode);
 							comparisonDataList.add(comparisonJson);
 						}
 					}
