@@ -155,17 +155,15 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 						if(StringUtils.isBlank((actionSeq))){
 							continue;
 						}
+						String pfpCode = null;
 						if(StringUtils.isBlank(actionPfpCodeMergeMap.get(actionSeq))){
-							String pfpCode = findPfpCodeAdactionMerge(actionSeq);
-							if(StringUtils.isNotBlank(pfpCode)){
-								comparisonJson.put("pfp_code", pfpCode);
-								actionPfpCodeMergeMap.put(actionSeq, pfpCode);
-							}
+							pfpCode = findPfpCodeAdactionMerge(actionSeq);
 						}else{
-							String pfpCode = actionPfpCodeMergeMap.get(actionSeq);
-							comparisonJson.put("pfp_code", pfpCode);
+							pfpCode = actionPfpCodeMergeMap.get(actionSeq);
 						}
-						comparisonDataList.add(comparisonJson);
+						if(StringUtils.isNotBlank(pfpCode)){
+							comparisonDataList.add(comparisonJson);
+						}
 					}
 					
 					//刪除不在追蹤時間內資料與活動綁定轉換代碼不一致資料
@@ -183,17 +181,15 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 						if(StringUtils.isBlank((actionSeq))){
 							continue;
 						}
+						String pfpCode = null;
 						if(StringUtils.isBlank(actionPfpCodeMergeMap.get(actionSeq))){
-							String pfpCode = findPfpCodeAdactionMerge(actionSeq);
-							if(StringUtils.isNotBlank(pfpCode)){
-								comparisonJson.put("pfp_code", pfpCode);
-								actionPfpCodeMergeMap.put(actionSeq, pfpCode);
-							}
+							pfpCode = findPfpCodeAdactionMerge(actionSeq);
 						}else{
-							String pfpCode = actionPfpCodeMergeMap.get(actionSeq);
-							comparisonJson.put("pfp_code", pfpCode);
+							pfpCode = actionPfpCodeMergeMap.get(actionSeq);
 						}
-						comparisonDataList.add(comparisonJson);
+						if(StringUtils.isNotBlank(pfpCode)){
+							comparisonDataList.add(comparisonJson);
+						}
 					}
 					
 					log.info(">>>>>>>>>actionPfpCodeMergeMap:"+actionPfpCodeMergeMap);
@@ -211,8 +207,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	}
 	
 	private String findPfpCodeAdactionMerge(String actionSeq) throws Exception{
-		log.info(">>>>>>>>>>>>>:actionSeq:"+actionSeq);
-		
 		querySqlStr.setLength(0);
 		querySqlStr.append(" SELECT code_id FROM pfp_code_adaction_merge where 1=1 and code_type = 'C' and ad_action_seq = '").append(actionSeq).append("'");
 		ResultSet resultSet = mysqlUtil.query(querySqlStr.toString());
@@ -220,7 +214,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 		while(resultSet.next()){
 			code = resultSet.getString("code_id");
 		}
-		log.info(">>>>>>>>>>>>>:code:"+code);
+		actionPfpCodeMergeMap.put(actionSeq, code);
 		return code;
 	}
 	
@@ -253,23 +247,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			kdclDate = iteratorJson.getAsString("kdclDate");
 			
 			differenceDay = (long) (sdf.parse(jobDate).getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
-			
-			
-			if(type.equals("pv")){
-				log.info(">>>>>>>>>paclJsonInfo:"+this.paclJsonInfo);
-				log.info(">>>>>>>>>differenceDay:"+differenceDay);
-				log.info(">>>>>>>>>rangrDate:"+rangrDate);
-				log.info(">>>>>>>>>pfp_code:"+iteratorJson.getAsString("pfp_code"));
-				log.info(">>>>>>>>>convertSeq:"+convertSeq);
-			}
-			
-			
 			if(differenceDay > Long.valueOf(rangrDate)){
-				iterator.remove();
-				continue;
-			}
-			
-			if(StringUtils.isBlank(iteratorJson.getAsString("pfp_code"))){
 				iterator.remove();
 				continue;
 			}
@@ -280,9 +258,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			}
 		}
 		
-		if(type.equals("pv")){
-			log.info(">>>>>>>>>processOutOfRangeDay end");
-		}
 	}
 	
 	private List<JSONObject> sortKdclDataList(List<JSONObject> data){
