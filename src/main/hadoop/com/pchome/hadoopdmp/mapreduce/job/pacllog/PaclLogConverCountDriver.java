@@ -256,9 +256,7 @@ public class PaclLogConverCountDriver {
 			//STG
 //			Path inPath = new Path("/home/webuser/akbstg/storedata/alllog/"+sdf.format(cal.getTime()));
 			list = new ArrayList<Path>();  
-			cal = Calendar.getInstance();
 			for (int j = 0; j < convertDay; j++) {
-				cal.add(Calendar.DATE, -1);  
 				if(j < convertDay){
 					inPath = new Path("/home/webuser/akbstg/storedata/alllog/"+sdf.format(cal.getTime()));
 					status = fs.listStatus(inPath);  
@@ -269,6 +267,7 @@ public class PaclLogConverCountDriver {
 					    }  
 					}  
 				}
+				cal.add(Calendar.DATE, -1);  
 			}
 			Path paclPath = new Path("/home/webuser/alex/pacl_output/");  
 			list.add(paclPath);
