@@ -220,6 +220,9 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	}
 	
 	private void processOutOfRangeDay(List<JSONObject> data,String type) throws Exception{
+		log.info(">>>>>>>>paclJsonInfo:"+paclJsonInfo);
+		
+		
 		String clickRangeDate = paclJsonInfo.getAsString("clickRangeDate");
 		String impRangeDate = paclJsonInfo.getAsString("impRangeDate");
 		String convertPriceCount = paclJsonInfo.getAsString("convertPriceCount");
@@ -228,7 +231,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 		String convertSeq = paclJsonInfo.getAsString("convertSeq");
 		String convertNumType = paclJsonInfo.getAsString("convertNumType");
 		String convertCount = paclJsonInfo.getAsString("convertCount");
-		if(type.equals("PV")){
+		if(type.equals("pv")){
 			log.info(">>>>>>>>>processOutOfRangeDay start");
 			log.info(">>>>>>>>>data:"+data);
 		}
@@ -255,14 +258,14 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			iteratorJson.put("convertCount", convertCount);
 			kdclDate = iteratorJson.getAsString("kdclDate");
 			
-			if(type.equals("PV")){
+			if(type.equals("pv")){
 				log.info(">>>>>>>>>iteratorJson"+iteratorJson);
 				log.info(">>>>>>>>>kdclDate:"+kdclDate);
 				log.info(">>>>>>>>>jobDate:"+jobDate);
 			}
 			
 			differenceDay = (long) (sdf.parse(jobDate).getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
-			if(type.equals("PV")){
+			if(type.equals("pv")){
 				log.info(">>>>>>>>>differenceDay"+differenceDay);
 			}
 			
@@ -275,7 +278,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			}
 		}
 		
-		if(type.equals("PV")){
+		if(type.equals("pv")){
 			log.info(">>>>>>>>>processOutOfRangeDay end");
 		}
 	}
