@@ -230,7 +230,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 		String convertCount = paclJsonInfo.getAsString("convertCount");
 		if(type.equals("PV")){
 			log.info(">>>>>>>>>processOutOfRangeDay start");
-			log.info(">>>>>>>>>data data");
+			log.info(">>>>>>>>>data:"+data);
 		}
 		rangrDate = null;
 		if(type.equals("ck")){
@@ -241,6 +241,10 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 		iterator = data.iterator();
 		while (iterator.hasNext()) {
 			iteratorJson = (JSONObject)iterator.next();
+			if(type.equals("PV")){
+				log.info(">>>>>>>>>start add");
+				log.info(">>>>>>>>>clickRangeDate"+clickRangeDate);
+			}
 			iteratorJson.put("clickRangeDate", clickRangeDate);
 			iteratorJson.put("impRangeDate", impRangeDate);
 			iteratorJson.put("convertPriceCount", convertPriceCount);
@@ -250,7 +254,19 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			iteratorJson.put("convertNumType", convertNumType);
 			iteratorJson.put("convertCount", convertCount);
 			kdclDate = iteratorJson.getAsString("kdclDate");
+			
+			if(type.equals("PV")){
+				log.info(">>>>>>>>>iteratorJson"+iteratorJson);
+				log.info(">>>>>>>>>kdclDate:"+kdclDate);
+				log.info(">>>>>>>>>jobDate:"+jobDate);
+			}
+			
 			differenceDay = (long) (sdf.parse(jobDate).getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
+			if(type.equals("PV")){
+				log.info(">>>>>>>>>differenceDay"+differenceDay);
+			}
+			
+			
 			if(differenceDay > Long.valueOf(rangrDate)){
 				iterator.remove();
 			}
