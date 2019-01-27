@@ -231,10 +231,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 		String convertSeq = paclJsonInfo.getAsString("convertSeq");
 		String convertNumType = paclJsonInfo.getAsString("convertNumType");
 		String convertCount = paclJsonInfo.getAsString("convertCount");
-		if(type.equals("pv")){
-			log.info(">>>>>>>>>processOutOfRangeDay start");
-			log.info(">>>>>>>>>data:"+data);
-		}
 		rangrDate = null;
 		if(type.equals("ck")){
 			rangrDate = clickRangeDate;
@@ -244,7 +240,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 		iterator = data.iterator();
 		while (iterator.hasNext()) {
 			iteratorJson = (JSONObject)iterator.next();
-			if(type.equals("PV")){
+			if(type.equals("pv")){
 				log.info(">>>>>>>>>start add");
 				log.info(">>>>>>>>>clickRangeDate"+clickRangeDate);
 			}
@@ -272,9 +268,11 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			
 			if(differenceDay > Long.valueOf(rangrDate)){
 				iterator.remove();
+				continue;
 			}
 			if(!iteratorJson.getAsString("pfp_code").equals(convertSeq)){
 				iterator.remove();
+				continue;
 			}
 		}
 		
