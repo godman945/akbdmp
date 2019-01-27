@@ -195,9 +195,11 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 						}
 						comparisonDataList.add(comparisonJson);
 					}
-					
+					log.info(">>>>>>>>>>>>>1");
 					processOutOfRangeDay(comparisonDataList,"pv");
+					log.info(">>>>>>>>>>>>>2");
 					sortKdclDataList(comparisonDataList);
+					log.info(">>>>>>>>>>>>>3");
 					processSaveDBInfo(comparisonDataList,"pv",key);
 				}
 			}
