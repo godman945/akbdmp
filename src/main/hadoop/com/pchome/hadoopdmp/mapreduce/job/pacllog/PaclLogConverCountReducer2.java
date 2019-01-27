@@ -247,7 +247,23 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			kdclDate = iteratorJson.getAsString("kdclDate");
 			
 			differenceDay = (long) (sdf.parse(jobDate).getTime() - sdf.parse(kdclDate).getTime()) / (1000 * 60 * 60 *24);
+			
+			if(type.equals("pv")){
+				log.info(">>>>>>>>>iteratorJson:"+iteratorJson);
+				log.info(">>>>>>>>>paclJsonInfo:"+this.paclJsonInfo);
+				log.info(">>>>>>>>>differenceDay:"+differenceDay);
+				log.info(">>>>>>>>>rangrDate:"+rangrDate);
+				log.info(">>>>>>>>>pfp_code:"+iteratorJson.getAsString("pfp_code"));
+				log.info(">>>>>>>>>convertSeq:"+convertSeq);
+			}
+			
+			
 			if(differenceDay > Long.valueOf(rangrDate)){
+				iterator.remove();
+				continue;
+			}
+			
+			if(StringUtils.isBlank(iteratorJson.getAsString("pfp_code"))){
 				iterator.remove();
 				continue;
 			}
