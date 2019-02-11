@@ -1,10 +1,15 @@
 package alex.test;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -14,6 +19,10 @@ import org.springframework.stereotype.Component;
 import com.pchome.akbdmp.spring.config.bean.allbeanscan.SpringAllConfig;
 import com.pchome.soft.depot.utils.DateFormatUtil;
 import com.pchome.soft.depot.utils.KafkaUtil;
+
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
+import net.minidev.json.parser.JSONParser;
 
 @Component
 public class TestRun {
@@ -31,6 +40,16 @@ public class TestRun {
  	private KafkaUtil KafkaUtil;
 	
 	private void redisTest() throws Exception{
+		
+		
+		
+		
+		
+//		stg:pa:codecheck:TAC20181210000000001
+		
+		System.out.println(redisTemplate.opsForValue().get("stg:pa:codecheck:CAC20181210000000001:RLE20190111000000006"));
+		
+		
 		
 //		redisTemplate.opsForValue().set("alex", "AAA");
 //		redisTemplate.expire("alex", 1, TimeUnit.DAYS);
@@ -65,23 +84,23 @@ public class TestRun {
 		
 		
 		
-		int partition = 0;
-		String partitionHashcode = "1";
-		for (int i = 0; i < 10000; i++) {
-			KafkaUtil.sendMessage("TEST", partitionHashcode, "thread2_"+i);
-			if(partition == 2){
-				partition = 0;
-				partitionHashcode = "1";
-			}else{
-				partition = partition + 1;
-				if(partition == 1){
-					partitionHashcode = "key0";
-				}
-				if(partition == 2){
-					partitionHashcode = "key2";
-				}
-			}
-		}
+//		int partition = 0;
+//		String partitionHashcode = "1";
+//		for (int i = 0; i < 10000; i++) {
+//			KafkaUtil.sendMessage("TEST", partitionHashcode, "thread2_"+i);
+//			if(partition == 2){
+//				partition = 0;
+//				partitionHashcode = "1";
+//			}else{
+//				partition = partition + 1;
+//				if(partition == 1){
+//					partitionHashcode = "key0";
+//				}
+//				if(partition == 2){
+//					partitionHashcode = "key2";
+//				}
+//			}
+//		}
 	
 		
 		
@@ -231,10 +250,112 @@ public class TestRun {
 	}
 
 	public static void main(String[] args) throws Exception {
-		System.setProperty("spring.profiles.active", "stg");
-		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
-		TestRun TestRun = (TestRun) ctx.getBean(TestRun.class);
-		TestRun.redisTest();
+//		System.setProperty("spring.profiles.active", "stg");
+//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
+//		TestRun TestRun = (TestRun) ctx.getBean(TestRun.class);
+//		TestRun.redisTest();
+		
+		
+//		List<JSONObject> paclJsonInfoList = new ArrayList<JSONObject>();
+//		JSONObject json = null;
+//		for (int i = 0; i < 2; i++) {
+//			JSONObject json2 = new  JSONObject();
+//			json2.put("old_alex_"+i, "old_"+i);
+//			json = json2;
+//			
+//			paclJsonInfoList.add(json);
+//		}
+//		System.out.println(paclJsonInfoList);
+//		
+		JSONParser jsonParser = new JSONParser();
+		
+		
+		
+		String data = "[{'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'10','kdclSourceDate':'2019-01-18 10:25:06','actionSeq':'aa_201901080003','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201711060005','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0151','groupSeq':'ag_201901080004','age':'0','fileName':'kwstg1-10.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg2.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-18','adSeq':'ad_201901080002'}, {'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'18','kdclSourceDate':'2019-01-22 18:29:32','actionSeq':'aa_201901170002','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201711060005','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0134','groupSeq':'ag_201901170002','age':'0','fileName':'kwstg1-18.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg2.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-22','adSeq':'ad_201901170003'}, {'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'18','kdclSourceDate':'2019-01-22 18:25:33','actionSeq':'aa_201901170002','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201711040015','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0129','groupSeq':'ag_201901170002','age':'0','fileName':'kwstg1-18.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg1.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-22','adSeq':'ad_201901170003'}, {'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'18','kdclSourceDate':'2019-01-22 18:23:44','actionSeq':'aa_201901170002','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201711040015','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0129','groupSeq':'ag_201901170002','age':'0','fileName':'kwstg1-18.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg1.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-22','adSeq':'ad_201901170003'}, {'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'18','kdclSourceDate':'2019-01-22 18:23:40','actionSeq':'aa_201901170002','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201509250003','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0128','groupSeq':'ag_201901170002','age':'0','fileName':'kwstg1-18.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg1.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-22','adSeq':'ad_201901170003'}, {'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'18','kdclSourceDate':'2019-01-22 18:23:36','actionSeq':'aa_201901170002','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201512170007','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0135','groupSeq':'ag_201901170002','age':'0','fileName':'kwstg1-18.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg1.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-22','adSeq':'ad_201901170003'}, {'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'09','kdclSourceDate':'2019-01-22 09:47:44','actionSeq':'aa_201901170002','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201510070007','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0124','groupSeq':'ag_201901170002','age':'0','fileName':'kwstg1-09.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg1.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-22','adSeq':'ad_201901170003'}, {'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'09','kdclSourceDate':'2019-01-22 09:47:28','actionSeq':'aa_201901170002','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201711040015','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0144','groupSeq':'ag_201901170002','age':'0','fileName':'kwstg1-09.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg1.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-22','adSeq':'ad_201901170003'}, {'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'09','kdclSourceDate':'2019-01-22 09:47:18','actionSeq':'aa_201901170002','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201711040015','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0144','groupSeq':'ag_201901170002','age':'0','fileName':'kwstg1-09.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg1.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-22','adSeq':'ad_201901170003'}, {'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'09','kdclSourceDate':'2019-01-22 09:47:08','actionSeq':'aa_201901170002','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201509250003','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0128','groupSeq':'ag_201901170002','age':'0','fileName':'kwstg1-09.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg1.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-22','adSeq':'ad_201901170003'}]";
+		
+		JSONArray arr =  (JSONArray) jsonParser.parse(data);
+		List<JSONObject> list = new ArrayList<>();
+		for (Object jsonObject : arr) {
+			list.add((JSONObject)jsonObject);
+		}
+
+		
+		Iterator<JSONObject> iterator = list.iterator();
+		while (iterator.hasNext()) {
+			JSONObject iteratorJson = (JSONObject)iterator.next();
+			iteratorJson.put("alex", "alex");
+			if(iteratorJson.getAsString("adSeq").equals("ad_201901080002")){
+				iterator.remove();
+				continue;
+			}
+		}
+		
+		
+		for (JSONObject jsonObject : list) {
+			System.out.println(jsonObject);
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+//		List<JSONObject> paclJsonInfoLis2 = new ArrayList<JSONObject>();
+//		Map<String,JSONObject> saveDBMap = new HashMap<String,JSONObject>();
+//		for (int i = 0; i < 2; i++) {
+//			for (JSONObject js : paclJsonInfoList) {
+//				JSONObject JSONObject = (net.minidev.json.JSONObject) jsonParser.parse(js.toString());
+//				paclJsonInfoLis2.add(JSONObject);
+//			}
+//			
+//			for (JSONObject jsonObject : paclJsonInfoLis2) {
+//				jsonObject.put("alex_new_"+i, "alex_"+i);
+//			}
+//			
+//			for (JSONObject jsonObject : paclJsonInfoLis2) {
+//				for (Entry<String, Object> jsonObjecte : jsonObject.entrySet()) {
+//					saveDBMap.put(jsonObjecte.getKey(), jsonObject);
+//				}
+//			}
+//			
+//			System.out.println(paclJsonInfoLis2);
+//			
+//			paclJsonInfoLis2.clear();
+//			
+//		}
+//		
+//		
+//		
+//		System.out.println(saveDBMap);
+//		System.out.println(paclJsonInfoList);
+//		
+//		
+//		
+		
+		
+		
+//		StringBuffer g = new StringBuffer();
+//		g.append("545454545456454454564545456454  \n dddqd88777897  \n fwe898978\n");
+//		g.append("<div class=\" logo-box pos-absolute pos-top pos-left\">");
+//		
+//		System.out.println(g.toString().indexOf("logo-box pos-absolute pos-top pos-left"));
+//		
+//		
+//		
+//		System.out.println(g.toString().substring(74, 112));
+		
+		
+//		System.out.println(g.toString().replace("logo-box pos-absolute pos-top pos-left","type logo-box pos-absolute pos-top pos-left"));
+		
+		
+		
+		
 		
 		
 		
