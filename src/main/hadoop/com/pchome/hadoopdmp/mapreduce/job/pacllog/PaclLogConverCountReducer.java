@@ -1,6 +1,5 @@
 package com.pchome.hadoopdmp.mapreduce.job.pacllog;
 
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
@@ -8,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -161,7 +159,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			findAdactionReportUserSql.append(" ON t.pfp_customer_info_id = r.customer_info_id  ");
 			findAdactionReportUserSql.append(" AND r.ad_pvclk_date = '").append(jobDate).append("'");
 			findAdactionReportUserSql.append(" WHERE  1 = 1  ");
-			findAdactionReportUserSql.append(" AND t.tracking_seq = 'REPLACE_TRACKING_ID'  ");
+			findAdactionReportUserSql.append(" AND t.tracking_seq = 'REPLACE_TRACKING_ID' GROUP BY ad_operating_rule  ");
 			
 			findEcProdrSql.append(" SELECT ec.catalog_prod_seq, ");
 			findEcProdrSql.append(" ca.pfp_customer_info_id ");
@@ -198,7 +196,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 				convertSeq = key.split("<PCHOME>",-1)[0];
 				userDefineConvertPrice = null;
 				convertConditionArray = null;
-				log.info(">>>>>>>>>>convertSeq:"+convertSeq);
+//				log.info(">>>>>>>>>>convertSeq:"+convertSeq);
 				
 				for (Text text : mapperValue) {
 					String value = text.toString();
@@ -247,6 +245,12 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 				for (Text text : mapperValue) {
 					String prodId = text.toString().split("<PCHOME>",-1)[0];
 					String trackingDate = text.toString().split("<PCHOME>",-1)[1];
+					
+					log.info(">>>>>>>>>>prodId:"+prodId);
+					log.info(">>>>>>>>>>trackingDate:"+trackingDate);
+					log.info(">>>>>>>>>>trackingDeatilMap:"+trackingDeatilMap);
+					
+					
 					this.prodFlag = false;
 					this.prodAdFlag = (boolean) trackingDeatilMap.get("adProdOperatingFlag");
 					this.notProdAdFlag = (boolean) trackingDeatilMap.get("adNotProdOperatingFlag");
@@ -270,7 +274,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 							}
 							userProdIdDBMap.put(this.pfpCustomerInfoId, prodSet);
 						}
-						
+						log.info(">>>>>>>>>>userProdIdDBMap:"+userProdIdDBMap);
 						/*判斷商品是否存在開始*/
 						Set<String> prodSet = userProdIdDBMap.get(this.pfpCustomerInfoId);
 						for (String dbProdId : prodSet) {
@@ -290,6 +294,8 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 								saveHbaseTrackingMap.put(uuid, saveHbaseTrackingDetail);
 							}
 						}
+						
+						log.info(">>>>>>>>>>saveHbaseTrackingMap:"+saveHbaseTrackingMap);
 						/*判斷商品是否存在結束*/
 					}
 				}
