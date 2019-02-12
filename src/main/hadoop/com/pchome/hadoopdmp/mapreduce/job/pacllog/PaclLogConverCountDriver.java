@@ -267,39 +267,34 @@ public class PaclLogConverCountDriver {
 
 	public static void main(String[] args) throws Exception {
 		log.info("====driver start====");
-		
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		int i = 28;
-		Calendar cal = Calendar.getInstance();  
-		cal.setTime(new Date()); 
-		String a="";
-		for (int j = 0; j < i; j++) {
-			if(j != i-1){
-				cal.add(Calendar.DATE, -1);  
-				System.out.println(sdf.format(cal.getTime()));  
-				a= a+"/home/webuser/analyzer/storedata/alllog/"+sdf.format(cal.getTime())+",";
-			}else{
-				a= a+"/home/webuser/analyzer/storedata/alllog/"+sdf.format(cal.getTime());
-			}
-		}
-		
-		System.out.println(a);
-		
-		
-		
-//		if(args.length > 0 && (args[0].equals("prd") || args[0].equals("stg")) ){
-//			if(args[0].equals("prd")){
-//				System.setProperty("spring.profiles.active", "prd");
+//		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//		int i = 28;
+//		Calendar cal = Calendar.getInstance();  
+//		cal.setTime(new Date()); 
+//		String a="";
+//		for (int j = 0; j < i; j++) {
+//			if(j != i-1){
+//				cal.add(Calendar.DATE, -1);  
+//				System.out.println(sdf.format(cal.getTime()));  
+//				a= a+"/home/webuser/analyzer/storedata/alllog/"+sdf.format(cal.getTime())+",";
 //			}else{
-//				System.setProperty("spring.profiles.active", "stg");
+//				a= a+"/home/webuser/analyzer/storedata/alllog/"+sdf.format(cal.getTime());
 //			}
-//			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-//			PaclLogConverCountDriver paclLogConverCountDriver = (PaclLogConverCountDriver) ctx.getBean(PaclLogConverCountDriver.class);
-//			paclLogConverCountDriver.drive(args[0]);
-//			log.info("====driver end====");
-//		}else{
-//			log.info("==== args[0] must be 'prd' or 'stg' ====");
 //		}
+//		
+//		System.out.println(a);
+		if(args.length > 0 && (args[0].equals("prd") || args[0].equals("stg")) ){
+			if(args[0].equals("prd")){
+				System.setProperty("spring.profiles.active", "prd");
+			}else{
+				System.setProperty("spring.profiles.active", "stg");
+			}
+			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+			PaclLogConverCountDriver paclLogConverCountDriver = (PaclLogConverCountDriver) ctx.getBean(PaclLogConverCountDriver.class);
+			paclLogConverCountDriver.drive(args[0]);
+			log.info("====driver end====");
+		}else{
+			log.info("==== args[0] must be 'prd' or 'stg' ====");
+		}
 	}
 }
