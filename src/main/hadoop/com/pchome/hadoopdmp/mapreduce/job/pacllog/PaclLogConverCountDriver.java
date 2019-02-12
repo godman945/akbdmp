@@ -5,7 +5,6 @@ import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,20 +16,14 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.hadoop.compression.lzo.LzoIndexer;
 import com.hadoop.compression.lzo.LzopCodec;
-import com.hadoop.mapreduce.LzoIndexOutputFormat;
 import com.hadoop.mapreduce.LzoTextInputFormat;
-import com.pchome.hadoopdmp.mapreduce.job.thirdcategorylog.ThirdCategoryLogMapper;
-import com.pchome.hadoopdmp.mapreduce.job.thirdcategorylog.ThirdCategoryLogReducer;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 
 @Component
@@ -131,7 +124,7 @@ public class PaclLogConverCountDriver {
 			job.setNumReduceTasks(5); 
 			job.setMapSpeculativeExecution(false);
 			job.setInputFormatClass(LzoTextInputFormat.class);
-			logInputPath = "/home/webuser/pa/storedata/alllog/"+sdf.format(new Date())+"/";
+			logInputPath = "/home/webuser/pa/storedata/alllog/"+this.sdf.format(new Date())+"/";
 			
 //			logInputPath = akbPacLoglAll;
 			outPath = "/home/webuser/alex/pacl_output";
@@ -221,9 +214,9 @@ public class PaclLogConverCountDriver {
 				if(j != convertDay-1){
 					cal.add(Calendar.DATE, -1);  
 					System.out.println(sdf.format(cal.getTime()));  
-					paths = paths+"/home/webuser/analyzer/storedata/alllog/"+sdf.format(cal.getTime())+"/,";
+					paths = paths+"/home/webuser/analyzer/storedata/alllog/"+this.sdf.format(cal.getTime())+"/,";
 				}else{
-					paths = paths+"/home/webuser/analyzer/storedata/alllog/"+sdf.format(cal.getTime())+"/,/home/webuser/alex/pacl_output/";
+					paths = paths+"/home/webuser/analyzer/storedata/alllog/"+this.sdf.format(cal.getTime())+"/,/home/webuser/alex/pacl_output/";
 				}
 			}
 			
