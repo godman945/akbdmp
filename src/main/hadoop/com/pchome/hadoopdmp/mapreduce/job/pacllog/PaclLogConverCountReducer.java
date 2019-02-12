@@ -32,7 +32,6 @@ import org.apache.kafka.clients.producer.Producer;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import com.pchome.soft.util.HBaseUtil;
 import com.pchome.soft.util.MysqlUtil;
 
 import net.minidev.json.JSONObject;
@@ -44,8 +43,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	private static Log log = LogFactory.getLog("PaclLogConverCountReducer");
 
 	private Text keyOut = new Text();
-
-	private Text valueOut = new Text();
 
 	public static String record_date;
 
@@ -66,8 +63,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	public static Map<String, PcalConditionBean> convertConditionMap = new HashMap<String, PcalConditionBean>();
 
 	private MysqlUtil mysqlUtil = null;
-	
-	private HBaseUtil hbaseUtil = null;
 	
 	private final static SimpleDateFormat sdfFormat =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
@@ -95,8 +90,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	private static String convertSeq = null;
 	
 	private static String trackingSeq = null;
-	
-	private static String prodId = null;
 	
 	private static Map<String,Map<String,String>> saveHbaseTrackingMap = new HashMap<String,Map<String,String>>();
 	
@@ -134,8 +127,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
 		try {
 			jobDate = context.getConfiguration().get("job.date");
-			log.info(">>>>>>>>>>>jobDate:"+jobDate);
-			
 			//MySql
 			mysqlUtil = MysqlUtil.getInstance();
 			mysqlUtil.setConnection(context.getConfiguration().get("spring.profiles.active"));
@@ -148,7 +139,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			conf.set("hbase.master", "192.168.2.149:16010");   
 			conf = HBaseConfiguration.create(conf);
 			Connection connection = ConnectionFactory.createConnection(conf);
-			admin = (HBaseAdmin) connection.getAdmin();
+			this.admin = (HBaseAdmin) connection.getAdmin();
 			
 			findAdactionReportUserSql.append(" SELECT  ");
 			findAdactionReportUserSql.append(" tracking_seq, ");
@@ -188,7 +179,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			uuid = null;
 			
 			String key = mapperKey.toString();
-//			log.info(">>>>>>init mapperKey:"+key);
 			uuid = key.split("<PCHOME>",-1)[1];
 			paclType = key.split("<PCHOME>",-1)[2];
 			//處理轉換資料
@@ -196,8 +186,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 				convertSeq = key.split("<PCHOME>",-1)[0];
 				userDefineConvertPrice = null;
 				convertConditionArray = null;
-//				log.info(">>>>>>>>>>convertSeq:"+convertSeq);
-				
 				for (Text text : mapperValue) {
 					String value = text.toString();
 					JSONObject logJson = (JSONObject) jsonParser.parse(value);
@@ -211,7 +199,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			}
 			//處理追蹤資料
 			if(paclType.equals("tracking")){
-//				log.info(">>>>>>init mapperKey:"+key);
 				this.prodFlag = false;
 				this.prodAdFlag = false;
 				this.notProdAdFlag = false;
@@ -245,12 +232,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 				for (Text text : mapperValue) {
 					String prodId = text.toString().split("<PCHOME>",-1)[0];
 					String trackingDate = text.toString().split("<PCHOME>",-1)[1];
-					
-					log.info(">>>>>>>>>>prodId:"+prodId);
-					log.info(">>>>>>>>>>trackingDate:"+trackingDate);
-					log.info(">>>>>>>>>>trackingDeatilMap:"+trackingDeatilMap);
-					
-					
 					this.prodFlag = false;
 					this.prodAdFlag = (boolean) trackingDeatilMap.get("adProdOperatingFlag");
 					this.notProdAdFlag = (boolean) trackingDeatilMap.get("adNotProdOperatingFlag");
@@ -274,7 +255,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 							}
 							userProdIdDBMap.put(this.pfpCustomerInfoId, prodSet);
 						}
-						log.info(">>>>>>>>>>userProdIdDBMap:"+userProdIdDBMap);
 						/*判斷商品是否存在開始*/
 						Set<String> prodSet = userProdIdDBMap.get(this.pfpCustomerInfoId);
 						for (String dbProdId : prodSet) {
@@ -294,8 +274,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 								saveHbaseTrackingMap.put(uuid, saveHbaseTrackingDetail);
 							}
 						}
-						
-						log.info(">>>>>>>>>>saveHbaseTrackingMap:"+saveHbaseTrackingMap);
 						/*判斷商品是否存在結束*/
 					}
 				}
@@ -318,9 +296,9 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	 * 2.根據轉換條件各自需踩過一次log
 	 * 3.
 	 * */
+	@SuppressWarnings("static-access")
 	public void processConvertLog() throws Exception{
 		if(convertConditionMap.get(convertSeq) == null){
-//			log.info(">>>>>>convertConditionMap data not exist!!");
 			sql.append(" SELECT   ");
 			sql.append(" 	c.convert_type,  ");
 			sql.append(" 	c.convert_seq,  ");
@@ -362,7 +340,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 				convertConditionMap.put(convertSeq, pcalConditionBean);
 			}
 		}else{
-//			log.info(">>>>>>convertConditionMap data exist!!");
 			pcalConditionBean = convertConditionMap.get(convertSeq);
 		}
 		
@@ -376,12 +353,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 				convertConditionSet.add(rouleId+"_0");
 			}
 		}
-		
-//		log.info("convertSeq:"+convertSeq+">>>>>>>convertConditionSet:"+convertConditionSet.toString());
-		log.info("paclLogList:"+paclLogList.toString());
-		
-		
-//		開始計算條件出現次數
+		//開始計算條件出現次數
 		for (JSONObject paclLogJson : paclLogList) {
 			for (String convertConditionStr : convertConditionSet) {
 				String converArray[] = convertConditionStr.split("_");
@@ -404,8 +376,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 				}
 			}
 		}
-		log.info("convertSeq:"+convertSeq+">>>>>>>convertConditionSet:"+convertConditionSet.toString());
-		
 		//統計轉換次數
 		int convertCount = 0;
 		for (String rouleIdCountStr : convertConditionSet) {
@@ -445,16 +415,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 					convertPriceCount = (int)Double.parseDouble(pcalConditionBean.getConvertPrice());
 				}
 			}
-			
-			if(uuid.equals("fe06708897d46cdba71d80826f3fae20")){
-				log.info("ConvertNumType:"+pcalConditionBean.getConvertNumType());
-				log.info("convertCount:"+convertCount);
-				log.info("userDefineConvertPrice:"+this.userDefineConvertPrice);
-				log.info("convertPriceCount:"+convertPriceCount);
-				
-			}
-			
-//			log.info(uuid+"============="+convertConditionSet+" convertCount:"+convertCount+" convertPriceCount:"+convertPriceCount);
 			keyOut.set(uuid);
 			convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getClickRangeDate());
 			convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getImpRangeDate());
@@ -465,14 +425,14 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getConvertNumType());
 			convertWriteInfo.append(paclSymbol).append(pcalConditionBean.getConvertCount());
 			convertWriteInfo.append(paclSymbol).append(jobDate);
-			log.info(">>>>>>write>>>>>>>>key:"+keyOut+" value:"+convertWriteInfo.toString());
 			context.write(keyOut, new Text(convertWriteInfo.toString()));
 		}
 	}
 	
 	
-	
+	@SuppressWarnings({ "deprecation", "resource" })
 	 public void putData(String tableName,String rowKey,String family,String qualifier,JSONObject logJson) throws Exception{
+		 log.info("save hbase>>>>>>>>>tableName:"+tableName+">>>>>rowKey:"+rowKey+">>>>>>family:"+family+">>>>>>>>qualifier:"+qualifier+">>>>>>>>logJson:"+logJson);
 		 HTable table = new HTable(conf, Bytes.toBytes(tableName));
 		 int region = Math.abs(rowKey.hashCode()) % 10;
 		 rowKey = "0"+region+"|"+rowKey;
@@ -495,6 +455,9 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			 //資料天數小於28天才會寫入更新
 			 for (Entry<String, Object> entry : logJson.entrySet()) {
 				 double days = (double) ((now.getTime() - sdfFormat.parse(entry.getValue().toString()).getTime()) / (1000*3600*24));
+				 
+				 log.info("save hbase >>>>>days:"+days);
+				 log.info("save hbase >>>>>entry.getKey():"+entry.getKey()+">>>>>>>>>>entry.getValue().toString():"+entry.getValue().toString());
 				 if(days <= 28){
 					 hbaseValueJson.put(entry.getKey(), entry.getValue().toString());
 				 }
@@ -509,6 +472,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 		 }
 	 }
 	 
+	 @SuppressWarnings({ "deprecation", "resource" })
 	 public JSONObject getData(String tableName,String rowKey,String family,String qualifier) throws Exception{
 		 HTable table = new HTable(conf, Bytes.toBytes(tableName));
 		 int region = Math.abs(rowKey.hashCode()) % 10;
