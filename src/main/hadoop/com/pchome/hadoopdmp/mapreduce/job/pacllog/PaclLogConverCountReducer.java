@@ -105,6 +105,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	
 	private Context context = null;
 	
+	@SuppressWarnings("unused")
 	private HBaseAdmin admin = null;
 	
 	private Configuration conf = null;
@@ -463,7 +464,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 				 }
 			 }
 			 Put put = new Put(Bytes.toBytes(rowKey));
-			 put.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier), Bytes.toBytes(logJson.toString()));
+			 put.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier), Bytes.toBytes(hbaseValueJson.toString()));
 			 table.put(put);
 		 }else{
 			 Put put = new Put(Bytes.toBytes(rowKey));
