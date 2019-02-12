@@ -433,7 +433,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	
 	@SuppressWarnings({ "deprecation", "resource" })
 	 public void putData(String tableName,String rowKey,String family,String qualifier,JSONObject logJson) throws Exception{
-		 log.info("save hbase>>>>>>>>>tableName:"+tableName+">>>>>rowKey:"+rowKey+">>>>>>family:"+family+">>>>>>>>qualifier:"+qualifier+">>>>>>>>logJson:"+logJson);
 		 HTable table = new HTable(conf, Bytes.toBytes(tableName));
 		 int region = Math.abs(rowKey.hashCode()) % 10;
 		 rowKey = "0"+region+"|"+rowKey;
@@ -456,9 +455,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			 //資料天數小於28天才會寫入更新
 			 for (Entry<String, Object> entry : logJson.entrySet()) {
 				 double days = (double) ((now.getTime() - sdfFormat.parse(entry.getValue().toString()).getTime()) / (1000*3600*24));
-				 
-				 log.info("save hbase >>>>>days:"+days);
-				 log.info("save hbase >>>>>entry.getKey():"+entry.getKey()+">>>>>>>>>>entry.getValue().toString():"+entry.getValue().toString());
 				 if(days <= 28){
 					 hbaseValueJson.put(entry.getKey(), entry.getValue().toString());
 				 }
