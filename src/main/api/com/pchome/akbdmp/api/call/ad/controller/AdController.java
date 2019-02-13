@@ -105,7 +105,7 @@ public class AdController extends BaseController {
 			if(redisTemplate.opsForValue().get(mapKey) == null){
 				kafkaUtil.sendMessage(dmpApiTopic, "", key);
 				redisTemplate.opsForValue().set(redisCallmapKey+key, key, 1,TimeUnit.DAYS);
-				return result;
+				return result.toString();
 			}
 			//dmp有資料
 			Object redisDmpClassValue = redisTemplate.opsForValue().get(classKey);
