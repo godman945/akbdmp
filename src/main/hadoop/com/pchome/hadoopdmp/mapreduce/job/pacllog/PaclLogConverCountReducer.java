@@ -120,14 +120,15 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	
 	private static boolean prodFlag = false;
 	
-	
 	private static String pfpCustomerInfoId	 = "";
 	
+	private static String hbaseTableName = "";
 	
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
 		try {
 			jobDate = context.getConfiguration().get("job.date");
+			hbaseTableName = context.getConfiguration().get("hbaseTableName");
 			//MySql
 			mysqlUtil = MysqlUtil.getInstance();
 			mysqlUtil.setConnection(context.getConfiguration().get("spring.profiles.active"));
@@ -490,7 +491,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 				for (Entry<String, String> saveHbaseTrackingData : saveHbaseTrackingDetail.entrySet()) {
 					data.clear();
 					data.put(saveHbaseTrackingData.getKey(), saveHbaseTrackingData.getValue());
-					putData("pacl_retargeting",rowKey,"type","retargeting",data);
+					putData(hbaseTableName,rowKey,"type","retargeting",data);
 				}
 			}
 			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement( "DELETE FROM `pfp_code_convert_trans` where  1=1 and convert_date = '"+jobDate+"'");

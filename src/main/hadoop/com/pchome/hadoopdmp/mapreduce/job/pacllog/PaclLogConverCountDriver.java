@@ -89,6 +89,12 @@ public class PaclLogConverCountDriver {
 			jobConf.set("mapreduce.reduce.memory.mb", "8192");
 //		    jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 			jobConf.set("spring.profiles.active", env);
+			if(env.equals("prd")){
+				jobConf.set("hbaseTableName", "pacl_retargeting_prd");
+			}else{
+				jobConf.set("hbaseTableName", "pacl_retargeting_stg");
+			}
+			
 			// hdfs
 			Configuration conf = new Configuration();
 			conf.set("hadoop.job.ugi", jobUgi);
@@ -116,6 +122,9 @@ public class PaclLogConverCountDriver {
 				cal.setTime(new Date());
 				jobConf.set("job.date", sdf.format(new Date()));
 			}
+			
+			
+			
 			
 			FileSystem fs = FileSystem.get(conf);
 			SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
