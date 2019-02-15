@@ -63,14 +63,15 @@ public class PaclLogConverCountDriver {
 	@Value("${akb.pacl.all}")
 	private String akbPacLoglAll;
 	
+	@Value("${akb.pacl.output}")
+	private String akbPaclOutput; //輸出pacl整理後資料(lzo)
+	
+	@Value("${akb.pacl.finish.output}")
+	private String akbPaclFinishOutput;
 	
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	
 	private final static int convertDay = 10;
-	
-	private String logInputPath;
-	
-	private String outPath;
 	
 	public static StringBuffer effectPaclPfpUser = new StringBuffer(); 
 	
@@ -126,7 +127,7 @@ public class PaclLogConverCountDriver {
 			// job
 			log.info("----job1 start---- jobDate:"+jobDate);
 	
-			Job job = new Job(jobConf, "dmp_conv_count_"+ env + "_" + sdf2.format(date));
+			Job job = new Job(jobConf, "pacl_conv_count_"+ env + "_" + sdf2.format(date));
 			job.setJarByClass(PaclLogConverCountDriver.class);
 			job.setMapperClass(PaclLogConverCountMapper.class);
 			job.setReducerClass(PaclLogConverCountReducer.class);
@@ -145,20 +146,16 @@ public class PaclLogConverCountDriver {
 			for (FileStatus fileStatus : status) {  
 			    if (fs.getFileStatus(fileStatus.getPath()).isDir()) {  
 			        list.add(fileStatus.getPath());
-			        log.info("path:"+fileStatus.getPath());
+			        log.info("Job1 INPUT PATH:"+fileStatus.getPath());
 			    }  
 			}  
 			Path[] paths = new Path[list.size()];  
 			list.toArray(paths);
-			//輸出pacl整理後資料(lzo)
-			outPath = "/home/webuser/alex/pacl_output";
 			//hdfs存在則刪除
-			deleteExistedDir(fs, new Path(outPath), true);
-				
-			log.info(">>>>>>Job1 INPUT PATH:"+logInputPath);
-			log.info(">>>>>>Job1 OUTPUT PATH:"+outPath);
+			deleteExistedDir(fs, new Path(akbPaclOutput), true);
+			log.info(">>>>>>Job1 OUTPUT PATH:"+akbPaclOutput);
 			FileInputFormat.setInputPaths(job, paths);
-			FileOutputFormat.setOutputPath(job, new Path(outPath));
+			FileOutputFormat.setOutputPath(job, new Path(akbPaclOutput));
 			FileOutputFormat.setCompressOutput(job, true);
 			FileOutputFormat.setOutputCompressorClass(job, LzopCodec.class);
 			//load jar path
@@ -238,7 +235,7 @@ public class PaclLogConverCountDriver {
 			}
 			mysqlUtil.closeConnection();
 			jobConf.set("effectPaclPfpUser", effectPaclPfpUser.toString());
-			Job job2 = new Job(jobConf, "dmp_conv2_"+ env + "_" + sdf2.format(date));
+			Job job2 = new Job(jobConf, "pacl_conv2_"+ env + "_" + sdf2.format(date));
 			for (String jarPath : jarPaths) {
 				DistributedCache.addArchiveToClassPath(new Path(jarPath), job2.getConfiguration(), fs);
 			}
@@ -272,23 +269,22 @@ public class PaclLogConverCountDriver {
 					for (FileStatus fileStatus : status) {  
 					    if (fs.getFileStatus(fileStatus.getPath()).isDir()) {  
 					        list.add(fileStatus.getPath());
-					        log.info("path:"+fileStatus.getPath());
+					        log.info("Job2 INPUT PATH:"+fileStatus.getPath());
 					    }  
 					}  
 				}
 				cal.add(Calendar.DATE, -1);  
 			}
-			Path paclPath = new Path("/home/webuser/alex/pacl_output/");  
+			Path paclPath = new Path(akbPaclOutput+"/");
+			log.info("Job2 INPUT PATH:"+akbPaclOutput+"/");
 			list.add(paclPath);
-			log.info("path:/home/webuser/alex/pacl_output/");
-
+			
 			paths = new Path[list.size()];  
 			list.toArray(paths);  
 			FileInputFormat.setInputPaths(job2, paths);
-			outPath = "/home/webuser/alex/pacl_output2";
 			//hdfs存在則刪除
-			deleteExistedDir(fs, new Path(outPath), true);
-			FileOutputFormat.setOutputPath(job2, new Path(outPath));
+			deleteExistedDir(fs, new Path(akbPaclFinishOutput), true);
+			FileOutputFormat.setOutputPath(job2, new Path(akbPaclFinishOutput));
 			if (job2.waitForCompletion(true)) {
 				log.info("Job2 is OK");
 				
