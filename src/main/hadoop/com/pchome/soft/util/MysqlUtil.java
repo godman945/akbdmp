@@ -28,9 +28,15 @@ public class MysqlUtil {
 	
 	public void setConnection(String env) throws Exception{
 		if(env.equals("prd")){
-			
+			String url = "jdbc:mysql://kddbm.mypchome.com.tw:3306/akb";
+			String jdbcDriver = "com.mysql.jdbc.Driver";
+			String user = "keyword";
+			String password =  "K1y0nLine";
+			connect = DriverManager.getConnection(url, user, password);
+			connect.setAutoCommit(false); // 设置手动提交 
+			statement = connect.createStatement();
 		}else{
-			String url = "jdbc:mysql://kddbdev.mypchome.com.tw:3306/akb_video";
+			String url = "jdbc:mysql://kddbdev.mypchome.com.tw:3306/akb";
 			String jdbcDriver = "com.mysql.jdbc.Driver";
 			String user = "keyword";
 			String password =  "K1y0nLine";
