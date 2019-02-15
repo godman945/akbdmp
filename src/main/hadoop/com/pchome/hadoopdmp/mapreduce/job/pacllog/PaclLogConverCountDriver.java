@@ -7,9 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -34,7 +32,9 @@ import com.hadoop.mapreduce.LzoTextInputFormat;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 import com.pchome.soft.util.MysqlUtil;
 
+
 @Component
+@SuppressWarnings("deprecation")
 public class PaclLogConverCountDriver {
 
 	private static Log log = LogFactory.getLog("PaclLogConverCountDriver");
@@ -109,11 +109,8 @@ public class PaclLogConverCountDriver {
 			conf.set("mapred.map.tasks.speculative.execution","true");
 			conf.set("mapred.reduce.tasks.speculative.execution","true");
 			conf.set("dfs.block.size","900457280000");
-			
-			
 			//JVM
 			conf.set("mapred.child.java.opts", "-Xmx4048M");
-//			conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 			Calendar cal = Calendar.getInstance();  
 			if(StringUtils.isNotBlank(jobDate)){
 				cal.setTime(sdf.parse(jobDate));
@@ -122,9 +119,6 @@ public class PaclLogConverCountDriver {
 				cal.setTime(new Date());
 				jobConf.set("job.date", sdf.format(new Date()));
 			}
-			
-			
-			
 			
 			FileSystem fs = FileSystem.get(conf);
 			SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -264,10 +258,16 @@ public class PaclLogConverCountDriver {
 			job2.setMapSpeculativeExecution(false);
 			//STG
 //			Path inPath = new Path("/home/webuser/akbstg/storedata/alllog/"+sdf.format(cal.getTime()));
+			String logPath = "";
+			if(env.equals("prd")){
+				logPath = "/home/webuser/akb/storedata/alllog";
+			}else{
+				logPath = "/home/webuser/akbstg/storedata/alllog/";
+			}
 			list = new ArrayList<Path>();  
 			for (int j = 0; j < convertDay; j++) {
 				if(j < convertDay){
-					inPath = new Path("/home/webuser/akbstg/storedata/alllog/"+sdf.format(cal.getTime()));
+					inPath = new Path(logPath+sdf.format(cal.getTime()));
 					status = fs.listStatus(inPath);  
 					for (FileStatus fileStatus : status) {  
 					    if (fs.getFileStatus(fileStatus.getPath()).isDir()) {  
