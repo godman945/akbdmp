@@ -89,6 +89,9 @@ public class AdController extends BaseController {
 			result.put("sex", "");
 			result.put("age", "");
 			result.put("retargeting_prod", new HashMap<>());
+			
+			log.info(">>>>>>>>>>result:"+result);
+			
 			if(StringUtils.isBlank(memid) && StringUtils.isBlank(uuid)){
 				return result.toString();
 			}
@@ -103,6 +106,7 @@ public class AdController extends BaseController {
 //			map不存在key則呼叫kafka建立redis key反之只取redis key
 //			redisTemplate.opsForValue().get(mapKey);
 			if(redisTemplate.opsForValue().get(mapKey) == null){
+				log.info(">>>>>>>>>>1");
 				kafkaUtil.sendMessage(dmpApiTopic, "", key);
 				redisTemplate.opsForValue().set(redisCallmapKey+key, key, 1,TimeUnit.DAYS);
 				return result.toString();
@@ -120,10 +124,12 @@ public class AdController extends BaseController {
 			String retargetingKey = radisRetargetingKey + key;
 			Object obj = redisTemplate.opsForValue().get(retargetingKey);
 			if(obj != null){
+				log.info(">>>>>>>>>>2");
 				String retargeting = obj.toString();
 				JSONObject retargetingAdJson = new JSONObject(retargeting);
 				result.put("retargeting_prod", retargetingAdJson);
 			}else{
+				log.info(">>>>>>>>>>3");
 				result.put("retargeting_prod", new HashMap<>());
 			}
 			
