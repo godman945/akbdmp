@@ -123,6 +123,8 @@ public class AdController extends BaseController {
 				String retargeting = obj.toString();
 				JSONObject retargetingAdJson = new JSONObject(retargeting);
 				result.put("retargeting_prod", retargetingAdJson);
+			}else{
+				result.put("retargeting_prod", new HashMap<>());
 			}
 			
 			//頻次資料
