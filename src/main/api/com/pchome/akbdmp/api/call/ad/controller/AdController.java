@@ -136,7 +136,7 @@ public class AdController extends BaseController {
 			//頻次資料
 			Object fckeyTimes = redisTemplate.opsForValue().get(fcKey);
 			if(fckeyTimes == null || (Integer)fckeyTimes > redisFrequency){
-				System.out.println((Integer) fckeyTimes);
+				log.info(">>>>>>>>>>4");
 				result.put("ad_class", new JSONArray());
 				result.put("behavior", "");
 				result.put("sex", "");
