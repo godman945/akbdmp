@@ -91,7 +91,7 @@ public class AdController extends BaseController {
 			result.put("retargeting_prod", new HashMap<>());
 			
 			log.info(">>>>>>>>>>result:"+result);
-			
+
 			if(StringUtils.isBlank(memid) && StringUtils.isBlank(uuid)){
 				return result.toString();
 			}
