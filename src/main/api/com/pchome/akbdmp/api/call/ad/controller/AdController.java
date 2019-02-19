@@ -141,9 +141,13 @@ public class AdController extends BaseController {
 				result.put("behavior", "");
 				result.put("sex", "");
 				result.put("age", "");
-				String retargeting = obj.toString();
-				JSONObject retargetingAdJson = new JSONObject(retargeting);
-				result.put("retargeting_prod", retargetingAdJson);
+				if(obj != null){
+					String retargeting = obj.toString();
+					JSONObject retargetingAdJson = new JSONObject(retargeting);
+					result.put("retargeting_prod", retargetingAdJson);
+				}else{
+					result.put("retargeting_prod", new HashMap<>());
+				}
 			}
 			if(!active.equals("prd")){
 				log.info("memid:"+memid);
