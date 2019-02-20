@@ -209,88 +209,88 @@ public class PaclLogConverCountDriver {
 				log.info("Job1 is Failed");
 			}
 
-			log.info("----job2 start----");
-			MysqlUtil mysqlUtil = MysqlUtil.getInstance();
-			mysqlUtil.setConnection(env);
-			
-			Calendar effectCalendar = Calendar.getInstance();
-			effectCalendar.setTime(cal.getTime());
-			effectCalendar.add(Calendar.DATE, - convertDay);
-			String effectDate = sdf.format(effectCalendar.getTime());
-			StringBuffer sql = new StringBuffer();
-			sql.append(" SELECT c.pfp_customer_info_id  ");
-			sql.append(" FROM   (SELECT customer_info_id  ");
-			sql.append(" FROM   pfp_ad_action_report  ");
-			sql.append(" WHERE  1 = 1  ");
-			sql.append(" AND ad_pvclk_date >= '").append(effectDate).append("'");
-			sql.append(" GROUP  BY customer_info_id)a  ");
-			sql.append(" RIGHT JOIN pfp_code_convert c  ");
-			sql.append(" ON a.customer_info_id = c.pfp_customer_info_id  ");
-			sql.append(" AND c.convert_status = 1  ");
-			sql.append(" GROUP  BY pfp_customer_info_id  ");
-			ResultSet resultSet = mysqlUtil.query(sql.toString());
-			while(resultSet.next()){
-				String pfpCustomerInfoId = resultSet.getString("pfp_customer_info_id");
-				effectPaclPfpUser.append(pfpCustomerInfoId).append(",");
-			}
-			mysqlUtil.closeConnection();
-			jobConf.set("effectPaclPfpUser", effectPaclPfpUser.toString());
-			Job job2 = new Job(jobConf, "pacl_conv2_"+ env + "_" + sdf2.format(date));
-			for (String jarPath : jarPaths) {
-				DistributedCache.addArchiveToClassPath(new Path(jarPath), job2.getConfiguration(), fs);
-			}
-			for (String filePath : filePaths) {
-				DistributedCache.addCacheFile(new URI(filePath), job2.getConfiguration());
-			}
-			job2.setJarByClass(PaclLogConverCountDriver.class);
-			job2.setMapperClass(PaclLogConverCountMapper.class);
-			job2.setReducerClass(PaclLogConverCountReducer2.class);
-//			job2.setCombinerClass(PaclLogConvertCombiner.class);
-			job2.setMapOutputKeyClass(Text.class);
-			job2.setMapOutputValueClass(Text.class);
-			job2.setInputFormatClass(LzoTextInputFormat.class);
-			job2.setOutputKeyClass(Text.class);
-			job2.setOutputValueClass(Text.class);
-			job2.setNumReduceTasks(1);//1個reduce 
-			job2.setMapSpeculativeExecution(false);
-			//STG
-//			Path inPath = new Path("/home/webuser/akbstg/storedata/alllog/"+sdf.format(cal.getTime()));
-			String logPath = "";
-			if(env.equals("prd")){
-				logPath = "/home/webuser/akb/storedata/alllog/";
-			}else{
-				logPath = "/home/webuser/akbstg/storedata/alllog/";
-			}
-			list = new ArrayList<Path>();  
-			for (int j = 0; j < convertDay; j++) {
-				if(j < convertDay){
-					inPath = new Path(logPath+sdf.format(cal.getTime()));
-					status = fs.listStatus(inPath);  
-					for (FileStatus fileStatus : status) {  
-					    if (fs.getFileStatus(fileStatus.getPath()).isDir()) {  
-					        list.add(fileStatus.getPath());
-					        log.info("Job2 INPUT PATH:"+fileStatus.getPath());
-					    }  
-					}  
-				}
-				cal.add(Calendar.DATE, -1);  
-			}
-			Path paclPath = new Path(akbPaclOutput+"/");
-			log.info("Job2 INPUT PATH:"+akbPaclOutput+"/");
-			list.add(paclPath);
-			
-			paths = new Path[list.size()];  
-			list.toArray(paths);  
-			FileInputFormat.setInputPaths(job2, paths);
-			//hdfs存在則刪除
-			deleteExistedDir(fs, new Path(akbPaclFinishOutput), true);
-			FileOutputFormat.setOutputPath(job2, new Path(akbPaclFinishOutput));
-			if (job2.waitForCompletion(true)) {
-				log.info("Job2 is OK");
-				
-			} else {
-				log.info("Job2 is Failed");
-			}
+//			log.info("----job2 start----");
+//			MysqlUtil mysqlUtil = MysqlUtil.getInstance();
+//			mysqlUtil.setConnection(env);
+//			
+//			Calendar effectCalendar = Calendar.getInstance();
+//			effectCalendar.setTime(cal.getTime());
+//			effectCalendar.add(Calendar.DATE, - convertDay);
+//			String effectDate = sdf.format(effectCalendar.getTime());
+//			StringBuffer sql = new StringBuffer();
+//			sql.append(" SELECT c.pfp_customer_info_id  ");
+//			sql.append(" FROM   (SELECT customer_info_id  ");
+//			sql.append(" FROM   pfp_ad_action_report  ");
+//			sql.append(" WHERE  1 = 1  ");
+//			sql.append(" AND ad_pvclk_date >= '").append(effectDate).append("'");
+//			sql.append(" GROUP  BY customer_info_id)a  ");
+//			sql.append(" RIGHT JOIN pfp_code_convert c  ");
+//			sql.append(" ON a.customer_info_id = c.pfp_customer_info_id  ");
+//			sql.append(" AND c.convert_status = 1  ");
+//			sql.append(" GROUP  BY pfp_customer_info_id  ");
+//			ResultSet resultSet = mysqlUtil.query(sql.toString());
+//			while(resultSet.next()){
+//				String pfpCustomerInfoId = resultSet.getString("pfp_customer_info_id");
+//				effectPaclPfpUser.append(pfpCustomerInfoId).append(",");
+//			}
+//			mysqlUtil.closeConnection();
+//			jobConf.set("effectPaclPfpUser", effectPaclPfpUser.toString());
+//			Job job2 = new Job(jobConf, "pacl_conv2_"+ env + "_" + sdf2.format(date));
+//			for (String jarPath : jarPaths) {
+//				DistributedCache.addArchiveToClassPath(new Path(jarPath), job2.getConfiguration(), fs);
+//			}
+//			for (String filePath : filePaths) {
+//				DistributedCache.addCacheFile(new URI(filePath), job2.getConfiguration());
+//			}
+//			job2.setJarByClass(PaclLogConverCountDriver.class);
+//			job2.setMapperClass(PaclLogConverCountMapper.class);
+//			job2.setReducerClass(PaclLogConverCountReducer2.class);
+////			job2.setCombinerClass(PaclLogConvertCombiner.class);
+//			job2.setMapOutputKeyClass(Text.class);
+//			job2.setMapOutputValueClass(Text.class);
+//			job2.setInputFormatClass(LzoTextInputFormat.class);
+//			job2.setOutputKeyClass(Text.class);
+//			job2.setOutputValueClass(Text.class);
+//			job2.setNumReduceTasks(1);//1個reduce 
+//			job2.setMapSpeculativeExecution(false);
+//			//STG
+////			Path inPath = new Path("/home/webuser/akbstg/storedata/alllog/"+sdf.format(cal.getTime()));
+//			String logPath = "";
+//			if(env.equals("prd")){
+//				logPath = "/home/webuser/akb/storedata/alllog/";
+//			}else{
+//				logPath = "/home/webuser/akbstg/storedata/alllog/";
+//			}
+//			list = new ArrayList<Path>();  
+//			for (int j = 0; j < convertDay; j++) {
+//				if(j < convertDay){
+//					inPath = new Path(logPath+sdf.format(cal.getTime()));
+//					status = fs.listStatus(inPath);  
+//					for (FileStatus fileStatus : status) {  
+//					    if (fs.getFileStatus(fileStatus.getPath()).isDir()) {  
+//					        list.add(fileStatus.getPath());
+//					        log.info("Job2 INPUT PATH:"+fileStatus.getPath());
+//					    }  
+//					}  
+//				}
+//				cal.add(Calendar.DATE, -1);  
+//			}
+//			Path paclPath = new Path(akbPaclOutput+"/");
+//			log.info("Job2 INPUT PATH:"+akbPaclOutput+"/");
+//			list.add(paclPath);
+//			
+//			paths = new Path[list.size()];  
+//			list.toArray(paths);  
+//			FileInputFormat.setInputPaths(job2, paths);
+//			//hdfs存在則刪除
+//			deleteExistedDir(fs, new Path(akbPaclFinishOutput), true);
+//			FileOutputFormat.setOutputPath(job2, new Path(akbPaclFinishOutput));
+//			if (job2.waitForCompletion(true)) {
+//				log.info("Job2 is OK");
+//				
+//			} else {
+//				log.info("Job2 is Failed");
+//			}
 		 } catch (Exception e) {
 			 log.error("drive error>>>>>> "+ e);
 	     }
