@@ -257,7 +257,7 @@ public class PaclLogConverCountDriver {
 //			Path inPath = new Path("/home/webuser/akbstg/storedata/alllog/"+sdf.format(cal.getTime()));
 			String logPath = "";
 			if(env.equals("prd")){
-				logPath = "/home/webuser/akb/storedata/alllog";
+				logPath = "/home/webuser/akb/storedata/alllog/";
 			}else{
 				logPath = "/home/webuser/akbstg/storedata/alllog/";
 			}
