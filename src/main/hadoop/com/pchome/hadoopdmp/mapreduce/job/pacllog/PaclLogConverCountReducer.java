@@ -229,7 +229,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 					trackingDeatilMap.put("pfpCustomerInfoId", pfpCustomerInfoId);
 					trackingMap.put(trackingSeq, trackingDeatilMap);
 				}
-				log.info(">>>>>>>>>>>>>trackingMap:"+trackingMap);
 				//	saveHbaseTrackingMap
 				for (Text text : mapperValue) {
 					String prodId = text.toString().split("<PCHOME>",-1)[0];
@@ -257,11 +256,8 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 						}
 					}
 					
-					
-					log.info("prodId:"+prodId+" trackingSeq:"+trackingSeq+" notProdAdFlag:"+notProdAdFlag+" prodAdFlag:"+prodAdFlag+" prodFlag:"+prodFlag);
 					//查無商品資與未送商品序號視為一般廣告
 					if((!prodFlag && this.notProdAdFlag) || (StringUtils.isBlank(prodId) && this.notProdAdFlag)){
-						log.info("not prod ad");
 						if(saveHbaseTrackingMap.containsKey(uuid)){
 							Map<String,String> saveHbaseTrackingDetail = saveHbaseTrackingMap.get(uuid);
 							saveHbaseTrackingDetail.put(this.trackingSeq+"_ALL", trackingDate);
@@ -271,7 +267,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 							saveHbaseTrackingMap.put(uuid, saveHbaseTrackingDetail);
 						}
 					}else if(prodFlag && this.prodAdFlag){
-						log.info("is prod ad");
 						if(saveHbaseTrackingMap.containsKey(uuid)){
 							Map<String,String> saveHbaseTrackingDetail = saveHbaseTrackingMap.get(uuid);
 							saveHbaseTrackingDetail.put(this.trackingSeq+"_"+prodId, trackingDate);
@@ -539,10 +534,10 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 					putData(hbaseTableName,rowKey,"type","retargeting",data);
 				}
 			}
-//			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement( "DELETE FROM `pfp_code_convert_trans` where  1=1 and convert_date = '"+jobDate+"'");
-//			preparedStmt.execute();
-//			mysqlUtil.getConnect().commit();
-//			mysqlUtil.closeConnection();
+			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement( "DELETE FROM `pfp_code_convert_trans` where  1=1 and convert_date = '"+jobDate+"'");
+			preparedStmt.execute();
+			mysqlUtil.getConnect().commit();
+			mysqlUtil.closeConnection();
 		} catch (Throwable e) {
 			convertConditionSet.clear();
 			convertWriteInfo.setLength(0);
