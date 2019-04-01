@@ -160,27 +160,27 @@ public class PaclLogConverCountDriver {
 			FileOutputFormat.setOutputCompressorClass(job, LzopCodec.class);
 			//load jar path
 			String[] jarPaths = {
-					"/home/webuser/dmp/webapps/analyzer/lib/commons-lang-2.6.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/commons-logging-1.1.1.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/log4j-1.2.15.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/mongo-java-driver-2.11.3.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/softdepot-1.0.9.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/solr-solrj-4.5.0.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/noggit-0.5.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/httpcore-4.2.2.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/httpclient-4.2.3.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/httpmime-4.2.3.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/mysql-connector-java-5.1.12-bin.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/json-20160810.jar",
-					// add kafka jar
-					"/home/webuser/dmp/webapps/analyzer/lib/kafka-clients-0.9.0.0.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/kafka_2.11-0.9.0.0.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/slf4j-api-1.7.19.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/slf4j-log4j12-1.7.6.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/json-smart-2.3.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/asm-1.0.2.jar",
-					// add hbase jar
-					"/home/webuser/dmp/webapps/analyzer/lib/hbase-client-1.4.5.jar"
+//					"/home/webuser/dmp/webapps/analyzer/lib/commons-lang-2.6.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/commons-logging-1.1.1.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/log4j-1.2.15.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/mongo-java-driver-2.11.3.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/softdepot-1.0.9.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/solr-solrj-4.5.0.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/noggit-0.5.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/httpcore-4.2.2.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/httpclient-4.2.3.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/httpmime-4.2.3.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/mysql-connector-java-5.1.12-bin.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/json-20160810.jar",
+//					// add kafka jar
+//					"/home/webuser/dmp/webapps/analyzer/lib/kafka-clients-0.9.0.0.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/kafka_2.11-0.9.0.0.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/slf4j-api-1.7.19.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/slf4j-log4j12-1.7.6.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/json-smart-2.3.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/asm-1.0.2.jar",
+//					// add hbase jar
+//					"/home/webuser/dmp/webapps/analyzer/lib/hbase-client-1.4.5.jar"
 			}; 
 			for (String jarPath : jarPaths) {
 				Path hadoopJarPath = new Path(jarPath);
