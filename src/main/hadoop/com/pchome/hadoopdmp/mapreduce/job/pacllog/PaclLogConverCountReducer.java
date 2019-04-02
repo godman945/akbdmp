@@ -396,20 +396,11 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			}
 		}
 		//開始計算條件出現次數
-		log.info("convert uuid:"+uuid);
-		log.info("convert paclLogList:"+paclLogList);
 		for (JSONObject paclLogJson : paclLogList) {
 			for (String convertConditionStr : convertConditionSet) {
 				String converArray[] = convertConditionStr.split("_");
 				String rouleId = converArray[0];
 				int count = Integer.parseInt(converArray[1]);
-				
-				if(uuid.equals("ef49c4d7f54849a38eee19a13ab256c7")){
-					log.info(">>>>>>>rouleId"+rouleId);
-					log.info(">>>>>>>count"+count);
-				}
-				
-				
 				if(pcalConditionBean.getConvertType().equals("1")){
 					convertConditionSet.remove(rouleId+"_"+count);
 					count ++;
@@ -532,21 +523,21 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	
 	 public void cleanup(Context context) {
 		try {
-//			log.info("saveHbaseTrackingMap:"+saveHbaseTrackingMap);
-//			JSONObject data = new JSONObject();
-//			for (Entry<String, Map<String, String>> entry : saveHbaseTrackingMap.entrySet()) {
-//				String rowKey = entry.getKey();
-//				Map<String,String> saveHbaseTrackingDetail = entry.getValue();
-//				for (Entry<String, String> saveHbaseTrackingData : saveHbaseTrackingDetail.entrySet()) {
-//					data.clear();
-//					data.put(saveHbaseTrackingData.getKey(), saveHbaseTrackingData.getValue());
-//					putData(hbaseTableName,rowKey,"type","retargeting",data);
-//				}
-//			}
-//			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement( "DELETE FROM `pfp_code_convert_trans` where  1=1 and convert_date = '"+jobDate+"'");
-//			preparedStmt.execute();
-//			mysqlUtil.getConnect().commit();
-//			mysqlUtil.closeConnection();
+			log.info("saveHbaseTrackingMap:"+saveHbaseTrackingMap);
+			JSONObject data = new JSONObject();
+			for (Entry<String, Map<String, String>> entry : saveHbaseTrackingMap.entrySet()) {
+				String rowKey = entry.getKey();
+				Map<String,String> saveHbaseTrackingDetail = entry.getValue();
+				for (Entry<String, String> saveHbaseTrackingData : saveHbaseTrackingDetail.entrySet()) {
+					data.clear();
+					data.put(saveHbaseTrackingData.getKey(), saveHbaseTrackingData.getValue());
+					putData(hbaseTableName,rowKey,"type","retargeting",data);
+				}
+			}
+			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement( "DELETE FROM `pfp_code_convert_trans` where  1=1 and convert_date = '"+jobDate+"'");
+			preparedStmt.execute();
+			mysqlUtil.getConnect().commit();
+			mysqlUtil.closeConnection();
 		} catch (Throwable e) {
 			convertConditionSet.clear();
 			convertWriteInfo.setLength(0);

@@ -71,20 +71,31 @@ public class PaclLogConverCountDriver {
 	
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	
-	private final static int convertDay = 3;
+	private final static int convertDay = 28;
 	
 	public static StringBuffer effectPaclPfpUser = new StringBuffer(); 
 	
 	public void drive(String env,String jobDate) throws Exception {
 		try {
-			
-			
 			JobConf jobConf = new JobConf();
+			jobConf.setNumMapTasks(5);
+			jobConf.set("mapred.max.split.size","900457280000"); //3045728 49 //3045728000 7
+			jobConf.set("mapred.min.split.size","900457280000"); //1015544 49 //1015544000 7
+			//ask推测执行
+			jobConf.set("mapred.map.tasks.speculative.execution","true");
+			jobConf.set("mapred.reduce.tasks.speculative.execution","true");
+			//JVM
+			jobConf.set("mapred.child.java.opts", "-Xmx4048M");
+			jobConf.set("mapreduce.map.memory.mb", "4096");
+			jobConf.set("mapreduce.reduce.memory.mb", "8192");
+//		    jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
+			jobConf.set("spring.profiles.active", env);
 			if(env.equals("prd")){
-			jobConf.set("hbaseTableName", "pacl_retargeting_prd");
+				jobConf.set("hbaseTableName", "pacl_retargeting_prd");
 			}else{
 				jobConf.set("hbaseTableName", "pacl_retargeting_stg");
 			}
+			
 			// hdfs
 			Configuration conf = new Configuration();
 			conf.set("mapreduce.map.output.compress.codec", codec);
@@ -94,6 +105,20 @@ public class PaclLogConverCountDriver {
 			conf.set("mapred.map.tasks.speculative.execution","true");
 			conf.set("mapred.reduce.tasks.speculative.execution","true");
 			conf.set("mapred.child.java.opts", "-Xmx4048M");
+//			conf.set("hadoop.job.ugi", jobUgi);
+//			conf.set("fs.defaultFS", hdfsPath);
+//			//hadoop叢集位置
+//			conf.set("mapreduce.jobtracker.address", tracker);
+//			//com.hadoop.compression.lzo.LzoCodec
+//			conf.set("mapreduce.map.output.compress.codec", codec);
+//			conf.set("mapreduce.map.speculative", mapredExecution);
+//			conf.set("mapreduce.reduce.speculative", mapredReduceExecution);
+//			conf.set("mapreduce.task.timeout", mapredTimeout);
+//			conf.set("mapred.map.tasks.speculative.execution","true");
+//			conf.set("mapred.reduce.tasks.speculative.execution","true");
+//			conf.set("dfs.block.size","900457280000");
+//			//JVM
+//			conf.set("mapred.child.java.opts", "-Xmx4048M");
 			Calendar cal = Calendar.getInstance();  
 			if(StringUtils.isNotBlank(jobDate)){
 				cal.setTime(sdf.parse(jobDate));
@@ -102,6 +127,7 @@ public class PaclLogConverCountDriver {
 				cal.setTime(new Date());
 				jobConf.set("job.date", sdf.format(new Date()));
 			}
+			
 			FileSystem fs = FileSystem.get(conf);
 			SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Date date = new Date();
@@ -119,6 +145,7 @@ public class PaclLogConverCountDriver {
 			job.setNumReduceTasks(1); 
 			job.setMapSpeculativeExecution(false);
 			job.setInputFormatClass(LzoTextInputFormat.class);
+			
 			//載入pacl所有lzo資料
 			Path inPath = new Path("/home/webuser/pa/storedata/alllog/"+sdf.format(cal.getTime()));
 			FileStatus[] status = fs.listStatus(inPath);  
@@ -170,238 +197,107 @@ public class PaclLogConverCountDriver {
 				}
 				DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fs);
 			}
+			String[] filePaths = {
+					hdfsPath + "/home/webuser/dmp/crawlBreadCrumb/data/pfp_ad_category_new.csv",
+					hdfsPath + "/home/webuser/dmp/readingdata/ClsfyGndAgeCrspTable.txt",
+					hdfsPath + "/home/webuser/dmp/alex/log4j.xml",
+					hdfsPath + "/home/webuser/dmp/jobfile/DMP_24h_category.csv",
+					hdfsPath + "/home/webuser/dmp/jobfile/DMP_Ruten_category.csv",
+					hdfsPath + "/home/webuser/dmp/jobfile/GeoLite2-City.mmdb",
+					hdfsPath + "/home/webuser/dmp/jobfile/ThirdAdClassTable.txt"
+			};
+			for (String filePath : filePaths) {
+				DistributedCache.addCacheFile(new URI(filePath), job.getConfiguration());
+			}
 			if (job.waitForCompletion(true)) {
 				log.info("Job1 is OK");
+				
 			} else {
 				log.info("Job1 is Failed");
 			}
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-//			JobConf jobConf = new JobConf();
-//			jobConf.setNumMapTasks(5);
-//			jobConf.set("mapred.max.split.size","900457280000"); //3045728 49 //3045728000 7
-//			jobConf.set("mapred.min.split.size","900457280000"); //1015544 49 //1015544000 7
-//			//ask推测执行
-//			jobConf.set("mapred.map.tasks.speculative.execution","true");
-//			jobConf.set("mapred.reduce.tasks.speculative.execution","true");
-//			//JVM
-//			jobConf.set("mapred.child.java.opts", "-Xmx4048M");
-//			jobConf.set("mapreduce.map.memory.mb", "4096");
-//			jobConf.set("mapreduce.reduce.memory.mb", "8192");
-////		    jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
-//			jobConf.set("spring.profiles.active", env);
-//			if(env.equals("prd")){
-//				jobConf.set("hbaseTableName", "pacl_retargeting_prd");
-//			}else{
-//				jobConf.set("hbaseTableName", "pacl_retargeting_stg");
-//			}
-//			
-//			// hdfs
-//			Configuration conf = new Configuration();
-//			conf.set("hadoop.job.ugi", jobUgi);
-//			conf.set("fs.defaultFS", hdfsPath);
-//			//hadoop叢集位置
-//			conf.set("mapreduce.jobtracker.address", tracker);
-//			//com.hadoop.compression.lzo.LzoCodec
-//			conf.set("mapreduce.map.output.compress.codec", codec);
-//			conf.set("mapreduce.map.speculative", mapredExecution);
-//			conf.set("mapreduce.reduce.speculative", mapredReduceExecution);
-//			conf.set("mapreduce.task.timeout", mapredTimeout);
-//			conf.set("mapred.map.tasks.speculative.execution","true");
-//			conf.set("mapred.reduce.tasks.speculative.execution","true");
-//			conf.set("dfs.block.size","900457280000");
-//			//JVM
-//			conf.set("mapred.child.java.opts", "-Xmx4048M");
-//			Calendar cal = Calendar.getInstance();  
-//			if(StringUtils.isNotBlank(jobDate)){
-//				cal.setTime(sdf.parse(jobDate));
-//				jobConf.set("job.date", jobDate);
-//			}else{
-//				cal.setTime(new Date());
-//				jobConf.set("job.date", sdf.format(new Date()));
-//			}
-//			
-//			FileSystem fs = FileSystem.get(conf);
-//			SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//			Date date = new Date();
-//			// job
-//			log.info("----job1 start---- jobDate:"+jobDate);
-//	
-//			Job job = new Job(jobConf, "pacl_conv_count_"+ env + "_" + sdf2.format(date));
-//			job.setJarByClass(PaclLogConverCountDriver.class);
-//			job.setMapperClass(PaclLogConverCountMapper.class);
-//			job.setReducerClass(PaclLogConverCountReducer.class);
-//			job.setMapOutputKeyClass(Text.class);
-//			job.setMapOutputValueClass(Text.class);
-//			job.setOutputKeyClass(Text.class);
-//			job.setOutputValueClass(Text.class);
-//			job.setNumReduceTasks(1); 
-//			job.setMapSpeculativeExecution(false);
-//			job.setInputFormatClass(LzoTextInputFormat.class);
-//			//載入pacl所有lzo資料
-////			Path inPath = new Path("/home/webuser/pa/storedata/alllog/"+sdf.format(cal.getTime()));
-//			Path inPath = new Path("/home/webuser/akbstg/storedata/alllog/"+sdf.format(cal.getTime()));
-//			
-//			FileStatus[] status = fs.listStatus(inPath);  
-//			List<Path> list = new ArrayList<Path>();  
-//			for (FileStatus fileStatus : status) {  
-//			    if (fs.getFileStatus(fileStatus.getPath()).isDir()) {  
-//			        list.add(fileStatus.getPath());
-//			        log.info("Job1 INPUT PATH:"+fileStatus.getPath());
-//			    }  
-//			}  
-//			Path[] paths = new Path[list.size()];  
-//			list.toArray(paths);
-//			//hdfs存在則刪除
-//			deleteExistedDir(fs, new Path(akbPaclOutput), true);
-//			log.info(">>>>>>Job1 OUTPUT PATH:"+akbPaclOutput);
-//			FileInputFormat.setInputPaths(job, paths);
-//			FileOutputFormat.setOutputPath(job, new Path(akbPaclOutput));
-//			FileOutputFormat.setCompressOutput(job, true);
-//			FileOutputFormat.setOutputCompressorClass(job, LzopCodec.class);
-//			//load jar path
-//			String[] jarPaths = {
-//					"/home/webuser/dmp/webapps/analyzer/lib/commons-lang-2.6.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/commons-logging-1.1.1.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/log4j-1.2.15.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/mongo-java-driver-2.11.3.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/softdepot-1.0.9.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/solr-solrj-4.5.0.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/noggit-0.5.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/httpcore-4.2.2.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/httpclient-4.2.3.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/httpmime-4.2.3.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/mysql-connector-java-5.1.12-bin.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/json-20160810.jar",
-//					// add kafka jar
-//					"/home/webuser/dmp/webapps/analyzer/lib/kafka-clients-0.9.0.0.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/kafka_2.11-0.9.0.0.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/slf4j-api-1.7.19.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/slf4j-log4j12-1.7.6.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/json-smart-2.3.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/asm-1.0.2.jar",
-//					// add hbase jar
-//					"/home/webuser/dmp/webapps/analyzer/lib/hbase-client-1.4.5.jar"
-//			}; 
-//			for (String jarPath : jarPaths) {
-//				Path hadoopJarPath = new Path(jarPath);
-//				FileStatus[] files = fs.listStatus(hadoopJarPath);
-//				for (FileStatus fileStatus : files) {
-//					log.info("hadoopJarPath:"+fileStatus.getPath());
-//				}
-//				DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fs);
-//			}
-////			String[] filePaths = {
-////					hdfsPath + "/home/webuser/dmp/crawlBreadCrumb/data/pfp_ad_category_new.csv",
-////					hdfsPath + "/home/webuser/dmp/readingdata/ClsfyGndAgeCrspTable.txt",
-////					hdfsPath + "/home/webuser/dmp/alex/log4j.xml",
-////					hdfsPath + "/home/webuser/dmp/jobfile/DMP_24h_category.csv",
-////					hdfsPath + "/home/webuser/dmp/jobfile/DMP_Ruten_category.csv",
-////					hdfsPath + "/home/webuser/dmp/jobfile/GeoLite2-City.mmdb",
-////					hdfsPath + "/home/webuser/dmp/jobfile/ThirdAdClassTable.txt"
-////			};
-////			for (String filePath : filePaths) {
-////				DistributedCache.addCacheFile(new URI(filePath), job.getConfiguration());
-////			}
-//			if (job.waitForCompletion(true)) {
-//				log.info("Job1 is OK");
-//				
-//			} else {
-//				log.info("Job1 is Failed");
-//			}
 
-//			log.info("----job2 start----");
-//			MysqlUtil mysqlUtil = MysqlUtil.getInstance();
-//			mysqlUtil.setConnection(env);
-//			
-//			Calendar effectCalendar = Calendar.getInstance();
-//			effectCalendar.setTime(cal.getTime());
-//			effectCalendar.add(Calendar.DATE, - convertDay);
-//			String effectDate = sdf.format(effectCalendar.getTime());
-//			StringBuffer sql = new StringBuffer();
-//			sql.append(" SELECT c.pfp_customer_info_id  ");
-//			sql.append(" FROM   (SELECT customer_info_id  ");
-//			sql.append(" FROM   pfp_ad_action_report  ");
-//			sql.append(" WHERE  1 = 1  ");
-//			sql.append(" AND ad_pvclk_date >= '").append(effectDate).append("'");
-//			sql.append(" GROUP  BY customer_info_id)a  ");
-//			sql.append(" RIGHT JOIN pfp_code_convert c  ");
-//			sql.append(" ON a.customer_info_id = c.pfp_customer_info_id  ");
-//			sql.append(" AND c.convert_status = 1  ");
-//			sql.append(" GROUP  BY pfp_customer_info_id  ");
-//			ResultSet resultSet = mysqlUtil.query(sql.toString());
-//			while(resultSet.next()){
-//				String pfpCustomerInfoId = resultSet.getString("pfp_customer_info_id");
-//				effectPaclPfpUser.append(pfpCustomerInfoId).append(",");
-//			}
-//			mysqlUtil.closeConnection();
-//			jobConf.set("effectPaclPfpUser", effectPaclPfpUser.toString());
-//			Job job2 = new Job(jobConf, "pacl_conv2_"+ env + "_" + sdf2.format(date));
-//			for (String jarPath : jarPaths) {
-//				DistributedCache.addArchiveToClassPath(new Path(jarPath), job2.getConfiguration(), fs);
-//			}
-//			for (String filePath : filePaths) {
-//				DistributedCache.addCacheFile(new URI(filePath), job2.getConfiguration());
-//			}
-//			job2.setJarByClass(PaclLogConverCountDriver.class);
-//			job2.setMapperClass(PaclLogConverCountMapper.class);
-//			job2.setReducerClass(PaclLogConverCountReducer2.class);
-////			job2.setCombinerClass(PaclLogConvertCombiner.class);
-//			job2.setMapOutputKeyClass(Text.class);
-//			job2.setMapOutputValueClass(Text.class);
-//			job2.setInputFormatClass(LzoTextInputFormat.class);
-//			job2.setOutputKeyClass(Text.class);
-//			job2.setOutputValueClass(Text.class);
-//			job2.setNumReduceTasks(1);//1個reduce 
-//			job2.setMapSpeculativeExecution(false);
-//			//STG
-////			Path inPath = new Path("/home/webuser/akbstg/storedata/alllog/"+sdf.format(cal.getTime()));
-//			String logPath = "";
-//			if(env.equals("prd")){
-//				logPath = "/home/webuser/akb/storedata/alllog/";
-//			}else{
-//				logPath = "/home/webuser/akbstg/storedata/alllog/";
-//			}
-//			list = new ArrayList<Path>();  
-//			for (int j = 0; j < convertDay; j++) {
-//				if(j < convertDay){
-//					inPath = new Path(logPath+sdf.format(cal.getTime()));
-//					status = fs.listStatus(inPath);  
-//					for (FileStatus fileStatus : status) {  
-//					    if (fs.getFileStatus(fileStatus.getPath()).isDir()) {  
-//					        list.add(fileStatus.getPath());
-//					        log.info("Job2 INPUT PATH:"+fileStatus.getPath());
-//					    }  
-//					}  
-//				}
-//				cal.add(Calendar.DATE, -1);  
-//			}
-//			Path paclPath = new Path(akbPaclOutput+"/");
-//			log.info("Job2 INPUT PATH:"+akbPaclOutput+"/");
-//			list.add(paclPath);
-//			
-//			paths = new Path[list.size()];  
-//			list.toArray(paths);  
-//			FileInputFormat.setInputPaths(job2, paths);
-//			//hdfs存在則刪除
-//			deleteExistedDir(fs, new Path(akbPaclFinishOutput), true);
-//			FileOutputFormat.setOutputPath(job2, new Path(akbPaclFinishOutput));
-//			if (job2.waitForCompletion(true)) {
-//				log.info("Job2 is OK");
-//				
-//			} else {
-//				log.info("Job2 is Failed");
-//			}
+			log.info("----job2 start----");
+			MysqlUtil mysqlUtil = MysqlUtil.getInstance();
+			mysqlUtil.setConnection(env);
+			
+			Calendar effectCalendar = Calendar.getInstance();
+			effectCalendar.setTime(cal.getTime());
+			effectCalendar.add(Calendar.DATE, - convertDay);
+			String effectDate = sdf.format(effectCalendar.getTime());
+			StringBuffer sql = new StringBuffer();
+			sql.append(" SELECT c.pfp_customer_info_id  ");
+			sql.append(" FROM   (SELECT customer_info_id  ");
+			sql.append(" FROM   pfp_ad_action_report  ");
+			sql.append(" WHERE  1 = 1  ");
+			sql.append(" AND ad_pvclk_date >= '").append(effectDate).append("'");
+			sql.append(" GROUP  BY customer_info_id)a  ");
+			sql.append(" RIGHT JOIN pfp_code_convert c  ");
+			sql.append(" ON a.customer_info_id = c.pfp_customer_info_id  ");
+			sql.append(" AND c.convert_status = 1  ");
+			sql.append(" GROUP  BY pfp_customer_info_id  ");
+			ResultSet resultSet = mysqlUtil.query(sql.toString());
+			while(resultSet.next()){
+				String pfpCustomerInfoId = resultSet.getString("pfp_customer_info_id");
+				effectPaclPfpUser.append(pfpCustomerInfoId).append(",");
+			}
+			mysqlUtil.closeConnection();
+			jobConf.set("effectPaclPfpUser", effectPaclPfpUser.toString());
+			Job job2 = new Job(jobConf, "pacl_conv2_"+ env + "_" + sdf2.format(date));
+			for (String jarPath : jarPaths) {
+				DistributedCache.addArchiveToClassPath(new Path(jarPath), job2.getConfiguration(), fs);
+			}
+			for (String filePath : filePaths) {
+				DistributedCache.addCacheFile(new URI(filePath), job2.getConfiguration());
+			}
+			job2.setJarByClass(PaclLogConverCountDriver.class);
+			job2.setMapperClass(PaclLogConverCountMapper.class);
+			job2.setReducerClass(PaclLogConverCountReducer2.class);
+//			job2.setCombinerClass(PaclLogConvertCombiner.class);
+			job2.setMapOutputKeyClass(Text.class);
+			job2.setMapOutputValueClass(Text.class);
+			job2.setInputFormatClass(LzoTextInputFormat.class);
+			job2.setOutputKeyClass(Text.class);
+			job2.setOutputValueClass(Text.class);
+			job2.setNumReduceTasks(1);//1個reduce 
+			job2.setMapSpeculativeExecution(false);
+			//STG
+//			Path inPath = new Path("/home/webuser/akbstg/storedata/alllog/"+sdf.format(cal.getTime()));
+			String logPath = "";
+			if(env.equals("prd")){
+				logPath = "/home/webuser/akb/storedata/alllog/";
+			}else{
+				logPath = "/home/webuser/akbstg/storedata/alllog/";
+			}
+			list = new ArrayList<Path>();  
+			for (int j = 0; j < convertDay; j++) {
+				if(j < convertDay){
+					inPath = new Path(logPath+sdf.format(cal.getTime()));
+					status = fs.listStatus(inPath);  
+					for (FileStatus fileStatus : status) {  
+					    if (fs.getFileStatus(fileStatus.getPath()).isDir()) {  
+					        list.add(fileStatus.getPath());
+					        log.info("Job2 INPUT PATH:"+fileStatus.getPath());
+					    }  
+					}  
+				}
+				cal.add(Calendar.DATE, -1);  
+			}
+			Path paclPath = new Path(akbPaclOutput+"/");
+			log.info("Job2 INPUT PATH:"+akbPaclOutput+"/");
+			list.add(paclPath);
+			
+			paths = new Path[list.size()];  
+			list.toArray(paths);  
+			FileInputFormat.setInputPaths(job2, paths);
+			//hdfs存在則刪除
+			deleteExistedDir(fs, new Path(akbPaclFinishOutput), true);
+			FileOutputFormat.setOutputPath(job2, new Path(akbPaclFinishOutput));
+			if (job2.waitForCompletion(true)) {
+				log.info("Job2 is OK");
+				
+			} else {
+				log.info("Job2 is Failed");
+			}
 		 } catch (Exception e) {
 			 log.error("drive error>>>>>> "+ e);
 	     }
