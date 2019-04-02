@@ -95,7 +95,6 @@ public class PaclLogConverCountDriver {
 			}else{
 				jobConf.set("hbaseTableName", "pacl_retargeting_stg");
 			}
-			
 			// hdfs
 			Configuration conf = new Configuration();
 			conf.set("mapreduce.map.output.compress.codec", codec);
@@ -106,11 +105,10 @@ public class PaclLogConverCountDriver {
 			conf.set("mapred.reduce.tasks.speculative.execution","true");
 			conf.set("mapred.child.java.opts", "-Xmx8192M");
 			conf.set("mapreduce.jobtracker.address", "hpd11.mypchome.com.tw:9001");
-			conf.set("mapreduce.map.memory.mb", "2048");
-	        conf.set("mapreduce.map.java.opts", "-Xmx1640m");
-	        conf.set("mapreduce.reduce.memory.mb", "4096");
-	        conf.set("mapreduce.reduce.java.opts", "-Xmx3280m");
-			
+			conf.set("mapreduce.map.memory.mb", "8192");
+	        conf.set("mapreduce.map.java.opts", "-Xmx8192m");
+	        conf.set("mapreduce.reduce.memory.mb", "8192");
+	        conf.set("mapreduce.reduce.java.opts", "-Xmx9192m");
 			
 			
 			
