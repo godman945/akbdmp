@@ -105,6 +105,14 @@ public class PaclLogConverCountDriver {
 			conf.set("mapred.map.tasks.speculative.execution","true");
 			conf.set("mapred.reduce.tasks.speculative.execution","true");
 			conf.set("mapred.child.java.opts", "-Xmx8192M");
+			conf.set("mapreduce.map.memory.mb", "2048");
+	        conf.set("mapreduce.map.java.opts", "-Xmx1640m");
+	        conf.set("mapreduce.reduce.memory.mb", "4096");
+	        conf.set("mapreduce.reduce.java.opts", "-Xmx3280m");
+			
+			
+			
+			
 //			conf.set("hadoop.job.ugi", jobUgi);
 //			conf.set("fs.defaultFS", hdfsPath);
 //			//hadoop叢集位置
