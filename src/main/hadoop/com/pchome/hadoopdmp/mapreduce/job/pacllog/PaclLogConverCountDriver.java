@@ -104,7 +104,7 @@ public class PaclLogConverCountDriver {
 			conf.set("mapreduce.task.timeout", mapredTimeout);
 			conf.set("mapred.map.tasks.speculative.execution","true");
 			conf.set("mapred.reduce.tasks.speculative.execution","true");
-			conf.set("mapred.child.java.opts", "-Xmx4048M");
+			conf.set("mapred.child.java.opts", "-Xmx8192M");
 //			conf.set("hadoop.job.ugi", jobUgi);
 //			conf.set("fs.defaultFS", hdfsPath);
 //			//hadoop叢集位置
@@ -198,13 +198,7 @@ public class PaclLogConverCountDriver {
 				DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fs);
 			}
 			String[] filePaths = {
-					hdfsPath + "/home/webuser/dmp/crawlBreadCrumb/data/pfp_ad_category_new.csv",
-					hdfsPath + "/home/webuser/dmp/readingdata/ClsfyGndAgeCrspTable.txt",
 					hdfsPath + "/home/webuser/dmp/alex/log4j.xml",
-					hdfsPath + "/home/webuser/dmp/jobfile/DMP_24h_category.csv",
-					hdfsPath + "/home/webuser/dmp/jobfile/DMP_Ruten_category.csv",
-					hdfsPath + "/home/webuser/dmp/jobfile/GeoLite2-City.mmdb",
-					hdfsPath + "/home/webuser/dmp/jobfile/ThirdAdClassTable.txt"
 			};
 			for (String filePath : filePaths) {
 				DistributedCache.addCacheFile(new URI(filePath), job.getConfiguration());
