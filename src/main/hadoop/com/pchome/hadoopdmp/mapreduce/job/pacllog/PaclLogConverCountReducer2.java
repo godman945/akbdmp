@@ -143,8 +143,8 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			}
 			
 			if(flagKdcl && flagPacl){
-				log.info("key:"+key+" flagKdcl:"+flagKdcl+" flagPacl:"+flagPacl);
-				log.info(">>>>>>>>>paclJsonInfoList:"+paclJsonInfoList);
+//				log.info("key:"+key+" flagKdcl:"+flagKdcl+" flagPacl:"+flagPacl);
+//				log.info(">>>>>>>>>paclJsonInfoList:"+paclJsonInfoList);
 				for (JSONObject paclJson : paclJsonInfoList) {
 					this.paclJsonInfo = paclJson;
 					comparisonDataList.clear();
@@ -231,7 +231,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			rangrDate = clickRangeDate;
 		}else if(type.equals("pv")){
 			rangrDate = impRangeDate;
-			log.info(">>>>>>>>>data pv list:"+data);
+//			log.info(">>>>>>>>>data pv list:"+data);
 		}
 		iterator = data.iterator();
 		while (iterator.hasNext()) {
@@ -371,8 +371,10 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			int count = 0;
 			int totalSize = saveDBMap.size();
 			log.info("cleanup saveDBMap size:"+totalSize);
-//			log.info("saveDBMap:"+saveDBMap);
+			log.info("saveDBMap:"+saveDBMap);
 			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement(insertSqlStr.toString());
+			
+			
 			for (Entry<String ,JSONObject> data : saveDBMap.entrySet()) {
 				//寫入mysql
 				count = count + 1;
