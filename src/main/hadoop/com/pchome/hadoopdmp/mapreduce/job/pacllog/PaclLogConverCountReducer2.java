@@ -270,7 +270,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 		
 	}
 	
-	private List<JSONObject> sortKdclDataList(List<JSONObject> data){
+	private static List<JSONObject> sortKdclDataList(List<JSONObject> data){
 		Collections.sort(comparisonDataList, new Comparator<JSONObject>() {
 			public int compare(JSONObject o1, JSONObject o2) {
 				try {
@@ -374,7 +374,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			log.info("saveDBMap:"+saveDBMap);
 			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement(insertSqlStr.toString());
 			
-			
+			log.info("preparedStmt:"+preparedStmt);
 			for (Entry<String ,JSONObject> data : saveDBMap.entrySet()) {
 				//寫入mysql
 				count = count + 1;
@@ -440,7 +440,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 					preparedStmt.close();
 				}
 			}
-			
+			log.info(">>>>>>>>mysql insert finish");
 			mysqlUtil.closeConnection();
 		} catch (Throwable e) {
 			log.error("reduce cleanup error>>>>>> " + e);
