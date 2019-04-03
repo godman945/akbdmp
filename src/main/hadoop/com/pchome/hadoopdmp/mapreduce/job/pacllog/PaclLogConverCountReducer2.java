@@ -200,6 +200,17 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 					processSaveDBInfo(comparisonDataList,"pv",key);
 				}
 			}
+			
+			dataCkList.clear();
+			dataPvList.clear();
+			paclJsonInfo.clear();
+			paclJsonInfoList.clear();
+			comparisonDataList.clear();
+			iteratorJson = null;
+			iterator = null;
+			differenceDay = null;
+			flagKdcl = false;
+			flagPacl = false;
 		} catch (Throwable e) {
 			log.error("reduce error>>>>>> " + e);
 		}
@@ -284,10 +295,11 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 		return data;
 	}
 	
+	private static String convertBelong = null;
 	private void processSaveDBInfo(List<JSONObject> data,String type,String uuid) throws Exception{
 		if(data.size() > 0){
 			//1:最終 2:最初
-			String convertBelong = ((JSONObject)data.get(0)).getAsString("convertBelong");
+			convertBelong = ((JSONObject)data.get(0)).getAsString("convertBelong");
 			if(convertBelong.equals("1")){
 				JSONObject saveJson = new JSONObject();
 				saveJson = data.get(0);
@@ -445,5 +457,22 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 		} catch (Throwable e) {
 			log.error("reduce cleanup error>>>>>> " + e);
 		}
+	}
+	
+	public static void main(String args[]){
+		List a = new ArrayList<>();
+		a.add("A");
+		a.add("v");
+		
+		Map map = new HashMap<>();
+		List f = new ArrayList<>();
+		f.addAll(a);
+		map.put("alex", f);
+		
+		a.clear();
+		
+		
+		System.out.println(map);
+		
 	}
 }
