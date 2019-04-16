@@ -114,7 +114,9 @@ public class DmpLogDriver {
 			conf.set("mapred.reduce.tasks.speculative.execution","true");
 			
 			//JVM
-			conf.set("mapred.child.java.opts", "-Xmx4048M");
+			jobConf.set("mapred.child.java.opts", "-Xmx8192M");
+			jobConf.set("mapreduce.map.memory.mb", "8192");
+			jobConf.set("mapreduce.reduce.memory.mb", "8192");
 //			conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
 			
 			
