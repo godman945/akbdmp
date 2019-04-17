@@ -82,7 +82,10 @@ public class MysqlUtil {
 			String password =  "K1y0nLine";
 			MysqlUtil mysqlUtil = MysqlUtil.getInstance();
 			mysqlUtil.setConnection("stg");
+			
+			
 			String jobDate ="2018-12-19";
+			
 			StringBuffer trackingSql = new StringBuffer();
 			trackingSql.append("SELECT ec.catalog_prod_seq ");
 			trackingSql.append(" FROM   (SELECT ca.catalog_seq ");

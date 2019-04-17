@@ -1,6 +1,10 @@
 package com.pchome.hadoopdmp.mapreduce.job.pacllog;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
@@ -39,6 +43,8 @@ public class PaclLogConverCountDriver {
 
 	private static Log log = LogFactory.getLog("PaclLogConverCountDriver");
 
+	private static String paclSymbol = String.valueOf(new char[] { 9, 31 });
+	
 	@Value("${hpd11.fs.default.name}")
 	private String hdfsPath;
 
@@ -88,7 +94,7 @@ public class PaclLogConverCountDriver {
 			jobConf.set("mapred.child.java.opts", "-Xmx8192M");
 			jobConf.set("mapreduce.map.memory.mb", "8192");
 			jobConf.set("mapreduce.reduce.memory.mb", "8192");
-//		    jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
+			jobConf.set("mapreduce.job.running.map.limit", "100");
 			jobConf.set("spring.profiles.active", env);
 			if(env.equals("prd")){
 				jobConf.set("hbaseTableName", "pacl_retargeting_prd");
@@ -109,23 +115,6 @@ public class PaclLogConverCountDriver {
 	        conf.set("mapreduce.map.java.opts", "-Xmx8192m");
 	        conf.set("mapreduce.reduce.memory.mb", "8192");
 	        conf.set("mapreduce.reduce.java.opts", "-Xmx8192m");
-			
-			
-			
-//			conf.set("hadoop.job.ugi", jobUgi);
-//			conf.set("fs.defaultFS", hdfsPath);
-//			//hadoop叢集位置
-//			conf.set("mapreduce.jobtracker.address", tracker);
-//			//com.hadoop.compression.lzo.LzoCodec
-//			conf.set("mapreduce.map.output.compress.codec", codec);
-//			conf.set("mapreduce.map.speculative", mapredExecution);
-//			conf.set("mapreduce.reduce.speculative", mapredReduceExecution);
-//			conf.set("mapreduce.task.timeout", mapredTimeout);
-//			conf.set("mapred.map.tasks.speculative.execution","true");
-//			conf.set("mapred.reduce.tasks.speculative.execution","true");
-//			conf.set("dfs.block.size","900457280000");
-//			//JVM
-//			conf.set("mapred.child.java.opts", "-Xmx4048M");
 			Calendar cal = Calendar.getInstance();  
 			if(StringUtils.isNotBlank(jobDate)){
 				cal.setTime(sdf.parse(jobDate));
@@ -242,6 +231,36 @@ public class PaclLogConverCountDriver {
 				effectPaclPfpUser.append(pfpCustomerInfoId).append(",");
 			}
 			mysqlUtil.closeConnection();
+			
+			
+			//pacl過濾kdcl用
+		     Path paclHdfsPath = new Path("/home/webuser/akb_prod_convert_prd/pacl_output/part-r-00000.lzo");
+		     LzopCodec lzo = null;
+		     InputStream is = null;
+		     InputStreamReader isr = null;
+		     BufferedReader reader = null;
+		     List<String> result = null;
+		     String line = null;
+		     System.setProperty("java.library.path", "/usr/local/hadoop/lib/native/Linux-amd64-64/lib");
+		     lzo = new LzopCodec();
+		     lzo.setConf(conf);
+		     is = lzo.createInputStream(fs.open(paclHdfsPath));
+		     isr = new InputStreamReader(is);
+		     reader = new BufferedReader(isr);
+		     result = new ArrayList<String>();
+		     StringBuffer paclUuid = new StringBuffer();
+		     int paclUuidCount = 0;
+		     while((line = reader.readLine()) != null) {
+		    	 String arrayData[] = line.split(paclSymbol,-1);
+		    	 String uuid = arrayData[0].trim();
+		    	 paclUuid.append(uuid).append(",");
+		    	 log.info(">>>>> pacl uuid:"+uuid);
+		    	 paclUuidCount = paclUuidCount + 1;
+		     }
+		     log.info("paclUuidCount:"+paclUuidCount);
+		     jobConf.set("paclUuid", paclUuid.toString());
+			
+			
 			jobConf.set("effectPaclPfpUser", effectPaclPfpUser.toString());
 			Job job2 = new Job(jobConf, "pacl_conv2_"+ env + "_" + sdf2.format(date));
 			for (String jarPath : jarPaths) {
@@ -265,7 +284,7 @@ public class PaclLogConverCountDriver {
 //			Path inPath = new Path("/home/webuser/akbstg/storedata/alllog/"+sdf.format(cal.getTime()));
 			String logPath = "";
 			if(env.equals("prd")){
-				logPath = "/home/webuser/akb/storedata/alllog/";
+				logPath = "/home/webuser/analyzer/storedata/alllog/";
 			}else{
 				logPath = "/home/webuser/akbstg/storedata/alllog/";
 			}
@@ -273,12 +292,13 @@ public class PaclLogConverCountDriver {
 			for (int j = 0; j < convertDay; j++) {
 				if(j < convertDay){
 					inPath = new Path(logPath+sdf.format(cal.getTime()));
+					log.info(">>>>>>>>>>>>>>"+inPath.getName());
 					status = fs.listStatus(inPath);  
 					for (FileStatus fileStatus : status) {  
-					    if (fs.getFileStatus(fileStatus.getPath()).isDir()) {  
-					        list.add(fileStatus.getPath());
-					        log.info("Job2 INPUT PATH:"+fileStatus.getPath());
-					    }  
+						if(fileStatus.getPath().toString().substring(fileStatus.getPath().toString().length() - 3, fileStatus.getPath().toString().length()).equals("lzo")){
+							list.add(fileStatus.getPath());
+							log.info("Job2 INPUT PATH:"+fileStatus.getPath());
+						}
 					}  
 				}
 				cal.add(Calendar.DATE, -1);  

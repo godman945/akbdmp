@@ -21,6 +21,7 @@ import net.minidev.json.JSONObject;
 public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, Text> {
 	Log log = LogFactory.getLog("PaclLogConverCountMapper");
 	
+	
 	private Text keyOut = new Text();
 
 	private static String paclSymbol = String.valueOf(new char[] { 9, 31 });
@@ -37,13 +38,18 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 	
 	public static StringBuffer effectPaclPfpUser = new StringBuffer();
 	
+	public static String paclUuid = null;
+	
+	
 	@Override
 	public void setup(Context context) {
 		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
 		try {
 			effectPaclPfpUser.append(context.getConfiguration().get("effectPaclPfpUser"));
-			log.info(">>>>>>>>>effectPaclPfpUser:"+effectPaclPfpUser.toString());
-		
+//			log.info(">>>>>>>>>effectPaclPfpUser:"+effectPaclPfpUser.toString());
+			paclUuid = context.getConfiguration().get("paclUuid");
+//			log.info(">>>>>>>>>paclUuid:"+paclUuid);
+			
 		} catch (Exception e) {
 			log.error("Mapper setup error>>>>>> " +e);
 		}
@@ -64,17 +70,19 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 //				log.info("arrayData size : " + arrayData.length);
 //				log.info("paclType:"+paclType);
 				if(paclType.equals("tracking")){
-					String paclUuid = StringUtils.isNotBlank(arrayData[3]) ? arrayData[3] : arrayData[2];
+//					String paclUuid = StringUtils.isNotBlank(arrayData[3]) ? arrayData[3] : arrayData[2];
+					String paclUuid = arrayData[2];
 					String trackingId = arrayData[12];
 					String prodId = arrayData[13];
 					String date = arrayData[0];
-					
+				
 					keyOut.set(trackingId+"<PCHOME>"+paclUuid+"<PCHOME>"+paclType);
 					context.write(keyOut, new Text(prodId+"<PCHOME>"+date));
 				}else if(paclType.equals("page_view")){
 					
 				}else if(paclType.equals("convert")){
-					String paclUuid = StringUtils.isNotBlank(arrayData[3]) ? arrayData[3] : arrayData[2];
+//					String paclUuid = StringUtils.isNotBlank(arrayData[3]) ? arrayData[3] : arrayData[2];
+					String paclUuid = arrayData[2];
 					String convId = arrayData[12];
 					String rouleId = arrayData[13];
 					String userDefineConvertPrice = arrayData[14];
@@ -88,7 +96,12 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 				}
 			}else if(fileName.contains("kdcl") || fileName.contains("kwstg")){
 					String pfpCustomerInfoId = arrayData[6];
-					if(effectPaclPfpUser.toString().contains(pfpCustomerInfoId)){
+					String kdclUUid = arrayData[2];
+					if(effectPaclPfpUser.toString().contains(pfpCustomerInfoId) && paclUuid.contains(kdclUUid)){
+						if(kdclUUid.equals("329a4e74d827230e8a67147d5abfa398")){
+							log.info("1>>>>>>>>KDCL pfpCustomerInfoId:"+pfpCustomerInfoId);
+							log.info("2>>>>>>>>KDCL UUID:"+kdclUUid);
+						}
 //						log.info(">>>>>>kdcl log");
 //						log.info("raw_data : " + value);
 						String date = arrayData[0];
@@ -178,4 +191,6 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 			log.error("Mapper error>>>>>> " +e); 
 		}
 	}
+	
+	
 }

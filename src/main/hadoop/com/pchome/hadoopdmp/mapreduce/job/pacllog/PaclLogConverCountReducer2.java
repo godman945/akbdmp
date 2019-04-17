@@ -55,7 +55,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	private static JSONObject iteratorJson = null;
 	private static String rangrDate = null;
 	private static String jobDate = null;
-	
+	private static int logMergeCount = 0;
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
 		try {
@@ -143,6 +143,11 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			}
 			
 			if(flagKdcl && flagPacl){
+				logMergeCount = logMergeCount + 1;
+				if(key.equals("329a4e74d827230e8a67147d5abfa398")) {
+					log.info(">>>>>>>>dataCkList:"+dataCkList);
+					log.info(">>>>>>>>dataPvList:"+dataPvList);
+				}
 //				log.info("key:"+key+" flagKdcl:"+flagKdcl+" flagPacl:"+flagPacl);
 //				log.info(">>>>>>>>>paclJsonInfoList:"+paclJsonInfoList);
 				for (JSONObject paclJson : paclJsonInfoList) {
@@ -200,17 +205,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 					processSaveDBInfo(comparisonDataList,"pv",key);
 				}
 			}
-			
-			dataCkList.clear();
-			dataPvList.clear();
-			paclJsonInfo.clear();
-			paclJsonInfoList.clear();
-			comparisonDataList.clear();
-			iteratorJson = null;
-			iterator = null;
-			differenceDay = null;
-			flagKdcl = false;
-			flagPacl = false;
 		} catch (Throwable e) {
 			log.error("reduce error>>>>>> " + e);
 		}
@@ -240,6 +234,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 		rangrDate = null;
 		if(type.equals("ck")){
 			rangrDate = clickRangeDate;
+//			log.info(">>>>>>>>>data ck list:"+data);
 		}else if(type.equals("pv")){
 			rangrDate = impRangeDate;
 //			log.info(">>>>>>>>>data pv list:"+data);
@@ -281,7 +276,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 		
 	}
 	
-	private static List<JSONObject> sortKdclDataList(List<JSONObject> data){
+	private List<JSONObject> sortKdclDataList(List<JSONObject> data){
 		Collections.sort(comparisonDataList, new Comparator<JSONObject>() {
 			public int compare(JSONObject o1, JSONObject o2) {
 				try {
@@ -295,11 +290,10 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 		return data;
 	}
 	
-	private static String convertBelong = null;
 	private void processSaveDBInfo(List<JSONObject> data,String type,String uuid) throws Exception{
 		if(data.size() > 0){
 			//1:最終 2:最初
-			convertBelong = ((JSONObject)data.get(0)).getAsString("convertBelong");
+			String convertBelong = ((JSONObject)data.get(0)).getAsString("convertBelong");
 			if(convertBelong.equals("1")){
 				JSONObject saveJson = new JSONObject();
 				saveJson = data.get(0);
@@ -380,13 +374,15 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	
 	public void cleanup(Context context) {
 		try {
+			log.info("cleanup logMergeCount:"+logMergeCount);
+			
+			
 			int count = 0;
 			int totalSize = saveDBMap.size();
 			log.info("cleanup saveDBMap size:"+totalSize);
 			log.info("saveDBMap:"+saveDBMap);
 			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement(insertSqlStr.toString());
-			
-			log.info("preparedStmt:"+preparedStmt);
+			Date date = new Date();
 			for (Entry<String ,JSONObject> data : saveDBMap.entrySet()) {
 				//寫入mysql
 				count = count + 1;
@@ -459,20 +455,4 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 		}
 	}
 	
-	public static void main(String args[]){
-		List a = new ArrayList<>();
-		a.add("A");
-		a.add("v");
-		
-		Map map = new HashMap<>();
-		List f = new ArrayList<>();
-		f.addAll(a);
-		map.put("alex", f);
-		
-		a.clear();
-		
-		
-		System.out.println(map);
-		
-	}
 }

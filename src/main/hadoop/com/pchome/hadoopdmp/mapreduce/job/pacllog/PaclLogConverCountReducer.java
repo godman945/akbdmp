@@ -179,7 +179,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 		try {
 			this.context = context;
 			uuid = null;
-			
 			String key = mapperKey.toString();
 			uuid = key.split("<PCHOME>",-1)[1];
 			paclType = key.split("<PCHOME>",-1)[2];
@@ -276,48 +275,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 							saveHbaseTrackingMap.put(uuid, saveHbaseTrackingDetail);
 						}
 					}
-					/*判斷商品是否存在結束*/
-					
-//					if(StringUtils.isBlank(prodId) && this.notProdAdFlag){
-//						if(saveHbaseTrackingMap.containsKey(uuid)){
-//							Map<String,String> saveHbaseTrackingDetail = saveHbaseTrackingMap.get(uuid);
-//							saveHbaseTrackingDetail.put(this.trackingSeq+"_ALL", trackingDate);
-//						}else{
-//							Map<String,String> saveHbaseTrackingDetail = new HashMap<String,String>();
-//							saveHbaseTrackingDetail.put(this.trackingSeq+"_ALL", trackingDate);
-//							saveHbaseTrackingMap.put(uuid, saveHbaseTrackingDetail);
-//						}
-//					}else if(StringUtils.isNotBlank(prodId) && this.prodAdFlag){ 	//1.商品廣告資料 2.判斷商品存在
-//						if(!userProdIdDBMap.containsKey(this.pfpCustomerInfoId)){
-//							ResultSet resultSet = mysqlUtil.query(findEcProdrSql.toString().replace("REPLACE_CUSTOMER_ID", this.pfpCustomerInfoId));
-//							Set<String> prodSet = new HashSet<String>();
-//							while(resultSet.next()){
-//								String dbProdSeq = resultSet.getString("catalog_prod_seq");
-//								prodSet.add(dbProdSeq);
-//							}
-//							userProdIdDBMap.put(this.pfpCustomerInfoId, prodSet);
-//						}
-//						/*判斷商品是否存在開始*/
-//						Set<String> prodSet = userProdIdDBMap.get(this.pfpCustomerInfoId);
-//						for (String dbProdId : prodSet) {
-//							if(prodId.equals(dbProdId)){
-//								prodFlag = true;
-//								break;
-//							}
-//						}
-//						
-//						if(prodFlag){
-//							if(saveHbaseTrackingMap.containsKey(uuid)){
-//								Map<String,String> saveHbaseTrackingDetail = saveHbaseTrackingMap.get(uuid);
-//								saveHbaseTrackingDetail.put(this.trackingSeq+"_"+prodId, trackingDate);
-//							}else{
-//								Map<String,String> saveHbaseTrackingDetail = new HashMap<String,String>();
-//								saveHbaseTrackingDetail.put(this.trackingSeq+"_"+prodId, trackingDate);
-//								saveHbaseTrackingMap.put(uuid, saveHbaseTrackingDetail);
-//							}
-//						}
-//						/*判斷商品是否存在結束*/
-//					}
 				}
 			}
 			
@@ -486,8 +443,6 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 			 JSONObject hbaseValueJson = (JSONObject) jsonParser.parse(Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
 			 //刪除超過28天資料
 			 for (Entry<String, Object> entry : hbaseValueJson.entrySet()) {
-				 System.out.println(entry.getKey());
-				 System.out.println(entry.getValue());
 				 double days = (double) ((now.getTime() - sdfFormat.parse(entry.getValue().toString()).getTime()) / (1000*3600*24));
 				 if(days > 28){
 					 hbaseValueJson.remove(entry.getKey());
@@ -524,6 +479,12 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 	 public void cleanup(Context context) {
 		try {
 			log.info("saveHbaseTrackingMap:"+saveHbaseTrackingMap);
+			log.info(">>>>>>>>>jobDate:"+jobDate);
+			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement( "DELETE FROM `pfp_code_convert_trans` where  1=1 and convert_date = '"+jobDate+"'");
+			preparedStmt.execute();
+			mysqlUtil.getConnect().commit();
+			mysqlUtil.closeConnection();
+			
 			JSONObject data = new JSONObject();
 			for (Entry<String, Map<String, String>> entry : saveHbaseTrackingMap.entrySet()) {
 				String rowKey = entry.getKey();
@@ -534,10 +495,7 @@ public class PaclLogConverCountReducer extends Reducer<Text, Text, Text, Text> {
 					putData(hbaseTableName,rowKey,"type","retargeting",data);
 				}
 			}
-			PreparedStatement preparedStmt = mysqlUtil.getConnect().prepareStatement( "DELETE FROM `pfp_code_convert_trans` where  1=1 and convert_date = '"+jobDate+"'");
-			preparedStmt.execute();
-			mysqlUtil.getConnect().commit();
-			mysqlUtil.closeConnection();
+			
 		} catch (Throwable e) {
 			convertConditionSet.clear();
 			convertWriteInfo.setLength(0);
