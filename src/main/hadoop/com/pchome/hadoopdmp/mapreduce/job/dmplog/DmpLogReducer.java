@@ -149,22 +149,22 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				reducerMapKey.append(dmpMemid);
 				JSONObject dmpJson = kafkaDmpMap.get(reducerMapKey.toString());
 				if (dmpJson == null) {
-					log.info(">>>>>>>>>1");
+//					log.info(">>>>>>>>>1");
 					processKafakDmpMapKeyNotExist(recordDate, jsonObjOrg, reducerMapKey.toString());
 				} else {
-					log.info(">>>>>>>>>2");
+//					log.info(">>>>>>>>>2");
 					processKafakDmpMapKeyIsExist(recordDate, jsonObjOrg, reducerMapKey.toString(), dmpJson);
 				}
 
 				JSONObject dmpUuidJson = kafkaDmpMap.get(dmpUuid);
 				if (dmpUuidJson == null) {
-					log.info(">>>>>>>>>3");
+//					log.info(">>>>>>>>>3");
 					dmpUuidJson = (JSONObject) kafkaDmpMap.get(dmpMemid).clone();
 					JSONObject keyObject = (JSONObject) dmpUuidJson.get("key");
 					keyObject.put("uuid", dmpUuid);
 					keyObject.put("memid", "null");
 				} else {
-					log.info(">>>>>>>>>4");
+//					log.info(">>>>>>>>>4");
 					dmpUuidJson = (JSONObject) kafkaDmpMap.get(dmpMemid).clone();
 					JSONObject keyObject = (JSONObject) dmpUuidJson.get("key");
 					keyObject.put("uuid", dmpUuid);
@@ -174,20 +174,20 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			} else {
 				StringBuffer reducerMapKey = new StringBuffer();
 				if (((StringUtils.isNotBlank(dmpMemid) && !dmpMemid.equals("null")))) {
-					log.info(">>>>>>>>>7");
+//					log.info(">>>>>>>>>7");
 					reducerMapKey.append(dmpMemid);
 				}
 				if (((StringUtils.isNotBlank(dmpUuid) && !dmpUuid.equals("null")))) {
-					log.info(">>>>>>>>>8");
+//					log.info(">>>>>>>>>8");
 					reducerMapKey.append(dmpUuid);
 				}
 
 				JSONObject dmpJson = kafkaDmpMap.get(reducerMapKey.toString());
 				if (dmpJson == null) {
-					log.info(">>>>>>>>>9");
+//					log.info(">>>>>>>>>9");
 					processKafakDmpMapKeyNotExist(recordDate, jsonObjOrg, reducerMapKey.toString());
 				} else {
-					log.info(">>>>>>>>>10");
+//					log.info(">>>>>>>>>10");
 					processKafakDmpMapKeyIsExist(recordDate, jsonObjOrg, reducerMapKey.toString(), dmpJson);
 				}
 			}
