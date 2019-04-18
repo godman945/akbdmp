@@ -81,43 +81,50 @@ public class DmpLogDriver {
 	public void drive(String env,String timeType) throws Exception {
 		try {
 			Calendar calendar = Calendar.getInstance();
-			
 			JobConf jobConf = new JobConf();
-			
-//			jobConf.setNumMapTasks(8);
-			
 			jobConf.set("mapred.max.split.size","3045728"); //3045728 49 //3045728000 7
 			jobConf.set("mapred.min.split.size","1015544"); //1015544 49 //1015544000 7
-			
 			//ask推测执行
 			jobConf.set("mapred.map.tasks.speculative.execution","true");
 			jobConf.set("mapred.reduce.tasks.speculative.execution","true");
-//			//JVM
-			jobConf.set("mapred.child.java.opts", "-Xmx4048M");
-//		    jobConf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
-			
-			jobConf.set("spring.profiles.active", env);
-			
-			// hdfs
-			Configuration conf = new Configuration();
-			conf.set("hadoop.job.ugi", jobUgi);
-			conf.set("fs.defaultFS", hdfsPath);
-			//hadoop叢集位置
-			conf.set("mapreduce.jobtracker.address", tracker);
-			//com.hadoop.compression.lzo.LzoCodec
-			conf.set("mapreduce.map.output.compress.codec", codec);
-			conf.set("mapreduce.map.speculative", mapredExecution);
-			conf.set("mapreduce.reduce.speculative", mapredReduceExecution);
-			conf.set("mapreduce.task.timeout", mapredTimeout);
-			
-			conf.set("mapred.map.tasks.speculative.execution","true");
-			conf.set("mapred.reduce.tasks.speculative.execution","true");
-			
+//			JVM
 			//JVM
 			jobConf.set("mapred.child.java.opts", "-Xmx8192M");
 			jobConf.set("mapreduce.map.memory.mb", "8192");
 			jobConf.set("mapreduce.reduce.memory.mb", "8192");
-//			conf.set("yarn.app.mapreduce.am.command-opts", "-Xmx2g");
+			jobConf.set("mapreduce.job.running.map.limit", "100");
+			jobConf.set("spring.profiles.active", env);
+			
+			
+			// hdfs
+			Configuration conf = new Configuration();
+			conf.set("mapreduce.map.output.compress.codec", codec);
+			conf.set("mapreduce.map.speculative", mapredExecution);
+			conf.set("mapreduce.reduce.speculative", mapredReduceExecution);
+			conf.set("mapreduce.task.timeout", mapredTimeout);
+			conf.set("mapred.map.tasks.speculative.execution","true");
+			conf.set("mapred.reduce.tasks.speculative.execution","true");
+			conf.set("mapred.child.java.opts", "-Xmx8192M");
+			conf.set("mapreduce.jobtracker.address", "hpd11.mypchome.com.tw:9001");
+			conf.set("mapreduce.map.memory.mb", "8192");
+	        conf.set("mapreduce.map.java.opts", "-Xmx8192m");
+	        conf.set("mapreduce.reduce.memory.mb", "8192");
+	        conf.set("mapreduce.reduce.java.opts", "-Xmx8192m");
+			
+//			Configuration conf = new Configuration();
+//			conf.set("hadoop.job.ugi", jobUgi);
+//			conf.set("fs.defaultFS", hdfsPath);
+//			//hadoop叢集位置
+//			conf.set("mapreduce.jobtracker.address", tracker);
+//			//com.hadoop.compression.lzo.LzoCodec
+//			conf.set("mapreduce.map.output.compress.codec", codec);
+//			conf.set("mapreduce.map.speculative", mapredExecution);
+//			conf.set("mapreduce.reduce.speculative", mapredReduceExecution);
+//			conf.set("mapreduce.task.timeout", mapredTimeout);
+//			conf.set("mapred.map.tasks.speculative.execution","true");
+//			conf.set("mapred.reduce.tasks.speculative.execution","true");
+			
+			
 			
 			
 //			//測試前2小時-上線拿掉
