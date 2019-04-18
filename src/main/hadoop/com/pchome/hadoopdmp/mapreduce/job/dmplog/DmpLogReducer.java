@@ -194,7 +194,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					processKafakDmpMapKeyIsExist(recordDate, jsonObjOrg, reducerMapKey.toString(), dmpJson);
 				}
 			}
-
+ 
 			// if(dmpJson == null){
 			// processKafakDmpMapKeyNotExist();
 			//
