@@ -328,6 +328,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		kafkaDmpMap.put(reducerMapKey.toString(), dmpJson);
 	}
 
+	
+	private static String partitionHashcode = "1";
+	private static int partition = 0;
 	public void cleanup(Context context) {
 		try {
 			String kafkaTopic;
@@ -338,13 +341,12 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				kafkaTopic = "dmp_log_stg";
 			}
 			Iterator iterator = kafkaDmpMap.entrySet().iterator();
-			int partition = 0;
-			String partitionHashcode = "1";
 			while (iterator.hasNext()) {
 				count = count + 1;
 				Map.Entry mapEntry = (Map.Entry) iterator.next();
 				if(count == 1){
 					log.info("mapEntry:"+mapEntry);
+					log.info("mapEntry size:"+kafkaDmpMap.size());
 				}
 				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>(kafkaTopic, partitionHashcode, mapEntry.getValue().toString()));
 				while (!f.isDone()) {
