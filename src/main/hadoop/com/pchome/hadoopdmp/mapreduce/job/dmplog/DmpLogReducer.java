@@ -148,7 +148,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				StringBuffer reducerMapKey = new StringBuffer();
 				reducerMapKey.append(dmpMemid);
 				
-				log.info("kafkaDmpMap:"+kafkaDmpMap.get(reducerMapKey.toString()));
+//				log.info("kafkaDmpMap:"+kafkaDmpMap.get(reducerMapKey.toString()));
 				
 				JSONObject dmpJson = kafkaDmpMap.get(reducerMapKey.toString());
 				if (dmpJson == null) {
@@ -263,7 +263,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	private void processKafakDmpMapKeyIsExist(String recordDate, JSONObject jsonObjOrg, String reducerMapKey,
 			JSONObject dmpJson) throws Exception {
 		
-		log.info("dmpJson:"+dmpJson.get("data"));
+//		log.info("dmpJson:"+dmpJson.get("data"));
 		
 		// log.info(">>>>>>>>>10-1");
 		JSONObject hadoopDataOrg = ((JSONObject) jsonObjOrg.get("data"));
