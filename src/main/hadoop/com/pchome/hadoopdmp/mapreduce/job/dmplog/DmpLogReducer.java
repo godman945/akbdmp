@@ -331,6 +331,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	
 	private static String partitionHashcode = "1";
 	private static int partition = 0;
+	private static int total = 0;
 	public void cleanup(Context context) {
 		try {
 			String kafkaTopic;
@@ -350,7 +351,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				}
 				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>(kafkaTopic, partitionHashcode, mapEntry.getValue().toString()));
 				while (!f.isDone()) {
+					
 				}
+				log.info("process count:"+count);
 				if(partition == 2){
 					partition = 0;
 					partitionHashcode = "1";
@@ -370,8 +373,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			log.info(">>>>>>cleanup redisClassifyMap:" + redisClassifyMap);
 			for (Entry<String, Integer> redisMap : redisClassifyMap.entrySet()) {
 				String redisKey = redisMap.getKey();
-				int count = redisMap.getValue();
-				redisTemplate.opsForValue().increment(redisKey, count);
+				total = 0;
+				total = redisMap.getValue();
+				redisTemplate.opsForValue().increment(redisKey, total);
 				redisTemplate.expire(redisKey, 4, TimeUnit.DAYS);
 			}
 		} catch (Throwable e) {
