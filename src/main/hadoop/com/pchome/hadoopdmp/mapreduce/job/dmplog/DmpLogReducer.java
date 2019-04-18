@@ -147,6 +147,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				// 先處理memid
 				StringBuffer reducerMapKey = new StringBuffer();
 				reducerMapKey.append(dmpMemid);
+				
+				log.info("kafkaDmpMap:"+kafkaDmpMap.get(reducerMapKey.toString()));
+				
 				JSONObject dmpJson = kafkaDmpMap.get(reducerMapKey.toString());
 				if (dmpJson == null) {
 //					log.info(">>>>>>>>>1");
@@ -259,9 +262,13 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	// 處理mdp map存在時
 	private void processKafakDmpMapKeyIsExist(String recordDate, JSONObject jsonObjOrg, String reducerMapKey,
 			JSONObject dmpJson) throws Exception {
+		
+		log.info("dmpJson:"+dmpJson.get("data"));
+		
 		// log.info(">>>>>>>>>10-1");
 		JSONObject hadoopDataOrg = ((JSONObject) jsonObjOrg.get("data"));
 		JSONObject hadoopDataDmpMap = ((JSONObject) dmpJson.get("data"));
+		
 		for (EnumDataKeyInfo enumDataKeyInfo : EnumDataKeyInfo.values()) {
 			String source = ((JSONObject) hadoopDataOrg.get(enumDataKeyInfo.toString())).getAsString("source");
 			String value = ((JSONObject) hadoopDataOrg.get(enumDataKeyInfo.toString())).getAsString("value");
