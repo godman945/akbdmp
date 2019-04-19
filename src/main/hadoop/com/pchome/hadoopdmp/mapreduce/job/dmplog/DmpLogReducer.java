@@ -349,10 +349,11 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					log.info("mapEntry:"+mapEntry);
 					log.info("mapEntry size:"+kafkaDmpMap.size());
 				}
-				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>(kafkaTopic, partitionHashcode, mapEntry.getValue().toString()));
-				while (!f.isDone()) {
-					
-				}
+				producer.send(new ProducerRecord<String, String>(kafkaTopic, partitionHashcode, mapEntry.getValue().toString()));
+//				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>(kafkaTopic, partitionHashcode, mapEntry.getValue().toString()));
+//				while (!f.isDone()) {
+//					
+//				}
 				log.info("process count:"+count);
 				if(partition == 2){
 					partition = 0;
