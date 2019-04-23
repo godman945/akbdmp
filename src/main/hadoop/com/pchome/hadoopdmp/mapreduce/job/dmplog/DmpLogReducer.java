@@ -347,7 +347,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			while (iterator.hasNext()) {
 				count = count + 1;
 				Map.Entry mapEntry = (Map.Entry) iterator.next();
-				if(count <= 10){
+//				if(count <= 10){
 //					log.info("mapEntry:"+mapEntry);
 //					log.info("mapEntry size:"+kafkaDmpMap.size());
 					keyOut.set(((JSONObject)mapEntry.getValue()).getAsString("date_time"));
