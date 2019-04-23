@@ -348,10 +348,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				count = count + 1;
 				Map.Entry mapEntry = (Map.Entry) iterator.next();
 				if(count <= 10){
-					log.info("mapEntry:"+mapEntry);
-					log.info("mapEntry size:"+kafkaDmpMap.size());
-					
-					keyOut.set(record_date);
+//					log.info("mapEntry:"+mapEntry);
+//					log.info("mapEntry size:"+kafkaDmpMap.size());
+					keyOut.set(((JSONObject)mapEntry.getValue()).getAsString("date_time"));
 					wiriteToDruid.append(",");
 					wiriteToDruid.append(mapEntry.getKey().toString());
 					
@@ -366,10 +365,10 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 							  wiriteToDruid.append(",").append(ob.get(key));
 						}
 					}
-					log.info("--------");
+//					log.info("--------");
 					context.write(keyOut, new Text(wiriteToDruid.toString()));
 					wiriteToDruid.setLength(0);
-				}
+//				}
 				producer.send(new ProducerRecord<String, String>(kafkaTopic, partitionHashcode, mapEntry.getValue().toString()));
 				if(partition == 2){
 					partition = 0;
