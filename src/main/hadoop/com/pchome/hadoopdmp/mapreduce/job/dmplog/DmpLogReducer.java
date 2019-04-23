@@ -332,6 +332,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	private static String partitionHashcode = "1";
 	private static int partition = 0;
 	private static int total = 0;
+	private static StringBuffer wiriteToDruid = new StringBuffer();
 	public void cleanup(Context context) {
 		try {
 			String kafkaTopic;
@@ -345,16 +346,35 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			while (iterator.hasNext()) {
 				count = count + 1;
 				Map.Entry mapEntry = (Map.Entry) iterator.next();
-				if(count == 1){
+				if(count <= 10){
 					log.info("mapEntry:"+mapEntry);
 					log.info("mapEntry size:"+kafkaDmpMap.size());
+					keyOut.set(mapEntry.getKey().toString());
+					wiriteToDruid.append(",");
+					wiriteToDruid.append(((JSONObject)mapEntry.getValue()).get("ad_class"));
+					JSONArray arr =  (JSONArray) ((JSONObject)((JSONObject)mapEntry.getValue()).get("data")).get("classify");
+					for (Object object : arr) {
+						JSONObject ob = (JSONObject) object;
+						for(Iterator iterator2 = ob.keySet().iterator(); iterator2.hasNext();) {
+							  String key = (String) iterator2.next();
+							  log.info(key);
+							  log.info(ob.get(key));
+							  wiriteToDruid.append(",").append(ob.get(key));
+						}
+					}
+					log.info("--------");
+					context.write(keyOut, new Text(wiriteToDruid.toString()));
+					wiriteToDruid.setLength(0);
 				}
 				producer.send(new ProducerRecord<String, String>(kafkaTopic, partitionHashcode, mapEntry.getValue().toString()));
-//				Future<RecordMetadata> f = producer.send(new ProducerRecord<String, String>(kafkaTopic, partitionHashcode, mapEntry.getValue().toString()));
-//				while (!f.isDone()) {
-//					
-//				}
-				log.info("process count:"+count);
+
+				
+				
+				
+				
+				
+				
+				
 				if(partition == 2){
 					partition = 0;
 					partitionHashcode = "1";
@@ -368,6 +388,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					}
 				}
 			}
+			log.info("process count:"+count);
 			producer.close();
 			log.info(">>>>>>reduce count:" + count);
 			log.info(">>>>>>write clssify to Redis>>>>>");
