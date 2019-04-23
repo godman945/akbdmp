@@ -133,6 +133,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			String dmpMemid = (String) ((JSONObject) jsonObjOrg.get("key")).get("memid");
 			String dmpUuid = (String) ((JSONObject) jsonObjOrg.get("key")).get("uuid");
 			String recordDate = jsonObjOrg.getAsString("record_date");
+			record_date = recordDate;
 			// 建立map key
 			// StringBuffer reducerMapKey = new StringBuffer();
 			// reducerMapKey.append(dmpSource);
@@ -349,8 +350,11 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				if(count <= 10){
 					log.info("mapEntry:"+mapEntry);
 					log.info("mapEntry size:"+kafkaDmpMap.size());
-					keyOut.set(mapEntry.getKey().toString());
+					
+					keyOut.set(record_date);
 					wiriteToDruid.append(",");
+					wiriteToDruid.append(mapEntry.getKey().toString());
+					
 					wiriteToDruid.append(((JSONObject)mapEntry.getValue()).get("ad_class"));
 					JSONArray arr =  (JSONArray) ((JSONObject)((JSONObject)mapEntry.getValue()).get("data")).get("classify");
 					for (Object object : arr) {
@@ -367,14 +371,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					wiriteToDruid.setLength(0);
 				}
 				producer.send(new ProducerRecord<String, String>(kafkaTopic, partitionHashcode, mapEntry.getValue().toString()));
-
-				
-				
-				
-				
-				
-				
-				
 				if(partition == 2){
 					partition = 0;
 					partitionHashcode = "1";
