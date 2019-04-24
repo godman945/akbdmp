@@ -153,10 +153,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				
 				JSONObject dmpJson = kafkaDmpMap.get(reducerMapKey.toString());
 				if (dmpJson == null) {
-//					log.info(">>>>>>>>>1");
 					processKafakDmpMapKeyNotExist(recordDate, jsonObjOrg, reducerMapKey.toString());
 				} else {
-//					log.info(">>>>>>>>>2");
 					processKafakDmpMapKeyIsExist(recordDate, jsonObjOrg, reducerMapKey.toString(), dmpJson);
 				}
 
@@ -215,6 +213,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	private void processKafakDmpMapKeyNotExist(String recordDate, JSONObject jsonObjOrg, String reducerMapKey)
 			throws Exception {
 		// 處理info資訊
+		log.info("processKafakDmpMapKeyNotExist >>>>>>>> 1");
 		JSONObject hadoopData = ((JSONObject) jsonObjOrg.get("data"));
 		hadoopData.put("record_date", recordDate);
 		for (EnumDataKeyInfo enumDataKeyInfo : EnumDataKeyInfo.values()) {
@@ -258,18 +257,15 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			}
 		}
 		kafkaDmpMap.put(reducerMapKey.toString(), jsonObjOrg);
+		log.info("processKafakDmpMapKeyNotExist >>>>>>>> 2");
 	}
 
 	// 處理mdp map存在時
 	private void processKafakDmpMapKeyIsExist(String recordDate, JSONObject jsonObjOrg, String reducerMapKey,
 			JSONObject dmpJson) throws Exception {
-		
-//		log.info("dmpJson:"+dmpJson.get("data"));
-		
-		// log.info(">>>>>>>>>10-1");
+		log.info("processKafakDmpMapKeyIsExist >>>>>>>> 1");
 		JSONObject hadoopDataOrg = ((JSONObject) jsonObjOrg.get("data"));
 		JSONObject hadoopDataDmpMap = ((JSONObject) dmpJson.get("data"));
-		
 		for (EnumDataKeyInfo enumDataKeyInfo : EnumDataKeyInfo.values()) {
 			String source = ((JSONObject) hadoopDataOrg.get(enumDataKeyInfo.toString())).getAsString("source");
 			String value = ((JSONObject) hadoopDataOrg.get(enumDataKeyInfo.toString())).getAsString("value");
@@ -327,6 +323,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		}
 		// log.info(">>>>>>>>>10-3");
 		kafkaDmpMap.put(reducerMapKey.toString(), dmpJson);
+		log.info("processKafakDmpMapKeyIsExist >>>>>>>> 2");
 	}
 	
 	private static String partitionHashcode = "1";
@@ -376,23 +373,20 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //					log.info("mapEntry size:"+kafkaDmpMap.size());
 					keyOut.set(((JSONObject)mapEntry.getValue()).getAsString("date_time"));
 					wiriteToDruid.append(",").append(dmpJsonObj.getAsString("record_date"));
-					wiriteToDruid.append(",").append(((JSONObject)dmpJsonDataObj.get("time_info")).get("value"));
+					wiriteToDruid.append(",").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("time_info")).get(0)).get("value"));
 					wiriteToDruid.append(",").append(mapEntry.getKey().toString());
-					wiriteToDruid.append(",").append(((JSONObject)dmpJsonDataObj.get("category_info")).get("value"));
+					wiriteToDruid.append(",").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("category_info")).get(0)).get("value"));
 					wiriteToDruid.append(",").append(dmpJsonObj.get("user_agent"));
-					wiriteToDruid.append(",").append(((JSONObject)dmpJsonDataObj.get("sex_info")).get("value"));
-					wiriteToDruid.append(",").append(((JSONObject)dmpJsonDataObj.get("age_info")).get("value"));
-					wiriteToDruid.append(",").append(((JSONObject)dmpJsonDataObj.get("area_country_info")).get("value"));
-					wiriteToDruid.append(",").append(((JSONObject)dmpJsonDataObj.get("area_city_info")).get("value"));
-					wiriteToDruid.append(",").append(((JSONObject)dmpJsonDataObj.get("device_info")).get("value"));
-					wiriteToDruid.append(",").append(((JSONObject)dmpJsonDataObj.get("device_os_info")).get("value"));
-					wiriteToDruid.append(",").append(((JSONObject)dmpJsonDataObj.get("device_browser_info")).get("value"));
-					wiriteToDruid.append(",").append(((JSONObject)dmpJsonDataObj.get("device_phone_info")).get("value"));
+					wiriteToDruid.append(",").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("sex_info")).get(0)).get("value"));
+					wiriteToDruid.append(",").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("age_info")).get(0)).get("value"));
+					wiriteToDruid.append(",").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("area_country_info")).get(0)).get("value"));
+					wiriteToDruid.append(",").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("area_city_info")).get(0)).get("value"));
+					wiriteToDruid.append(",").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_info")).get(0)).get("value"));
+					wiriteToDruid.append(",").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_os_info")).get(0)).get("value"));
+					wiriteToDruid.append(",").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_browser_info")).get(0)).get("value"));
+					wiriteToDruid.append(",").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_phone_info")).get(0)).get("value"));
 					wiriteToDruid.append(",").append(dmpJsonObj.get("url"));
 					wiriteToDruid.append(",").append(dmpJsonObj.get("ip"));
-					
-					
-					
 					if(count <= 10) {
 						log.info(wiriteToDruid.toString());
 					}
