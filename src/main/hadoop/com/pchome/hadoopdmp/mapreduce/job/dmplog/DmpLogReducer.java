@@ -366,6 +366,10 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			while (iterator.hasNext()) {
 				count = count + 1;
 				Map.Entry mapEntry = (Map.Entry) iterator.next();
+				
+				if(count == 1) {
+					log.info(">>>:"+mapEntry.getValue());
+				}
 				dmpJsonObj = (JSONObject)mapEntry.getValue();
 				dmpJsonDataObj = (JSONObject) dmpJsonObj.get("data");
 //					log.info("mapEntry:"+mapEntry);
