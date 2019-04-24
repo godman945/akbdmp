@@ -388,6 +388,11 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					wiriteToDruid.append(",").append(dmpJsonObj.get("ip"));
 					
 					
+					
+					if(count <= 10) {
+						log.info(wiriteToDruid.toString());
+					}
+					
 //					JSONArray arr =  (JSONArray) ((JSONObject)((JSONObject)mapEntry.getValue()).get("data")).get("classify");
 //					for (Object object : arr) {
 //						JSONObject ob = (JSONObject) object;
