@@ -328,12 +328,13 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		// log.info(">>>>>>>>>10-3");
 		kafkaDmpMap.put(reducerMapKey.toString(), dmpJson);
 	}
-
 	
 	private static String partitionHashcode = "1";
 	private static int partition = 0;
 	private static int total = 0;
 	private static StringBuffer wiriteToDruid = new StringBuffer();
+	private static JSONObject dmpJsonObj = null;
+	private static JSONObject dmpJsonDataObj = null;
 	public void cleanup(Context context) {
 		try {
 			String kafkaTopic;
@@ -344,31 +345,62 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				kafkaTopic = "dmp_log_stg";
 			}
 			Iterator iterator = kafkaDmpMap.entrySet().iterator();
+			/*
+			 * druid [0]:date_time
+			 * druid [1]:date
+			 * druid [2]:time
+			 * druid [3]:uuid
+			 * druid [4]:category
+			 * druid [5]:user_agent
+			 * druid [6]:sex
+			 * druid [7]:age
+			 * druid [8]:area_country
+			 * druid [9]:area_city
+			 * druid [10]:device
+			 * druid [11]:device_os
+			 * druid [12]:device_browser
+			 * druid [13]:device_phone
+			 * druid [14]:url
+			 * druid [15]:ip
+			 * */
 			while (iterator.hasNext()) {
 				count = count + 1;
 				Map.Entry mapEntry = (Map.Entry) iterator.next();
-//				if(count <= 10){
+				dmpJsonObj = (JSONObject)mapEntry.getValue();
+				dmpJsonDataObj = (JSONObject) dmpJsonObj.get("data");
 //					log.info("mapEntry:"+mapEntry);
 //					log.info("mapEntry size:"+kafkaDmpMap.size());
 					keyOut.set(((JSONObject)mapEntry.getValue()).getAsString("date_time"));
-					wiriteToDruid.append(",");
-					wiriteToDruid.append(mapEntry.getKey().toString());
+					wiriteToDruid.append(",").append(dmpJsonObj.getAsString("record_date"));
+					wiriteToDruid.append(",").append(((JSONObject)dmpJsonDataObj.get("time_info")).get("value"));
+					wiriteToDruid.append(",").append(mapEntry.getKey().toString());
+					wiriteToDruid.append(",").append(((JSONObject)dmpJsonDataObj.get("category_info")).get("value"));
+					wiriteToDruid.append(",").append(dmpJsonObj.get("user_agent"));
+					wiriteToDruid.append(",").append(((JSONObject)dmpJsonDataObj.get("sex_info")).get("value"));
+					wiriteToDruid.append(",").append(((JSONObject)dmpJsonDataObj.get("age_info")).get("value"));
+					wiriteToDruid.append(",").append(((JSONObject)dmpJsonDataObj.get("area_country_info")).get("value"));
+					wiriteToDruid.append(",").append(((JSONObject)dmpJsonDataObj.get("area_city_info")).get("value"));
+					wiriteToDruid.append(",").append(((JSONObject)dmpJsonDataObj.get("device_info")).get("value"));
+					wiriteToDruid.append(",").append(((JSONObject)dmpJsonDataObj.get("device_os_info")).get("value"));
+					wiriteToDruid.append(",").append(((JSONObject)dmpJsonDataObj.get("device_browser_info")).get("value"));
+					wiriteToDruid.append(",").append(((JSONObject)dmpJsonDataObj.get("device_phone_info")).get("value"));
+					wiriteToDruid.append(",").append(dmpJsonObj.get("url"));
+					wiriteToDruid.append(",").append(dmpJsonObj.get("ip"));
 					
-					wiriteToDruid.append(((JSONObject)mapEntry.getValue()).get("ad_class"));
-					JSONArray arr =  (JSONArray) ((JSONObject)((JSONObject)mapEntry.getValue()).get("data")).get("classify");
-					for (Object object : arr) {
-						JSONObject ob = (JSONObject) object;
-						for(Iterator iterator2 = ob.keySet().iterator(); iterator2.hasNext();) {
-							  String key = (String) iterator2.next();
-							  log.info(key);
-							  log.info(ob.get(key));
-							  wiriteToDruid.append(",").append(ob.get(key));
-						}
-					}
+					
+//					JSONArray arr =  (JSONArray) ((JSONObject)((JSONObject)mapEntry.getValue()).get("data")).get("classify");
+//					for (Object object : arr) {
+//						JSONObject ob = (JSONObject) object;
+//						for(Iterator iterator2 = ob.keySet().iterator(); iterator2.hasNext();) {
+//							  String key = (String) iterator2.next();
+//							  log.info(key);
+//							  log.info(ob.get(key));
+//							  wiriteToDruid.append(",").append(ob.get(key));
+//						}
+//					}
 //					log.info("--------");
 					context.write(keyOut, new Text(wiriteToDruid.toString()));
 					wiriteToDruid.setLength(0);
-//				}
 				producer.send(new ProducerRecord<String, String>(kafkaTopic, partitionHashcode, mapEntry.getValue().toString()));
 				if(partition == 2){
 					partition = 0;
