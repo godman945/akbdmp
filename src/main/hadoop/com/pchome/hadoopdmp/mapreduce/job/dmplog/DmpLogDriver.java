@@ -132,13 +132,13 @@ public class DmpLogDriver {
 				Path path = new Path("/home/webuser/analyzer/storedata/alllog/"+sdf.format(calStart.getTime()));
 				FileStatus[] status = fs.listStatus(path); 
 				for (FileStatus fileStatus : status) {  
-				
-					log.info(">>>>>>>"+fileStatus.getPath());
+					if(fileStatus.getPath().toString().contains("lzo")) {
+						log.info(">>>>>>>"+fileStatus.getPath());
+					}
 				}  
-				
 //				listPath.add(new Path("/home/webuser/analyzer/storedata/alllog/"+sdf.format(calStart.getTime())));
 //				log.info(">>>>>>Job1 INPUT PATH:"+"/home/webuser/analyzer/storedata/alllog/"+sdf.format(calStart.getTime()));
-//				calStart.add(Calendar.DATE, 1);
+				calStart.add(Calendar.DATE, 1);
 			}
 			
 			
