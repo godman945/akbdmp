@@ -436,18 +436,18 @@ public class DmpLogDriver {
 //		System.out.println(timePath);
 		
 		log.info("====driver start====");
-		boolean jobFlag = false;
-		if(args.length != 2){
-			jobFlag = true;
-		}else if(!args[0].equals("prd") && !args[0].equals("stg")){
-			jobFlag = true;
-		}else if(!args[1].equals("day") && !args[1].equals("hour")){
-			jobFlag = true;
-		}
-		if(jobFlag){
-			printUsage();
-			return;
-		}
+//		boolean jobFlag = false;
+//		if(args.length != 2){
+//			jobFlag = true;
+//		}else if(!args[0].equals("prd") && !args[0].equals("stg")){
+//			jobFlag = true;
+//		}else if(!args[1].equals("day") && !args[1].equals("hour")){
+//			jobFlag = true;
+//		}
+//		if(jobFlag){
+//			printUsage();
+//			return;
+//		}
 		
 		if(args[0].equals("prd")){
 			if(args.length == 3) {
