@@ -12,6 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.filecache.DistributedCache;
+import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
@@ -74,8 +75,8 @@ public class DmpLogDriver {
 	@Value("${akb.path.alllog}")
 	private String akbPathAllLog;
 	
-	private SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
-	private SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMddHHmmss");
+	private static SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+	private static SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMddHHmmss");
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	String logInputPath;
 	String outPath;
@@ -100,26 +101,6 @@ public class DmpLogDriver {
 			jobConf.set("spring.profiles.active", env);
 			
 			
-			
-			
-			
-			
-			
-			
-//			jobConf.set("mapred.max.split.size","3045728"); //3045728 49 //3045728000 7
-//			jobConf.set("mapred.min.split.size","1015544"); //1015544 49 //1015544000 7
-//			//ask推测执行
-//			jobConf.set("mapred.map.tasks.speculative.execution","true");
-//			jobConf.set("mapred.reduce.tasks.speculative.execution","true");
-////			JVM
-//			//JVM
-//			jobConf.set("mapred.child.java.opts", "-Xmx8192M");
-//			jobConf.set("mapreduce.map.memory.mb", "8192");
-//			jobConf.set("mapreduce.reduce.memory.mb", "8192");
-//			jobConf.set("mapreduce.job.running.map.limit", "100");
-//			jobConf.set("spring.profiles.active", env);
-			
-			
 			// hdfs
 			Configuration conf = new Configuration();
 			conf.set("mapreduce.map.output.compress.codec", codec);
@@ -134,19 +115,9 @@ public class DmpLogDriver {
 	        conf.set("mapreduce.map.java.opts", "-Xmx8192m");
 	        conf.set("mapreduce.reduce.memory.mb", "8192");
 	        conf.set("mapreduce.reduce.java.opts", "-Xmx8192m");
-			
+	        conf.set("spring.profiles.active", env);
 	        
-			Job job = new Job(jobConf, "dmp_log_"+ env + "_druid_month");
-			job.setJarByClass(DmpLogDriver.class);
-			job.setMapperClass(DmpLogMapper.class);
-			job.setMapOutputKeyClass(Text.class);
-			job.setMapOutputValueClass(Text.class);
-			job.setReducerClass(DmpLogReducer.class);
-			job.setInputFormatClass(LzoTextInputFormat.class);
-			job.setOutputKeyClass(Text.class);
-			job.setOutputValueClass(Text.class);
-			job.setNumReduceTasks(1);//1個reduce 
-			job.setMapSpeculativeExecution(false);
+	        
 	        
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 			Calendar calStart = Calendar.getInstance();
@@ -155,18 +126,51 @@ public class DmpLogDriver {
 			calEnd.setTime(sdf.parse("2019-04-01"));
 			
 			List<Path> listPath = new ArrayList<Path>();  
+
+			FileSystem fs = FileSystem.get(conf);
 			while(calStart.getTime().before(calEnd.getTime())) {
-				listPath.add(new Path("/home/webuser/analyzer/storedata/alllog/"+sdf.format(calStart.getTime())));
-				log.info("/home/webuser/analyzer/storedata/alllog/"+sdf.format(calStart.getTime()));
-				calStart.add(Calendar.DATE, 1);
+				Path path = new Path("/home/webuser/analyzer/storedata/alllog/"+sdf.format(calStart.getTime()));
+				FileStatus[] status = fs.listStatus(path); 
+				for (FileStatus fileStatus : status) {  
+				
+					log.info(">>>>>>>"+fileStatus.getPath());
+				}  
+				
+//				listPath.add(new Path("/home/webuser/analyzer/storedata/alllog/"+sdf.format(calStart.getTime())));
+//				log.info(">>>>>>Job1 INPUT PATH:"+"/home/webuser/analyzer/storedata/alllog/"+sdf.format(calStart.getTime()));
+//				calStart.add(Calendar.DATE, 1);
 			}
 			
 			
-	        
-	        
-	        
-	        
-	        
+//			/home/webuser/akb/storedata/alllog/2019-03-01
+			
+			
+			
+//			Path[] paths = new Path[listPath.size()];  
+//			listPath.toArray(paths);  
+//			
+//			
+//			
+//			
+//			
+//			Job job = new Job(jobConf, "dmp_log_"+ env + "_druid_month");
+//			job.setJarByClass(DmpLogDriver.class);
+//			job.setMapperClass(DmpLogMapper.class);
+//			job.setMapOutputKeyClass(Text.class);
+//			job.setMapOutputValueClass(Text.class);
+//			job.setReducerClass(DmpLogReducer.class);
+//			job.setInputFormatClass(LzoTextInputFormat.class);
+//			job.setOutputKeyClass(Text.class);
+//			job.setOutputValueClass(Text.class);
+//			job.setNumReduceTasks(1);//1個reduce 
+//			job.setMapSpeculativeExecution(false);
+//			
+//			FileSystem fs = FileSystem.get(conf);
+//			deleteExistedDir(fs, new Path("/home/webuser/alex/druid"), true);
+//			FileOutputFormat.setOutputPath(job, new Path("/home/webuser/alex/druid"));
+//			FileInputFormat.setInputPaths(job, paths);
+//	        
+//			log.info(">>>>>>Job1 OUTPUT PATH:"+"/home/webuser/alex/druid");
 	        
 	        
 	        
