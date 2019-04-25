@@ -133,6 +133,9 @@ public class DmpLogDriver {
 				FileStatus[] status = fs.listStatus(path); 
 				for (FileStatus fileStatus : status) {  
 					String name = fileStatus.getPath().toString().substring(fileStatus.getPath().toString().length()-3 ,fileStatus.getPath().toString().length());
+					log.info(">>>>>>>getPath:"+fileStatus.getPath().toString());
+					log.info(">>>>>>>name:"+name);
+					
 					if(name.equals("lzo")) {
 						log.info(">>>>>>>"+fileStatus.getPath());
 					}
