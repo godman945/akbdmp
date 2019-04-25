@@ -6,6 +6,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,7 +66,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private DB mongoOrgOperations;
 	public static DatabaseReader reader = null;
 	public static InetAddress ipAddress = null;
-
+	private static SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+	private static SimpleDateFormat sdf =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private static String recordDate =  "";
 	@Override
 	public void setup(Context context) {
 		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
@@ -147,8 +150,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	}
 
 	@Override
+	
 	public void map(LongWritable offset, Text value, Context context) {
 		try {
+			recordDate = "";
 			//讀取kdcl、Campaign資料
 //			log.info("raw_data : " + value);
 			
@@ -185,6 +190,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				dmpDataBean.setAdClass(values[15]);
 				dmpDataBean.setAge("null");
 				dmpDataBean.setSex("null");
+				recordDate = sdf1.format(sdf.parse(values[0]));
+				
 //				log.info(">>>>>> kdcl rawdata:" + valueStr);
 			}else if( valueStr.indexOf(campaignSymbol) > -1 ){	//Campaign log raw data格式
 				// values[0] memid			會員帳號
@@ -214,7 +221,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				 dmpDataBean.setUserAgent("");
 				 dmpDataBean.setSource("campaign");
 				 dmpDataBean.setAdClass(values[2]);
-				 
+				 recordDate = values[7];
 				 if (StringUtils.equals(values[4], "0")){
 					 dmpDataBean.setAge("null");
 				 }else{
@@ -267,7 +274,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			dmpLogBeanResult = personalInfoComponent.processPersonalInfo(dmpLogBeanResult, mongoOrgOperations);
 			
 			//紀錄日期
-			dmpLogBeanResult.setRecordDate(record_date);
+			dmpLogBeanResult.setRecordDate(recordDate);
 			
 			//傳至kafka的值只要是null或空字串，全部轉成字串null
 			dmpLogBeanResult = dmpBeanIntegrate(dmpLogBeanResult);

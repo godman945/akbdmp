@@ -132,50 +132,31 @@ public class DmpLogDriver {
 				Path path = new Path("/home/webuser/akb/storedata/alllog/"+sdf.format(calStart.getTime()));
 				FileStatus[] status = fs.listStatus(path); 
 				for (FileStatus fileStatus : status) {  
-					String name = fileStatus.getPath().toString().substring(fileStatus.getPath().toString().length()-3 ,fileStatus.getPath().toString().length());
-					log.info(">>>>>>>getPath:"+fileStatus.getPath().toString());
-					log.info(">>>>>>>name:"+name);
-					
-					if(name.equals("lzo")) {
-						log.info(">>>>>>>"+fileStatus.getPath());
-					}
+					log.info("Job1 INPUT PATH:"+fileStatus.getPath().toString());
+					listPath.add(new Path(fileStatus.getPath().toString()));
 				}  
-//				listPath.add(new Path("/home/webuser/analyzer/storedata/alllog/"+sdf.format(calStart.getTime())));
-//				log.info(">>>>>>Job1 INPUT PATH:"+"/home/webuser/analyzer/storedata/alllog/"+sdf.format(calStart.getTime()));
 				calStart.add(Calendar.DATE, 1);
 			}
 			
+			Path[] paths = new Path[listPath.size()];  
+			listPath.toArray(paths);  
+			Job job = new Job(jobConf, "dmp_log_"+ env + "_druid_month");
+			job.setJarByClass(DmpLogDriver.class);
+			job.setMapperClass(DmpLogMapper.class);
+			job.setMapOutputKeyClass(Text.class);
+			job.setMapOutputValueClass(Text.class);
+			job.setReducerClass(DmpLogReducer.class);
+			job.setInputFormatClass(LzoTextInputFormat.class);
+			job.setOutputKeyClass(Text.class);
+			job.setOutputValueClass(Text.class);
+			job.setNumReduceTasks(1);//1個reduce 
+			job.setMapSpeculativeExecution(false);
 			
-//			/home/webuser/akb/storedata/alllog/2019-03-01
-			
-			
-			
-//			Path[] paths = new Path[listPath.size()];  
-//			listPath.toArray(paths);  
-//			
-//			
-//			
-//			
-//			
-//			Job job = new Job(jobConf, "dmp_log_"+ env + "_druid_month");
-//			job.setJarByClass(DmpLogDriver.class);
-//			job.setMapperClass(DmpLogMapper.class);
-//			job.setMapOutputKeyClass(Text.class);
-//			job.setMapOutputValueClass(Text.class);
-//			job.setReducerClass(DmpLogReducer.class);
-//			job.setInputFormatClass(LzoTextInputFormat.class);
-//			job.setOutputKeyClass(Text.class);
-//			job.setOutputValueClass(Text.class);
-//			job.setNumReduceTasks(1);//1個reduce 
-//			job.setMapSpeculativeExecution(false);
-//			
-//			FileSystem fs = FileSystem.get(conf);
-//			deleteExistedDir(fs, new Path("/home/webuser/alex/druid"), true);
-//			FileOutputFormat.setOutputPath(job, new Path("/home/webuser/alex/druid"));
-//			FileInputFormat.setInputPaths(job, paths);
-//	        
-//			log.info(">>>>>>Job1 OUTPUT PATH:"+"/home/webuser/alex/druid");
+			deleteExistedDir(fs, new Path("/home/webuser/alex/druid"), true);
+			FileOutputFormat.setOutputPath(job, new Path("/home/webuser/alex/druid"));
+			FileInputFormat.setInputPaths(job, paths);
 	        
+			log.info(">>>>>>Job1 OUTPUT PATH:"+"/home/webuser/alex/druid");
 	        
 	        
 	        
@@ -350,51 +331,51 @@ public class DmpLogDriver {
 //				return;
 //			}
 //	
-//			//load jar path
-//			String[] jarPaths = {
-//					"/home/webuser/dmp/webapps/analyzer/lib/commons-lang-2.6.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/commons-logging-1.1.1.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/log4j-1.2.15.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/mongo-java-driver-2.11.3.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/softdepot-1.0.9.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/solr-solrj-4.5.0.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/noggit-0.5.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/httpcore-4.2.2.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/httpclient-4.2.3.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/httpmime-4.2.3.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/mysql-connector-java-5.1.12-bin.jar",
-//	
-//					// add kafka jar
-//					"/home/webuser/dmp/webapps/analyzer/lib/kafka-clients-0.9.0.0.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/kafka_2.11-0.9.0.0.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/slf4j-api-1.7.19.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/slf4j-log4j12-1.7.6.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/json-smart-2.3.jar",
-//					"/home/webuser/dmp/webapps/analyzer/lib/asm-1.0.2.jar" 
-//			}; 
-//			for (String jarPath : jarPaths) {
-//				DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fs);
-//			}
-//	
-//			String[] filePaths = {
-//					hdfsPath + "/home/webuser/dmp/crawlBreadCrumb/data/pfp_ad_category_new.csv",
-//					hdfsPath + "/home/webuser/dmp/readingdata/ClsfyGndAgeCrspTable.txt",
-//					hdfsPath + "/home/webuser/dmp/alex/log4j.xml",
-//					hdfsPath + "/home/webuser/dmp/jobfile/DMP_24h_category.csv",
-//					hdfsPath + "/home/webuser/dmp/jobfile/DMP_Ruten_category.csv",
-//					hdfsPath + "/home/webuser/dmp/jobfile/GeoLite2-City.mmdb",
-//					hdfsPath + "/home/webuser/dmp/jobfile/ThirdAdClassTable.txt"
-//			};
-//			for (String filePath : filePaths) {
-//				DistributedCache.addCacheFile(new URI(filePath), job.getConfiguration());
-//			}
-//	
-//			if (job.waitForCompletion(true)) {
-//				log.info("Job1 is OK");
-//			} else {
-//				log.info("Job1 is Failed");
-//			}
-//
+			//load jar path
+			String[] jarPaths = {
+					"/home/webuser/dmp/webapps/analyzer/lib/commons-lang-2.6.jar",
+					"/home/webuser/dmp/webapps/analyzer/lib/commons-logging-1.1.1.jar",
+					"/home/webuser/dmp/webapps/analyzer/lib/log4j-1.2.15.jar",
+					"/home/webuser/dmp/webapps/analyzer/lib/mongo-java-driver-2.11.3.jar",
+					"/home/webuser/dmp/webapps/analyzer/lib/softdepot-1.0.9.jar",
+					"/home/webuser/dmp/webapps/analyzer/lib/solr-solrj-4.5.0.jar",
+					"/home/webuser/dmp/webapps/analyzer/lib/noggit-0.5.jar",
+					"/home/webuser/dmp/webapps/analyzer/lib/httpcore-4.2.2.jar",
+					"/home/webuser/dmp/webapps/analyzer/lib/httpclient-4.2.3.jar",
+					"/home/webuser/dmp/webapps/analyzer/lib/httpmime-4.2.3.jar",
+					"/home/webuser/dmp/webapps/analyzer/lib/mysql-connector-java-5.1.12-bin.jar",
+	
+					// add kafka jar
+					"/home/webuser/dmp/webapps/analyzer/lib/kafka-clients-0.9.0.0.jar",
+					"/home/webuser/dmp/webapps/analyzer/lib/kafka_2.11-0.9.0.0.jar",
+					"/home/webuser/dmp/webapps/analyzer/lib/slf4j-api-1.7.19.jar",
+					"/home/webuser/dmp/webapps/analyzer/lib/slf4j-log4j12-1.7.6.jar",
+					"/home/webuser/dmp/webapps/analyzer/lib/json-smart-2.3.jar",
+					"/home/webuser/dmp/webapps/analyzer/lib/asm-1.0.2.jar" 
+			}; 
+			for (String jarPath : jarPaths) {
+				DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fs);
+			}
+	
+			String[] filePaths = {
+					hdfsPath + "/home/webuser/dmp/crawlBreadCrumb/data/pfp_ad_category_new.csv",
+					hdfsPath + "/home/webuser/dmp/readingdata/ClsfyGndAgeCrspTable.txt",
+					hdfsPath + "/home/webuser/dmp/alex/log4j.xml",
+					hdfsPath + "/home/webuser/dmp/jobfile/DMP_24h_category.csv",
+					hdfsPath + "/home/webuser/dmp/jobfile/DMP_Ruten_category.csv",
+					hdfsPath + "/home/webuser/dmp/jobfile/GeoLite2-City.mmdb",
+					hdfsPath + "/home/webuser/dmp/jobfile/ThirdAdClassTable.txt"
+			};
+			for (String filePath : filePaths) {
+				DistributedCache.addCacheFile(new URI(filePath), job.getConfiguration());
+			}
+	
+			if (job.waitForCompletion(true)) {
+				log.info("Job1 is OK");
+			} else {
+				log.info("Job1 is Failed");
+			}
+
 ////			//job2
 ////			log.info("...... ThirdCategoryLog start ......");
 ////			

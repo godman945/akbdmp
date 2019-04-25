@@ -133,7 +133,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			String dmpMemid = (String) ((JSONObject) jsonObjOrg.get("key")).get("memid");
 			String dmpUuid = (String) ((JSONObject) jsonObjOrg.get("key")).get("uuid");
 			String recordDate = jsonObjOrg.getAsString("record_date");
-			record_date = recordDate;
+			record_date = (String) ((JSONObject) jsonObjOrg.get("key")).get("recordDate");
 			// 建立map key
 			// StringBuffer reducerMapKey = new StringBuffer();
 			// reducerMapKey.append(dmpSource);
@@ -404,32 +404,32 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //					log.info("--------");
 					context.write(keyOut, new Text(wiriteToDruid.toString()));
 					wiriteToDruid.setLength(0);
-				producer.send(new ProducerRecord<String, String>(kafkaTopic, partitionHashcode, mapEntry.getValue().toString()));
-				if(partition == 2){
-					partition = 0;
-					partitionHashcode = "1";
-				}else{
-					partition = partition + 1;
-					if(partition == 1){
-						partitionHashcode = "key0";
-					}
-					if(partition == 2){
-						partitionHashcode = "key2";
-					}
-				}
+//				producer.send(new ProducerRecord<String, String>(kafkaTopic, partitionHashcode, mapEntry.getValue().toString()));
+//				if(partition == 2){
+//					partition = 0;
+//					partitionHashcode = "1";
+//				}else{
+//					partition = partition + 1;
+//					if(partition == 1){
+//						partitionHashcode = "key0";
+//					}
+//					if(partition == 2){
+//						partitionHashcode = "key2";
+//					}
+//				}
 			}
-			log.info("process count:"+count);
-			producer.close();
-			log.info(">>>>>>reduce count:" + count);
-			log.info(">>>>>>write clssify to Redis>>>>>");
-			log.info(">>>>>>cleanup redisClassifyMap:" + redisClassifyMap);
-			for (Entry<String, Integer> redisMap : redisClassifyMap.entrySet()) {
-				String redisKey = redisMap.getKey();
-				total = 0;
-				total = redisMap.getValue();
-				redisTemplate.opsForValue().increment(redisKey, total);
-				redisTemplate.expire(redisKey, 4, TimeUnit.DAYS);
-			}
+//			log.info("process count:"+count);
+//			producer.close();
+//			log.info(">>>>>>reduce count:" + count);
+//			log.info(">>>>>>write clssify to Redis>>>>>");
+//			log.info(">>>>>>cleanup redisClassifyMap:" + redisClassifyMap);
+//			for (Entry<String, Integer> redisMap : redisClassifyMap.entrySet()) {
+//				String redisKey = redisMap.getKey();
+//				total = 0;
+//				total = redisMap.getValue();
+//				redisTemplate.opsForValue().increment(redisKey, total);
+//				redisTemplate.expire(redisKey, 4, TimeUnit.DAYS);
+//			}
 		} catch (Throwable e) {
 			log.error("reduce cleanup error>>>>>> " + e);
 		}
