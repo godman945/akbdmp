@@ -372,21 +372,21 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //					log.info("mapEntry:"+mapEntry);
 //					log.info("mapEntry size:"+kafkaDmpMap.size());
 					keyOut.set(((JSONObject)mapEntry.getValue()).getAsString("date_time"));
-					wiriteToDruid.append(",").append(dmpJsonObj.getAsString("record_date"));
-					wiriteToDruid.append(",").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("time_info")).get(0)).get("value"));
-					wiriteToDruid.append(",").append(mapEntry.getKey().toString());
-					wiriteToDruid.append(",").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("category_info")).get(0)).get("value"));
-					wiriteToDruid.append(",").append(dmpJsonObj.get("user_agent"));
-					wiriteToDruid.append(",").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("sex_info")).get(0)).get("value"));
-					wiriteToDruid.append(",").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("age_info")).get(0)).get("value"));
-					wiriteToDruid.append(",").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("area_country_info")).get(0)).get("value"));
-					wiriteToDruid.append(",").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("area_city_info")).get(0)).get("value"));
-					wiriteToDruid.append(",").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_info")).get(0)).get("value"));
-					wiriteToDruid.append(",").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_os_info")).get(0)).get("value"));
-					wiriteToDruid.append(",").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_browser_info")).get(0)).get("value"));
-					wiriteToDruid.append(",").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_phone_info")).get(0)).get("value"));
-					wiriteToDruid.append(",").append(dmpJsonObj.get("url"));
-					wiriteToDruid.append(",").append(dmpJsonObj.get("ip"));
+					wiriteToDruid.append(",").append("\"").append(dmpJsonObj.getAsString("record_date")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("time_info")).get(0)).get("value")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(mapEntry.getKey().toString()).append("\"");
+					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("category_info")).get(0)).get("value")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJsonObj.get("user_agent")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("sex_info")).get(0)).get("value")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("age_info")).get(0)).get("value")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("area_country_info")).get(0)).get("value")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("area_city_info")).get(0)).get("value")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_info")).get(0)).get("value")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_os_info")).get(0)).get("value")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_browser_info")).get(0)).get("value")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_phone_info")).get(0)).get("value")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJsonObj.get("url")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJsonObj.get("ip")).append("\"");
 					if(count <= 10) {
 						log.info(wiriteToDruid.toString());
 					}
