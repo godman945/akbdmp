@@ -3,8 +3,10 @@ package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -74,7 +76,7 @@ public class DmpLogDriver {
 	
 	private SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
 	private SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMddHHmmss");
-	
+	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	String logInputPath;
 	String outPath;
 	
@@ -133,6 +135,42 @@ public class DmpLogDriver {
 	        conf.set("mapreduce.reduce.memory.mb", "8192");
 	        conf.set("mapreduce.reduce.java.opts", "-Xmx8192m");
 			
+	        
+			Job job = new Job(jobConf, "dmp_log_"+ env + "_druid_month");
+			job.setJarByClass(DmpLogDriver.class);
+			job.setMapperClass(DmpLogMapper.class);
+			job.setMapOutputKeyClass(Text.class);
+			job.setMapOutputValueClass(Text.class);
+			job.setReducerClass(DmpLogReducer.class);
+			job.setInputFormatClass(LzoTextInputFormat.class);
+			job.setOutputKeyClass(Text.class);
+			job.setOutputValueClass(Text.class);
+			job.setNumReduceTasks(1);//1個reduce 
+			job.setMapSpeculativeExecution(false);
+	        
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			Calendar calStart = Calendar.getInstance();
+			Calendar calEnd = Calendar.getInstance();
+			calStart.setTime(sdf.parse("2019-03-01"));
+			calEnd.setTime(sdf.parse("2019-04-01"));
+			
+			List<Path> listPath = new ArrayList<Path>();  
+			while(calStart.getTime().before(calEnd.getTime())) {
+				listPath.add(new Path("/home/webuser/analyzer/storedata/alllog/"+sdf.format(calStart.getTime())));
+				log.info("/home/webuser/analyzer/storedata/alllog/"+sdf.format(calStart.getTime()));
+				calStart.add(Calendar.DATE, 1);
+			}
+			
+			
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
 //			Configuration conf = new Configuration();
 //			conf.set("hadoop.job.ugi", jobUgi);
 //			conf.set("fs.defaultFS", hdfsPath);
@@ -452,7 +490,6 @@ public class DmpLogDriver {
 		if(args[0].equals("prd")){
 			if(args.length == 3) {
 				System.setProperty("druid.test", "true");
-				log.info(System.getProperty("druid.test"));
 			}
 			System.setProperty("spring.profiles.active", "prd");
 		}else{
