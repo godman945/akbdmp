@@ -16,6 +16,7 @@ import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.compress.GzipCodec;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -123,7 +124,7 @@ public class DmpLogDriver {
 			Calendar calStart = Calendar.getInstance();
 			Calendar calEnd = Calendar.getInstance();
 			calStart.setTime(sdf.parse("2019-03-01"));
-			calEnd.setTime(sdf.parse("2019-04-01"));
+			calEnd.setTime(sdf.parse("2019-03-02"));
 			
 			List<Path> listPath = new ArrayList<Path>();  
 
@@ -155,8 +156,11 @@ public class DmpLogDriver {
 			deleteExistedDir(fs, new Path("/home/webuser/alex/druid"), true);
 			FileOutputFormat.setOutputPath(job, new Path("/home/webuser/alex/druid"));
 			FileInputFormat.setInputPaths(job, paths);
-	        
-			log.info(">>>>>>Job1 OUTPUT PATH:"+"/home/webuser/alex/druid");
+			FileOutputFormat.setCompressOutput(job, true);  //job使用压缩  
+	        FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);  
+			
+			
+			log.info(">>>>>>Job1 OUTPUT PATH:"+"/home/webuser/alex/druid/");
 	        
 	        
 	        
