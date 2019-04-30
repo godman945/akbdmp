@@ -154,14 +154,14 @@ public class DmpLogDriver {
 			job.setNumReduceTasks(1);//1個reduce 
 			job.setMapSpeculativeExecution(false);
 			
-			deleteExistedDir(fs, new Path("/home/webuser/alex/druid"), true);
+			deleteExistedDir(fs, new Path("/home/webuser/alex/druid/"+sdf.format(calStart.getTime())), true);
 			FileOutputFormat.setOutputPath(job, new Path("/home/webuser/alex/druid/"+sdf.format(calStart.getTime())));
 			FileInputFormat.setInputPaths(job, paths);
 			FileOutputFormat.setCompressOutput(job, true);  //job使用压缩  
 	        FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);  
 			
 			
-			log.info(">>>>>>Job1 OUTPUT PATH:"+"/home/webuser/alex/druid/");
+			log.info(">>>>>>Job1 OUTPUT PATH:"+"/home/webuser/alex/druid/"+sdf.format(calStart.getTime()));
 	        
 	        
 	        
