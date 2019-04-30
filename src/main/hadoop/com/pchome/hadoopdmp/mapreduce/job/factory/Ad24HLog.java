@@ -16,27 +16,34 @@ import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper;
 
 public class Ad24HLog extends ACategoryLogData {
 	private DBCollection dBCollection;
+	private static String sourceUrl = "";
+	private static String class24hUrlClassify = "";
+	private static String category = "";
+	private static String categorySource = "";
+	private static List<CategoryCodeBean> list;
+	private static DBObject dbObject = null;
+	private static BasicDBObject andQuery = new BasicDBObject();
+	private static List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+	private static BasicDBObject basicDBObject = new BasicDBObject();
 	
-	public Object processCategory(DmpLogBean dmpDataBean, DB mongoOperations) throws Exception {
-		this.dBCollection= mongoOperations.getCollection("class_url");
+	public Object processCategory(net.minidev.json.JSONObject dmpJSon, DBCollection dbCollectionUrl) throws Exception {
+		category = "null";
+		categorySource = "null";
+		class24hUrlClassify = "null" ;
+		this.dBCollection = dbCollectionUrl;
+		sourceUrl = dmpJSon.getAsString("url");
 		
-		dmpDataBean.setSource("kdcl");
-		
-		String sourceUrl = dmpDataBean.getUrl();
-		String category = "null";
-		String categorySource = "null";
-		String class24hUrlClassify = "null";
 		
 		if (StringUtils.isBlank(sourceUrl)) {
-			dmpDataBean.setUrl("null");
-			dmpDataBean.setCategory("null");
-			dmpDataBean.setCategorySource("null");
-			dmpDataBean.setClass24hUrlClassify("N");
-			return dmpDataBean;
+			dmpJSon.put("url", "null");
+			dmpJSon.put("category", "null");
+			dmpJSon.put("category_source", "null");
+			dmpJSon.put("class_24h_url_classify", "N");
+			return dmpJSon;
 		}
 		
 		//用url比對24h對照表找出分類代號
-		List<CategoryCodeBean> list = DmpLogMapper.category24hBeanList;
+		list = DmpLogMapper.category24hBeanList;
 		for (CategoryCodeBean categoryBean : list) {
 			if(sourceUrl.indexOf(categoryBean.getEnglishCode()) != -1){
 				category = categoryBean.getNumberCode();
@@ -46,10 +53,9 @@ public class Ad24HLog extends ACategoryLogData {
 			}
 		}
 		
-		if (StringUtils.isBlank(category)){
+		if (!category.equals("null") && StringUtils.isBlank(category)){
 			//查詢url
-			DBObject dbObject =queryClassUrl(sourceUrl.trim()) ;
-			
+			dbObject = queryClassUrl(sourceUrl.trim()) ;
 			if(dbObject != null){
 				if(dbObject.get("status").equals("0")){
 					category ="null";
@@ -74,22 +80,88 @@ public class Ad24HLog extends ACategoryLogData {
 			}
 		}
 		
-		dmpDataBean.setCategory(category);
-		dmpDataBean.setCategorySource(categorySource);
-		dmpDataBean.setClass24hUrlClassify(class24hUrlClassify);
+		dmpJSon.put("category", category);
+		dmpJSon.put("category_source", categorySource);
+		dmpJSon.put("class_24h_url_classify", class24hUrlClassify);
+		return dmpJSon;
 		
-		return dmpDataBean;
+		
+		
+		
+		
+		
+//		this.dBCollection= mongoOperations.getCollection("class_url");
+//		
+//		dmpDataBean.setSource("kdcl");
+//		
+//		String sourceUrl = dmpDataBean.getUrl();
+//		String category = "null";
+//		String categorySource = "null";
+//		String class24hUrlClassify = "null";
+//		
+//		if (StringUtils.isBlank(sourceUrl)) {
+//			dmpDataBean.setUrl("null");
+//			dmpDataBean.setCategory("null");
+//			dmpDataBean.setCategorySource("null");
+//			dmpDataBean.setClass24hUrlClassify("N");
+//			return dmpDataBean;
+//		}
+//		
+//		//用url比對24h對照表找出分類代號
+//		List<CategoryCodeBean> list = DmpLogMapper.category24hBeanList;
+//		for (CategoryCodeBean categoryBean : list) {
+//			if(sourceUrl.indexOf(categoryBean.getEnglishCode()) != -1){
+//				category = categoryBean.getNumberCode();
+//				categorySource = "24h";
+//				class24hUrlClassify = "Y";
+//				break;
+//			}
+//		}
+//		
+//		if (StringUtils.isBlank(category)){
+//			//查詢url
+//			DBObject dbObject =queryClassUrl(sourceUrl.trim()) ;
+//			
+//			if(dbObject != null){
+//				if(dbObject.get("status").equals("0")){
+//					category ="null";
+//					categorySource = "null";
+//					class24hUrlClassify = "N";
+//					// url 存在 status = 0  , mongo update_date 更新(一天一次) query_time+1 如大於 2000 不再加 
+//					updateClassUrlUpdateDate(sourceUrl.trim(),dbObject) ;
+//					updateClassUrlQueryTime( sourceUrl.trim(),dbObject) ;
+//				}else if( (dbObject.get("status").equals("1")) && (StringUtils.isNotBlank(dbObject.get("ad_class").toString())) ){
+//					category = dbObject.get("ad_class").toString();
+//					categorySource = "24h";
+//					class24hUrlClassify = "Y"; 
+//					//url 存在 status = 1 取分類代號回傳 mongo update_date 更新(一天一次) class24hUrlClassify = "Y"
+//					updateClassUrlUpdateDate(sourceUrl.trim(),dbObject) ;
+//				}
+//			}else{
+//				category = "null";
+//				categorySource = "null";
+//				class24hUrlClassify = "N";
+//				// url 不存在  ,寫入 mongo url代號 status=0 
+//				insertClassUrl(sourceUrl.trim(),"","0",1);
+//			}
+//		}
+//		
+//		dmpDataBean.setCategory(category);
+//		dmpDataBean.setCategorySource(categorySource);
+//		dmpDataBean.setClass24hUrlClassify(class24hUrlClassify);
+//		
+//		return dmpDataBean;
 	}
 	
 	
 
 	public DBObject queryClassUrl(String url) throws Exception {
-		BasicDBObject andQuery = new BasicDBObject();
-		List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
-		obj.add(new BasicDBObject("url",url));
+		andQuery.clear();
+		obj.clear();
+		basicDBObject.clear();
+		obj.add(basicDBObject.append("url",url));
 		andQuery.put("$and", obj);
-		DBObject dbObject =  dBCollection.findOne(andQuery);
-		return dbObject;
+		return dBCollection.findOne(andQuery);
 	}
 	
 	public void updateClassUrlUpdateDate(String url,DBObject dbObject) throws Exception {

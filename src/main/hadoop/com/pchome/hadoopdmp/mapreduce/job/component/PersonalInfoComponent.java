@@ -29,94 +29,187 @@ public class PersonalInfoComponent {
 	
 	Log log = LogFactory.getLog("PersonalInfoComponent");
 	
-	private DBCollection dBCollection;
+	private static DBCollection dBCollection;
+	private static String memid = "";
+	private static String category = "";
+	private static DBObject dbObject;
+	private static String userInfoStr;
+	private static String msex = "";
+	private static String mage = "";
+	private static Map<String, Object> memberInfoMapApi;
+	
+	
+	
+	
+	
 	
 	// 處理個資元件
-	public DmpLogBean processPersonalInfo(DmpLogBean dmpDataBean ,DB mongoOperations) throws Exception {
-		this.dBCollection= mongoOperations.getCollection("user_detail");
-		
-		String memid = dmpDataBean.getMemid();
-		String category = dmpDataBean.getCategory();
+	public net.minidev.json.JSONObject processPersonalInfo(net.minidev.json.JSONObject dmpJSon ,DBCollection dbCollectionUser) throws Exception {
+		this.dBCollection = dbCollectionUser;
+		memid = dmpJSon.getAsString("memid");
+		category = dmpJSon.getAsString("category");
 		
 		// 如有memid資料，先查mongo，再撈會員中心查個資
 		// 撈回mongo為NA也算已打過會員中心API，不再重打會員中心api
 		if ((StringUtils.isNotBlank(memid)) && (!memid.equals("null"))) {
-			DBObject dbObject = queryUserDetail(memid);
-			
-			String msex = "";
-			String mage = "";
+			dbObject = queryUserDetail(memid);
+			msex = "";
+			mage = "";
 			if (dbObject != null) {
-				String userInfoStr = dbObject.get("user_info").toString();
-				
+				userInfoStr = dbObject.get("user_info").toString();
 				// mongo user_detail舊資料中有無mage、msex
-				 if ( (!userInfoStr.contains("mage")) || (!userInfoStr.contains("msex")) ){
-					Map<String, Object> memberInfoMapApi = findMemberInfoAPI(memid);
+				 if ((!userInfoStr.contains("mage")) || (!userInfoStr.contains("msex"))){
+					memberInfoMapApi = findMemberInfoAPI(memid);
 					msex = (String) memberInfoMapApi.get("msex");
 					mage = (String) memberInfoMapApi.get("mage");
 					//更新user資料
 					updateUserDetail(memid,msex,mage);
-					dmpDataBean.setMsex("null");
-					dmpDataBean.setMage("null");
-					if ( (!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA")) ) {
-						dmpDataBean.setPersonalInfoApiClassify("Y");
+					dmpJSon.put("msex", "null");
+					dmpJSon.put("mage", "null");
+					if ((!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA"))) {
+						dmpJSon.put("personal_info_api_classify", "Y");
 					} else {
-						dmpDataBean.setPersonalInfoApiClassify("N");
+						dmpJSon.put("personal_info_api_classify", "N");
 					}
 				}else{
 					// mongodb已有資料就跳過,包括NA (mongo user_detail結構中已有mage和msex)
-					dmpDataBean.setMsex("null");
-					dmpDataBean.setMage("null");
-					dmpDataBean.setPersonalInfoApiClassify("Y");
+					dmpJSon.put("msex", "null");
+					dmpJSon.put("mage", "null");
+					dmpJSon.put("personal_info_api_classify", "Y");
 				}
 			} else {
 				// mongo尚未新增user_detail，直接新增一筆mongo資料，塞會員中心打回來的性別、年齡(空的轉成NA寫入)
-				Map<String, Object> memberInfoMapApi = findMemberInfoAPI(memid);
+				memberInfoMapApi = findMemberInfoAPI(memid);
 				msex = (String) memberInfoMapApi.get("msex");
 				mage = (String) memberInfoMapApi.get("mage");
 				//新增user
 				insertUserDetail(memid,msex,mage);
-				dmpDataBean.setMsex("null");
-				dmpDataBean.setMage("null");
-				if ( (!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA")) ) {
-					dmpDataBean.setPersonalInfoApiClassify("Y");
+				dmpJSon.put("msex", "null");
+				dmpJSon.put("mage", "null");
+				if ((!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA"))) {
+					dmpJSon.put("personal_info_api_classify", "Y");
 				} else {
-					dmpDataBean.setPersonalInfoApiClassify("N");
+					dmpJSon.put("personal_info_api_classify", "N");
 				}
 			}
 		}
 		
 		//如果raw data就有推估的age、sex，即PersonalInfo已被分類
-		if ( (!StringUtils.equals(dmpDataBean.getSex(), "null")) && (!StringUtils.equals(dmpDataBean.getAge(), "null")) ){
-			dmpDataBean.setPersonalInfoClassify("Y");
-			dmpDataBean.setSexSource(dmpDataBean.getSource());
-			dmpDataBean.setAgeSource(dmpDataBean.getSource());
-			return dmpDataBean;
+		if ((!StringUtils.equals(dmpJSon.getAsString("sex"), "null")) && (!StringUtils.equals((dmpJSon.getAsString("age")), "null")) ){
+			dmpJSon.put("personal_info_classify", "Y");
+			dmpJSon.put("sex_source",dmpJSon.getAsString("dmp_source"));
+			dmpJSon.put("age_source",dmpJSon.getAsString("dmp_source"));
+			return dmpJSon;
 		}
 		//處理個資推估
-		dmpDataBean = processForecastPersonalInfo(dmpDataBean,category);
+		processForecastPersonalInfo(dmpJSon,category);
 		
-		return dmpDataBean;
+		return dmpJSon;
+		
+		
+		
+		
+		
+		
+		
+		
+		
+//		this.dBCollection= mongoOperations.getCollection("user_detail");
+//		
+//		String memid = dmpDataBean.getMemid();
+//		String category = dmpDataBean.getCategory();
+//		
+//		// 如有memid資料，先查mongo，再撈會員中心查個資
+//		// 撈回mongo為NA也算已打過會員中心API，不再重打會員中心api
+//		if ((StringUtils.isNotBlank(memid)) && (!memid.equals("null"))) {
+//			DBObject dbObject = queryUserDetail(memid);
+//			
+//			String msex = "";
+//			String mage = "";
+//			if (dbObject != null) {
+//				String userInfoStr = dbObject.get("user_info").toString();
+//				
+//				// mongo user_detail舊資料中有無mage、msex
+//				 if ( (!userInfoStr.contains("mage")) || (!userInfoStr.contains("msex")) ){
+//					Map<String, Object> memberInfoMapApi = findMemberInfoAPI(memid);
+//					msex = (String) memberInfoMapApi.get("msex");
+//					mage = (String) memberInfoMapApi.get("mage");
+//					//更新user資料
+//					updateUserDetail(memid,msex,mage);
+//					dmpDataBean.setMsex("null");
+//					dmpDataBean.setMage("null");
+//					if ( (!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA")) ) {
+//						dmpDataBean.setPersonalInfoApiClassify("Y");
+//					} else {
+//						dmpDataBean.setPersonalInfoApiClassify("N");
+//					}
+//				}else{
+//					// mongodb已有資料就跳過,包括NA (mongo user_detail結構中已有mage和msex)
+//					dmpDataBean.setMsex("null");
+//					dmpDataBean.setMage("null");
+//					dmpDataBean.setPersonalInfoApiClassify("Y");
+//				}
+//			} else {
+//				// mongo尚未新增user_detail，直接新增一筆mongo資料，塞會員中心打回來的性別、年齡(空的轉成NA寫入)
+//				Map<String, Object> memberInfoMapApi = findMemberInfoAPI(memid);
+//				msex = (String) memberInfoMapApi.get("msex");
+//				mage = (String) memberInfoMapApi.get("mage");
+//				//新增user
+//				insertUserDetail(memid,msex,mage);
+//				dmpDataBean.setMsex("null");
+//				dmpDataBean.setMage("null");
+//				if ( (!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA")) ) {
+//					dmpDataBean.setPersonalInfoApiClassify("Y");
+//				} else {
+//					dmpDataBean.setPersonalInfoApiClassify("N");
+//				}
+//			}
+//		}
+//		
+//		//如果raw data就有推估的age、sex，即PersonalInfo已被分類
+//		if ( (!StringUtils.equals(dmpDataBean.getSex(), "null")) && (!StringUtils.equals(dmpDataBean.getAge(), "null")) ){
+//			dmpDataBean.setPersonalInfoClassify("Y");
+//			dmpDataBean.setSexSource(dmpDataBean.getSource());
+//			dmpDataBean.setAgeSource(dmpDataBean.getSource());
+//			return dmpDataBean;
+//		}
+//		//處理個資推估
+//		dmpDataBean = processForecastPersonalInfo(dmpDataBean,category);
+//		
+//		return dmpDataBean;
 	}
 	
 
 	
-	public DmpLogBean processForecastPersonalInfo(DmpLogBean dmpDataBean, String category) throws Exception {
+	public net.minidev.json.JSONObject processForecastPersonalInfo(net.minidev.json.JSONObject dmpJSon, String category) throws Exception {
 		// 讀取ClsfyGndAgeCrspTable.txt做age、sex個資推估
 		Map<String, String> forecastInfoMap = forecastPersonalInfo(category);
 		String sex = forecastInfoMap.get("sex");
 		String age = forecastInfoMap.get("age");
 
-		dmpDataBean.setSex(sex);
-		dmpDataBean.setSexSource(StringUtils.equals(sex, "null") ? "null" : "excel");
-		dmpDataBean.setAge(age);
-		dmpDataBean.setAgeSource(StringUtils.equals(age, "null") ? "null" : "excel");
-
+		dmpJSon.put("sex", sex);
+		dmpJSon.put("age", age);
+		dmpJSon.put("sex_source", StringUtils.equals(sex, "null") ? "null" : "excel");
+		dmpJSon.put("age_source", StringUtils.equals(age, "null") ? "null" : "excel");
+		
 		if ((!StringUtils.equals(age, "null")) && (!StringUtils.equals(sex, "null"))) {
-			dmpDataBean.setPersonalInfoClassify("Y");
+			dmpJSon.put("personal_info_classify", "Y");
 		} else {
-			dmpDataBean.setPersonalInfoClassify("N");
+			dmpJSon.put("personal_info_classify", "N");
 		}
-		return dmpDataBean;
+		
+		return dmpJSon;
+//		dmpDataBean.setSex(sex);
+//		dmpDataBean.setSexSource(StringUtils.equals(sex, "null") ? "null" : "excel");
+//		dmpDataBean.setAge(age);
+//		dmpDataBean.setAgeSource(StringUtils.equals(age, "null") ? "null" : "excel");
+//
+//		if ((!StringUtils.equals(age, "null")) && (!StringUtils.equals(sex, "null"))) {
+//			dmpDataBean.setPersonalInfoClassify("Y");
+//		} else {
+//			dmpDataBean.setPersonalInfoClassify("N");
+//		}
+//		return dmpDataBean;
 	}
 	
 	public DBObject queryUserDetail(String memid) throws Exception {

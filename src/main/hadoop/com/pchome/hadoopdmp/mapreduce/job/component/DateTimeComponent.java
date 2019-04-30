@@ -3,6 +3,7 @@ package com.pchome.hadoopdmp.mapreduce.job.component;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.mapreduce.InputSplit;
@@ -14,10 +15,8 @@ public class DateTimeComponent {
 	Log log = LogFactory.getLog("DateTimeComponent");
 	
 	public net.minidev.json.JSONObject datetimeTransformHour(net.minidev.json.JSONObject dmpJSon) throws Exception {
-		
-		
-		
-		
+		dmpJSon.put("time_info_source", dmpJSon.getAsString("hour"));
+		dmpJSon.put("time_info_classify", dmpJSon.getAsString("Y"));
 		return dmpJSon;
 		
 		

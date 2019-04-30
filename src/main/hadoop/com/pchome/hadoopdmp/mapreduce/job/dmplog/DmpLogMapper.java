@@ -30,6 +30,7 @@ import org.springframework.stereotype.Component;
 
 import com.maxmind.geoip2.DatabaseReader;
 import com.mongodb.DB;
+import com.mongodb.DBCollection;
 import com.pchome.hadoopdmp.enumerate.CategoryLogEnum;
 import com.pchome.hadoopdmp.mapreduce.job.component.DateTimeComponent;
 import com.pchome.hadoopdmp.mapreduce.job.component.DeviceComponent;
@@ -71,13 +72,18 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
 	private static SimpleDateFormat sdf =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private static String recordDate =  "";
+	private static DBCollection dBCollection_class_url;
+	private static DBCollection dBCollection_user_detail;
+	
 	@Override
 	public void setup(Context context) {
 		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
 		try {
-//			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
-//			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-//			this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
+			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
+			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+			this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
+			dBCollection_class_url =  this.mongoOrgOperations.getCollection("class_url");
+			dBCollection_user_detail = this.mongoOrgOperations.getCollection("user_detail");
 //			record_date = context.getConfiguration().get("job.date");
 			
 			//load 推估分類個資表(ClsfyGndAgeCrspTable.txt)
@@ -145,6 +151,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		}
 	}
 
+	private static String hour = "";
 	private static String valueStr = "";
 	private static String[] values = null;
 	
@@ -158,7 +165,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			String fileName = ((FileSplit)inputSplit).getPath().getName();
 			valueStr = value.toString();
 			values = valueStr.split(kdclSymbol);
-			
+			hour = ((FileSplit)inputSplit).getPath().toString().split("/")[9];
 			log.info(">>>>>>>"+((FileSplit)inputSplit).getPath());
 			log.info(">>>>>>>valueStr:"+valueStr);
 			
@@ -190,6 +197,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				dmpJSon.put("sex", "null");
 				dmpJSon.put("age", "null");
 				dmpJSon.put("record_date", sdf1.format(sdf.parse(values[0])));
+				dmpJSon.put("hour", hour);
 			}else if(valueStr.indexOf(campaignSymbol) > -1 ){
 				// values[0] memid			會員帳號
 				// values[1] uuid			通用唯一識別碼	
@@ -204,7 +212,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					 log.info("values.length < " + campaignLogLength);
 					 return;
 				}
-				if ( StringUtils.isBlank(values[0]) && StringUtils.isBlank(values[1])  ){
+				if (StringUtils.isBlank(values[0]) && StringUtils.isBlank(values[1])  ){
 					return;
 				}
 				
@@ -228,6 +236,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpJSon.put("sex", values[5]);
 				}
 				dmpJSon.put("record_date", values[7]);
+				dmpJSon.put("hour", hour);
 			}else{
 				 return;
 			}
@@ -236,7 +245,29 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			geoIpComponent.ipTransformGEO(dmpJSon);
 			//時間處理元件(日期時間字串轉成小時)			
 			dateTimeComponent.datetimeTransformHour(dmpJSon); 
+			//裝置處理元件(UserAgent轉成裝置資訊)
+			deviceComponent.parseUserAgentToDevice(dmpJSon);
+			//分類處理元件(分析click、24H、Ruten、campaign分類)
+			if ((dmpJSon.getAsString("trigger_type").equals("ck") || dmpJSon.getAsString("trigger_type").equals("campaign")) ) {// kdcl ad_click的adclass  或   campaign log的adclass 	//&& StringUtils.isNotBlank(dmpLogBeanResult.getAdClass())
+				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
+				aCategoryLogData.processCategory(dmpJSon, null);
+			}else if (dmpJSon.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpJSon.getAsString("url")) && dmpJSon.getAsString("url").contains("ruten")) {	// 露天
+				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
+				aCategoryLogData.processCategory(dmpJSon, dBCollection_class_url);
+			}else if (dmpJSon.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpJSon.getAsString("url")) && dmpJSon.getAsString("url").contains("24h")) {		// 24h
+				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
+				aCategoryLogData.processCategory(dmpJSon, dBCollection_class_url);
+			}else if (dmpJSon.getAsString("trigger_type").equals("pv") ){
+				dmpJSon.put("category", "null");
+				dmpJSon.put("category_source", "null");
+				dmpJSon.put("class_adclick_classify", "null");
+				dmpJSon.put("class_24h_url_classify", "null");
+				dmpJSon.put("class_ruten_url_classify", "null");
+			}
+			//個資處理元件
+			personalInfoComponent.processPersonalInfo(dmpJSon, dBCollection_user_detail);
 			
+			log.info(dmpJSon);
 			
 			
 			

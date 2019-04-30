@@ -24,143 +24,280 @@ import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper;
 @SuppressWarnings({ "unchecked"})
 public class AdRutenLog extends ACategoryLogData {
 	Log log = LogFactory.getLog("AdRutenLog");
-	private DBCollection dBCollection;
 	
-	public Object processCategory(DmpLogBean dmpDataBean, DB mongoOperations) throws Exception {
-		this.dBCollection= mongoOperations.getCollection("class_url");
-		
-		dmpDataBean.setSource("kdcl");
-		
-		String sourceUrl = dmpDataBean.getUrl();
-		String category = "null";
-		String categorySource = "null";
-		String classRutenUrlClassify = "null" ;
-		
+	private static DBCollection dBCollection;
+	
+	
+	private static String sourceUrl = "";
+	private static String classRutenUrlClassify = "";
+	private static String category = "";
+	private static String categorySource = "";
+	
+	private static DBObject dbObject = null;
+	private static BasicDBObject andQuery = new BasicDBObject();
+	private static List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+	private static BasicDBObject basicDBObject = new BasicDBObject();
+	
+	private static Pattern p = Pattern.compile("(http|https)://goods.ruten.com.tw/item/\\S+\\?\\d+");
+	private static Matcher matcher = null;
+	private static StringBuffer transformUrl = new StringBuffer();
+	private static String breadcrumbResult = "";
+	private static String[] breadcrumbAry = null;
+	private static boolean hasCategory = false;
+	private static List<CategoryRutenCodeBean> categoryRutenList;
+	private static Document doc;
+	private static Elements breadcrumbE;
+	
+	public Object processCategory(net.minidev.json.JSONObject dmpJSon, DBCollection dbCollectionUrl) throws Exception {
+		transformUrl.setLength(0);
+		category = "null";
+		categorySource = "null";
+		classRutenUrlClassify = "null" ;
+		this.dBCollection = dbCollectionUrl;
+		sourceUrl = dmpJSon.getAsString("url");
 		if (StringUtils.isBlank(sourceUrl)) {
-			dmpDataBean.setUrl("null");
-			dmpDataBean.setCategory("null");
-			dmpDataBean.setCategorySource("null");
-			dmpDataBean.setClassRutenUrlClassify("N");
-			return dmpDataBean;
-		}
-		
-		//查詢url
-		DBObject dbObject =queryClassUrl(sourceUrl.trim()) ;
-		
-		if(dbObject != null){
-			if(dbObject.get("status").equals("0")){
-				category = "null";
-				categorySource = "null";
-				classRutenUrlClassify = "N"; 
-				// url 存在 status = 0 跳過回傳空值 , mongo update_date 更新(一天一次) mongo,query_time+1 如大於 2000 不再加  classRutenUrl = "N"
-				updateClassUrlUpdateDate(sourceUrl.trim(),dbObject) ;
-				updateClassUrlQueryTime( sourceUrl.trim(),dbObject) ;
-			}else if( (dbObject.get("status").equals("1")) && (StringUtils.isNotBlank(dbObject.get("ad_class").toString())) ){
-				category = dbObject.get("ad_class").toString();
-				categorySource = "ruten";
-				classRutenUrlClassify = "Y"; 
-				//url 存在 status = 1 取分類代號回傳 mongodn update_date 更新(一天一次) classRutenUrl = "Y";
-				updateClassUrlUpdateDate(sourceUrl.trim(),dbObject) ;
-			}
-		} else {
-			try {
-				// url 不存在
-				StringBuffer transformUrl = new StringBuffer();
-				Pattern p = Pattern.compile("(http|https)://goods.ruten.com.tw/item/\\S+\\?\\d+");
-				Matcher m = p.matcher(sourceUrl.toString());
-
-				if (m.find()) {
-					// url是Ruten商品頁，爬蟲撈麵包屑(http與https)
-					transformUrl.append("http://m.ruten.com.tw/goods/show.php?g=");
-					transformUrl.append(m.group().replaceAll("(http|https)://goods.ruten.com.tw/item/\\S+\\?", ""));
-					// Thread.sleep(500);
-					Document doc = Jsoup.parse(new URL(transformUrl.toString()), 10000);
-					Elements breadcrumbE = doc.body().select("table[class=goods-list]");
-					String breadcrumbResult = "";
-
-					if (breadcrumbE.size() > 0) {
-						for (int i = 0; i < breadcrumbE.get(0).getElementsByClass("rt-breadcrumb-link").size(); i++) {
-							if (i != (breadcrumbE.get(0).getElementsByClass("rt-breadcrumb-link").size() - 1)) {
-								breadcrumbResult = breadcrumbResult
-										+ breadcrumbE.get(0).getElementsByClass("rt-breadcrumb-link").get(i).text()
-										+ ">";
-							} else {
-								breadcrumbResult = breadcrumbResult
-										+ breadcrumbE.get(0).getElementsByClass("rt-breadcrumb-link").get(i).text();
+			dmpJSon.put("url", "null");
+			dmpJSon.put("category", "null");
+			dmpJSon.put("category_source", "null");
+			dmpJSon.put("class_ruten_url_classify", "N");
+			return dmpJSon;
+		}else {
+			//查詢url
+			dbObject = queryClassUrl(sourceUrl.trim());
+			log.info(">>>>>>>>>>dbObject:"+dbObject);
+			if(dbObject != null){
+				if(dbObject.get("status").equals("0")){
+					category = "null";
+					categorySource = "null";
+					classRutenUrlClassify = "N"; 
+					// url 存在 status = 0 跳過回傳空值 , mongo update_date 更新(一天一次) mongo,query_time+1 如大於 2000 不再加  classRutenUrl = "N"
+					updateClassUrlUpdateDate(sourceUrl.trim(),dbObject) ;
+					updateClassUrlQueryTime( sourceUrl.trim(),dbObject) ;
+				}else if((dbObject.get("status").equals("1")) && (StringUtils.isNotBlank(dbObject.get("ad_class").toString()))){
+					category = dbObject.get("ad_class").toString();
+					categorySource = "ruten";
+					classRutenUrlClassify = "Y"; 
+					//url 存在 status = 1 取分類代號回傳 mongodn update_date 更新(一天一次) classRutenUrl = "Y";
+					updateClassUrlUpdateDate(sourceUrl.trim(),dbObject) ;
+				}
+			} else {
+				try {
+					// url 不存在
+					matcher = p.matcher(sourceUrl.toString());
+					if (matcher.find()) {
+						// url是Ruten商品頁，爬蟲撈麵包屑(http與https)
+						transformUrl.append("http://m.ruten.com.tw/goods/show.php?g=");
+						transformUrl.append(matcher.group().replaceAll("(http|https)://goods.ruten.com.tw/item/\\S+\\?", ""));
+						// Thread.sleep(500);
+						doc = Jsoup.parse(new URL(transformUrl.toString()), 10000);
+						breadcrumbE = doc.body().select("table[class=goods-list]");
+						breadcrumbResult = "";
+						if (breadcrumbE.size() > 0) {
+							for (int i = 0; i < breadcrumbE.get(0).getElementsByClass("rt-breadcrumb-link").size(); i++) {
+								if (i != (breadcrumbE.get(0).getElementsByClass("rt-breadcrumb-link").size() - 1)) {
+									breadcrumbResult = breadcrumbResult
+											+ breadcrumbE.get(0).getElementsByClass("rt-breadcrumb-link").get(i).text()
+											+ ">";
+								} else {
+									breadcrumbResult = breadcrumbResult
+											+ breadcrumbE.get(0).getElementsByClass("rt-breadcrumb-link").get(i).text();
+								}
+	
 							}
-
-						}
-
-						// 比對爬蟲回來的分類，由最底層分類開始比對Ruten分類表
-						String[] breadcrumbAry = breadcrumbResult.split(">");
-						List<CategoryRutenCodeBean> categoryRutenList = DmpLogMapper.categoryRutenBeanList;
-						boolean hasCategory = false;
-
-						for (int i = breadcrumbAry.length - 1; i >= 0; i--) {
-							if (hasCategory) {
-								break;
-							}
-							for (CategoryRutenCodeBean categoryRutenBean : categoryRutenList) {
-								if (categoryRutenBean.getChineseDesc().trim().equals(breadcrumbAry[i].trim())) {
-									category = categoryRutenBean.getNumberCode();
-									hasCategory = true;
+	
+							// 比對爬蟲回來的分類，由最底層分類開始比對Ruten分類表
+							breadcrumbAry = breadcrumbResult.split(">");
+							categoryRutenList = DmpLogMapper.categoryRutenBeanList;
+							hasCategory = false;
+							for (int i = breadcrumbAry.length - 1; i >= 0; i--) {
+								if (hasCategory) {
 									break;
 								}
+								for (CategoryRutenCodeBean categoryRutenBean : categoryRutenList) {
+									if (categoryRutenBean.getChineseDesc().trim().equals(breadcrumbAry[i].trim())) {
+										category = categoryRutenBean.getNumberCode();
+										hasCategory = true;
+										break;
+									}
+								}
 							}
-						}
-
-						if (StringUtils.isNotBlank(category)) {
-							// 爬蟲有比對到Ruten分類
-							categorySource = "ruten";
-							classRutenUrlClassify = "Y";
-							//新增url
-							insertClassUrl(sourceUrl.trim(),"1",category,breadcrumbResult,"",0) ;
+	
+							if (!category.equals("null") && StringUtils.isNotBlank(category)) {
+								// 爬蟲有比對到Ruten分類
+								categorySource = "ruten";
+								classRutenUrlClassify = "Y";
+								//新增url
+								insertClassUrl(sourceUrl.trim(),"1",category,breadcrumbResult,"",0) ;
+							} else {
+								// 麵包屑沒有比對到Ruten分類
+								category = "null";
+								categorySource = "null";
+								classRutenUrlClassify = "N";
+								insertClassUrl(sourceUrl.trim(),"0","",breadcrumbResult,"爬不到麵包屑的訊息",1) ;
+							}
 						} else {
-							// 麵包屑沒有比對到Ruten分類
+							// 沒有麵包屑
 							category = "null";
 							categorySource = "null";
 							classRutenUrlClassify = "N";
-							insertClassUrl(sourceUrl.trim(),"0","",breadcrumbResult,"爬不到麵包屑的訊息",1) ;
+							insertClassUrl(sourceUrl.trim(),"0","","","沒有麵包屑的訊息",1) ;
 						}
 					} else {
-						// 沒有麵包屑
+						// url不是Ruten商品頁，寫入mongo
 						category = "null";
 						categorySource = "null";
 						classRutenUrlClassify = "N";
-						insertClassUrl(sourceUrl.trim(),"0","","","沒有麵包屑的訊息",1) ;
+						insertClassUrl(sourceUrl.trim(),"0","","","url不符合Ruten商品頁",1) ;
 					}
-				} else {
-					// url不是Ruten商品頁，寫入mongo
+				} catch (Exception e) {
 					category = "null";
 					categorySource = "null";
 					classRutenUrlClassify = "N";
-					insertClassUrl(sourceUrl.trim(),"0","","","url不符合Ruten商品頁",1) ;
+					insertClassUrl(sourceUrl.trim(),"0","","","",1) ;
+					log.error(">>>>>>"+ e.getMessage());
 				}
-
-			} catch (Exception e) {
-				category = "null";
-				categorySource = "null";
-				classRutenUrlClassify = "N";
-				insertClassUrl(sourceUrl.trim(),"0","","","",1) ;
-				log.error(">>>>>>"+ e.getMessage());
 			}
 		}
-
-		dmpDataBean.setCategory(category);
-		dmpDataBean.setCategorySource(categorySource);
-		dmpDataBean.setClassRutenUrlClassify(classRutenUrlClassify);
 		
-		return dmpDataBean;
+		dmpJSon.put("category", category);
+		dmpJSon.put("category_source", categorySource);
+		dmpJSon.put("class_ruten_url_classify", classRutenUrlClassify);
+		return dmpJSon;
+		
+//		this.dBCollection= mongoOperations.getCollection("class_url");
+//		
+//		dmpDataBean.setSource("kdcl");
+//		
+//		String sourceUrl = dmpDataBean.getUrl();
+//		String category = "null";
+//		String categorySource = "null";
+//		String classRutenUrlClassify = "null" ;
+//		
+//		if (StringUtils.isBlank(sourceUrl)) {
+//			dmpDataBean.setUrl("null");
+//			dmpDataBean.setCategory("null");
+//			dmpDataBean.setCategorySource("null");
+//			dmpDataBean.setClassRutenUrlClassify("N");
+//			return dmpDataBean;
+//		}
+//		
+//		//查詢url
+//		DBObject dbObject =queryClassUrl(sourceUrl.trim()) ;
+//		
+//		if(dbObject != null){
+//			if(dbObject.get("status").equals("0")){
+//				category = "null";
+//				categorySource = "null";
+//				classRutenUrlClassify = "N"; 
+//				// url 存在 status = 0 跳過回傳空值 , mongo update_date 更新(一天一次) mongo,query_time+1 如大於 2000 不再加  classRutenUrl = "N"
+//				updateClassUrlUpdateDate(sourceUrl.trim(),dbObject) ;
+//				updateClassUrlQueryTime( sourceUrl.trim(),dbObject) ;
+//			}else if( (dbObject.get("status").equals("1")) && (StringUtils.isNotBlank(dbObject.get("ad_class").toString())) ){
+//				category = dbObject.get("ad_class").toString();
+//				categorySource = "ruten";
+//				classRutenUrlClassify = "Y"; 
+//				//url 存在 status = 1 取分類代號回傳 mongodn update_date 更新(一天一次) classRutenUrl = "Y";
+//				updateClassUrlUpdateDate(sourceUrl.trim(),dbObject) ;
+//			}
+//		} else {
+//			try {
+//				// url 不存在
+//				StringBuffer transformUrl = new StringBuffer();
+//				Pattern p = Pattern.compile("(http|https)://goods.ruten.com.tw/item/\\S+\\?\\d+");
+//				Matcher m = p.matcher(sourceUrl.toString());
+//
+//				if (m.find()) {
+//					// url是Ruten商品頁，爬蟲撈麵包屑(http與https)
+//					transformUrl.append("http://m.ruten.com.tw/goods/show.php?g=");
+//					transformUrl.append(m.group().replaceAll("(http|https)://goods.ruten.com.tw/item/\\S+\\?", ""));
+//					// Thread.sleep(500);
+//					Document doc = Jsoup.parse(new URL(transformUrl.toString()), 10000);
+//					Elements breadcrumbE = doc.body().select("table[class=goods-list]");
+//					String breadcrumbResult = "";
+//
+//					if (breadcrumbE.size() > 0) {
+//						for (int i = 0; i < breadcrumbE.get(0).getElementsByClass("rt-breadcrumb-link").size(); i++) {
+//							if (i != (breadcrumbE.get(0).getElementsByClass("rt-breadcrumb-link").size() - 1)) {
+//								breadcrumbResult = breadcrumbResult
+//										+ breadcrumbE.get(0).getElementsByClass("rt-breadcrumb-link").get(i).text()
+//										+ ">";
+//							} else {
+//								breadcrumbResult = breadcrumbResult
+//										+ breadcrumbE.get(0).getElementsByClass("rt-breadcrumb-link").get(i).text();
+//							}
+//
+//						}
+//
+//						// 比對爬蟲回來的分類，由最底層分類開始比對Ruten分類表
+//						String[] breadcrumbAry = breadcrumbResult.split(">");
+//						List<CategoryRutenCodeBean> categoryRutenList = DmpLogMapper.categoryRutenBeanList;
+//						boolean hasCategory = false;
+//
+//						for (int i = breadcrumbAry.length - 1; i >= 0; i--) {
+//							if (hasCategory) {
+//								break;
+//							}
+//							for (CategoryRutenCodeBean categoryRutenBean : categoryRutenList) {
+//								if (categoryRutenBean.getChineseDesc().trim().equals(breadcrumbAry[i].trim())) {
+//									category = categoryRutenBean.getNumberCode();
+//									hasCategory = true;
+//									break;
+//								}
+//							}
+//						}
+//
+//						if (StringUtils.isNotBlank(category)) {
+//							// 爬蟲有比對到Ruten分類
+//							categorySource = "ruten";
+//							classRutenUrlClassify = "Y";
+//							//新增url
+//							insertClassUrl(sourceUrl.trim(),"1",category,breadcrumbResult,"",0) ;
+//						} else {
+//							// 麵包屑沒有比對到Ruten分類
+//							category = "null";
+//							categorySource = "null";
+//							classRutenUrlClassify = "N";
+//							insertClassUrl(sourceUrl.trim(),"0","",breadcrumbResult,"爬不到麵包屑的訊息",1) ;
+//						}
+//					} else {
+//						// 沒有麵包屑
+//						category = "null";
+//						categorySource = "null";
+//						classRutenUrlClassify = "N";
+//						insertClassUrl(sourceUrl.trim(),"0","","","沒有麵包屑的訊息",1) ;
+//					}
+//				} else {
+//					// url不是Ruten商品頁，寫入mongo
+//					category = "null";
+//					categorySource = "null";
+//					classRutenUrlClassify = "N";
+//					insertClassUrl(sourceUrl.trim(),"0","","","url不符合Ruten商品頁",1) ;
+//				}
+//
+//			} catch (Exception e) {
+//				category = "null";
+//				categorySource = "null";
+//				classRutenUrlClassify = "N";
+//				insertClassUrl(sourceUrl.trim(),"0","","","",1) ;
+//				log.error(">>>>>>"+ e.getMessage());
+//			}
+//		}
+//
+//		dmpDataBean.setCategory(category);
+//		dmpDataBean.setCategorySource(categorySource);
+//		dmpDataBean.setClassRutenUrlClassify(classRutenUrlClassify);
+//		
+//		return dmpDataBean;
 	}
 	
 	
 	public DBObject queryClassUrl(String url) throws Exception {
-		BasicDBObject andQuery = new BasicDBObject();
-		List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
-		obj.add(new BasicDBObject("url",url));
+		andQuery.clear();
+		obj.clear();
+		basicDBObject.clear();
+		obj.add(basicDBObject.append("url",url));
 		andQuery.put("$and", obj);
-		DBObject dbObject =  dBCollection.findOne(andQuery);
-		return dbObject;
+		return dBCollection.findOne(andQuery);
 	}
 	
 	public void updateClassUrlUpdateDate(String url,DBObject dbObject) throws Exception {
@@ -171,7 +308,6 @@ public class AdRutenLog extends ACategoryLogData {
 		if ( (!todayStr.equals(updateDateStr)) ){
 			Date date = new Date();
 			dbObject.put("update_date", date);
-
 		    DBObject olddbObject = new BasicDBObject();
 		    olddbObject.put("url", url);
 		    dBCollection.update(olddbObject, dbObject);
@@ -179,7 +315,7 @@ public class AdRutenLog extends ACategoryLogData {
 	}
 	
 	public void updateClassUrlQueryTime(String url,DBObject dbObject) throws Exception {
-		if ( (Integer.parseInt( dbObject.get("query_time").toString()) <2000) ){
+		if ((Integer.parseInt(dbObject.get("query_time").toString()) <2000) ){
 			BasicDBObject newDocument = new BasicDBObject();
 			newDocument.append("$inc", new BasicDBObject().append("query_time", 1));
 			DBObject filter = new BasicDBObject(); 
