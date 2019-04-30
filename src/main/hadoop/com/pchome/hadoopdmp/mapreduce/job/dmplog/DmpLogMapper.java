@@ -154,10 +154,13 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public void map(LongWritable offset, Text value, Context context) {
 		try {
 			inputSplit = (InputSplit) context.getInputSplit(); 
-			String fileName = ((FileSplit)inputSplit).getPath().getName();
-			log.info(">>>>>>>"+((FileSplit)inputSplit).getPath());
+//			String fileName = ((FileSplit)inputSplit).getPath().getName();
 			valueStr = value.toString();
 			values = valueStr.split(kdclSymbol);
+			
+			log.info(">>>>>>>"+((FileSplit)inputSplit).getPath());
+			log.info(">>>>>>>valueStr:"+valueStr);
+			
 			if (valueStr.indexOf(kdclSymbol) > -1 ){
 				// values[0]  date time (2018-01-04 04:57:12)
 				// values[1]  memid

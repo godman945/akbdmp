@@ -19,7 +19,7 @@ public class GeoIpComponent {
 	private static CityResponse response = null;
 	public net.minidev.json.JSONObject ipTransformGEO(net.minidev.json.JSONObject dmpJSon) throws Exception {
 		response = null;
-		
+		log.info(">>>>>>>1");
 		// 判斷是否為正確ip格式
 		ip = dmpJSon.getAsString("ip");
 		if (!ipAdd.isIP(ip)) {
@@ -31,6 +31,7 @@ public class GeoIpComponent {
 		}
 		// ip轉換國家、城市
 		InetAddress ipAddress = DmpLogMapper.ipAddress.getByName(ip);
+		log.info(">>>>>>>2");
 		try {
 			response = DmpLogMapper.reader.city(ipAddress);
 		} catch (Exception e) {
@@ -53,6 +54,7 @@ public class GeoIpComponent {
 		}else{
 			dmpJSon.put("area_info_classify", "N");
 		}
+		log.info(">>>>>>>3");
 		return dmpJSon;
 		
 //		String ip = dmpDataBean.getIp();
