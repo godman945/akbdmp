@@ -149,10 +149,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static String[] values = null;
 	
 	
-	private static net.minidev.json.JSONObject dmpJSon =  null;
+	private static net.minidev.json.JSONObject dmpJSon =  new net.minidev.json.JSONObject();
 	private static InputSplit inputSplit = null;
 	public void map(LongWritable offset, Text value, Context context) {
 		try {
+			dmpJSon.clear();
 			inputSplit = (InputSplit) context.getInputSplit(); 
 //			String fileName = ((FileSplit)inputSplit).getPath().getName();
 			valueStr = value.toString();
