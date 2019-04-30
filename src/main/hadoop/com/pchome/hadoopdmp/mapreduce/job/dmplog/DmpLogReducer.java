@@ -125,87 +125,87 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	@Override
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
 		try {
-			// log.info(">>>>>> reduce start : " + mapperKey.toString());
-			String data = mapperKey.toString();
-			JSONObject jsonObjOrg = (net.minidev.json.JSONObject) jsonParser.parse(data);
-
-			// String dmpSource = (String) jsonObjOrg.get("org_source");
-			String dmpMemid = (String) ((JSONObject) jsonObjOrg.get("key")).get("memid");
-			String dmpUuid = (String) ((JSONObject) jsonObjOrg.get("key")).get("uuid");
-			String recordDate = jsonObjOrg.getAsString("record_date");
-			record_date = (String) ((JSONObject) jsonObjOrg.get("key")).get("recordDate");
-			// 建立map key
-			// StringBuffer reducerMapKey = new StringBuffer();
-			// reducerMapKey.append(dmpSource);
-			// reducerMapKey.append("_");
-			// reducerMapKey.append(dmpMemid);
-			// reducerMapKey.append("_");
-			// reducerMapKey.append(dmpUuid);
-
-			// JSONObject dmpJson = kafkaDmpMap.get(reducerMapKey.toString());
-			if (((StringUtils.isNotBlank(dmpMemid) && !dmpMemid.equals("null"))
-					&& ((StringUtils.isNotBlank(dmpUuid) && !dmpUuid.equals("null"))))) {
-				// 先處理memid
-				StringBuffer reducerMapKey = new StringBuffer();
-				reducerMapKey.append(dmpMemid);
-				
-//				log.info("kafkaDmpMap:"+kafkaDmpMap.get(reducerMapKey.toString()));
-				
-				JSONObject dmpJson = kafkaDmpMap.get(reducerMapKey.toString());
-				if (dmpJson == null) {
-					processKafakDmpMapKeyNotExist(recordDate, jsonObjOrg, reducerMapKey.toString());
-				} else {
-					processKafakDmpMapKeyIsExist(recordDate, jsonObjOrg, reducerMapKey.toString(), dmpJson);
-				}
-
-				JSONObject dmpUuidJson = kafkaDmpMap.get(dmpUuid);
-				if (dmpUuidJson == null) {
-//					log.info(">>>>>>>>>3");
-					dmpUuidJson = (JSONObject) kafkaDmpMap.get(dmpMemid).clone();
-					JSONObject keyObject = (JSONObject) dmpUuidJson.get("key");
-					keyObject.put("uuid", dmpUuid);
-					keyObject.put("memid", "null");
-				} else {
-//					log.info(">>>>>>>>>4");
-					dmpUuidJson = (JSONObject) kafkaDmpMap.get(dmpMemid).clone();
-					JSONObject keyObject = (JSONObject) dmpUuidJson.get("key");
-					keyObject.put("uuid", dmpUuid);
-					keyObject.put("memid", "null");
-					processKafakDmpMapKeyIsExist(recordDate, jsonObjOrg, dmpUuid.toString(), dmpUuidJson);
-				}
-			} else {
-				StringBuffer reducerMapKey = new StringBuffer();
-				if (((StringUtils.isNotBlank(dmpMemid) && !dmpMemid.equals("null")))) {
-//					log.info(">>>>>>>>>7");
-					reducerMapKey.append(dmpMemid);
-				}
-				if (((StringUtils.isNotBlank(dmpUuid) && !dmpUuid.equals("null")))) {
-//					log.info(">>>>>>>>>8");
-					reducerMapKey.append(dmpUuid);
-				}
-
-				JSONObject dmpJson = kafkaDmpMap.get(reducerMapKey.toString());
-				if (dmpJson == null) {
-//					log.info(">>>>>>>>>9");
-					processKafakDmpMapKeyNotExist(recordDate, jsonObjOrg, reducerMapKey.toString());
-				} else {
-//					log.info(">>>>>>>>>10");
-					processKafakDmpMapKeyIsExist(recordDate, jsonObjOrg, reducerMapKey.toString(), dmpJson);
-				}
-			}
- 
-			// if(dmpJson == null){
-			// processKafakDmpMapKeyNotExist();
-			//
-			// }else{
-			// processKafakDmpMapKeyIsExist();
-			// }
+//			// log.info(">>>>>> reduce start : " + mapperKey.toString());
+//			String data = mapperKey.toString();
+//			JSONObject jsonObjOrg = (net.minidev.json.JSONObject) jsonParser.parse(data);
+//
+//			// String dmpSource = (String) jsonObjOrg.get("org_source");
+//			String dmpMemid = (String) ((JSONObject) jsonObjOrg.get("key")).get("memid");
+//			String dmpUuid = (String) ((JSONObject) jsonObjOrg.get("key")).get("uuid");
+//			String recordDate = jsonObjOrg.getAsString("record_date");
+//			record_date = (String) ((JSONObject) jsonObjOrg.get("key")).get("recordDate");
+//			// 建立map key
+//			// StringBuffer reducerMapKey = new StringBuffer();
+//			// reducerMapKey.append(dmpSource);
+//			// reducerMapKey.append("_");
+//			// reducerMapKey.append(dmpMemid);
+//			// reducerMapKey.append("_");
+//			// reducerMapKey.append(dmpUuid);
+//
+//			// JSONObject dmpJson = kafkaDmpMap.get(reducerMapKey.toString());
+//			if (((StringUtils.isNotBlank(dmpMemid) && !dmpMemid.equals("null"))
+//					&& ((StringUtils.isNotBlank(dmpUuid) && !dmpUuid.equals("null"))))) {
+//				// 先處理memid
+//				StringBuffer reducerMapKey = new StringBuffer();
+//				reducerMapKey.append(dmpMemid);
+//				
+////				log.info("kafkaDmpMap:"+kafkaDmpMap.get(reducerMapKey.toString()));
+//				
+//				JSONObject dmpJson = kafkaDmpMap.get(reducerMapKey.toString());
+//				if (dmpJson == null) {
+//					processKafakDmpMapKeyNotExist(recordDate, jsonObjOrg, reducerMapKey.toString());
+//				} else {
+//					processKafakDmpMapKeyIsExist(recordDate, jsonObjOrg, reducerMapKey.toString(), dmpJson);
+//				}
+//
+//				JSONObject dmpUuidJson = kafkaDmpMap.get(dmpUuid);
+//				if (dmpUuidJson == null) {
+////					log.info(">>>>>>>>>3");
+//					dmpUuidJson = (JSONObject) kafkaDmpMap.get(dmpMemid).clone();
+//					JSONObject keyObject = (JSONObject) dmpUuidJson.get("key");
+//					keyObject.put("uuid", dmpUuid);
+//					keyObject.put("memid", "null");
+//				} else {
+////					log.info(">>>>>>>>>4");
+//					dmpUuidJson = (JSONObject) kafkaDmpMap.get(dmpMemid).clone();
+//					JSONObject keyObject = (JSONObject) dmpUuidJson.get("key");
+//					keyObject.put("uuid", dmpUuid);
+//					keyObject.put("memid", "null");
+//					processKafakDmpMapKeyIsExist(recordDate, jsonObjOrg, dmpUuid.toString(), dmpUuidJson);
+//				}
+//			} else {
+//				StringBuffer reducerMapKey = new StringBuffer();
+//				if (((StringUtils.isNotBlank(dmpMemid) && !dmpMemid.equals("null")))) {
+////					log.info(">>>>>>>>>7");
+//					reducerMapKey.append(dmpMemid);
+//				}
+//				if (((StringUtils.isNotBlank(dmpUuid) && !dmpUuid.equals("null")))) {
+////					log.info(">>>>>>>>>8");
+//					reducerMapKey.append(dmpUuid);
+//				}
+//
+//				JSONObject dmpJson = kafkaDmpMap.get(reducerMapKey.toString());
+//				if (dmpJson == null) {
+////					log.info(">>>>>>>>>9");
+//					processKafakDmpMapKeyNotExist(recordDate, jsonObjOrg, reducerMapKey.toString());
+//				} else {
+////					log.info(">>>>>>>>>10");
+//					processKafakDmpMapKeyIsExist(recordDate, jsonObjOrg, reducerMapKey.toString(), dmpJson);
+//				}
+//			}
+// 
+//			// if(dmpJson == null){
+//			// processKafakDmpMapKeyNotExist();
+//			//
+//			// }else{
+//			// processKafakDmpMapKeyIsExist();
+//			// }
 		} catch (Throwable e) {
-			// log.error(">>>>>> reduce error redis key:"
-			// +reducerMapKey.toString());
-			log.error("reduce error>>>>>> " + e);
-			// log.error(">>>>>>reduce error>> redisClassifyMap:" +
-			// redisClassifyMap);
+//			// log.error(">>>>>> reduce error redis key:"
+//			// +reducerMapKey.toString());
+//			log.error("reduce error>>>>>> " + e);
+//			// log.error(">>>>>>reduce error>> redisClassifyMap:" +
+//			// redisClassifyMap);
 		}
 	}
 
@@ -334,76 +334,76 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	private static JSONObject dmpJsonDataObj = null;
 	public void cleanup(Context context) {
 		try {
-			String kafkaTopic;
-			String env = context.getConfiguration().get("spring.profiles.active");
-			if (env.equals("prd")) {
-				kafkaTopic = "dmp_log_prd";
-			} else {
-				kafkaTopic = "dmp_log_stg";
-			}
-			Iterator iterator = kafkaDmpMap.entrySet().iterator();
-			/*
-			 * druid [0]:date_time
-			 * druid [1]:date
-			 * druid [2]:time
-			 * druid [3]:uuid
-			 * druid [4]:category
-			 * druid [5]:user_agent
-			 * druid [6]:sex
-			 * druid [7]:age
-			 * druid [8]:area_country
-			 * druid [9]:area_city
-			 * druid [10]:device
-			 * druid [11]:device_os
-			 * druid [12]:device_browser
-			 * druid [13]:device_phone
-			 * druid [14]:url
-			 * druid [15]:ip
-			 * */
-			while (iterator.hasNext()) {
-				count = count + 1;
-				Map.Entry mapEntry = (Map.Entry) iterator.next();
-				
-				if(count == 1) {
-					log.info(">>>:"+mapEntry.getValue());
-				}
-				dmpJsonObj = (JSONObject)mapEntry.getValue();
-				dmpJsonDataObj = (JSONObject) dmpJsonObj.get("data");
-//					log.info("mapEntry:"+mapEntry);
-//					log.info("mapEntry size:"+kafkaDmpMap.size());
-					keyOut.set(((JSONObject)mapEntry.getValue()).getAsString("date_time"));
-					wiriteToDruid.append(",").append("\"").append(dmpJsonObj.getAsString("record_date")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("time_info")).get(0)).get("value")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(mapEntry.getKey().toString()).append("\"");
-					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("category_info")).get(0)).get("value")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJsonObj.get("user_agent")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("sex_info")).get(0)).get("value")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("age_info")).get(0)).get("value")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("area_country_info")).get(0)).get("value")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("area_city_info")).get(0)).get("value")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_info")).get(0)).get("value")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_os_info")).get(0)).get("value")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_browser_info")).get(0)).get("value")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_phone_info")).get(0)).get("value")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJsonObj.get("url")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJsonObj.get("ip")).append("\"");
-					if(count <= 10) {
-						log.info(wiriteToDruid.toString());
-					}
-					
-//					JSONArray arr =  (JSONArray) ((JSONObject)((JSONObject)mapEntry.getValue()).get("data")).get("classify");
-//					for (Object object : arr) {
-//						JSONObject ob = (JSONObject) object;
-//						for(Iterator iterator2 = ob.keySet().iterator(); iterator2.hasNext();) {
-//							  String key = (String) iterator2.next();
-//							  log.info(key);
-//							  log.info(ob.get(key));
-//							  wiriteToDruid.append(",").append(ob.get(key));
-//						}
+//			String kafkaTopic;
+//			String env = context.getConfiguration().get("spring.profiles.active");
+//			if (env.equals("prd")) {
+//				kafkaTopic = "dmp_log_prd";
+//			} else {
+//				kafkaTopic = "dmp_log_stg";
+//			}
+//			Iterator iterator = kafkaDmpMap.entrySet().iterator();
+//			/*
+//			 * druid [0]:date_time
+//			 * druid [1]:date
+//			 * druid [2]:time
+//			 * druid [3]:uuid
+//			 * druid [4]:category
+//			 * druid [5]:user_agent
+//			 * druid [6]:sex
+//			 * druid [7]:age
+//			 * druid [8]:area_country
+//			 * druid [9]:area_city
+//			 * druid [10]:device
+//			 * druid [11]:device_os
+//			 * druid [12]:device_browser
+//			 * druid [13]:device_phone
+//			 * druid [14]:url
+//			 * druid [15]:ip
+//			 * */
+//			while (iterator.hasNext()) {
+//				count = count + 1;
+//				Map.Entry mapEntry = (Map.Entry) iterator.next();
+//				
+//				if(count == 1) {
+//					log.info(">>>:"+mapEntry.getValue());
+//				}
+//				dmpJsonObj = (JSONObject)mapEntry.getValue();
+//				dmpJsonDataObj = (JSONObject) dmpJsonObj.get("data");
+////					log.info("mapEntry:"+mapEntry);
+////					log.info("mapEntry size:"+kafkaDmpMap.size());
+//					keyOut.set(((JSONObject)mapEntry.getValue()).getAsString("date_time"));
+//					wiriteToDruid.append(",").append("\"").append(dmpJsonObj.getAsString("record_date")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("time_info")).get(0)).get("value")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(mapEntry.getKey().toString()).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("category_info")).get(0)).get("value")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJsonObj.get("user_agent")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("sex_info")).get(0)).get("value")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("age_info")).get(0)).get("value")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("area_country_info")).get(0)).get("value")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("area_city_info")).get(0)).get("value")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_info")).get(0)).get("value")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_os_info")).get(0)).get("value")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_browser_info")).get(0)).get("value")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_phone_info")).get(0)).get("value")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJsonObj.get("url")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJsonObj.get("ip")).append("\"");
+//					if(count <= 10) {
+//						log.info(wiriteToDruid.toString());
 //					}
-//					log.info("--------");
-					context.write(keyOut, new Text(wiriteToDruid.toString()));
-					wiriteToDruid.setLength(0);
+//					
+////					JSONArray arr =  (JSONArray) ((JSONObject)((JSONObject)mapEntry.getValue()).get("data")).get("classify");
+////					for (Object object : arr) {
+////						JSONObject ob = (JSONObject) object;
+////						for(Iterator iterator2 = ob.keySet().iterator(); iterator2.hasNext();) {
+////							  String key = (String) iterator2.next();
+////							  log.info(key);
+////							  log.info(ob.get(key));
+////							  wiriteToDruid.append(",").append(ob.get(key));
+////						}
+////					}
+////					log.info("--------");
+//					context.write(keyOut, new Text(wiriteToDruid.toString()));
+//					wiriteToDruid.setLength(0);
 //				producer.send(new ProducerRecord<String, String>(kafkaTopic, partitionHashcode, mapEntry.getValue().toString()));
 //				if(partition == 2){
 //					partition = 0;
@@ -417,7 +417,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //						partitionHashcode = "key2";
 //					}
 //				}
-			}
+//			}
 //			log.info("process count:"+count);
 //			producer.close();
 //			log.info(">>>>>>reduce count:" + count);

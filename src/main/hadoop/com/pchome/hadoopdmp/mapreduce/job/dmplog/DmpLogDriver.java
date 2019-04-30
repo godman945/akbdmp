@@ -130,7 +130,8 @@ public class DmpLogDriver {
 
 			FileSystem fs = FileSystem.get(conf);
 			while(calStart.getTime().before(calEnd.getTime())) {
-				Path path = new Path("/home/webuser/analyzer/storedata/alllog/"+sdf.format(calStart.getTime()));
+//				Path path = new Path("/home/webuser/analyzer/storedata/alllog/"+sdf.format(calStart.getTime()));
+				Path path = new Path("/home/webuser/akb/storedata/alllog/"+sdf.format(calStart.getTime()));
 				FileStatus[] status = fs.listStatus(path); 
 				for (FileStatus fileStatus : status) {  
 					log.info("Job1 INPUT PATH:"+fileStatus.getPath().toString());
@@ -154,7 +155,7 @@ public class DmpLogDriver {
 			job.setMapSpeculativeExecution(false);
 			
 			deleteExistedDir(fs, new Path("/home/webuser/alex/druid"), true);
-			FileOutputFormat.setOutputPath(job, new Path("/home/webuser/alex/druid"));
+			FileOutputFormat.setOutputPath(job, new Path("/home/webuser/alex/druid/"+sdf.format(calStart.getTime())));
 			FileInputFormat.setInputPaths(job, paths);
 			FileOutputFormat.setCompressOutput(job, true);  //job使用压缩  
 	        FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);  
