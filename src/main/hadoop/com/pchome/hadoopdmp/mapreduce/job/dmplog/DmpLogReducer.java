@@ -71,6 +71,15 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	public Map<String, Integer> redisClassifyMap = null;
 
+	
+	
+	private static String partitionHashcode = "1";
+	private static int partition = 0;
+	private static int total = 0;
+	private static StringBuffer wiriteToDruid = new StringBuffer();
+	private static JSONObject dmpJsonObj = null;
+	private static JSONObject dmpJsonDataObj = null;
+	private static net.minidev.json.JSONObject dmpJSon =  new net.minidev.json.JSONObject();
 	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"
@@ -125,6 +134,52 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	@Override
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
 		try {
+			
+//			keyOut.set(((JSONObject)mapEntry.getValue()).getAsString("date_time"));
+//			wiriteToDruid.append(",").append("\"").append(dmpJsonObj.getAsString("record_date")).append("\"");
+//			wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("time_info")).get(0)).get("value")).append("\"");
+//			wiriteToDruid.append(",").append("\"").append(mapEntry.getKey().toString()).append("\"");
+//			wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("category_info")).get(0)).get("value")).append("\"");
+//			wiriteToDruid.append(",").append("\"").append(dmpJsonObj.get("user_agent")).append("\"");
+//			wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("sex_info")).get(0)).get("value")).append("\"");
+//			wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("age_info")).get(0)).get("value")).append("\"");
+//			wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("area_country_info")).get(0)).get("value")).append("\"");
+//			wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("area_city_info")).get(0)).get("value")).append("\"");
+//			wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_info")).get(0)).get("value")).append("\"");
+//			wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_os_info")).get(0)).get("value")).append("\"");
+//			wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_browser_info")).get(0)).get("value")).append("\"");
+//			wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_phone_info")).get(0)).get("value")).append("\"");
+//			wiriteToDruid.append(",").append("\"").append(dmpJsonObj.get("url")).append("\"");
+//			wiriteToDruid.append(",").append("\"").append(dmpJsonObj.get("ip")).append("\"");
+			
+			
+			for (Text text : mapperValue) {
+				dmpJSon.clear();
+				wiriteToDruid.setLength(0);
+				
+				dmpJSon = (net.minidev.json.JSONObject) jsonParser.parse(text.toString());
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("date_time")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("memid")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ip")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("url")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("user_agent")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("trigger_type")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_class")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("dmp_source")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("record_date")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("hour")).append("\"");
+				keyOut.set(dmpJSon.getAsString("uuid"));
+				context.write(new Text(mapperKey.toString()), new Text(wiriteToDruid.toString()));
+				
+			}
+			
+			dmpJSon.clear();
+			wiriteToDruid.setLength(0);
+			
+			
+			
 //			// log.info(">>>>>> reduce start : " + mapperKey.toString());
 //			String data = mapperKey.toString();
 //			JSONObject jsonObjOrg = (net.minidev.json.JSONObject) jsonParser.parse(data);
@@ -326,12 +381,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //		log.info("processKafakDmpMapKeyIsExist >>>>>>>> 2");
 	}
 	
-	private static String partitionHashcode = "1";
-	private static int partition = 0;
-	private static int total = 0;
-	private static StringBuffer wiriteToDruid = new StringBuffer();
-	private static JSONObject dmpJsonObj = null;
-	private static JSONObject dmpJsonDataObj = null;
+	
 	public void cleanup(Context context) {
 		try {
 //			String kafkaTopic;

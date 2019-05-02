@@ -241,33 +241,46 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				 return;
 			}
 			
-			//地區處理元件(ip 轉國家、城市)
-			geoIpComponent.ipTransformGEO(dmpJSon);
-			//時間處理元件(日期時間字串轉成小時)			
-			dateTimeComponent.datetimeTransformHour(dmpJSon); 
-			//裝置處理元件(UserAgent轉成裝置資訊)
-			deviceComponent.parseUserAgentToDevice(dmpJSon);
-			//分類處理元件(分析click、24H、Ruten、campaign分類)
-			if ((dmpJSon.getAsString("trigger_type").equals("ck") || dmpJSon.getAsString("trigger_type").equals("campaign")) ) {// kdcl ad_click的adclass  或   campaign log的adclass 	//&& StringUtils.isNotBlank(dmpLogBeanResult.getAdClass())
-				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
-				aCategoryLogData.processCategory(dmpJSon, null);
-			}else if (dmpJSon.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpJSon.getAsString("url")) && dmpJSon.getAsString("url").contains("ruten")) {	// 露天
-				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
-				aCategoryLogData.processCategory(dmpJSon, dBCollection_class_url);
-			}else if (dmpJSon.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpJSon.getAsString("url")) && dmpJSon.getAsString("url").contains("24h")) {		// 24h
-				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
-				aCategoryLogData.processCategory(dmpJSon, dBCollection_class_url);
-			}else if (dmpJSon.getAsString("trigger_type").equals("pv") ){
-				dmpJSon.put("category", "null");
-				dmpJSon.put("category_source", "null");
-				dmpJSon.put("class_adclick_classify", "null");
-				dmpJSon.put("class_24h_url_classify", "null");
-				dmpJSon.put("class_ruten_url_classify", "null");
+			if(StringUtils.isBlank(dmpJSon.getAsString("uuid")) || dmpJSon.getAsString("uuid").equals("null")) {
+				 return;
 			}
-			//個資處理元件
-			personalInfoComponent.processPersonalInfo(dmpJSon, dBCollection_user_detail);
 			
-			log.info(dmpJSon);
+			keyOut.set(dmpJSon.getAsString("uuid"));
+			context.write(keyOut, new Text(dmpJSon.toString()));
+			
+			
+			
+			
+			
+			
+			
+//			//地區處理元件(ip 轉國家、城市)
+//			geoIpComponent.ipTransformGEO(dmpJSon);
+//			//時間處理元件(日期時間字串轉成小時)			
+//			dateTimeComponent.datetimeTransformHour(dmpJSon); 
+//			//裝置處理元件(UserAgent轉成裝置資訊)
+//			deviceComponent.parseUserAgentToDevice(dmpJSon);
+//			//分類處理元件(分析click、24H、Ruten、campaign分類)
+//			if ((dmpJSon.getAsString("trigger_type").equals("ck") || dmpJSon.getAsString("trigger_type").equals("campaign")) ) {// kdcl ad_click的adclass  或   campaign log的adclass 	//&& StringUtils.isNotBlank(dmpLogBeanResult.getAdClass())
+//				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
+//				aCategoryLogData.processCategory(dmpJSon, null);
+//			}else if (dmpJSon.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpJSon.getAsString("url")) && dmpJSon.getAsString("url").contains("ruten")) {	// 露天
+//				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
+//				aCategoryLogData.processCategory(dmpJSon, dBCollection_class_url);
+//			}else if (dmpJSon.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpJSon.getAsString("url")) && dmpJSon.getAsString("url").contains("24h")) {		// 24h
+//				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
+//				aCategoryLogData.processCategory(dmpJSon, dBCollection_class_url);
+//			}else if (dmpJSon.getAsString("trigger_type").equals("pv") ){
+//				dmpJSon.put("category", "null");
+//				dmpJSon.put("category_source", "null");
+//				dmpJSon.put("class_adclick_classify", "null");
+//				dmpJSon.put("class_24h_url_classify", "null");
+//				dmpJSon.put("class_ruten_url_classify", "null");
+//			}
+//			//個資處理元件
+//			personalInfoComponent.processPersonalInfo(dmpJSon, dBCollection_user_detail);
+//			
+//			log.info(dmpJSon);
 			
 			
 			

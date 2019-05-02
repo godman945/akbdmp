@@ -155,13 +155,13 @@ public class DmpLogDriver {
 			job.setMapSpeculativeExecution(false);
 			
 			deleteExistedDir(fs, new Path("/home/webuser/alex/druid/"+sdf.format(calStart.getTime())), true);
-			FileOutputFormat.setOutputPath(job, new Path("/home/webuser/alex/druid/"+sdf.format(calStart.getTime())));
+			FileOutputFormat.setOutputPath(job, new Path("/home/webuser/alex/druid/"+sdf.format(calEnd.getTime())));
 			FileInputFormat.setInputPaths(job, paths);
 			FileOutputFormat.setCompressOutput(job, true);  //job使用压缩  
 	        FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);  
 			
 			
-			log.info(">>>>>>Job1 OUTPUT PATH:"+"/home/webuser/alex/druid/"+sdf.format(calStart.getTime()));
+			log.info(">>>>>>Job1 OUTPUT PATH:"+"/home/webuser/alex/druid/"+sdf.format(calEnd.getTime()));
 	        
 	        
 	        
