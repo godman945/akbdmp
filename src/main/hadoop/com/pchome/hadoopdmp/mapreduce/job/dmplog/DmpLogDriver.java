@@ -82,7 +82,7 @@ public class DmpLogDriver {
 	String logInputPath;
 	String outPath;
 	
-	public void drive(String env,String timeType) throws Exception {
+	public void drive(String env,String timeType,String date) throws Exception {
 		try {
 			Calendar calendar = Calendar.getInstance();
 			JobConf jobConf = new JobConf();
@@ -123,8 +123,8 @@ public class DmpLogDriver {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 			Calendar calStart = Calendar.getInstance();
 			Calendar calEnd = Calendar.getInstance();
-			calStart.setTime(sdf.parse("2019-03-01"));
-			calEnd.setTime(sdf.parse("2019-03-02"));
+			calStart.setTime(sdf.parse(date));
+			calEnd.add(Calendar.DATE, 1);
 			
 			List<Path> listPath = new ArrayList<Path>();  
 
@@ -155,13 +155,13 @@ public class DmpLogDriver {
 			job.setMapSpeculativeExecution(false);
 			
 			deleteExistedDir(fs, new Path("/home/webuser/alex/druid/"+sdf.format(calStart.getTime())), true);
-			FileOutputFormat.setOutputPath(job, new Path("/home/webuser/alex/druid/"+sdf.format(calEnd.getTime())));
+			FileOutputFormat.setOutputPath(job, new Path("/home/webuser/alex/druid/"+sdf.format(calStart.getTime())));
 			FileInputFormat.setInputPaths(job, paths);
 			FileOutputFormat.setCompressOutput(job, true);  //job使用压缩  
 	        FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);  
 			
 			
-			log.info(">>>>>>Job1 OUTPUT PATH:"+"/home/webuser/alex/druid/"+sdf.format(calEnd.getTime()));
+			log.info(">>>>>>Job1 OUTPUT PATH:"+"/home/webuser/alex/druid/"+sdf.format(calStart.getTime()));
 	        
 	        
 	        
@@ -491,7 +491,7 @@ public class DmpLogDriver {
 		}
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 		DmpLogDriver dmpLogDriver = (DmpLogDriver) ctx.getBean(DmpLogDriver.class);
-		dmpLogDriver.drive(args[0],args[1]);
+		dmpLogDriver.drive(args[0],args[1],args[2]);
 		log.info("====driver end====");
 	}
 //
