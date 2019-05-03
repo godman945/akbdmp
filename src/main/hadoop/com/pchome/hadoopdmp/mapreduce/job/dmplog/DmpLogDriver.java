@@ -167,7 +167,7 @@ public class DmpLogDriver {
 			job.setNumReduceTasks(1);//1個reduce 
 			job.setMapSpeculativeExecution(false);
 			
-			deleteExistedDir(fs, new Path("/home/webuser/alex/druid/"+sdf.format(calStart.getTime())), true);
+			deleteExistedDir(fs, new Path("/home/webuser/alex/druid/"+date), true);
 			FileOutputFormat.setOutputPath(job, new Path("/home/webuser/alex/druid/"+sdf.format(calStart.getTime())));
 			FileInputFormat.setInputPaths(job, paths);
 			FileOutputFormat.setCompressOutput(job, true);  //job使用压缩  
