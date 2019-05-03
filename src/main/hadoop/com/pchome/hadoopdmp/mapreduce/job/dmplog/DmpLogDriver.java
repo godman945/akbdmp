@@ -174,7 +174,7 @@ public class DmpLogDriver {
 	        FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);  
 			
 			
-			log.info(">>>>>>Job1 OUTPUT PATH:"+"/home/webuser/alex/druid/"+sdf.format(calStart.getTime()));
+			log.info(">>>>>>Job1 OUTPUT PATH:"+"/home/webuser/alex/druid/"+date);
 	        
 	        
 	        
