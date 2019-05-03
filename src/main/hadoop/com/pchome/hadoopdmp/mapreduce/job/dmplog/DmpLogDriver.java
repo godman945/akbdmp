@@ -122,9 +122,22 @@ public class DmpLogDriver {
 	        
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 			Calendar calStart = Calendar.getInstance();
-			Calendar calEnd = Calendar.getInstance();
 			calStart.setTime(sdf.parse(date));
+			
+			Calendar calEnd = Calendar.getInstance();
+			calEnd.setTime(sdf.parse(date));
 			calEnd.add(Calendar.DATE, 1);
+			
+			
+			
+			
+			
+			
+//			Calendar calEnd = Calendar.getInstance();
+//			calStart.setTime(sdf.parse(date));
+			
+			
+//			calEnd.setTime((calStart.add(Calendar.DATE, 1)).);
 			
 			List<Path> listPath = new ArrayList<Path>();  
 
