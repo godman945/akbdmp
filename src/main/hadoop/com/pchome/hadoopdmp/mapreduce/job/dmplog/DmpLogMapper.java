@@ -73,13 +73,17 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public void setup(Context context) {
 		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
 		try {
+			record_date = context.getConfiguration().get("job.date");
+			record_time = context.getConfiguration().get("job.time");
+			
+			log.info("record_date:"+record_date);
+			log.info("record_time:"+record_time);
 			
 			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
 			dBCollection_class_url =  this.mongoOrgOperations.getCollection("class_url");
 			dBCollection_user_detail = this.mongoOrgOperations.getCollection("user_detail");
-			
 			//load 推估分類個資表(ClsfyGndAgeCrspTable.txt)
 			Configuration conf = context.getConfiguration();
 			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
@@ -91,9 +95,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				String[] tmpStrAry2 = tmpStrAry[1].split(",");
 				clsfyCraspMap.put(tmpStrAry[0],new combinedValue(tmpStrAry[1].split(",")[0], tmpStrAry2.length > 1 ? tmpStrAry2[1] : ""));
 			}
-			
-			record_date = context.getConfiguration().get("job.date");
-			record_time = context.getConfiguration().get("job.time");
 			
 			// load 分類表(pfp_ad_category_new.csv)
 			Path cate_path = Paths.get(path[0].toString());
@@ -228,7 +229,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		try {
 			//讀取kdcl、Campaign資料
 			dmpDataJson.clear();
-			log.info("raw_data : " + value);
+//			log.info("raw_data : " + value);
 			logStr = value.toString();
 			if (logStr.indexOf(kdclSymbol) > -1 ){	//kdcl log	raw data格式
 			// values[0]  date time (2018-01-04 04:57:12)
@@ -307,41 +308,31 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			
 			
 			//地區處理元件(ip 轉國家、城市)
-			log.info(">>>>>>>>1");
 			geoIpComponent.ipTransformGEO(dmpDataJson);
 			//時間處理元件(日期時間字串轉成小時)		
-			log.info(">>>>>>>>2");
 			dateTimeComponent.datetimeTransformHour(dmpDataJson); 
 			//時間處理元件(日期時間字串轉成小時)
-			log.info(">>>>>>>>3");
 			dateTimeComponent.datetimeTransformHour(dmpDataJson); 
 			//裝置處理元件(UserAgent轉成裝置資訊)
-			log.info(">>>>>>>>4");
 			deviceComponent.parseUserAgentToDevice(dmpDataJson);
 			
 			//分類處理元件(分析click、24H、Ruten、campaign分類)
-			log.info(">>>>>>>>5");
 			if ((dmpDataJson.getAsString("trigger_type").equals("ck") || dmpDataJson.getAsString("trigger_type").equals("campaign")) ) {// kdcl ad_click的adclass  或   campaign log的adclass 	//&& StringUtils.isNotBlank(dmpLogBeanResult.getAdClass())
-				log.info(">>>>>>>>6");
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
 				aCategoryLogData.processCategory(dmpDataJson, null);
 			}else if (dmpDataJson.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpDataJson.getAsString("url")) && dmpDataJson.getAsString("url").contains("ruten")) {	// 露天
-				log.info(">>>>>>>>7");
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
 				aCategoryLogData.processCategory(dmpDataJson, dBCollection_class_url);
 			}else if (dmpDataJson.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpDataJson.getAsString("url")) && dmpDataJson.getAsString("url").contains("24h")) {		// 24h
-				log.info(">>>>>>>>8");
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
 				aCategoryLogData.processCategory(dmpDataJson, dBCollection_class_url);
 			}else if (dmpDataJson.getAsString("trigger_type").equals("pv") ){
-				log.info(">>>>>>>>9");
 				dmpDataJson.put("category", "null");
 				dmpDataJson.put("category_source", "null");
 				dmpDataJson.put("class_adclick_classify", "null");
 				dmpDataJson.put("class_24h_url_classify", "null");
 				dmpDataJson.put("class_ruten_url_classify", "null");
 			}
-			log.info(">>>>>>>>10");
 			personalInfoComponent.processPersonalInfo(dmpDataJson, dBCollection_user_detail);
 			
 			

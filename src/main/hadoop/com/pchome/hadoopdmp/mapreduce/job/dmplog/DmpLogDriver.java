@@ -115,6 +115,20 @@ public class DmpLogDriver {
 	        conf.set("mapreduce.reduce.java.opts", "-Xmx8192m");
 	        conf.set("spring.profiles.active", env);
 	        
+	        
+	        
+	        conf.set("job.date",date);
+			jobConf.set("job.date",hour);
+			
+			conf.set("job.time",date);
+			jobConf.set("job.time",hour);
+	        
+	        
+	        
+	        
+	        
+	        
+	        
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 			Calendar calStart = Calendar.getInstance();
 			calStart.setTime(sdf.parse(date));
@@ -171,11 +185,11 @@ public class DmpLogDriver {
 			FileInputFormat.setInputPaths(job, paths);
 			FileOutputFormat.setCompressOutput(job, true);  //job使用压缩  
 	        FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);  
-	        conf.set("job.date",paths[0].toString().split("/")[8]);
-			jobConf.set("job.date",paths[0].toString().split("/")[8]);
-			
-			conf.set("job.time",paths[0].toString().split("/")[9]);
-			jobConf.set("job.time",paths[0].toString().split("/")[9]);
+//	        conf.set("job.date",paths[0].toString().split("/")[8]);
+//			jobConf.set("job.date",paths[0].toString().split("/")[8]);
+//			
+//			conf.set("job.time",paths[0].toString().split("/")[9]);
+//			jobConf.set("job.time",paths[0].toString().split("/")[9]);
 			
 			
 			
