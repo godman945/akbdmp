@@ -128,7 +128,7 @@ public class DmpLogDriver {
 			if(env.equals("prd")) {
 				
 			}else {
-				Path path = new Path("/home/webuser/analyzer/storedata/alllog/"+date+"/"+hour);
+				Path path = new Path("/home/webuser/akb/storedata/alllog/"+date+"/"+hour);
 				FileStatus[] status = fs.listStatus(path); 
 				for (FileStatus fileStatus : status) {  
 					log.info("JOB INPUT PATH:"+fileStatus.getPath().toString());
