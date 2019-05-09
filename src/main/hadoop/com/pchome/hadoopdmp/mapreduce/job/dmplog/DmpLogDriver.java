@@ -22,6 +22,7 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -82,12 +83,10 @@ public class DmpLogDriver {
 	String logInputPath;
 	String outPath;
 	
-	public void drive(String env,String timeType,String date) throws Exception {
+	public void drive(String env,String timeType,String date,String hour) throws Exception {
 		try {
 			Calendar calendar = Calendar.getInstance();
 			JobConf jobConf = new JobConf();
-			
-			
 			jobConf.setNumMapTasks(5);
 			jobConf.set("mapred.max.split.size","3045728"); //3045728 49 //3045728000 7
 			jobConf.set("mapred.min.split.size","1015544"); //1015544 49 //1015544000 7
@@ -100,8 +99,6 @@ public class DmpLogDriver {
 			jobConf.set("mapreduce.reduce.memory.mb", "8192");
 			jobConf.set("mapreduce.job.running.map.limit", "100");
 			jobConf.set("spring.profiles.active", env);
-			
-			
 			// hdfs
 			Configuration conf = new Configuration();
 			conf.set("mapreduce.map.output.compress.codec", codec);
@@ -118,44 +115,30 @@ public class DmpLogDriver {
 	        conf.set("mapreduce.reduce.java.opts", "-Xmx8192m");
 	        conf.set("spring.profiles.active", env);
 	        
-	        
-	        
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 			Calendar calStart = Calendar.getInstance();
 			calStart.setTime(sdf.parse(date));
-			
 			Calendar calEnd = Calendar.getInstance();
 			calEnd.setTime(sdf.parse(date));
 			calEnd.add(Calendar.DATE, 1);
 			
-			
-			
-			
-			
-			
-//			Calendar calEnd = Calendar.getInstance();
-//			calStart.setTime(sdf.parse(date));
-			
-			
-//			calEnd.setTime((calStart.add(Calendar.DATE, 1)).);
-			
+			//輸入檔案
 			List<Path> listPath = new ArrayList<Path>();  
-
 			FileSystem fs = FileSystem.get(conf);
-			while(calStart.getTime().before(calEnd.getTime())) {
-//				Path path = new Path("/home/webuser/analyzer/storedata/alllog/"+sdf.format(calStart.getTime()));
-				Path path = new Path("/home/webuser/akb/storedata/alllog/"+sdf.format(calStart.getTime()));
+			if(env.equals("prd")) {
+				
+			}else {
+				Path path = new Path("/home/webuser/analyzer/storedata/alllog/"+date+"/"+hour);
 				FileStatus[] status = fs.listStatus(path); 
 				for (FileStatus fileStatus : status) {  
-					log.info("Job1 INPUT PATH:"+fileStatus.getPath().toString());
+					log.info("JOB INPUT PATH:"+fileStatus.getPath().toString());
 					listPath.add(new Path(fileStatus.getPath().toString()));
 				}  
-				calStart.add(Calendar.DATE, 1);
 			}
 			
 			Path[] paths = new Path[listPath.size()];  
 			listPath.toArray(paths);  
-			Job job = new Job(jobConf, "dmp_log_"+ env + "_druid_month");
+			Job job = new Job(jobConf, "dmp_log_"+ env + "_druid_test");
 			job.setJarByClass(DmpLogDriver.class);
 			job.setMapperClass(DmpLogMapper.class);
 			job.setMapOutputKeyClass(Text.class);
@@ -164,17 +147,71 @@ public class DmpLogDriver {
 			job.setInputFormatClass(LzoTextInputFormat.class);
 			job.setOutputKeyClass(Text.class);
 			job.setOutputValueClass(Text.class);
+			job.getConfiguration().set("mapreduce.output.basename", "druid_"+hour);
 			job.setNumReduceTasks(1);//1個reduce 
 			job.setMapSpeculativeExecution(false);
-			
-			deleteExistedDir(fs, new Path("/home/webuser/alex/druid/"+date), true);
-			FileOutputFormat.setOutputPath(job, new Path("/home/webuser/alex/druid/"+date));
+			if(env.equals("prd")) {
+				
+			}else {
+				deleteExistedDir(fs, new Path("/home/webuser/alex/druid/"+date+"/"+hour), true);
+				FileOutputFormat.setOutputPath(job, new Path("/home/webuser/alex/druid/"+date+"/"+hour));
+			}
 			FileInputFormat.setInputPaths(job, paths);
 			FileOutputFormat.setCompressOutput(job, true);  //job使用压缩  
 	        FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);  
 			
 			
-			log.info(">>>>>>Job1 OUTPUT PATH:"+"/home/webuser/alex/druid/"+date);
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+//			while(calStart.getTime().before(calEnd.getTime())) {
+////				Path path = new Path("/home/webuser/analyzer/storedata/alllog/"+sdf.format(calStart.getTime()));
+//				Path path = new Path("/home/webuser/akb/storedata/alllog/"+sdf.format(calStart.getTime()));
+//				FileStatus[] status = fs.listStatus(path); 
+//				for (FileStatus fileStatus : status) {  
+//					log.info("Job1 INPUT PATH:"+fileStatus.getPath().toString());
+//					listPath.add(new Path(fileStatus.getPath().toString()));
+//				}  
+//				calStart.add(Calendar.DATE, 1);
+//			}
+			
+//			Path[] paths = new Path[listPath.size()];  
+//			listPath.toArray(paths);  
+//			Job job = new Job(jobConf, "dmp_log_"+ env + "_druid_test");
+//			job.setJarByClass(DmpLogDriver.class);
+//			job.setMapperClass(DmpLogMapper.class);
+//			job.setMapOutputKeyClass(Text.class);
+//			job.setMapOutputValueClass(Text.class);
+//			job.setReducerClass(DmpLogReducer.class);
+//			job.setInputFormatClass(LzoTextInputFormat.class);
+//			job.setOutputKeyClass(Text.class);
+//			job.setOutputValueClass(Text.class);
+//			job.setNumReduceTasks(1);//1個reduce 
+//			job.setMapSpeculativeExecution(false);
+//			
+//			deleteExistedDir(fs, new Path("/home/webuser/alex/druid/"+date), true);
+//			FileOutputFormat.setOutputPath(job, new Path("/home/webuser/alex/druid/"+date));
+//			FileInputFormat.setInputPaths(job, paths);
+//			FileOutputFormat.setCompressOutput(job, true);  //job使用压缩  
+//	        FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);  
+			
+			
+//			log.info(">>>>>>Job1 OUTPUT PATH:"+"/home/webuser/alex/druid/"+date);
 	        
 	        
 	        
@@ -463,49 +500,18 @@ public class DmpLogDriver {
 	
 
 	public static void main(String[] args) throws Exception {
-//		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
-//		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMddHHmmss");
-//		String timePath  = "";
-//		Calendar calendar = Calendar.getInstance();
-//		System.out.println(calendar.get(Calendar.HOUR_OF_DAY));
-//		if(calendar.get(Calendar.HOUR_OF_DAY) == 0){
-//			calendar.add(Calendar.DAY_OF_MONTH, -1); 
-//			timePath = sdf1.format(calendar.getTime())+"/23";
-//		}else {
-//			if(String.valueOf(calendar.get(Calendar.HOUR_OF_DAY) - 1).length() < 2){
-//				timePath = sdf1.format(calendar.getTime()) +"/"+ "0"+(calendar.get(Calendar.HOUR_OF_DAY) - 1);
-//			}else{
-//				timePath = sdf1.format(calendar.getTime()) +"/"+ (calendar.get(Calendar.HOUR_OF_DAY) - 1);
-//			}
-//		}
-//		System.out.println(timePath);
-		
-		log.info("====driver start====");
-//		boolean jobFlag = false;
-//		if(args.length != 2){
-//			jobFlag = true;
-//		}else if(!args[0].equals("prd") && !args[0].equals("stg")){
-//			jobFlag = true;
-//		}else if(!args[1].equals("day") && !args[1].equals("hour")){
-//			jobFlag = true;
-//		}
-//		if(jobFlag){
-//			printUsage();
-//			return;
-//		}
-		
 		if(args[0].equals("prd")){
-			if(args.length == 3) {
-				System.setProperty("druid.test", "true");
-			}
 			System.setProperty("spring.profiles.active", "prd");
 		}else{
+			if(args.length != 4) {
+				System.setProperty("druid.test", "true");
+				log.info("====stg setup fail====");
+			}
 			System.setProperty("spring.profiles.active", "stg");
 		}
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 		DmpLogDriver dmpLogDriver = (DmpLogDriver) ctx.getBean(DmpLogDriver.class);
-		dmpLogDriver.drive(args[0],args[1],args[2]);
+		dmpLogDriver.drive(args[0],args[1],args[2],args[3]);
 		log.info("====driver end====");
 	}
-//
 }
