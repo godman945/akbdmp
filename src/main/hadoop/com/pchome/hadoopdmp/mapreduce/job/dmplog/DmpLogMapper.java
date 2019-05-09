@@ -254,7 +254,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			dmpDataJson.put("ip", values[3]);
 			dmpDataJson.put("url", values[4]);
 			dmpDataJson.put("user_agent", values[5]);
-			dmpDataJson.put("source", values[13]);
+			dmpDataJson.put("trigger_type", values[13]);
 			dmpDataJson.put("ad_class", values[15]);
 			dmpDataJson.put("age", "null");
 			dmpDataJson.put("sex", "null");
@@ -287,7 +287,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				dmpDataJson.put("ip", values[6]);
 				dmpDataJson.put("url", "");
 				dmpDataJson.put("user_agent", "");
-				dmpDataJson.put("source", "campaign");
+				dmpDataJson.put("trigger_type", "campaign");
 				dmpDataJson.put("ad_class", values[2]);
 				if (StringUtils.equals(values[4], "0")){
 					dmpDataJson.put("age", "null");
@@ -305,31 +305,41 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			
 			
 			//地區處理元件(ip 轉國家、城市)
+			log.info(">>>>>>>>1");
 			geoIpComponent.ipTransformGEO(dmpDataJson);
-			//時間處理元件(日期時間字串轉成小時)			
+			//時間處理元件(日期時間字串轉成小時)		
+			log.info(">>>>>>>>2");
 			dateTimeComponent.datetimeTransformHour(dmpDataJson); 
-			//時間處理元件(日期時間字串轉成小時)			
+			//時間處理元件(日期時間字串轉成小時)
+			log.info(">>>>>>>>3");
 			dateTimeComponent.datetimeTransformHour(dmpDataJson); 
 			//裝置處理元件(UserAgent轉成裝置資訊)
+			log.info(">>>>>>>>4");
 			deviceComponent.parseUserAgentToDevice(dmpDataJson);
 			
-			//分類處理元件(分析click、24H、Ruten、campaign分類) 
+			//分類處理元件(分析click、24H、Ruten、campaign分類)
+			log.info(">>>>>>>>5");
 			if ((dmpDataJson.getAsString("trigger_type").equals("ck") || dmpDataJson.getAsString("trigger_type").equals("campaign")) ) {// kdcl ad_click的adclass  或   campaign log的adclass 	//&& StringUtils.isNotBlank(dmpLogBeanResult.getAdClass())
+				log.info(">>>>>>>>6");
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
 				aCategoryLogData.processCategory(dmpDataJson, null);
 			}else if (dmpDataJson.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpDataJson.getAsString("url")) && dmpDataJson.getAsString("url").contains("ruten")) {	// 露天
+				log.info(">>>>>>>>7");
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
 				aCategoryLogData.processCategory(dmpDataJson, dBCollection_class_url);
 			}else if (dmpDataJson.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpDataJson.getAsString("url")) && dmpDataJson.getAsString("url").contains("24h")) {		// 24h
+				log.info(">>>>>>>>8");
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
 				aCategoryLogData.processCategory(dmpDataJson, dBCollection_class_url);
 			}else if (dmpDataJson.getAsString("trigger_type").equals("pv") ){
+				log.info(">>>>>>>>9");
 				dmpDataJson.put("category", "null");
 				dmpDataJson.put("category_source", "null");
 				dmpDataJson.put("class_adclick_classify", "null");
 				dmpDataJson.put("class_24h_url_classify", "null");
 				dmpDataJson.put("class_ruten_url_classify", "null");
 			}
+			log.info(">>>>>>>>10");
 			personalInfoComponent.processPersonalInfo(dmpDataJson, dBCollection_user_detail);
 			
 			log.info("****after****:"+dmpDataJson);
