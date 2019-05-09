@@ -126,7 +126,15 @@ public class DmpLogDriver {
 			List<Path> listPath = new ArrayList<Path>();  
 			FileSystem fs = FileSystem.get(conf);
 			if(env.equals("prd")) {
-				
+				Path path = new Path("/home/webuser/akb/storedata/alllog/"+date+"/"+hour);
+				FileStatus[] status = fs.listStatus(path); 
+				for (FileStatus fileStatus : status) {
+					if(fileStatus.getPath().toString().contains(".index")) {
+						continue;
+					}
+					log.info("JOB INPUT PATH:"+fileStatus.getPath().toString());
+					listPath.add(new Path(fileStatus.getPath().toString()));
+				}  
 			}else {
 				Path path = new Path("/home/webuser/akb/storedata/alllog/"+date+"/"+hour);
 				FileStatus[] status = fs.listStatus(path); 
@@ -154,7 +162,8 @@ public class DmpLogDriver {
 			job.setNumReduceTasks(1);//1個reduce 
 			job.setMapSpeculativeExecution(false);
 			if(env.equals("prd")) {
-				
+				deleteExistedDir(fs, new Path("/home/webuser/alex/druid/"+date+"/"+hour), true);
+				FileOutputFormat.setOutputPath(job, new Path("/home/webuser/alex/druid/"+date+"/"+hour));
 			}else {
 				deleteExistedDir(fs, new Path("/home/webuser/alex/druid/"+date+"/"+hour), true);
 				FileOutputFormat.setOutputPath(job, new Path("/home/webuser/alex/druid/"+date+"/"+hour));
@@ -162,13 +171,11 @@ public class DmpLogDriver {
 			FileInputFormat.setInputPaths(job, paths);
 			FileOutputFormat.setCompressOutput(job, true);  //job使用压缩  
 	        FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);  
-			
-	        
-	        log.info(">>>>>>>>>>>>>>"+paths[0]);
 	        conf.set("job.date",paths[0].toString().split("/")[8]);
 			jobConf.set("job.date",paths[0].toString().split("/")[8]);
 			
-			
+			conf.set("job.time",paths[0].toString().split("/")[9]);
+			jobConf.set("job.time",paths[0].toString().split("/")[9]);
 			
 			
 			
