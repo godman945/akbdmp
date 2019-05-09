@@ -163,7 +163,10 @@ public class DmpLogDriver {
 			FileOutputFormat.setCompressOutput(job, true);  //job使用压缩  
 	        FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);  
 			
-			
+	        
+	        log.info(">>>>>>>>>>>>>>"+paths[0]);
+	        conf.set("job.date",paths[0].toString().split("/")[8]);
+			jobConf.set("job.date",paths[0].toString().split("/")[8]);
 			
 			
 			

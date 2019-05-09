@@ -6,7 +6,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,9 +18,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.context.ApplicationContext;
@@ -30,7 +27,6 @@ import org.springframework.stereotype.Component;
 
 import com.maxmind.geoip2.DatabaseReader;
 import com.mongodb.DB;
-import com.mongodb.DBCollection;
 import com.pchome.hadoopdmp.enumerate.CategoryLogEnum;
 import com.pchome.hadoopdmp.mapreduce.job.component.DateTimeComponent;
 import com.pchome.hadoopdmp.mapreduce.job.component.DeviceComponent;
@@ -69,222 +65,94 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private DB mongoOrgOperations;
 	public static DatabaseReader reader = null;
 	public static InetAddress ipAddress = null;
-	private static SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
-	private static SimpleDateFormat sdf =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	private static String recordDate =  "";
-	private static DBCollection dBCollection_class_url;
-	private static DBCollection dBCollection_user_detail;
-	
+
 	@Override
 	public void setup(Context context) {
 		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
 		try {
-			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
-			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-			this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
-			dBCollection_class_url =  this.mongoOrgOperations.getCollection("class_url");
-			dBCollection_user_detail = this.mongoOrgOperations.getCollection("user_detail");
+			
+			
+			
+			
+//			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
+//			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//			this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
 //			record_date = context.getConfiguration().get("job.date");
-			
-			//load 推估分類個資表(ClsfyGndAgeCrspTable.txt)
-			Configuration conf = context.getConfiguration();
-			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
-			Path clsfyTable = Paths.get(path[1].toString());
-			Charset charset = Charset.forName("UTF-8");
-			List<String> lines = Files.readAllLines(clsfyTable, charset);
-			for (String line : lines) {
-				String[] tmpStrAry = line.split(";"); // 0001000000000000;M,35
-				String[] tmpStrAry2 = tmpStrAry[1].split(",");
-				clsfyCraspMap.put(tmpStrAry[0],new combinedValue(tmpStrAry[1].split(",")[0], tmpStrAry2.length > 1 ? tmpStrAry2[1] : ""));
-			}
-			
-
-			// load 分類表(pfp_ad_category_new.csv)
-			Path cate_path = Paths.get(path[0].toString());
-			charset = Charset.forName("UTF-8");
-			int maxCateLvl = 4;
-			categoryList = new ArrayList<Map<String, String>>();
-			for (int i = 0; i < maxCateLvl; i++) {
-				categoryList.add(new HashMap<String, String>());
-			}
-			lines.clear();
-			lines = Files.readAllLines(cate_path, charset);
-			// 將 table: pfp_ad_category_new 內容放入list中(共有 maxCateLvl 層)
-			for (String line : lines) {
-				String[] tmpStr = line.split(";");
-				int lvl = Integer.parseInt(tmpStr[5].replaceAll("\"", "").trim());
-				if (lvl <= maxCateLvl) {
-					categoryList.get(lvl - 1).put(tmpStr[3].replaceAll("\"", "").trim(),tmpStr[4].replaceAll("\"", "").replaceAll("@", "").trim());
-				}
-			}
-			
-			// load 24h分類表(DMP_24h_category.csv)
-			Path category24HPath = Paths.get(path[3].toString());
-			List<String> lines24H = Files.readAllLines(category24HPath, charset);
-			for (String line : lines24H) {
-				CategoryCodeBean categoryBean = new CategoryCodeBean();
-				String[] tmpStrAry = line.split(","); // 0001000000000000;M,35
-				categoryBean.setNumberCode(tmpStrAry[0].replaceAll("\"", ""));
-				categoryBean.setChineseDesc(tmpStrAry[1].replaceAll("\"", ""));
-				categoryBean.setBreadCrumb(tmpStrAry[2].replaceAll("\"", ""));
-				categoryBean.setEnglishCode(tmpStrAry[3].replaceAll("\"", ""));
-				category24hBeanList.add(categoryBean);
-			}
-			
-			// load Ruten分類表(DMP_Ruten_category.csv)
-			Path categoryRutenPath = Paths.get(path[4].toString());
-			List<String> linesRuten = Files.readAllLines(categoryRutenPath, charset);
-			for (String line : linesRuten) {
-				CategoryRutenCodeBean categoryRutenBean = new CategoryRutenCodeBean();
-				String[] tmpStrAry = line.split(","); //"0001000000000000","電腦、電腦周邊"
-				categoryRutenBean.setNumberCode(tmpStrAry[0].replaceAll("\"", ""));
-				categoryRutenBean.setChineseDesc(tmpStrAry[1].replaceAll("\"", ""));
-				categoryRutenBeanList.add(categoryRutenBean);
-			}
-			
-			//IP轉城市
-			File database = new File(path[5].toString());
-			reader = new DatabaseReader.Builder(database).build();  
-			
+//			Configuration conf = context.getConfiguration();
+//			
+//			//load 推估分類個資表(ClsfyGndAgeCrspTable.txt)
+//			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
+//			Path clsfyTable = Paths.get(path[1].toString());
+//			Charset charset = Charset.forName("UTF-8");
+//			List<String> lines = Files.readAllLines(clsfyTable, charset);
+//			for (String line : lines) {
+//				String[] tmpStrAry = line.split(";"); // 0001000000000000;M,35
+//				String[] tmpStrAry2 = tmpStrAry[1].split(",");
+//				clsfyCraspMap.put(tmpStrAry[0],new combinedValue(tmpStrAry[1].split(",")[0], tmpStrAry2.length > 1 ? tmpStrAry2[1] : ""));
+//			}
+//			
+//
+//			// load 分類表(pfp_ad_category_new.csv)
+//			Path cate_path = Paths.get(path[0].toString());
+//			charset = Charset.forName("UTF-8");
+//			int maxCateLvl = 4;
+//			categoryList = new ArrayList<Map<String, String>>();
+//			for (int i = 0; i < maxCateLvl; i++) {
+//				categoryList.add(new HashMap<String, String>());
+//			}
+//			lines.clear();
+//			lines = Files.readAllLines(cate_path, charset);
+//			// 將 table: pfp_ad_category_new 內容放入list中(共有 maxCateLvl 層)
+//			for (String line : lines) {
+//				String[] tmpStr = line.split(";");
+//				int lvl = Integer.parseInt(tmpStr[5].replaceAll("\"", "").trim());
+//				if (lvl <= maxCateLvl) {
+//					categoryList.get(lvl - 1).put(tmpStr[3].replaceAll("\"", "").trim(),tmpStr[4].replaceAll("\"", "").replaceAll("@", "").trim());
+//				}
+//			}
+//			
+//			// load 24h分類表(DMP_24h_category.csv)
+//			Path category24HPath = Paths.get(path[3].toString());
+//			List<String> lines24H = Files.readAllLines(category24HPath, charset);
+//			for (String line : lines24H) {
+//				CategoryCodeBean categoryBean = new CategoryCodeBean();
+//				
+//				String[] tmpStrAry = line.split(","); // 0001000000000000;M,35
+//				
+//				categoryBean.setNumberCode(tmpStrAry[0].replaceAll("\"", ""));
+//				categoryBean.setChineseDesc(tmpStrAry[1].replaceAll("\"", ""));
+//				categoryBean.setBreadCrumb(tmpStrAry[2].replaceAll("\"", ""));
+//				categoryBean.setEnglishCode(tmpStrAry[3].replaceAll("\"", ""));
+//				
+//				category24hBeanList.add(categoryBean);
+//			}
+//			
+//			// load Ruten分類表(DMP_Ruten_category.csv)
+//			Path categoryRutenPath = Paths.get(path[4].toString());
+//			List<String> linesRuten = Files.readAllLines(categoryRutenPath, charset);
+//			for (String line : linesRuten) {
+//				CategoryRutenCodeBean categoryRutenBean = new CategoryRutenCodeBean();
+//				
+//				String[] tmpStrAry = line.split(","); //"0001000000000000","電腦、電腦周邊"
+//				
+//				categoryRutenBean.setNumberCode(tmpStrAry[0].replaceAll("\"", ""));
+//				categoryRutenBean.setChineseDesc(tmpStrAry[1].replaceAll("\"", ""));
+//				
+//				categoryRutenBeanList.add(categoryRutenBean);
+//			}
+//			
+//			//IP轉城市
+//			File database = new File(path[5].toString());
+//			reader = new DatabaseReader.Builder(database).build();  
+//			
 		} catch (Exception e) {
 			log.error("Mapper setup error>>>>>> " +e);
 		}
 	}
 
-	private static String hour = "";
-	private static String valueStr = "";
-	private static String[] values = null;
-	
-	
-	private static net.minidev.json.JSONObject dmpJSon =  new net.minidev.json.JSONObject();
-	private static InputSplit inputSplit = null;
+	@Override
 	public void map(LongWritable offset, Text value, Context context) {
 		try {
-			dmpJSon.clear();
-			inputSplit = (InputSplit) context.getInputSplit(); 
-//			String fileName = ((FileSplit)inputSplit).getPath().getName();
-			valueStr = value.toString();
-			values = valueStr.split(kdclSymbol);
-			hour = ((FileSplit)inputSplit).getPath().toString().split("/")[9];
-			log.info(">>>>>>>"+((FileSplit)inputSplit).getPath());
-			log.info(">>>>>>>valueStr:"+valueStr);
-			
-			if (valueStr.indexOf(kdclSymbol) > -1 ){
-				// values[0]  date time (2018-01-04 04:57:12)
-				// values[1]  memid
-				// values[2]  uuid
-				// values[3]  ip
-				// values[4]  url
-				// values[5]  UserAgent
-				// values[13] ck,pv
-				// values[15] ad_class
-				if (values.length < kdclLogLength) {
-					log.info("values.length < " + kdclLogLength);
-					return;
-				}
-				if ((StringUtils.equals(values[1], "null")||StringUtils.isBlank(values[1]) ) && (StringUtils.equals(values[2], "null")||StringUtils.isBlank(values[2])) ){
-					return;
-				}
-				dmpJSon.put("date_time", values[0]);
-				dmpJSon.put("memid", values[1]);
-				dmpJSon.put("uuid", values[2]);
-				dmpJSon.put("ip", values[3]);
-				dmpJSon.put("url", values[4]);
-				dmpJSon.put("user_agent", values[5]);
-				dmpJSon.put("trigger_type", values[13]);
-				dmpJSon.put("ad_class", values[15]);
-				dmpJSon.put("dmp_source", "kdcl");
-				dmpJSon.put("sex", "null");
-				dmpJSon.put("age", "null");
-				dmpJSon.put("record_date", sdf1.format(sdf.parse(values[0])));
-				dmpJSon.put("hour", hour);
-			}else if(valueStr.indexOf(campaignSymbol) > -1 ){
-				// values[0] memid			會員帳號
-				// values[1] uuid			通用唯一識別碼	
-				// values[2] ad_class		分類
-				// values[3] Count			數量
-				// values[4] age			年齡 (0或空字串)
-				// values[5] sex			性別(F|M)
-				// values[6] ip_area		地區(台北市 or 空字串)
-				// values[7] record_date	紀錄日期(2018-04-27)
-				// values[8] Over_write		是否覆寫(true|false)
-				if (values.length < campaignLogLength) {
-					 log.info("values.length < " + campaignLogLength);
-					 return;
-				}
-				if (StringUtils.isBlank(values[0]) && StringUtils.isBlank(values[1])  ){
-					return;
-				}
-				
-				dmpJSon.put("date_time", values[7]);
-				dmpJSon.put("memid", StringUtils.isBlank(values[0]) ? "null" :values[0]);
-				dmpJSon.put("uuid", values[1]);
-				dmpJSon.put("ip", values[6]);
-				dmpJSon.put("url", "");
-				dmpJSon.put("user_agent", "");
-				dmpJSon.put("trigger_type", "campaign");
-				dmpJSon.put("ad_class", values[2]);
-				dmpJSon.put("dmp_source", "campaign");
-				if (StringUtils.equals(values[4], "0")){
-					dmpJSon.put("age", "null");
-				}else{
-					dmpJSon.put("age", values[4]);
-				}
-				if (StringUtils.isBlank(values[5])){
-					dmpJSon.put("sex", "null");
-				}else{
-					dmpJSon.put("sex", values[5]);
-				}
-				dmpJSon.put("record_date", values[7]);
-				dmpJSon.put("hour", hour);
-			}else{
-				 return;
-			}
-			
-			if(StringUtils.isBlank(dmpJSon.getAsString("uuid")) || dmpJSon.getAsString("uuid").equals("null")) {
-				 return;
-			}
-			
-			keyOut.set(dmpJSon.getAsString("uuid"));
-			context.write(keyOut, new Text(dmpJSon.toString()));
-			
-			
-			
-			
-			
-			
-			
-//			//地區處理元件(ip 轉國家、城市)
-//			geoIpComponent.ipTransformGEO(dmpJSon);
-//			//時間處理元件(日期時間字串轉成小時)			
-//			dateTimeComponent.datetimeTransformHour(dmpJSon); 
-//			//裝置處理元件(UserAgent轉成裝置資訊)
-//			deviceComponent.parseUserAgentToDevice(dmpJSon);
-//			//分類處理元件(分析click、24H、Ruten、campaign分類)
-//			if ((dmpJSon.getAsString("trigger_type").equals("ck") || dmpJSon.getAsString("trigger_type").equals("campaign")) ) {// kdcl ad_click的adclass  或   campaign log的adclass 	//&& StringUtils.isNotBlank(dmpLogBeanResult.getAdClass())
-//				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
-//				aCategoryLogData.processCategory(dmpJSon, null);
-//			}else if (dmpJSon.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpJSon.getAsString("url")) && dmpJSon.getAsString("url").contains("ruten")) {	// 露天
-//				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
-//				aCategoryLogData.processCategory(dmpJSon, dBCollection_class_url);
-//			}else if (dmpJSon.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpJSon.getAsString("url")) && dmpJSon.getAsString("url").contains("24h")) {		// 24h
-//				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
-//				aCategoryLogData.processCategory(dmpJSon, dBCollection_class_url);
-//			}else if (dmpJSon.getAsString("trigger_type").equals("pv") ){
-//				dmpJSon.put("category", "null");
-//				dmpJSon.put("category_source", "null");
-//				dmpJSon.put("class_adclick_classify", "null");
-//				dmpJSon.put("class_24h_url_classify", "null");
-//				dmpJSon.put("class_ruten_url_classify", "null");
-//			}
-//			//個資處理元件
-//			personalInfoComponent.processPersonalInfo(dmpJSon, dBCollection_user_detail);
-//			
-//			log.info(dmpJSon);
-			
-			
-			
-//			recordDate = "";
 //			//讀取kdcl、Campaign資料
 ////			log.info("raw_data : " + value);
 //			
@@ -321,8 +189,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //				dmpDataBean.setAdClass(values[15]);
 //				dmpDataBean.setAge("null");
 //				dmpDataBean.setSex("null");
-//				recordDate = sdf1.format(sdf.parse(values[0]));
-//				
 ////				log.info(">>>>>> kdcl rawdata:" + valueStr);
 //			}else if( valueStr.indexOf(campaignSymbol) > -1 ){	//Campaign log raw data格式
 //				// values[0] memid			會員帳號
@@ -352,7 +218,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //				 dmpDataBean.setUserAgent("");
 //				 dmpDataBean.setSource("campaign");
 //				 dmpDataBean.setAdClass(values[2]);
-//				 recordDate = values[7];
+//				 
 //				 if (StringUtils.equals(values[4], "0")){
 //					 dmpDataBean.setAge("null");
 //				 }else{
@@ -405,7 +271,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			dmpLogBeanResult = personalInfoComponent.processPersonalInfo(dmpLogBeanResult, mongoOrgOperations);
 //			
 //			//紀錄日期
-//			dmpLogBeanResult.setRecordDate(recordDate);
+//			dmpLogBeanResult.setRecordDate(record_date);
 //			
 //			//傳至kafka的值只要是null或空字串，全部轉成字串null
 //			dmpLogBeanResult = dmpBeanIntegrate(dmpLogBeanResult);
@@ -417,7 +283,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			
 //			keyOut.set(sendKafkaJson.toString());
 //			context.write(keyOut, valueOut);
-//			
+			
 		} catch (Exception e) {
 			log.error("Mapper error>>>>>> " +e); 
 		}
