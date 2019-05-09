@@ -130,7 +130,10 @@ public class DmpLogDriver {
 			}else {
 				Path path = new Path("/home/webuser/akb/storedata/alllog/"+date+"/"+hour);
 				FileStatus[] status = fs.listStatus(path); 
-				for (FileStatus fileStatus : status) {  
+				for (FileStatus fileStatus : status) {
+					if(fileStatus.getPath().toString().contains(".index")) {
+						continue;
+					}
 					log.info("JOB INPUT PATH:"+fileStatus.getPath().toString());
 					listPath.add(new Path(fileStatus.getPath().toString()));
 				}  
