@@ -258,6 +258,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			dmpDataJson.put("ad_class", values[15]);
 			dmpDataJson.put("age", "null");
 			dmpDataJson.put("sex", "null");
+			dmpDataJson.put("log_source", "kdcl");
 			
 			}else if(logStr.indexOf(campaignSymbol) > -1 ){	//Campaign log raw data格式
 				// values[0] memid			會員帳號
@@ -289,6 +290,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				dmpDataJson.put("user_agent", "");
 				dmpDataJson.put("trigger_type", "campaign");
 				dmpDataJson.put("ad_class", values[2]);
+				dmpDataJson.put("log_source", "campaign");
 				if (StringUtils.equals(values[4], "0")){
 					dmpDataJson.put("age", "null");
 				}else{
@@ -342,7 +344,12 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			log.info(">>>>>>>>10");
 			personalInfoComponent.processPersonalInfo(dmpDataJson, dBCollection_user_detail);
 			
-			log.info("****after****:"+dmpDataJson);
+			
+			
+			if(!dmpDataJson.getAsString("age").equals("null")) {
+				log.info("****after****:"+dmpDataJson);
+			}
+			
 			
 			
 			
