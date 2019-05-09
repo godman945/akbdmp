@@ -114,17 +114,8 @@ public class DmpLogDriver {
 	        conf.set("mapreduce.reduce.memory.mb", "8192");
 	        conf.set("mapreduce.reduce.java.opts", "-Xmx8192m");
 	        conf.set("spring.profiles.active", env);
-	        
-	        
-	        
 	        conf.set("job.date",date);
-			jobConf.set("job.date",hour);
-			
-			conf.set("job.time",date);
 			jobConf.set("job.time",hour);
-	        
-	        
-	        
 	        
 	        
 	        
