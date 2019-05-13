@@ -175,6 +175,7 @@ public class DmpLogDriver {
 				deleteExistedDir(fs, new Path("/home/webuser/alex/druid/"+date+"/"+hour), true);
 				FileOutputFormat.setOutputPath(job, new Path("/home/webuser/alex/druid/"+date+"/"+hour));
 			}
+			log.info("JOB OUTPUT PATH:"+"/home/webuser/alex/druid/"+date+"/"+hour);
 			FileInputFormat.setInputPaths(job, paths);
 			FileOutputFormat.setCompressOutput(job, true);  //job使用压缩  
 	        FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);  

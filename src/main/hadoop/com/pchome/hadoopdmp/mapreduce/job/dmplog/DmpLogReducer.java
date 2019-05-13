@@ -186,9 +186,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("time_info_source")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("time_info_classify")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("class_24h_url_classify")).append("\"");
-				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_os_info")).append("\"");
 				keyOut.set(dmpJSon.getAsString("uuid"));
-				context.write(new Text(mapperKey.toString()), new Text(wiriteToDruid.toString()));
+				context.write(new Text(mapperKey.toString().trim()), new Text(wiriteToDruid.toString()));
 			}
 			dmpJSon.clear();
 			wiriteToDruid.setLength(0);
