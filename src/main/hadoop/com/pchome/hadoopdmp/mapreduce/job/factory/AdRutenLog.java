@@ -24,7 +24,7 @@ import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper;
 @SuppressWarnings({ "unchecked"})
 public class AdRutenLog extends ACategoryLogData {
 	Log log = LogFactory.getLog("AdRutenLog");
-	
+	private static DBObject filter = new BasicDBObject(); 
 	private static DBCollection dBCollection;
 	private static Date today = new Date();
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -32,7 +32,7 @@ public class AdRutenLog extends ACategoryLogData {
 	private static String classRutenUrlClassify = "";
 	private static String category = "";
 	private static String categorySource = "";
-	
+	private static BasicDBObject newDocument = new BasicDBObject();
 	private static DBObject dbObject = null;
 	private static BasicDBObject andQuery = new BasicDBObject();
 	private static List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
@@ -329,10 +329,11 @@ public class AdRutenLog extends ACategoryLogData {
 	
 	public void updateClassUrlQueryTime(String url,DBObject dbObject) throws Exception {
 		log.info(">>>>>>>update mongo url time");
+		log.info(">>>>>>>dbObject.get(query_time):"+dbObject.get("query_time"));
+		newDocument.clear();
+		filter.removeField("url");
 		if ((Integer.parseInt(dbObject.get("query_time").toString()) <2000) ){
-			BasicDBObject newDocument = new BasicDBObject();
 			newDocument.append("$inc", new BasicDBObject().append("query_time", 1));
-			DBObject filter = new BasicDBObject(); 
 			filter.put("url", url);
 			dBCollection.update(filter,newDocument);
 		}
