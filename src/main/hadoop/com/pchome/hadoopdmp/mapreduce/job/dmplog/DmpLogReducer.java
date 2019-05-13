@@ -158,20 +158,29 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				wiriteToDruid.setLength(0);
 				
 				dmpJSon = (net.minidev.json.JSONObject) jsonParser.parse(text.toString());
-				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("date_time")).append("\"");
+				
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("memid")).append("\"");
-				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ip")).append("\"");
-				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("url")).append("\"");
-				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("user_agent")).append("\"");
-				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("trigger_type")).append("\"");
-				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_class")).append("\"");
-				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("dmp_source")).append("\"");
-				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex")).append("\"");
-				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age")).append("\"");
-				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("record_date")).append("\"");
-				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("hour")).append("\"");
-				keyOut.set(dmpJSon.getAsString("uuid"));
-				context.write(new Text(mapperKey.toString()), new Text(wiriteToDruid.toString()));
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("memid")).append("\"");
+				
+				
+				
+				
+				
+				
+//				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("date_time")).append("\"");
+//				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("memid")).append("\"");
+//				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ip")).append("\"");
+//				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("url")).append("\"");
+//				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("user_agent")).append("\"");
+//				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("trigger_type")).append("\"");
+//				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_class")).append("\"");
+//				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("dmp_source")).append("\"");
+//				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex")).append("\"");
+//				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age")).append("\"");
+//				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("record_date")).append("\"");
+//				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("hour")).append("\"");
+//				keyOut.set(dmpJSon.getAsString("uuid"));
+//				context.write(new Text(mapperKey.toString()), new Text(wiriteToDruid.toString()));
 				
 			}
 			

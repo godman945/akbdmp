@@ -26,8 +26,8 @@ public class AdRutenLog extends ACategoryLogData {
 	Log log = LogFactory.getLog("AdRutenLog");
 	
 	private static DBCollection dBCollection;
-	
-	
+	private static Date today = new Date();
+	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	private static String sourceUrl = "";
 	private static String classRutenUrlClassify = "";
 	private static String category = "";
@@ -314,10 +314,10 @@ public class AdRutenLog extends ACategoryLogData {
 	}
 	
 	public void updateClassUrlUpdateDate(String url,DBObject dbObject) throws Exception {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		Date today = new Date();
+		log.info(">>>>>>>update mongo url");
 		String todayStr = sdf.format(today);
 		String updateDateStr = sdf.format(dbObject.get("update_date"));
+		log.info(">>>>>>>updateDateStr:"+updateDateStr);
 		if ( (!todayStr.equals(updateDateStr)) ){
 			Date date = new Date();
 			dbObject.put("update_date", date);
@@ -328,6 +328,7 @@ public class AdRutenLog extends ACategoryLogData {
 	}
 	
 	public void updateClassUrlQueryTime(String url,DBObject dbObject) throws Exception {
+		log.info(">>>>>>>update mongo url time");
 		if ((Integer.parseInt(dbObject.get("query_time").toString()) <2000) ){
 			BasicDBObject newDocument = new BasicDBObject();
 			newDocument.append("$inc", new BasicDBObject().append("query_time", 1));

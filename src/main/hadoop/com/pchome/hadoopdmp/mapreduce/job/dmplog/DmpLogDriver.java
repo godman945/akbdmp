@@ -99,6 +99,9 @@ public class DmpLogDriver {
 			jobConf.set("mapreduce.reduce.memory.mb", "8192");
 			jobConf.set("mapreduce.job.running.map.limit", "100");
 			jobConf.set("spring.profiles.active", env);
+			jobConf.set("job.time",hour);
+			jobConf.set("job.date",date);
+			
 			// hdfs
 			Configuration conf = new Configuration();
 			conf.set("mapreduce.map.output.compress.codec", codec);
@@ -114,8 +117,7 @@ public class DmpLogDriver {
 	        conf.set("mapreduce.reduce.memory.mb", "8192");
 	        conf.set("mapreduce.reduce.java.opts", "-Xmx8192m");
 	        conf.set("spring.profiles.active", env);
-	        conf.set("job.date",date);
-			jobConf.set("job.time",hour);
+			
 	        
 	        
 	        
