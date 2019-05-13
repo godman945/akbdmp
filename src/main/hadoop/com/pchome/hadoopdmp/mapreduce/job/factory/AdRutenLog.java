@@ -14,12 +14,18 @@ import org.apache.commons.logging.LogFactory;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
+import com.mongodb.WriteConcern;
 import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper;
+import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
+import com.pchome.hadoopdmp.spring.config.bean.mongodborg.MongodbOrgHadoopConfig;
 
 @SuppressWarnings({ "unchecked"})
 public class AdRutenLog extends ACategoryLogData {
@@ -37,7 +43,7 @@ public class AdRutenLog extends ACategoryLogData {
 	private static BasicDBObject andQuery = new BasicDBObject();
 	private static List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
 	private static BasicDBObject basicDBObject = new BasicDBObject();
-	
+	private static BasicDBObject query = new BasicDBObject();
 	private static Pattern p = Pattern.compile("(http|https)://goods.ruten.com.tw/item/\\S+\\?\\d+");
 	private static Matcher matcher = null;
 	private static StringBuffer transformUrl = new StringBuffer();
@@ -47,7 +53,7 @@ public class AdRutenLog extends ACategoryLogData {
 	private static List<CategoryRutenCodeBean> categoryRutenList;
 	private static Document doc;
 	private static Elements breadcrumbE;
-	
+	private static BasicDBObject intModifier = new BasicDBObject();
 	public Object processCategory(net.minidev.json.JSONObject dmpJSon, DBCollection dbCollectionUrl) throws Exception {
 		log.info(">>>>>>>>>>>1");
 		transformUrl.setLength(0);
@@ -314,10 +320,8 @@ public class AdRutenLog extends ACategoryLogData {
 	}
 	
 	public void updateClassUrlUpdateDate(String url,DBObject dbObject) throws Exception {
-		log.info(">>>>>>>update mongo url");
 		String todayStr = sdf.format(today);
 		String updateDateStr = sdf.format(dbObject.get("update_date"));
-		log.info(">>>>>>>updateDateStr:"+updateDateStr);
 		if ( (!todayStr.equals(updateDateStr)) ){
 			Date date = new Date();
 			dbObject.put("update_date", date);
@@ -330,13 +334,23 @@ public class AdRutenLog extends ACategoryLogData {
 	public void updateClassUrlQueryTime(String url,DBObject dbObject) throws Exception {
 		log.info(">>>>>>>update mongo url time");
 		log.info(">>>>>>>dbObject.get(query_time):"+dbObject.get("query_time"));
-		newDocument.clear();
-		filter.removeField("url");
-		if ((Integer.parseInt(dbObject.get("query_time").toString()) <2000) ){
-			newDocument.append("$inc", new BasicDBObject().append("query_time", 1));
-			filter.put("url", url);
-			dBCollection.update(filter,newDocument);
-		}
+		query.clear();
+		intModifier.clear();
+		query.put("_id", dbObject.get("_id"));
+		intModifier = intModifier.append("$inc", new BasicDBObject().append("query_time", 1));
+		this.dBCollection.update(query, intModifier, false, false, WriteConcern.SAFE);
+		
+//		BasicDBObject intModifier = new BasicDBObject("$inc", new BasicDBObject().append("query_time", 1));
+		
+		
+		
+//		newDocument.clear();
+//		filter.removeField("url");
+//		if ((Integer.parseInt(dbObject.get("query_time").toString()) <2000) ){
+//			newDocument.append("$inc", new BasicDBObject().append("query_time", 1));
+//			filter.put("url", url);
+//			dBCollection.update(filter,newDocument);
+//		}
 	}
 	
 	public void insertClassUrl(String url,String status,String adClass,String rutenBread,String errMsg,int queryTime) throws Exception {
@@ -351,4 +365,51 @@ public class AdRutenLog extends ACategoryLogData {
 				.append("update_date", today);
 		dBCollection.insert(documents);
 	}
+	
+//	public static void main(String args[]) throws Exception {
+//		System.setProperty("spring.profiles.active", "prd");
+//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//		DB mongoOrgOperations =  ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
+//		DBCollection dBCollection_class_url =  mongoOrgOperations.getCollection("class_url");
+//		System.out.println(dBCollection_class_url.getCount());
+//		
+//		
+//		BasicDBObject basicDBObject = new BasicDBObject();
+//		List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+//		obj.add(basicDBObject.append("url","https://goods.ruten.com.tw/item/show?21212115687994"));
+//		BasicDBObject andQuery = new BasicDBObject();
+//		andQuery.put("$and", obj);
+//		DBObject dbObject = dBCollection_class_url.findOne(andQuery);
+//		
+//		
+//		System.out.println(dbObject);
+//		System.out.println(dbObject.get("_id"));
+//		System.out.println(">>>>>>>dbObject.get(query_time):" + dbObject.get("query_time"));
+////		BasicDBObject newDocument = dbObject;
+////		DBObject filter = new BasicDBObject(); 
+//		if ((Integer.parseInt(dbObject.get("query_time").toString()) < 2000) ){
+//			
+//			BasicDBObject query = new BasicDBObject();
+//			query.put("_id", dbObject.get("_id"));
+//			BasicDBObject intModifier = new BasicDBObject();
+//			intModifier.append("$inc", new BasicDBObject().append("query_time", 1));
+//			dBCollection_class_url.update(query, intModifier, false, false, WriteConcern.SAFE);
+//			
+//			
+//			
+//			
+//			
+//			
+//			
+////			BasicDBObject newDocument = new BasicDBObject().append("$inc",new BasicDBObject().append("query_time", 1));
+////			dBCollection_class_url.update(newDocument, dbObject);
+//			
+////			((BasicDBObject)dbObject).append("$inc", new BasicDBObject().append("query_time", 1));
+////			dBCollection_class_url.update(dbObject, dbObject);
+////			newDocument.append("$inc", new BasicDBObject().append("query_time", 1));
+//////			filter.put("url", "https://goods.ruten.com.tw/item/show?21212115687994");
+//////			dBCollection_class_url.update(dbObject, newDocument);
+//		}
+//	}
+	
 }
