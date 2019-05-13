@@ -156,11 +156,48 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			for (Text text : mapperValue) {
 				dmpJSon.clear();
 				wiriteToDruid.setLength(0);
-				
 				dmpJSon = (net.minidev.json.JSONObject) jsonParser.parse(text.toString());
 				
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("date")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("date_time")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_source")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("trigger_type")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex_source")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age_source")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("category")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("category_source")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_info")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_info_source")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("country")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("city")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_info_source")).append("\"");
+				
+				
+				
+				
+				
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_os_info")).append("\"");
+				
+				
+				
+				
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ip")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_class")).append("\"");
+				
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("user_agent")).append("\"");
+
+				
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_phone_info")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_browser_info")).append("\"");
+				
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("url")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("memid")).append("\"");
-				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("memid")).append("\"");
+				
+				
+				
+				
 				
 				
 				

@@ -18,7 +18,6 @@ public class GeoIpComponent {
 	private static IpAdd ipAdd = new IpAdd();
 	private static CityResponse response = null;
 	public net.minidev.json.JSONObject ipTransformGEO(net.minidev.json.JSONObject dmpJSon) throws Exception {
-		response = null;
 		// 判斷是否為正確ip格式
 		ip = dmpJSon.getAsString("ip");
 		if (!ipAdd.isIP(ip)) {
@@ -53,6 +52,10 @@ public class GeoIpComponent {
 			dmpJSon.put("area_info_classify", "N");
 		}
 		return dmpJSon;
+		
+		
+		
+		
 		
 //		String ip = dmpDataBean.getIp();
 //		String countryStr = "null";

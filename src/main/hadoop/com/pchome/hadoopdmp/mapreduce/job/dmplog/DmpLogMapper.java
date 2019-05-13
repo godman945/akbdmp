@@ -334,17 +334,12 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				dmpDataJson.put("class_ruten_url_classify", "null");
 			}
 			personalInfoComponent.processPersonalInfo(dmpDataJson, dBCollection_user_detail);
-			
-			
-			
 			if(!dmpDataJson.getAsString("age").equals("null")) {
 				log.info("****after****:"+dmpDataJson);
 			}
 			
-			
-			
-			
-			
+			keyOut.set(dmpDataJson.getAsString("uuid"));
+			context.write(keyOut, new Text(dmpDataJson.toString()));
 			
 			
 //			DmpLogBean dmpDataBean =  new DmpLogBean();
