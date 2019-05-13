@@ -175,6 +175,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					return;
 				}
 				
+				if(values[2].indexOf("xxx") >=0) {
+					return;
+				}
+				
+				
 				dmpDataBean.setDateTime(values[0]);
 				dmpDataBean.setMemid(values[1]);
 				dmpDataBean.setUuid(values[2]);
@@ -197,7 +202,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				// values[7] record_date	紀錄日期(2018-04-27)
 				// values[8] Over_write		是否覆寫(true|false)
 				String[] values = valueStr.toString().split(campaignSymbol);
-				 if (values.length < campaignLogLength) {
+				if (values.length < campaignLogLength) {
 //					 log.info("values.length < " + campaignLogLength);
 					 return;
                  }
@@ -206,26 +211,30 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					return;
 				}
 				 
-				 dmpDataBean.setDateTime(values[7]);
-				 dmpDataBean.setMemid(StringUtils.isBlank(values[0])? "null" :values[0]);
-				 dmpDataBean.setUuid(values[1]);
-				 dmpDataBean.setIp(values[6]);
-				 dmpDataBean.setUrl("");
-				 dmpDataBean.setUserAgent("");
-				 dmpDataBean.setSource("campaign");
-				 dmpDataBean.setAdClass(values[2]);
+				if(values[1].indexOf("xxx") >=0) {
+					return;
+				}
+				
+				dmpDataBean.setDateTime(values[7]);
+				dmpDataBean.setMemid(StringUtils.isBlank(values[0])? "null" :values[0]);
+				dmpDataBean.setUuid(values[1]);
+				dmpDataBean.setIp(values[6]);
+				dmpDataBean.setUrl("");
+				dmpDataBean.setUserAgent("");
+				dmpDataBean.setSource("campaign");
+				dmpDataBean.setAdClass(values[2]);
 				 
-				 if (StringUtils.equals(values[4], "0")){
-					 dmpDataBean.setAge("null");
-				 }else{
-					 dmpDataBean.setAge(values[4]);
-				 }
+				if (StringUtils.equals(values[4], "0")){
+					dmpDataBean.setAge("null");
+				}else{
+					dmpDataBean.setAge(values[4]);
+				}
 				 
-				 if (StringUtils.isBlank(values[5])){
-					 dmpDataBean.setSex("null");
-				 }else{
-					 dmpDataBean.setSex(values[5]);
-				 }
+				if (StringUtils.isBlank(values[5])){
+					dmpDataBean.setSex("null");
+				}else{
+					dmpDataBean.setSex(values[5]);
+				}
 //				 log.info(">>>>>> campaige rawdata:" + valueStr);
 			}else{
 				 return;
