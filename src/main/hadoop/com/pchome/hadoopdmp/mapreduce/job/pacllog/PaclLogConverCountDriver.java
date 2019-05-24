@@ -91,9 +91,9 @@ public class PaclLogConverCountDriver {
 			jobConf.set("mapred.map.tasks.speculative.execution","true");
 			jobConf.set("mapred.reduce.tasks.speculative.execution","true");
 			//JVM
-			jobConf.set("mapred.child.java.opts", "-Xmx10240M");
-			jobConf.set("mapreduce.map.memory.mb", "10240");
-			jobConf.set("mapreduce.reduce.memory.mb", "10240");
+			jobConf.set("mapred.child.java.opts", "-Xmx8192M");
+			jobConf.set("mapreduce.map.memory.mb", "8192");
+			jobConf.set("mapreduce.reduce.memory.mb", "8192");
 			jobConf.set("mapreduce.job.running.map.limit", "100");
 			jobConf.set("spring.profiles.active", env);
 			if(env.equals("prd")){
@@ -111,10 +111,10 @@ public class PaclLogConverCountDriver {
 			conf.set("mapred.reduce.tasks.speculative.execution","true");
 			conf.set("mapred.child.java.opts", "-Xmx10240M");
 			conf.set("mapreduce.jobtracker.address", "hpd11.mypchome.com.tw:9001");
-			conf.set("mapreduce.map.memory.mb", "10240");
-	        conf.set("mapreduce.map.java.opts", "-Xmx10240m");
-	        conf.set("mapreduce.reduce.memory.mb", "10240");
-	        conf.set("mapreduce.reduce.java.opts", "-Xmx10240m");
+			conf.set("mapreduce.map.memory.mb", "8192");
+	        conf.set("mapreduce.map.java.opts", "-Xmx8192m");
+	        conf.set("mapreduce.reduce.memory.mb", "8192");
+	        conf.set("mapreduce.reduce.java.opts", "-Xmx8192m");
 			Calendar cal = Calendar.getInstance();  
 			if(StringUtils.isNotBlank(jobDate)){
 				cal.setTime(sdf.parse(jobDate));

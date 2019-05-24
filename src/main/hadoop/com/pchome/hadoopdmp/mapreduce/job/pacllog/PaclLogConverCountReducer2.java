@@ -144,10 +144,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			
 			if(flagKdcl && flagPacl){
 				logMergeCount = logMergeCount + 1;
-				if(key.equals("329a4e74d827230e8a67147d5abfa398")) {
-					log.info(">>>>>>>>dataCkList:"+dataCkList);
-					log.info(">>>>>>>>dataPvList:"+dataPvList);
-				}
 //				log.info("key:"+key+" flagKdcl:"+flagKdcl+" flagPacl:"+flagPacl);
 //				log.info(">>>>>>>>>paclJsonInfoList:"+paclJsonInfoList);
 				for (JSONObject paclJson : paclJsonInfoList) {
@@ -304,6 +300,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				saveDBMap.put(uuid+"<PCHOME>"+type.toUpperCase()+"<PCHOME>"+saveJson.getAsString("convertSeq"), saveJson);
 			}
 		}
+		log.info(">>>>>>>>>>saveDBMap size:"+saveDBMap.size());
 	}
 	
 	private String getOS(UAgentInfo uAgentInfo){
