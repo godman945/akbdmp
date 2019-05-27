@@ -56,6 +56,8 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	private static String rangrDate = null;
 	private static String jobDate = null;
 	private static int logMergeCount = 0;
+	private static JSONObject logJson = new JSONObject();
+	
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
 		try {
@@ -125,9 +127,11 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			differenceDay = null;
 			flagKdcl = false;
 			flagPacl = false;
+			logJson.clear();
 			for (Text text : mapperValue) {
 				String value = text.toString();
-				JSONObject logJson = (JSONObject) jsonParser.parse(value);
+				logJson = (JSONObject) jsonParser.parse(value);
+				log.info(">>>>>>>>logJson:"+logJson);
 				if(logJson.getAsString("fileName").contains("kdcl") || logJson.getAsString("fileName").contains("kwstg")){
 					flagKdcl = true;
 					String kdclType = logJson.getAsString("kdclType");
