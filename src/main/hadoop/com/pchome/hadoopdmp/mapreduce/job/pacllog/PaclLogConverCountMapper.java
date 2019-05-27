@@ -70,25 +70,25 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 //				log.info("arrayData size : " + arrayData.length);
 //				log.info("paclType:"+paclType);
 				if(paclType.equals("tracking")){
-//					String paclUuid = StringUtils.isNotBlank(arrayData[3]) ? arrayData[3] : arrayData[2];
 					String paclUuid = arrayData[2];
+					if(StringUtils.isBlank(paclUuid)) {
+						return;
+					}
 					String trackingId = arrayData[12];
 					String prodId = arrayData[13];
 					String date = arrayData[0];
-				
 					keyOut.set(trackingId+"<PCHOME>"+paclUuid+"<PCHOME>"+paclType);
 					context.write(keyOut, new Text(prodId+"<PCHOME>"+date));
-					
-					log.info(">>>tracking:"+keyOut);
-					
 				}else if(paclType.equals("page_view")){
 					
 				}else if(paclType.equals("convert")){
-//					String paclUuid = StringUtils.isNotBlank(arrayData[3]) ? arrayData[3] : arrayData[2];
 					String paclUuid = arrayData[2];
 					String convId = arrayData[12];
 					String rouleId = arrayData[13];
 					String userDefineConvertPrice = arrayData[14];
+					if(StringUtils.isBlank(paclUuid)) {
+						return;
+					}
 					paclLogInfo.put("paclUuid", paclUuid);
 					paclLogInfo.put("paclType", paclType);
 					paclLogInfo.put("convId", convId);
@@ -96,11 +96,13 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					paclLogInfo.put("userDefineConvertPrice", userDefineConvertPrice);
 					keyOut.set(convId+"<PCHOME>"+paclUuid+"<PCHOME>"+paclType);
 					context.write(keyOut, new Text(paclLogInfo.toString()));
-					log.info(">>>convert:"+keyOut);
 				}
 			}else if(fileName.contains("kdcl") || fileName.contains("kwstg")){
 					String pfpCustomerInfoId = arrayData[6];
 					String kdclUUid = arrayData[2];
+					if(StringUtils.isBlank(kdclUUid)) {
+						return;
+					}
 					if(effectPaclPfpUser.toString().contains(pfpCustomerInfoId) && paclUuid.contains(kdclUUid)){
 //						log.info(">>>>>>kdcl log");
 //						log.info("raw_data : " + value);
@@ -156,7 +158,6 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 						kdclInfo.put("priceType", priceType);
 						keyOut.set(uuid);
 						context.write(keyOut, new Text(kdclInfo.toString()));
-						log.info(">>>[kdcl,kwstg]:"+keyOut);
 					}
 				}else if(fileName.contains("part")){
 //					log.info(">>>>>>conv log");

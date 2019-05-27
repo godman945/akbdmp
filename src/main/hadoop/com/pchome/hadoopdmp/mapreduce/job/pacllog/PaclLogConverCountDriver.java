@@ -77,7 +77,7 @@ public class PaclLogConverCountDriver {
 	
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	
-	private final static int convertDay = 1;
+	private final static int convertDay = 28;
 	
 	public static StringBuffer effectPaclPfpUser = new StringBuffer(); 
 	

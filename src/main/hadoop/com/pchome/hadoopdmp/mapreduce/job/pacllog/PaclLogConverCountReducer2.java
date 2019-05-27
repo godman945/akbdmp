@@ -128,23 +128,13 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			flagKdcl = false;
 			flagPacl = false;
 			logJson.clear();
-			log.info("1>>>>>>>>>key:"+key);
 			if(StringUtils.isBlank(key)) {
-				
 				log.info("1>>>>>>>>>null");
 				return;
 			}
 			for (Text text : mapperValue) {
 				String value = text.toString();
 				logJson = (JSONObject) jsonParser.parse(value);
-				
-				
-				logMergeCount = logMergeCount + 1;
-				if(logMergeCount >= 30000) {
-					log.info("1>>>>>>>>logJson("+logMergeCount+"):"+logJson);
-					logMergeCount = 0;
-				}
-				
 				if(logJson.getAsString("fileName").contains("kdcl") || logJson.getAsString("fileName").contains("kwstg")){
 					flagKdcl = true;
 					String kdclType = logJson.getAsString("kdclType");
@@ -160,31 +150,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				}
 			}
 			
-			
-			
-			log.info("2>>>>>>>>>key:"+key);
-			logMergeCount = 0;
-			for (Text text : mapperValue) {
-				String value = text.toString();
-				logJson = (JSONObject) jsonParser.parse(value);
-				
-				
-				logMergeCount = logMergeCount + 1;
-				if(logMergeCount >= 10000) {
-					log.info("2>>>>>>>>logJson("+logMergeCount+"):"+logJson);
-					logMergeCount = 0;
-				}
-			}
-			
-			
-			
-			
-			
-			
-			
-			
 			if(flagKdcl && flagPacl){
-				log.info("-----------2");
 //				logMergeCount = logMergeCount + 1;
 //				log.info("key:"+key+" flagKdcl:"+flagKdcl+" flagPacl:"+flagPacl);
 //				log.info(">>>>>>>>>paclJsonInfoList:"+paclJsonInfoList);
@@ -237,7 +203,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 						}
 					}
 					
-//					log.info(">>>>>>>>>actionPfpCodeMergeMap:"+actionPfpCodeMergeMap);
 					processOutOfRangeDay(comparisonDataList,"pv");
 					sortKdclDataList(comparisonDataList);
 					processSaveDBInfo(comparisonDataList,"pv",key);
@@ -249,7 +214,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	}
 	
 	private String findPfpCodeAdactionMerge(String actionSeq) throws Exception{
-		log.info("-----------3");
 		querySqlStr.setLength(0);
 		querySqlStr.append(" SELECT code_id FROM pfp_code_adaction_merge where 1=1 and code_type = 'C' and ad_action_seq = '").append(actionSeq).append("'");
 		ResultSet resultSet = mysqlUtil.query(querySqlStr.toString());
