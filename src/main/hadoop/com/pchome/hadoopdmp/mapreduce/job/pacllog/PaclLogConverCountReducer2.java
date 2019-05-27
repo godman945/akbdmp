@@ -128,14 +128,15 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			flagKdcl = false;
 			flagPacl = false;
 			logJson.clear();
+			log.info("1>>>>>>>>>key:"+key);
 			for (Text text : mapperValue) {
 				String value = text.toString();
 				logJson = (JSONObject) jsonParser.parse(value);
 				
 				
 				logMergeCount = logMergeCount + 1;
-				if(logMergeCount >= 10000) {
-					log.info(">>>>>>>>logJson("+logMergeCount+"):"+logJson);
+				if(logMergeCount >= 30000) {
+					log.info("1>>>>>>>>logJson("+logMergeCount+"):"+logJson);
 					logMergeCount = 0;
 				}
 				
@@ -153,6 +154,29 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 					paclJsonInfoList.add(logJson);
 				}
 			}
+			
+			
+			
+			log.info("2>>>>>>>>>key:"+key);
+			logMergeCount = 0;
+			for (Text text : mapperValue) {
+				String value = text.toString();
+				logJson = (JSONObject) jsonParser.parse(value);
+				
+				
+				logMergeCount = logMergeCount + 1;
+				if(logMergeCount >= 10000) {
+					log.info("2>>>>>>>>logJson("+logMergeCount+"):"+logJson);
+					logMergeCount = 0;
+				}
+			}
+			
+			
+			
+			
+			
+			
+			
 			
 			if(flagKdcl && flagPacl){
 				log.info("-----------2");
@@ -314,7 +338,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 				saveDBMap.put(uuid+"<PCHOME>"+type.toUpperCase()+"<PCHOME>"+saveJson.getAsString("convertSeq"), saveJson);
 			}
 		}
-		log.info(">>>>>>>>>>saveDBMap size:"+saveDBMap.size());
 	}
 	
 	private String getOS(UAgentInfo uAgentInfo){
