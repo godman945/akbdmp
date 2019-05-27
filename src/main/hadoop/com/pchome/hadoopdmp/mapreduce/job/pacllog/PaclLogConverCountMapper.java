@@ -78,6 +78,9 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 				
 					keyOut.set(trackingId+"<PCHOME>"+paclUuid+"<PCHOME>"+paclType);
 					context.write(keyOut, new Text(prodId+"<PCHOME>"+date));
+					
+					log.info(">>>tracking:"+keyOut);
+					
 				}else if(paclType.equals("page_view")){
 					
 				}else if(paclType.equals("convert")){
@@ -93,15 +96,12 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 					paclLogInfo.put("userDefineConvertPrice", userDefineConvertPrice);
 					keyOut.set(convId+"<PCHOME>"+paclUuid+"<PCHOME>"+paclType);
 					context.write(keyOut, new Text(paclLogInfo.toString()));
+					log.info(">>>convert:"+keyOut);
 				}
 			}else if(fileName.contains("kdcl") || fileName.contains("kwstg")){
 					String pfpCustomerInfoId = arrayData[6];
 					String kdclUUid = arrayData[2];
 					if(effectPaclPfpUser.toString().contains(pfpCustomerInfoId) && paclUuid.contains(kdclUUid)){
-						if(kdclUUid.equals("329a4e74d827230e8a67147d5abfa398")){
-							log.info("1>>>>>>>>KDCL pfpCustomerInfoId:"+pfpCustomerInfoId);
-							log.info("2>>>>>>>>KDCL UUID:"+kdclUUid);
-						}
 //						log.info(">>>>>>kdcl log");
 //						log.info("raw_data : " + value);
 						String date = arrayData[0];
@@ -156,6 +156,7 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 						kdclInfo.put("priceType", priceType);
 						keyOut.set(uuid);
 						context.write(keyOut, new Text(kdclInfo.toString()));
+						log.info(">>>[kdcl,kwstg]:"+keyOut);
 					}
 				}else if(fileName.contains("part")){
 //					log.info(">>>>>>conv log");

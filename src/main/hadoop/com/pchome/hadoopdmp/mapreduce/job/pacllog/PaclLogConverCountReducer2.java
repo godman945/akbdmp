@@ -129,6 +129,11 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			flagPacl = false;
 			logJson.clear();
 			log.info("1>>>>>>>>>key:"+key);
+			if(StringUtils.isBlank(key)) {
+				
+				log.info("1>>>>>>>>>null");
+				return;
+			}
 			for (Text text : mapperValue) {
 				String value = text.toString();
 				logJson = (JSONObject) jsonParser.parse(value);
