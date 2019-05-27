@@ -113,6 +113,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	@Override
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
 		try {
+			log.info("-----------1");
 			String key = mapperKey.toString();
 			dataCkList.clear();
 			dataPvList.clear();
@@ -143,7 +144,8 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			}
 			
 			if(flagKdcl && flagPacl){
-				logMergeCount = logMergeCount + 1;
+				log.info("-----------2");
+//				logMergeCount = logMergeCount + 1;
 //				log.info("key:"+key+" flagKdcl:"+flagKdcl+" flagPacl:"+flagPacl);
 //				log.info(">>>>>>>>>paclJsonInfoList:"+paclJsonInfoList);
 				for (JSONObject paclJson : paclJsonInfoList) {
@@ -207,6 +209,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	}
 	
 	private String findPfpCodeAdactionMerge(String actionSeq) throws Exception{
+		log.info("-----------3");
 		querySqlStr.setLength(0);
 		querySqlStr.append(" SELECT code_id FROM pfp_code_adaction_merge where 1=1 and code_type = 'C' and ad_action_seq = '").append(actionSeq).append("'");
 		ResultSet resultSet = mysqlUtil.query(querySqlStr.toString());
