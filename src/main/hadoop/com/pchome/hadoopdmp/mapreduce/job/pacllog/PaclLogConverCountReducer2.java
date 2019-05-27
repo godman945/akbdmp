@@ -131,7 +131,14 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			for (Text text : mapperValue) {
 				String value = text.toString();
 				logJson = (JSONObject) jsonParser.parse(value);
-				log.info(">>>>>>>>logJson:"+logJson);
+				
+				
+				logMergeCount = logMergeCount + 1;
+				if(logMergeCount >= 10000) {
+					log.info(">>>>>>>>logJson("+logMergeCount+"):"+logJson);
+					logMergeCount = 0;
+				}
+				
 				if(logJson.getAsString("fileName").contains("kdcl") || logJson.getAsString("fileName").contains("kwstg")){
 					flagKdcl = true;
 					String kdclType = logJson.getAsString("kdclType");
