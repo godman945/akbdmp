@@ -91,7 +91,7 @@ public class PaclLogConverCountDriver {
 			jobConf.set("mapred.map.tasks.speculative.execution","true");
 			jobConf.set("mapred.reduce.tasks.speculative.execution","true");
 			//JVM
-			jobConf.set("mapred.child.java.opts", "-Xmx8192M");
+			jobConf.set("mapred.child.java.opts", "-Xmx10240M");
 			jobConf.set("mapreduce.map.memory.mb", "8192");
 			jobConf.set("mapreduce.reduce.memory.mb", "8192");
 			jobConf.set("mapreduce.job.running.map.limit", "100");
