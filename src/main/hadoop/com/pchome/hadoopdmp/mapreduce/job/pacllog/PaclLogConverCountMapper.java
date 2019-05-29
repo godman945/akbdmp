@@ -70,22 +70,25 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 //				log.info("arrayData size : " + arrayData.length);
 //				log.info("paclType:"+paclType);
 				if(paclType.equals("tracking")){
-//					String paclUuid = StringUtils.isNotBlank(arrayData[3]) ? arrayData[3] : arrayData[2];
 					String paclUuid = arrayData[2];
+					if(StringUtils.isBlank(paclUuid)) {
+						return;
+					}
 					String trackingId = arrayData[12];
 					String prodId = arrayData[13];
 					String date = arrayData[0];
-				
 					keyOut.set(trackingId+"<PCHOME>"+paclUuid+"<PCHOME>"+paclType);
 					context.write(keyOut, new Text(prodId+"<PCHOME>"+date));
 				}else if(paclType.equals("page_view")){
 					
 				}else if(paclType.equals("convert")){
-//					String paclUuid = StringUtils.isNotBlank(arrayData[3]) ? arrayData[3] : arrayData[2];
 					String paclUuid = arrayData[2];
 					String convId = arrayData[12];
 					String rouleId = arrayData[13];
 					String userDefineConvertPrice = arrayData[14];
+					if(StringUtils.isBlank(paclUuid)) {
+						return;
+					}
 					paclLogInfo.put("paclUuid", paclUuid);
 					paclLogInfo.put("paclType", paclType);
 					paclLogInfo.put("convId", convId);
@@ -97,11 +100,10 @@ public class PaclLogConverCountMapper extends Mapper<LongWritable, Text, Text, T
 			}else if(fileName.contains("kdcl") || fileName.contains("kwstg")){
 					String pfpCustomerInfoId = arrayData[6];
 					String kdclUUid = arrayData[2];
+					if(StringUtils.isBlank(kdclUUid)) {
+						return;
+					}
 					if(effectPaclPfpUser.toString().contains(pfpCustomerInfoId) && paclUuid.contains(kdclUUid)){
-						if(kdclUUid.equals("329a4e74d827230e8a67147d5abfa398")){
-							log.info("1>>>>>>>>KDCL pfpCustomerInfoId:"+pfpCustomerInfoId);
-							log.info("2>>>>>>>>KDCL UUID:"+kdclUUid);
-						}
 //						log.info(">>>>>>kdcl log");
 //						log.info("raw_data : " + value);
 						String date = arrayData[0];

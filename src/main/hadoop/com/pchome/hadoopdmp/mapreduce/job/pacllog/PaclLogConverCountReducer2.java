@@ -56,6 +56,8 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	private static String rangrDate = null;
 	private static String jobDate = null;
 	private static int logMergeCount = 0;
+	private static JSONObject logJson = new JSONObject();
+	
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
 		try {
@@ -113,6 +115,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 	@Override
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
 		try {
+			log.info("-----------1");
 			String key = mapperKey.toString();
 			dataCkList.clear();
 			dataPvList.clear();
@@ -124,9 +127,14 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			differenceDay = null;
 			flagKdcl = false;
 			flagPacl = false;
+			logJson.clear();
+			if(StringUtils.isBlank(key)) {
+				log.info("1>>>>>>>>>null");
+				return;
+			}
 			for (Text text : mapperValue) {
 				String value = text.toString();
-				JSONObject logJson = (JSONObject) jsonParser.parse(value);
+				logJson = (JSONObject) jsonParser.parse(value);
 				if(logJson.getAsString("fileName").contains("kdcl") || logJson.getAsString("fileName").contains("kwstg")){
 					flagKdcl = true;
 					String kdclType = logJson.getAsString("kdclType");
@@ -143,11 +151,7 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 			}
 			
 			if(flagKdcl && flagPacl){
-				logMergeCount = logMergeCount + 1;
-				if(key.equals("329a4e74d827230e8a67147d5abfa398")) {
-					log.info(">>>>>>>>dataCkList:"+dataCkList);
-					log.info(">>>>>>>>dataPvList:"+dataPvList);
-				}
+//				logMergeCount = logMergeCount + 1;
 //				log.info("key:"+key+" flagKdcl:"+flagKdcl+" flagPacl:"+flagPacl);
 //				log.info(">>>>>>>>>paclJsonInfoList:"+paclJsonInfoList);
 				for (JSONObject paclJson : paclJsonInfoList) {
@@ -199,7 +203,6 @@ public class PaclLogConverCountReducer2 extends Reducer<Text, Text, Text, Text> 
 						}
 					}
 					
-//					log.info(">>>>>>>>>actionPfpCodeMergeMap:"+actionPfpCodeMergeMap);
 					processOutOfRangeDay(comparisonDataList,"pv");
 					sortKdclDataList(comparisonDataList);
 					processSaveDBInfo(comparisonDataList,"pv",key);

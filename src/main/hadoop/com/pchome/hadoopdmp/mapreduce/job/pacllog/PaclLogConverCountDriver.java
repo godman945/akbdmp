@@ -91,7 +91,7 @@ public class PaclLogConverCountDriver {
 			jobConf.set("mapred.map.tasks.speculative.execution","true");
 			jobConf.set("mapred.reduce.tasks.speculative.execution","true");
 			//JVM
-			jobConf.set("mapred.child.java.opts", "-Xmx8192M");
+			jobConf.set("mapred.child.java.opts", "-Xmx12288M");
 			jobConf.set("mapreduce.map.memory.mb", "8192");
 			jobConf.set("mapreduce.reduce.memory.mb", "8192");
 			jobConf.set("mapreduce.job.running.map.limit", "100");
@@ -109,7 +109,7 @@ public class PaclLogConverCountDriver {
 			conf.set("mapreduce.task.timeout", mapredTimeout);
 			conf.set("mapred.map.tasks.speculative.execution","true");
 			conf.set("mapred.reduce.tasks.speculative.execution","true");
-			conf.set("mapred.child.java.opts", "-Xmx8192M");
+			conf.set("mapred.child.java.opts", "-Xmx12288M");
 			conf.set("mapreduce.jobtracker.address", "hpd11.mypchome.com.tw:9001");
 			conf.set("mapreduce.map.memory.mb", "8192");
 	        conf.set("mapreduce.map.java.opts", "-Xmx8192m");

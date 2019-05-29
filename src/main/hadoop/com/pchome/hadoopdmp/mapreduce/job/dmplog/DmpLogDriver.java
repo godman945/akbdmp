@@ -128,7 +128,7 @@ public class DmpLogDriver {
 	        List<Path> listPath = new ArrayList<Path>();  
 	        FileSystem fs = FileSystem.get(conf);
 	        
-	        Path path = new Path("/home/webuser/akb/storedata/alllog"+dmpDate+"/"+dmpHour);
+	        Path path = new Path("/home/webuser/akb/storedata/alllog/"+dmpDate+"/"+dmpHour);
 	        FileStatus[] status = fs.listStatus(path); 
 			for (FileStatus fileStatus : status) {
 				String pathStr = fileStatus.getPath().toString();
