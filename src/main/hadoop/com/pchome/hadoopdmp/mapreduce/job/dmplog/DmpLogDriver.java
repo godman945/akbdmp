@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -80,12 +81,16 @@ public class DmpLogDriver {
 	private static SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
 	private static SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMddHHmmss");
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	private static SimpleDateFormat sdfHour = new SimpleDateFormat("HH");
 	String logInputPath;
 	String outPath;
 	
-	public void drive(String env,String timeType,String date,String hour) throws Exception {
+	public void drive(String env,String dmpDate,String dmpHour) throws Exception {
 		try {
-			Calendar calendar = Calendar.getInstance();
+			Calendar dmpDateCalendar = Calendar.getInstance();
+			dmpDateCalendar.setTime(sdf.parse(dmpDate));
+			
+			
 			JobConf jobConf = new JobConf();
 			jobConf.setNumMapTasks(5);
 			jobConf.set("mapred.max.split.size","3045728"); //3045728 49 //3045728000 7
@@ -99,8 +104,8 @@ public class DmpLogDriver {
 			jobConf.set("mapreduce.reduce.memory.mb", "8192");
 			jobConf.set("mapreduce.job.running.map.limit", "100");
 			jobConf.set("spring.profiles.active", env);
-			jobConf.set("job.time",hour);
-			jobConf.set("job.date",date);
+			jobConf.set("job.date",dmpDate);
+			jobConf.set("job.hour",dmpHour);
 			
 			// hdfs
 			Configuration conf = new Configuration();
@@ -119,66 +124,72 @@ public class DmpLogDriver {
 	        conf.set("spring.profiles.active", env);
 			
 	        
+	        //輸入檔案
+	        List<Path> listPath = new ArrayList<Path>();  
+	        FileSystem fs = FileSystem.get(conf);
 	        
-	        
-	        
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			Calendar calStart = Calendar.getInstance();
-			calStart.setTime(sdf.parse(date));
-			Calendar calEnd = Calendar.getInstance();
-			calEnd.setTime(sdf.parse(date));
-			calEnd.add(Calendar.DATE, 1);
-			
-			//輸入檔案
-			List<Path> listPath = new ArrayList<Path>();  
-			FileSystem fs = FileSystem.get(conf);
-			if(env.equals("prd")) {
-				Path path = new Path("/home/webuser/akb/storedata/alllog/"+date+"/"+hour);
-				FileStatus[] status = fs.listStatus(path); 
-				for (FileStatus fileStatus : status) {
-					if(fileStatus.getPath().toString().contains(".index")) {
-						continue;
-					}
+	        Path path = new Path("/home/webuser/akb/storedata/alllog"+dmpDate+"/"+dmpHour);
+	        FileStatus[] status = fs.listStatus(path); 
+			for (FileStatus fileStatus : status) {
+				String pathStr = fileStatus.getPath().toString();
+				String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
+				if(extensionName.equals("LZO")) {
 					log.info("JOB INPUT PATH:"+fileStatus.getPath().toString());
 					listPath.add(new Path(fileStatus.getPath().toString()));
-				}  
-			}else {
-				Path path = new Path("/home/webuser/akb/storedata/alllog/"+date+"/"+hour);
-				FileStatus[] status = fs.listStatus(path); 
-				for (FileStatus fileStatus : status) {
-					if(fileStatus.getPath().toString().contains(".index")) {
-						continue;
-					}
-					log.info("JOB INPUT PATH:"+fileStatus.getPath().toString());
-					listPath.add(new Path(fileStatus.getPath().toString()));
-				}  
-			}
+				}
+				
+			}  
 			
-			Path[] paths = new Path[listPath.size()];  
-			listPath.toArray(paths);  
-			Job job = new Job(jobConf, "dmp_log_"+ env + "_druid_test");
-			job.setJarByClass(DmpLogDriver.class);
-			job.setMapperClass(DmpLogMapper.class);
-			job.setMapOutputKeyClass(Text.class);
-			job.setMapOutputValueClass(Text.class);
-			job.setReducerClass(DmpLogReducer.class);
-			job.setInputFormatClass(LzoTextInputFormat.class);
-			job.setOutputKeyClass(Text.class);
-			job.setOutputValueClass(Text.class);
-			job.getConfiguration().set("mapreduce.output.basename", "druid_"+hour);
-			job.setNumReduceTasks(1);//1個reduce 
-			job.setMapSpeculativeExecution(false);
-			if(env.equals("prd")) {
-				deleteExistedDir(fs, new Path("/home/webuser/alex/druid/"+date+"/"+hour), true);
-				FileOutputFormat.setOutputPath(job, new Path("/home/webuser/alex/druid/"+date+"/"+hour));
-			}else {
-				deleteExistedDir(fs, new Path("/home/webuser/alex/druid/"+date+"/"+hour), true);
-				FileOutputFormat.setOutputPath(job, new Path("/home/webuser/alex/druid/"+date+"/"+hour));
-			}
-			log.info("JOB OUTPUT PATH:"+"/home/webuser/alex/druid/"+date+"/"+hour);
-			FileInputFormat.setInputPaths(job, paths);
-			FileOutputFormat.setCompressOutput(job, true);  //job使用压缩  
-	        FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);  
+//			//輸入檔案
+//			List<Path> listPath = new ArrayList<Path>();  
+//			FileSystem fs = FileSystem.get(conf);
+//			if(env.equals("prd")) {
+//				Path path = new Path("/home/webuser/akb/storedata/alllog/"+date+"/"+hour);
+//				FileStatus[] status = fs.listStatus(path); 
+//				for (FileStatus fileStatus : status) {
+//					if(fileStatus.getPath().toString().contains(".index")) {
+//						continue;
+//					}
+//					log.info("JOB INPUT PATH:"+fileStatus.getPath().toString());
+//					listPath.add(new Path(fileStatus.getPath().toString()));
+//				}  
+//			}else {
+//				Path path = new Path("/home/webuser/akb/storedata/alllog/"+date+"/"+hour);
+//				FileStatus[] status = fs.listStatus(path); 
+//				for (FileStatus fileStatus : status) {
+//					if(fileStatus.getPath().toString().contains(".index")) {
+//						continue;
+//					}
+//					log.info("JOB INPUT PATH:"+fileStatus.getPath().toString());
+//					listPath.add(new Path(fileStatus.getPath().toString()));
+//				}  
+//			}
+//			
+//			Path[] paths = new Path[listPath.size()];  
+//			listPath.toArray(paths);  
+//			Job job = new Job(jobConf, "dmp_log_"+ env + "_druid_test");
+//			job.setJarByClass(DmpLogDriver.class);
+//			job.setMapperClass(DmpLogMapper.class);
+//			job.setMapOutputKeyClass(Text.class);
+//			job.setMapOutputValueClass(Text.class);
+//			job.setReducerClass(DmpLogReducer.class);
+//			job.setInputFormatClass(LzoTextInputFormat.class);
+//			job.setOutputKeyClass(Text.class);
+//			job.setOutputValueClass(Text.class);
+//			job.getConfiguration().set("mapreduce.output.basename", "druid_"+hour);
+//			job.setNumReduceTasks(1);//1個reduce 
+//			job.setMapSpeculativeExecution(false);
+//			if(env.equals("prd")) {
+//				deleteExistedDir(fs, new Path("/home/webuser/alex/druid/"+date+"/"+hour), true);
+//				FileOutputFormat.setOutputPath(job, new Path("/home/webuser/alex/druid/"+date+"/"+hour));
+//			}else {
+//				deleteExistedDir(fs, new Path("/home/webuser/alex/druid/"+date+"/"+hour), true);
+//				FileOutputFormat.setOutputPath(job, new Path("/home/webuser/alex/druid/"+date+"/"+hour));
+//			}
+//			log.info("JOB OUTPUT PATH:"+"/home/webuser/alex/druid/"+date+"/"+hour);
+//			FileInputFormat.setInputPaths(job, paths);
+//			FileOutputFormat.setCompressOutput(job, true);  //job使用压缩  
+//	        FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);  
 //	        conf.set("job.date",paths[0].toString().split("/")[8]);
 //			jobConf.set("job.date",paths[0].toString().split("/")[8]);
 //			
@@ -407,50 +418,50 @@ public class DmpLogDriver {
 //				return;
 //			}
 //	
-			//load jar path
-			String[] jarPaths = {
-					"/home/webuser/dmp/webapps/analyzer/lib/commons-lang-2.6.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/commons-logging-1.1.1.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/log4j-1.2.15.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/mongo-java-driver-2.11.3.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/softdepot-1.0.9.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/solr-solrj-4.5.0.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/noggit-0.5.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/httpcore-4.2.2.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/httpclient-4.2.3.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/httpmime-4.2.3.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/mysql-connector-java-5.1.12-bin.jar",
-	
-					// add kafka jar
-					"/home/webuser/dmp/webapps/analyzer/lib/kafka-clients-0.9.0.0.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/kafka_2.11-0.9.0.0.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/slf4j-api-1.7.19.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/slf4j-log4j12-1.7.6.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/json-smart-2.3.jar",
-					"/home/webuser/dmp/webapps/analyzer/lib/asm-1.0.2.jar" 
-			}; 
-			for (String jarPath : jarPaths) {
-				DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fs);
-			}
-	
-			String[] filePaths = {
-					hdfsPath + "/home/webuser/dmp/crawlBreadCrumb/data/pfp_ad_category_new.csv",
-					hdfsPath + "/home/webuser/dmp/readingdata/ClsfyGndAgeCrspTable.txt",
-					hdfsPath + "/home/webuser/dmp/alex/log4j.xml",
-					hdfsPath + "/home/webuser/dmp/jobfile/DMP_24h_category.csv",
-					hdfsPath + "/home/webuser/dmp/jobfile/DMP_Ruten_category.csv",
-					hdfsPath + "/home/webuser/dmp/jobfile/GeoLite2-City.mmdb",
-					hdfsPath + "/home/webuser/dmp/jobfile/ThirdAdClassTable.txt"
-			};
-			for (String filePath : filePaths) {
-				DistributedCache.addCacheFile(new URI(filePath), job.getConfiguration());
-			}
-	
-			if (job.waitForCompletion(true)) {
-				log.info("Job1 is OK");
-			} else {
-				log.info("Job1 is Failed");
-			}
+//			//load jar path
+//			String[] jarPaths = {
+//					"/home/webuser/dmp/webapps/analyzer/lib/commons-lang-2.6.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/commons-logging-1.1.1.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/log4j-1.2.15.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/mongo-java-driver-2.11.3.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/softdepot-1.0.9.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/solr-solrj-4.5.0.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/noggit-0.5.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/httpcore-4.2.2.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/httpclient-4.2.3.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/httpmime-4.2.3.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/mysql-connector-java-5.1.12-bin.jar",
+//	
+//					// add kafka jar
+//					"/home/webuser/dmp/webapps/analyzer/lib/kafka-clients-0.9.0.0.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/kafka_2.11-0.9.0.0.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/slf4j-api-1.7.19.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/slf4j-log4j12-1.7.6.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/json-smart-2.3.jar",
+//					"/home/webuser/dmp/webapps/analyzer/lib/asm-1.0.2.jar" 
+//			}; 
+//			for (String jarPath : jarPaths) {
+//				DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fs);
+//			}
+//	
+//			String[] filePaths = {
+//					hdfsPath + "/home/webuser/dmp/crawlBreadCrumb/data/pfp_ad_category_new.csv",
+//					hdfsPath + "/home/webuser/dmp/readingdata/ClsfyGndAgeCrspTable.txt",
+//					hdfsPath + "/home/webuser/dmp/alex/log4j.xml",
+//					hdfsPath + "/home/webuser/dmp/jobfile/DMP_24h_category.csv",
+//					hdfsPath + "/home/webuser/dmp/jobfile/DMP_Ruten_category.csv",
+//					hdfsPath + "/home/webuser/dmp/jobfile/GeoLite2-City.mmdb",
+//					hdfsPath + "/home/webuser/dmp/jobfile/ThirdAdClassTable.txt"
+//			};
+//			for (String filePath : filePaths) {
+//				DistributedCache.addCacheFile(new URI(filePath), job.getConfiguration());
+//			}
+//	
+//			if (job.waitForCompletion(true)) {
+//				log.info("Job1 is OK");
+//			} else {
+//				log.info("Job1 is Failed");
+//			}
 
 ////			//job2
 ////			log.info("...... ThirdCategoryLog start ......");
@@ -519,20 +530,45 @@ public class DmpLogDriver {
 	}
 	
 	
-
-	public static void main(String[] args) throws Exception {
-		if(args[0].equals("prd")){
-			System.setProperty("spring.profiles.active", "prd");
-		}else{
-			if(args.length != 4) {
-				System.setProperty("druid.test", "true");
-				log.info("====stg setup fail====");
+	/**
+	 * args[0]:env
+	 * args[1]:date
+	 * args[2]:hour
+	 * */
+	public static void main(String[] args)  {
+		try {
+			if(args.length != 3) {
+				System.out.println("arg length fail");
 			}
-			System.setProperty("spring.profiles.active", "stg");
+			if(args[0].equals("prd")){
+				System.setProperty("spring.profiles.active", "prd");	
+			}else {
+				System.setProperty("spring.profiles.active", "stg");
+			}
+			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+			DmpLogDriver dmpLogDriver = (DmpLogDriver) ctx.getBean(DmpLogDriver.class);
+			dmpLogDriver.drive(args[0],args[1],args[2]);
+		}catch(Exception e) {
+			log.error(e.getMessage());
 		}
-		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-		DmpLogDriver dmpLogDriver = (DmpLogDriver) ctx.getBean(DmpLogDriver.class);
-		dmpLogDriver.drive(args[0],args[1],args[2],args[3]);
-		log.info("====driver end====");
+		
+		
+		
+		
+		
+		
+//		if(args[0].equals("prd")){
+//			System.setProperty("spring.profiles.active", "prd");
+//		}else{
+//			if(args.length != 4) {
+//				System.setProperty("druid.test", "true");
+//				log.info("====stg setup fail====");
+//			}
+//			System.setProperty("spring.profiles.active", "stg");
+//		}
+//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//		DmpLogDriver dmpLogDriver = (DmpLogDriver) ctx.getBean(DmpLogDriver.class);
+//		dmpLogDriver.drive(args[0],args[1],args[2],args[3]);
+//		log.info("====driver end====");
 	}
 }
