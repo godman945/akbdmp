@@ -156,13 +156,135 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	
 	private static String logStr = "";
 	private static net.minidev.json.JSONObject dmpDataJson = new net.minidev.json.JSONObject();
+	private static String logpath = "";
 	@Override
 	public void map(LongWritable offset, Text value, Context context) {
 		try {
 			inputSplit = (InputSplit)context.getInputSplit(); 
-			log.info(">>>>>>>>>>>>>>>>>>"+((FileSplit)inputSplit).getPath().toString());
-			String fileName = ((FileSplit)inputSplit).getPath().getName();
-			log.info(">>>>>>>>>>>>>>>>>>fileName:"+fileName);
+			logpath = ((FileSplit)inputSplit).getPath().toString();
+			log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
+//			String fileName = ((FileSplit)inputSplit).getPath().getName();
+//			log.info(">>>>>>>>>>>>>>>>>>fileName:"+fileName);
+			
+			logStr = value.toString();
+			//1.判斷log來源為kdcl或bu
+			if(logpath.contains("alllog")) {
+				//kdcl log	raw data格式為一般或是Campaign
+				if(logStr.indexOf(kdclSymbol) > -1 ){
+					// values[0]  date time (2018-01-04 04:57:12)
+					// values[1]  memid
+					// values[2]  uuid
+					// values[3]  ip
+					// values[4]  url
+					// values[5]  UserAgent
+					// values[13] ck,pv
+					// values[15] ad_class
+					String[] values = logStr.split(kdclSymbol);
+					if (values.length < kdclLogLength) {
+						return;
+					}
+					if ((StringUtils.equals(values[1], "null")||StringUtils.isBlank(values[1]) ) && (StringUtils.equals(values[2], "null")||StringUtils.isBlank(values[2])) ){
+						return;
+					}
+					dmpDataJson.put("date", record_date);
+					dmpDataJson.put("date_time", record_time);
+					dmpDataJson.put("memid", values[1]);
+					dmpDataJson.put("uuid", values[2]);
+					dmpDataJson.put("ip", values[3]);
+					dmpDataJson.put("url", values[4]);
+					dmpDataJson.put("user_agent", values[5]);
+					dmpDataJson.put("trigger_type", values[13]);
+					dmpDataJson.put("ad_class", values[15]);
+					dmpDataJson.put("age", "null");
+					dmpDataJson.put("sex", "null");
+					dmpDataJson.put("log_source", "kdcl");
+				}else if(logStr.indexOf(campaignSymbol) > -1 ){	
+					// values[0] memid			會員帳號
+					// values[1] uuid			通用唯一識別碼	
+					// values[2] ad_class		分類
+					// values[3] Count			數量
+					// values[4] age			年齡 (0或空字串)
+					// values[5] sex			性別(F|M)
+					// values[6] ip_area		地區(台北市 or 空字串)
+					// values[7] record_date	紀錄日期(2018-04-27)
+					// values[8] Over_write		是否覆寫(true|false)
+					String[] values = logStr.split(campaignSymbol);
+					if (values.length < campaignLogLength) {
+						 return;
+					}
+					if (StringUtils.isBlank(values[0]) && StringUtils.isBlank(values[1])){
+						return;
+					}
+					if (!values[7].equals(record_date)){
+						return;
+					}
+					dmpDataJson.put("date", record_date);
+					dmpDataJson.put("date_time", record_time);
+					dmpDataJson.put("memid", StringUtils.isBlank(values[0]) ? "null" : values[0]);
+					dmpDataJson.put("uuid", values[1]);
+					dmpDataJson.put("ip", values[6]);
+					dmpDataJson.put("url", "");
+					dmpDataJson.put("user_agent", "");
+					dmpDataJson.put("trigger_type", "campaign");
+					dmpDataJson.put("ad_class", values[2]);
+					dmpDataJson.put("log_source", "campaign");
+					if (StringUtils.equals(values[4], "0")){
+						dmpDataJson.put("age", "null");
+					}else{
+						dmpDataJson.put("age", values[4]);
+					}
+					if (StringUtils.isBlank(values[5])){
+						dmpDataJson.put("sex", "null");
+					}else{
+						dmpDataJson.put("sex", values[5]);
+					}
+				}else{
+					 return;
+				}
+				
+				
+			}
+			if(logpath.contains("bulog")) {
+				
+			}
+			
+			
+			//開始處理log格式
+			//1.地區處理元件(ip 轉國家、城市)
+			geoIpComponent.ipTransformGEO(dmpDataJson);
+			//2.時間處理元件(日期時間字串轉成小時)		
+			dateTimeComponent.datetimeTransformHour(dmpDataJson); 
+			//3.時間處理元件(日期時間字串轉成小時)
+			dateTimeComponent.datetimeTransformHour(dmpDataJson); 
+			//4.裝置處理元件(UserAgent轉成裝置資訊)
+			deviceComponent.parseUserAgentToDevice(dmpDataJson);
+			//5.分類處理元件(分析click、24H、Ruten、campaign分類)
+			if ((dmpDataJson.getAsString("trigger_type").equals("ck") || dmpDataJson.getAsString("trigger_type").equals("campaign")) ) {// kdcl ad_click的adclass  或   campaign log的adclass 	//&& StringUtils.isNotBlank(dmpLogBeanResult.getAdClass())
+				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
+				aCategoryLogData.processCategory(dmpDataJson, null);
+			}else if (dmpDataJson.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpDataJson.getAsString("url")) && dmpDataJson.getAsString("url").contains("ruten")) {	// 露天
+				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
+				aCategoryLogData.processCategory(dmpDataJson, dBCollection_class_url);
+			}else if (dmpDataJson.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpDataJson.getAsString("url")) && dmpDataJson.getAsString("url").contains("24h")) {		// 24h
+				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
+				aCategoryLogData.processCategory(dmpDataJson, dBCollection_class_url);
+			}else if (dmpDataJson.getAsString("trigger_type").equals("pv") ){
+				dmpDataJson.put("category", "null");
+				dmpDataJson.put("category_source", "null");
+				dmpDataJson.put("class_adclick_classify", "null");
+				dmpDataJson.put("class_24h_url_classify", "null");
+				dmpDataJson.put("class_ruten_url_classify", "null");
+			}
+			//6.個資
+			personalInfoComponent.processPersonalInfo(dmpDataJson, dBCollection_user_detail);
+			
+			
+			log.info("****after****:"+dmpDataJson);
+			
+//			if(!dmpDataJson.getAsString("age").equals("null")) {
+				
+//			}
+			
 			
 			
 			
@@ -285,6 +407,17 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			log.error("Mapper error>>>>>> " +e); 
 		}
 	}
+	
+	
+	
+	private void processKdclLog() {
+		
+	}
+	
+	
+	
+	
+	
 	
 	public DmpLogBean dmpBeanIntegrate(DmpLogBean dmpLogBeanResult) throws Exception {
 		dmpLogBeanResult.setMemid( StringUtils.isBlank(dmpLogBeanResult.getMemid()) ? "null" : dmpLogBeanResult.getMemid());
