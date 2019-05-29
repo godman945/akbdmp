@@ -128,6 +128,7 @@ public class DmpLogDriver {
 	        List<Path> listPath = new ArrayList<Path>();  
 	        FileSystem fs = FileSystem.get(conf);
 	        
+	        //載入kdcl log file
 	        Path path = new Path("/home/webuser/akb/storedata/alllog/"+dmpDate+"/"+dmpHour);
 	        FileStatus[] status = fs.listStatus(path); 
 			for (FileStatus fileStatus : status) {
@@ -137,8 +138,20 @@ public class DmpLogDriver {
 					log.info("JOB INPUT PATH:"+fileStatus.getPath().toString());
 					listPath.add(new Path(fileStatus.getPath().toString()));
 				}
-				
-			}  
+			}
+			 //載入bu log file
+			path = new Path("/home/webuser/akb/storedata/bulog/"+dmpDate+"/"+dmpHour);
+			status = fs.listStatus(path); 
+			for (FileStatus fileStatus : status) {
+				String pathStr = fileStatus.getPath().toString();
+				String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
+				if(extensionName.equals("LZO")) {
+					log.info("JOB INPUT PATH:"+fileStatus.getPath().toString());
+					listPath.add(new Path(fileStatus.getPath().toString()));
+				}
+			}
+			
+			log.info("listPath:"+listPath);
 			
 //			//輸入檔案
 //			List<Path> listPath = new ArrayList<Path>();  
