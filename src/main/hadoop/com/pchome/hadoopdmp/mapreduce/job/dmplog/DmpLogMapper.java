@@ -340,8 +340,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
 				aCategoryLogData.processCategory(dmpDataJson, dBCollection_class_url);
 			}else if (dmpDataJson.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpDataJson.getAsString("referer")) && dmpDataJson.getAsString("referer").contains("24h")) {		// 24h
-				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
-				aCategoryLogData.processCategory(dmpDataJson, dBCollection_class_url);
+//				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
+//				aCategoryLogData.processCategory(dmpDataJson, dBCollection_class_url);
 			}else if (dmpDataJson.getAsString("trigger_type").equals("pv") ){
 				dmpDataJson.put("category", "");
 				dmpDataJson.put("category_source", "");
