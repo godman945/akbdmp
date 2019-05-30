@@ -165,7 +165,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
 //			String fileName = ((FileSplit)inputSplit).getPath().getName();
 //			log.info(">>>>>>>>>>>>>>>>>>fileName:"+fileName);
-			if(logpath.contains("alllog")) {
+			if(logpath.contains("bulog")) {
 				log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
 			}
 			logStr = value.toString();

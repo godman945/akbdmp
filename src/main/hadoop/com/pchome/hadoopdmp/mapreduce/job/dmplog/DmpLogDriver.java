@@ -122,7 +122,8 @@ public class DmpLogDriver {
 	        conf.set("mapreduce.reduce.memory.mb", "8192");
 	        conf.set("mapreduce.reduce.java.opts", "-Xmx8192m");
 	        conf.set("spring.profiles.active", env);
-			
+	        conf.set("job.date",dmpDate);
+	        conf.set("job.hour",dmpHour);
 	        
 	        //輸入檔案
 	        List<Path> listPath = new ArrayList<Path>();  
