@@ -56,15 +56,12 @@ public class AdRutenLog extends ACategoryLogData {
 	private static BasicDBObject intModifier = new BasicDBObject();
 	public Object processCategory(net.minidev.json.JSONObject dmpJSon, DBCollection dbCollectionUrl) throws Exception {
 		transformUrl.setLength(0);
-		category = "null";
-		categorySource = "null";
-		classRutenUrlClassify = "null" ;
+		category = "";
+		categorySource = "";
+		classRutenUrlClassify = "" ;
 		this.dBCollection = dbCollectionUrl;
-		sourceUrl = dmpJSon.getAsString("url");
+		sourceUrl = dmpJSon.getAsString("referer");
 		if (StringUtils.isBlank(sourceUrl)) {
-			dmpJSon.put("url", "null");
-			dmpJSon.put("category", "null");
-			dmpJSon.put("category_source", "null");
 			dmpJSon.put("class_ruten_url_classify", "N");
 			return dmpJSon;
 		}else {
@@ -72,8 +69,6 @@ public class AdRutenLog extends ACategoryLogData {
 			dbObject = queryClassUrl(sourceUrl.trim());
 			if(dbObject != null){
 				if(dbObject.get("status").equals("0")){
-					category = "null";
-					categorySource = "null";
 					classRutenUrlClassify = "N"; 
 					// url 存在 status = 0 跳過回傳空值 , mongo update_date 更新(一天一次) mongo,query_time+1 如大於 2000 不再加  classRutenUrl = "N"
 					updateClassUrlUpdateDate(sourceUrl.trim(),dbObject) ;
@@ -125,7 +120,7 @@ public class AdRutenLog extends ACategoryLogData {
 									}
 								}
 							}
-							if (!category.equals("null") && StringUtils.isNotBlank(category)) {
+							if (StringUtils.isNotBlank(category)) {
 								// 爬蟲有比對到Ruten分類
 								categorySource = "ruten";
 								classRutenUrlClassify = "Y";
@@ -133,28 +128,28 @@ public class AdRutenLog extends ACategoryLogData {
 								insertClassUrl(sourceUrl.trim(),"1",category,breadcrumbResult,"",0) ;
 							} else {
 								// 麵包屑沒有比對到Ruten分類
-								category = "null";
-								categorySource = "null";
+								category = "";
+								categorySource = "";
 								classRutenUrlClassify = "N";
 								insertClassUrl(sourceUrl.trim(),"0","",breadcrumbResult,"爬不到麵包屑的訊息",1) ;
 							}
 						} else {
 							// 沒有麵包屑
-							category = "null";
-							categorySource = "null";
+							category = "";
+							categorySource = "";
 							classRutenUrlClassify = "N";
 							insertClassUrl(sourceUrl.trim(),"0","","","沒有麵包屑的訊息",1) ;
 						}
 					} else {
 						// url不是Ruten商品頁，寫入mongo
-						category = "null";
-						categorySource = "null";
+						category = "";
+						categorySource = "";
 						classRutenUrlClassify = "N";
 						insertClassUrl(sourceUrl.trim(),"0","","","url不符合Ruten商品頁",1) ;
 					}
 				} catch (Exception e) {
-					category = "null";
-					categorySource = "null";
+					category = "";
+					categorySource = "";
 					classRutenUrlClassify = "N";
 					insertClassUrl(sourceUrl.trim(),"0","","","",1) ;
 					log.error(">>>>>>"+ e.getMessage());

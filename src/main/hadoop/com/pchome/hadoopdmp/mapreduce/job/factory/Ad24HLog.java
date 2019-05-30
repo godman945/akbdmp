@@ -27,17 +27,14 @@ public class Ad24HLog extends ACategoryLogData {
 	private static BasicDBObject basicDBObject = new BasicDBObject();
 	
 	public Object processCategory(net.minidev.json.JSONObject dmpJSon, DBCollection dbCollectionUrl) throws Exception {
-		category = "null";
-		categorySource = "null";
-		class24hUrlClassify = "null" ;
+		category = "";
+		categorySource = "";
+		class24hUrlClassify = "" ;
 		this.dBCollection = dbCollectionUrl;
-		sourceUrl = dmpJSon.getAsString("url");
+		sourceUrl = dmpJSon.getAsString("referer");
 		
 		
 		if (StringUtils.isBlank(sourceUrl)) {
-			dmpJSon.put("url", "null");
-			dmpJSon.put("category", "null");
-			dmpJSon.put("category_source", "null");
 			dmpJSon.put("class_24h_url_classify", "N");
 			return dmpJSon;
 		}
@@ -53,7 +50,7 @@ public class Ad24HLog extends ACategoryLogData {
 			}
 		}
 		
-		if (!category.equals("null") && StringUtils.isBlank(category)){
+		if (StringUtils.isBlank(category)){
 			//查詢url
 			dbObject = queryClassUrl(sourceUrl.trim()) ;
 			if(dbObject != null){
@@ -72,8 +69,8 @@ public class Ad24HLog extends ACategoryLogData {
 					updateClassUrlUpdateDate(sourceUrl.trim(),dbObject) ;
 				}
 			}else{
-				category = "null";
-				categorySource = "null";
+				category = "";
+				categorySource = "";
 				class24hUrlClassify = "N";
 				// url 不存在  ,寫入 mongo url代號 status=0 
 				insertClassUrl(sourceUrl.trim(),"","0",1);
