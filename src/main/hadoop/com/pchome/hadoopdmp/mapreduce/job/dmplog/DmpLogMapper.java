@@ -480,7 +480,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			context.write(keyOut, new Text(dmpDataJson.toString()));
 			
 		} catch (Exception e) {
-			log.error("Mapper error>>>>>> " +e); 
+			log.error("Mapper error>>>>>> " +e);
+			log.error("Mapper error>>>>>>dmpDataJson:" +dmpDataJson); 
 		}
 	}
 	
