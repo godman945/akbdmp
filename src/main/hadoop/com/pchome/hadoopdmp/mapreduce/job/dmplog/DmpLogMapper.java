@@ -162,10 +162,12 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		try {
 			inputSplit = (InputSplit)context.getInputSplit(); 
 			logpath = ((FileSplit)inputSplit).getPath().toString();
-			log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
+//			log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
 //			String fileName = ((FileSplit)inputSplit).getPath().getName();
 //			log.info(">>>>>>>>>>>>>>>>>>fileName:"+fileName);
-			
+			if(logpath.contains("alllog")) {
+				log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
+			}
 			logStr = value.toString();
 			//1.判斷log來源為kdcl或bu
 			if(logpath.contains("alllog")) {
@@ -175,7 +177,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					// values[1]  memid
 					// values[2]  uuid
 					// values[3]  ip
-					// values[4]  url
+					// values[4]  referer
 					// values[5]  UserAgent
 					// values[13] ck,pv
 					// values[15] ad_class
@@ -187,17 +189,42 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						return;
 					}
 					dmpDataJson.put("date", record_date);
-					dmpDataJson.put("date_time", record_time);
+					dmpDataJson.put("hour", record_time);
 					dmpDataJson.put("memid", values[1]);
 					dmpDataJson.put("uuid", values[2]);
 					dmpDataJson.put("ip", values[3]);
-					dmpDataJson.put("url", values[4]);
+					dmpDataJson.put("referer", values[4]);
+					String domain = "";
+					if(StringUtils.isNotBlank(values[4])) {
+						domain = values[4].substring(values[4].indexOf("http"), values[4].indexOf("com/")+3);
+						domain = domain.replace("http://", "");
+						domain = domain.replace("https://", "");
+					}
+					dmpDataJson.put("domain", domain);
+					dmpDataJson.put("log_source", "kdcl");
+					dmpDataJson.put("pfd_customer_info_id", values[24]);
+					dmpDataJson.put("pfp_customer_info_id", values[6]);
+					dmpDataJson.put("style_id", values[7]);
+					dmpDataJson.put("action_id", values[21]);
+					dmpDataJson.put("group_id", values[22]);
+					dmpDataJson.put("ad_id", values[11]);
+					dmpDataJson.put("pfbx_customer_info_id", values[25]);
+					dmpDataJson.put("pfbx_position_id", values[26]);
+					dmpDataJson.put("ad_view", values[45]);
+					dmpDataJson.put("vpv", values[46]);
+					dmpDataJson.put("pa_id", "");
+					dmpDataJson.put("screen_x", "");
+					dmpDataJson.put("screen_y", "");
+					dmpDataJson.put("pa_event", "");
+					dmpDataJson.put("event_id", "");
+					dmpDataJson.put("op1", "");
+					dmpDataJson.put("op2", "");
+					dmpDataJson.put("email", "");
+					dmpDataJson.put("sex", "null");
+					dmpDataJson.put("age", "null");
 					dmpDataJson.put("user_agent", values[5]);
 					dmpDataJson.put("trigger_type", values[13]);
 					dmpDataJson.put("ad_class", values[15]);
-					dmpDataJson.put("age", "null");
-					dmpDataJson.put("sex", "null");
-					dmpDataJson.put("log_source", "kdcl");
 				}else if(logStr.indexOf(campaignSymbol) > -1 ){	
 					// values[0] memid			會員帳號
 					// values[1] uuid			通用唯一識別碼	
