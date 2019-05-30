@@ -57,7 +57,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private Text valueOut = new Text();
 
 	public static String record_date;
-	public static String record_time;
+	public static String record_hour;
 	public static ArrayList<Map<String, String>> categoryList = new ArrayList<Map<String, String>>();		     //分類表	
 	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();				 //分類個資表
 	public static List<CategoryCodeBean> category24hBeanList = new ArrayList<CategoryCodeBean>();				 //24H分類表
@@ -72,15 +72,16 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static DBCollection dBCollection_class_url;
 	private static DBCollection dBCollection_user_detail;
 	private static InputSplit inputSplit;
+	private static int count = 0;
 	@Override
 	public void setup(Context context) {
 		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
 		try {
 			record_date = context.getConfiguration().get("job.date");
-			record_time = context.getConfiguration().get("job.time");
+			record_hour = context.getConfiguration().get("job.hour");
 			
 			log.info("record_date:"+record_date);
-			log.info("record_time:"+record_time);
+			log.info("record_hour:"+record_hour);
 			
 			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
@@ -189,7 +190,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						return;
 					}
 					dmpDataJson.put("date", record_date);
-					dmpDataJson.put("hour", record_time);
+					dmpDataJson.put("hour", record_hour);
 					dmpDataJson.put("memid", values[1]);
 					dmpDataJson.put("uuid", values[2]);
 					dmpDataJson.put("ip", values[3]);
@@ -246,7 +247,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						return;
 					}
 					dmpDataJson.put("date", record_date);
-					dmpDataJson.put("date_time", record_time);
+					dmpDataJson.put("date_time", record_hour);
 					dmpDataJson.put("memid", StringUtils.isBlank(values[0]) ? "null" : values[0]);
 					dmpDataJson.put("uuid", values[1]);
 					dmpDataJson.put("ip", values[6]);
@@ -306,8 +307,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			personalInfoComponent.processPersonalInfo(dmpDataJson, dBCollection_user_detail);
 			
 			
-			log.info("****after****:"+dmpDataJson);
 			
+			if(count == 0) {
+				log.info("****after****:"+dmpDataJson);
+				count = count + 1;
+			}
 //			if(!dmpDataJson.getAsString("age").equals("null")) {
 				
 //			}
