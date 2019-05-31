@@ -136,7 +136,7 @@ public class DmpLogDriver {
 				String pathStr = fileStatus.getPath().toString();
 				String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
 				if(extensionName.equals("LZO")) {
-					log.info("JOB INPUT PATH:"+fileStatus.getPath().toString());
+//					log.info("JOB INPUT PATH:"+fileStatus.getPath().toString());
 					listPath.add(new Path(fileStatus.getPath().toString()));
 				}
 			}
@@ -147,14 +147,19 @@ public class DmpLogDriver {
 				String pathStr = fileStatus.getPath().toString();
 				String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
 				if(extensionName.equals("LZO")) {
-					log.info("JOB INPUT PATH:"+fileStatus.getPath().toString());
+//					log.info("JOB INPUT PATH:"+fileStatus.getPath().toString());
 					listPath.add(new Path(fileStatus.getPath().toString()));
 				}
 			}
 			
 			
 			Path[] paths = new Path[listPath.size()];  
-			listPath.toArray(paths);  
+			listPath.toArray(paths);
+			for (Path path2 : paths) {
+				log.info("JOB INPUT PATH:"+path2.toString());
+			}
+			
+			
 			Job job = new Job(jobConf, "dmp_log_"+ env + "_druid_test");
 			job.setJarByClass(DmpLogDriver.class);
 			job.setMapperClass(DmpLogMapper.class);
