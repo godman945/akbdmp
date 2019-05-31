@@ -198,13 +198,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("memid", values[1]);
 					dmpDataJson.put("uuid", values[2]);
 					dmpDataJson.put("referer", values[4]);
-					String domain = "";
-					if(StringUtils.isNotBlank(values[4])) {
-						domain = values[4].substring(values[4].indexOf("http"), values[4].indexOf("com/")+3);
-						domain = domain.replace("http://", "");
-						domain = domain.replace("https://", "");
-					}
-					dmpDataJson.put("domain", domain);
+					dmpDataJson.put("domain", "");
 					dmpDataJson.put("log_source", "kdcl");
 					dmpDataJson.put("pfd_customer_info_id", values[24]);
 					dmpDataJson.put("pfp_customer_info_id", values[6]);

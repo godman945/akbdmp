@@ -21,31 +21,25 @@ public class GeoIpComponent {
 		// 判斷是否為正確ip格式
 		ip = dmpJSon.getAsString("ip");
 		if (!ipAdd.isIP(ip)) {
-			dmpJSon.put("country", "null");
-			dmpJSon.put("city", "null");
-			dmpJSon.put("area_info_source", "null");
 			dmpJSon.put("area_info_classify", "null");
 			return dmpJSon;
 		}
 		// ip轉換國家、城市
 		InetAddress ipAddress = DmpLogMapper.ipAddress.getByName(ip);
+		dmpJSon.put("domain", ipAddress.getHostName());
 		try {
 			response = DmpLogMapper.reader.city(ipAddress);
 		} catch (Exception e) {
 			log.info("The address is not in the database:"+ip);
 		}
 		if (response == null) {
-			dmpJSon.put("country", "null");
-			dmpJSon.put("city", "null");
-			dmpJSon.put("area_info_source", "null");
 			dmpJSon.put("area_info_classify", "N");
 			return dmpJSon;
 		}
 		String countryStr = response.getCountry().getName();
 		String cityStr = response.getCity().getNames().get("en");
-		dmpJSon.put("country", countryStr);
-		dmpJSon.put("city", cityStr);
-		dmpJSon.put("area_info_source", "ip");
+		dmpJSon.put("area_country", countryStr);
+		dmpJSon.put("area_city", cityStr);
 		if( (StringUtils.isNotBlank(countryStr)) && (!StringUtils.equals(countryStr, "null")) && (StringUtils.isNotBlank(cityStr)) && (!StringUtils.equals(cityStr, "null")) ){
 			dmpJSon.put("area_info_classify", "Y");
 		}else{
