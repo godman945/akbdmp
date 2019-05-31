@@ -156,7 +156,7 @@ public class DmpLogDriver {
 			Path[] paths = new Path[listPath.size()];  
 			listPath.toArray(paths);
 			for (Path path2 : paths) {
-				log.info("JOB INPUT PATH:"+path2.toString());
+				log.info(">>>>>>>>>>JOB INPUT PATH:"+path2.toString());
 			}
 			
 			
