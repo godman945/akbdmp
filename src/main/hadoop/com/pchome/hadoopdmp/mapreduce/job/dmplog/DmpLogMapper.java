@@ -193,7 +193,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					if ((StringUtils.equals(values[1], "null")||StringUtils.isBlank(values[1]) ) && (StringUtils.equals(values[2], "null")||StringUtils.isBlank(values[2])) ){
 						return;
 					}
-					if (StringUtils.isBlank(values[4])) {
+					if (StringUtils.isBlank(values[4]) || !(values[4].contains("http"))) {
 						return;
 					}
 					dmpDataJson.put("fileName", fileName);

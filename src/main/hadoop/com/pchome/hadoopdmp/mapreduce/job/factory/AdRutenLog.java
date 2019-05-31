@@ -55,7 +55,6 @@ public class AdRutenLog extends ACategoryLogData {
 	private static Elements breadcrumbE;
 	private static BasicDBObject intModifier = new BasicDBObject();
 	public Object processCategory(net.minidev.json.JSONObject dmpJSon, DBCollection dbCollectionUrl) throws Exception {
-		log.info(">>>>>>>>>>>>>>1");
 		transformUrl.setLength(0);
 		category = "";
 		categorySource = "";
@@ -66,12 +65,9 @@ public class AdRutenLog extends ACategoryLogData {
 			dmpJSon.put("class_ruten_url_classify", "N");
 			return dmpJSon;
 		}else {
-			log.info(">>>>>>>>>>>>>>2");
 			//查詢url
 			dbObject = queryClassUrl(sourceUrl.trim());
-			log.info(">>>>>>>>>>>>>>3");
 			if(dbObject != null){
-				log.info(">>>>>>>>>>>>>>4");
 				if(dbObject.get("status").equals("0")){
 					classRutenUrlClassify = "N"; 
 					// url 存在 status = 0 跳過回傳空值 , mongo update_date 更新(一天一次) mongo,query_time+1 如大於 2000 不再加  classRutenUrl = "N"
@@ -80,24 +76,18 @@ public class AdRutenLog extends ACategoryLogData {
 					log.info("dbObject:"+dbObject);
 					updateClassUrlUpdateDate(sourceUrl.trim(),dbObject);
 					updateClassUrlQueryTime(sourceUrl.trim(),dbObject);
-					log.info(">>>>>>>>>>>>>>5");
 				}else if((dbObject.get("status").equals("1")) && (StringUtils.isNotBlank(dbObject.get("ad_class").toString()))){
-					log.info(">>>>>>>>>>>>>>6");
 					category = dbObject.get("ad_class").toString();
 					categorySource = "ruten";
 					classRutenUrlClassify = "Y"; 
 					//url 存在 status = 1 取分類代號回傳 mongodn update_date 更新(一天一次) classRutenUrl = "Y";
 					updateClassUrlUpdateDate(sourceUrl.trim(),dbObject);
-					log.info(">>>>>>>>>>>>>>7");
 				}
-				log.info(">>>>>>>>>>>>>>8");
 			} else {
-				log.info(">>>>>>>>>>>>>>9");
 				try {
 					// url 不存在
 					matcher = p.matcher(sourceUrl.toString());
 					if (matcher.find()) {
-						log.info(">>>>>>>>>>>>>>10");
 						// url是Ruten商品頁，爬蟲撈麵包屑(http與https)
 						transformUrl.append("http://m.ruten.com.tw/goods/show.php?g=");
 						transformUrl.append(matcher.group().replaceAll("(http|https)://goods.ruten.com.tw/item/\\S+\\?", ""));
@@ -106,7 +96,6 @@ public class AdRutenLog extends ACategoryLogData {
 						breadcrumbE = doc.body().select("table[class=goods-list]");
 						breadcrumbResult = "";
 						if (breadcrumbE.size() > 0) {
-							log.info(">>>>>>>>>>>>>>11");
 							for (int i = 0; i < breadcrumbE.get(0).getElementsByClass("rt-breadcrumb-link").size(); i++) {
 								if (i != (breadcrumbE.get(0).getElementsByClass("rt-breadcrumb-link").size() - 1)) {
 									breadcrumbResult = breadcrumbResult
@@ -122,7 +111,6 @@ public class AdRutenLog extends ACategoryLogData {
 							breadcrumbAry = breadcrumbResult.split(">");
 							categoryRutenList = DmpLogMapper.categoryRutenBeanList;
 							hasCategory = false;
-							log.info(">>>>>>>>>>>>>>12");
 							for (int i = breadcrumbAry.length - 1; i >= 0; i--) {
 								if (hasCategory) {
 									break;
@@ -135,34 +123,27 @@ public class AdRutenLog extends ACategoryLogData {
 									}
 								}
 							}
-							log.info(">>>>>>>>>>>>>>13");
 							if (StringUtils.isNotBlank(category)) {
-								log.info(">>>>>>>>>>>>>>14");
 								// 爬蟲有比對到Ruten分類
 								categorySource = "ruten";
 								classRutenUrlClassify = "Y";
 								//新增url
 								insertClassUrl(sourceUrl.trim(),"1",category,breadcrumbResult,"",0) ;
 							} else {
-								log.info(">>>>>>>>>>>>>>15");
 								// 麵包屑沒有比對到Ruten分類
 								category = "";
 								categorySource = "";
 								classRutenUrlClassify = "N";
 								insertClassUrl(sourceUrl.trim(),"0","",breadcrumbResult,"爬不到麵包屑的訊息",1) ;
 							}
-							log.info(">>>>>>>>>>>>>>16");
 						} else {
-							log.info(">>>>>>>>>>>>>>17");
 							// 沒有麵包屑
 							category = "";
 							categorySource = "";
 							classRutenUrlClassify = "N";
 							insertClassUrl(sourceUrl.trim(),"0","","","沒有麵包屑的訊息",1) ;
-							log.info(">>>>>>>>>>>>>>18");
 						}
 					} else {
-						log.info(">>>>>>>>>>>>>>19");
 						// url不是Ruten商品頁，寫入mongo
 						category = "";
 						categorySource = "";
@@ -178,11 +159,9 @@ public class AdRutenLog extends ACategoryLogData {
 				}
 			}
 		}
-		log.info(">>>>>>>>>>>>>>20");
 		dmpJSon.put("category", category);
 		dmpJSon.put("category_source", categorySource);
 		dmpJSon.put("class_ruten_url_classify", classRutenUrlClassify);
-		log.info(">>>>>>>>>>>>>>END");
 		return dmpJSon;
 		
 //		this.dBCollection= mongoOperations.getCollection("class_url");
