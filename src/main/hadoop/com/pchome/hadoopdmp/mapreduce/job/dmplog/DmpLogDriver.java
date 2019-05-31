@@ -151,7 +151,8 @@ public class DmpLogDriver {
 //				}
 //			}
 			
-			Path buPath = new Path("/home/webuser/akb/storedata/bulog/"+dmpDate+"/"+dmpHour);
+			Path buPath = new Path("/home/webuser/akb/storedata/bulog/"+dmpDate+"/"+dmpHour+"/");
+			log.info(">>>>>>>>>buPath:"+buPath.toString());
 			listPath.add(buPath);
 			
 			
