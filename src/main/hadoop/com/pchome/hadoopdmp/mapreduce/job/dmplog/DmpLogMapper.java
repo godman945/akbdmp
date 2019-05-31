@@ -163,7 +163,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	@Override
 	public void map(LongWritable offset, Text value, Context context) {
 		try {
-			log.info(">>>>>>>>>>>>1");
 			inputSplit = (InputSplit)context.getInputSplit(); 
 			logpath = ((FileSplit)inputSplit).getPath().toString();
 //			log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
@@ -193,12 +192,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						return;
 					}
 					
-					log.info(">>>>>>>>>>>>fileName:"+fileName);
-					log.info(">>>>>>>>>>>>date:"+record_date);
-					log.info(">>>>>>>>>>>>hour:"+record_hour);
-					log.info(">>>>>>>>>>>>memid:"+values[1]);
-					log.info(">>>>>>>>>>>>uuid:"+values[2]);
-					log.info(">>>>>>>>>>>>referer:"+values[4]);
 					
 					
 					
@@ -210,7 +203,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("referer", values[4]);
 					dmpDataJson.put("domain", "");
 					try {
-						log.info(">>>>>referer:"+values[4]);
 						if(hostNameMap.get(values[4]) == null) {
 							URI uri = new URI(values[4]);
 							String domain = uri.getHost();
