@@ -192,10 +192,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					if ((StringUtils.equals(values[1], "null")||StringUtils.isBlank(values[1]) ) && (StringUtils.equals(values[2], "null")||StringUtils.isBlank(values[2])) ){
 						return;
 					}
-					
-					
-					
-					
 					dmpDataJson.put("fileName", fileName);
 					dmpDataJson.put("date", record_date);
 					dmpDataJson.put("hour", record_hour);
@@ -203,8 +199,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("uuid", values[2]);
 					dmpDataJson.put("referer", values[4]);
 					dmpDataJson.put("domain", "");
-					
-					System.out.println("hostNameMap:"+hostNameMap);
 					try {
 						if(hostNameMap.get(values[4]) == null) {
 							URI uri = new URI(values[4]);
@@ -213,8 +207,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 							hostNameMap.put(values[4].toString(), domain.startsWith("www.") ? domain.substring(4) : domain);
 						}else {
 							dmpDataJson.put("domain", hostNameMap.get(values[4].toString()));
-							mapCount = mapCount + 1;
-							log.info("mapCount:"+mapCount);
 						}
 					}catch(Exception e) {
 						log.error("*****");
