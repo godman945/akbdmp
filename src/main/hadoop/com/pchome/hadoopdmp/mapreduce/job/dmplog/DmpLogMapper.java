@@ -74,6 +74,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static DBCollection dBCollection_user_detail;
 	private static InputSplit inputSplit;
 	private static int count = 0;
+	private static int mapCount = 0;
 	@Override
 	public void setup(Context context) {
 		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
@@ -202,16 +203,21 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("uuid", values[2]);
 					dmpDataJson.put("referer", values[4]);
 					dmpDataJson.put("domain", "");
+					
+					System.out.println("hostNameMap:"+hostNameMap);
 					try {
 						if(hostNameMap.get(values[4]) == null) {
 							URI uri = new URI(values[4]);
 							String domain = uri.getHost();
 							dmpDataJson.put("domain", domain.startsWith("www.") ? domain.substring(4) : domain);
-							hostNameMap.put(values[4], domain.startsWith("www.") ? domain.substring(4) : domain);
+							hostNameMap.put(values[4].toString(), domain.startsWith("www.") ? domain.substring(4) : domain);
 						}else {
-							dmpDataJson.put("domain", hostNameMap.get(values[4]));
+							dmpDataJson.put("domain", hostNameMap.get(values[4].toString()));
+							mapCount = mapCount + 1;
+							log.info("mapCount:"+mapCount);
 						}
 					}catch(Exception e) {
+						log.error("*****");
 						log.error(e.getMessage());
 					}
 					
