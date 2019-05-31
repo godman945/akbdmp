@@ -198,13 +198,19 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("uuid", values[2]);
 					dmpDataJson.put("referer", values[4]);
 					dmpDataJson.put("domain", "");
-					if(hostNameMap.get(values[4]) == null) {
-						URI uri = new URI(values[4]);
-						String domain = uri.getHost();
-						dmpDataJson.put("domain", domain.startsWith("www.") ? domain.substring(4) : domain);
-					}else {
-						dmpDataJson.put("domain", hostNameMap.get(values[4]));
+					try {
+						if(hostNameMap.get(values[4]) == null) {
+							URI uri = new URI(values[4]);
+							String domain = uri.getHost();
+							log.info(">>>>>domain:"+domain);
+							dmpDataJson.put("domain", domain.startsWith("www.") ? domain.substring(4) : domain);
+						}else {
+							dmpDataJson.put("domain", hostNameMap.get(values[4]));
+						}
+					}catch(Exception e) {
+						log.error(e.getMessage());
 					}
+					
 					
 					
 					dmpDataJson.put("log_source", "kdcl");
