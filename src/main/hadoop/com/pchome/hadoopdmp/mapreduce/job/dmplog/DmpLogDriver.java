@@ -140,16 +140,20 @@ public class DmpLogDriver {
 					listPath.add(new Path(fileStatus.getPath().toString()));
 				}
 			}
-			 //載入bu log file
-	        Path path2 = new Path("/home/webuser/akb/storedata/bulog/"+dmpDate+"/"+dmpHour);
-	        FileStatus[] status2 = fs.listStatus(path2); 
-			for (FileStatus fileStatus : status2) {
-				String pathStr = fileStatus.getPath().toString();
-				String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
-				if(extensionName.equals("LZO")) {
-					listPath.add(new Path(fileStatus.getPath().toString()));
-				}
-			}
+//			 //載入bu log file
+//	        Path path2 = new Path("/home/webuser/akb/storedata/bulog/"+dmpDate+"/"+dmpHour);
+//	        FileStatus[] status2 = fs.listStatus(path2); 
+//			for (FileStatus fileStatus : status2) {
+//				String pathStr = fileStatus.getPath().toString();
+//				String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
+//				if(extensionName.equals("LZO")) {
+//					listPath.add(new Path(fileStatus.getPath().toString()));
+//				}
+//			}
+			
+			Path buPath = new Path("/home/webuser/akb/storedata/bulog/"+dmpDate+"/"+dmpHour);
+			listPath.add(buPath);
+			
 			
 			
 			Path[] paths = new Path[listPath.size()];  
