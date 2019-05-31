@@ -200,7 +200,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("referer", values[4]);
 					dmpDataJson.put("domain", "");
 					try {
-						if(hostNameMap.get(values[4]) == null) {
+						if(!hostNameMap.containsKey(values[4].toString())) {
 							URI uri = new URI(values[4]);
 							String domain = uri.getHost();
 							dmpDataJson.put("domain", domain.startsWith("www.") ? domain.substring(4) : domain);
@@ -209,7 +209,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 							dmpDataJson.put("domain", hostNameMap.get(values[4].toString()));
 						}
 					}catch(Exception e) {
-						log.error("*****");
+						log.error("*****"+values[4]);
 						log.error(e.getMessage());
 					}
 					
