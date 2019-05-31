@@ -207,6 +207,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 							URI uri = new URI(values[4]);
 							String domain = uri.getHost();
 							dmpDataJson.put("domain", domain.startsWith("www.") ? domain.substring(4) : domain);
+							hostNameMap.put(values[4], domain.startsWith("www.") ? domain.substring(4) : domain);
 						}else {
 							dmpDataJson.put("domain", hostNameMap.get(values[4]));
 						}
