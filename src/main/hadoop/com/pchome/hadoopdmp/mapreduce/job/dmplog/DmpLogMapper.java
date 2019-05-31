@@ -168,20 +168,20 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		try {
 			inputSplit = (InputSplit)context.getInputSplit(); 
 			logpath = ((FileSplit)inputSplit).getPath().toString();
-			log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
+//			log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
 			String fileName = ((FileSplit)inputSplit).getPath().getName();
 //			log.info(">>>>>>>>>>>>>>>>>>fileName:"+fileName);
 			if(logpath.contains("bulog")) {
 				log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
+			}else if(logpath.contains("alllog")) {
+				return;
 			}
+			
+			
+			
 			logStr = value.toString();
 			//1.判斷log來源為kdcl或bu
 			if(logpath.contains("alllog")) {
-				if(true) {
-					return;	
-				}
-				
-				
 				//kdcl log	raw data格式為一般或是Campaign
 				if(logStr.indexOf(kdclSymbol) > -1 ){
 					// values[0]  date time (2018-01-04 04:57:12)
