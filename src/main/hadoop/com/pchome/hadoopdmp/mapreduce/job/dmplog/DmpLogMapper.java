@@ -43,6 +43,7 @@ import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryRutenCodeBean;
 import com.pchome.hadoopdmp.mapreduce.job.factory.DmpLogBean;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 import com.pchome.hadoopdmp.spring.config.bean.mongodborg.MongodbOrgHadoopConfig;
+import com.sun.tools.javac.code.Attribute.Array;
 
 @Component
 public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
@@ -192,6 +193,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					if ((StringUtils.equals(values[1], "null")||StringUtils.isBlank(values[1]) ) && (StringUtils.equals(values[2], "null")||StringUtils.isBlank(values[2])) ){
 						return;
 					}
+					if (StringUtils.isBlank(values[4])) {
+						return;
+					}
 					dmpDataJson.put("fileName", fileName);
 					dmpDataJson.put("date", record_date);
 					dmpDataJson.put("hour", record_hour);
@@ -212,8 +216,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						log.error("*****"+values[4]);
 						log.error(e.getMessage());
 					}
-					
-					
 					
 					dmpDataJson.put("log_source", "kdcl");
 					dmpDataJson.put("pfd_customer_info_id", values[24]);
