@@ -164,7 +164,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			inputSplit = (InputSplit)context.getInputSplit(); 
 			logpath = ((FileSplit)inputSplit).getPath().toString();
 //			log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
-//			String fileName = ((FileSplit)inputSplit).getPath().getName();
+			String fileName = ((FileSplit)inputSplit).getPath().getName();
 //			log.info(">>>>>>>>>>>>>>>>>>fileName:"+fileName);
 			if(logpath.contains("bulog")) {
 				log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
@@ -189,6 +189,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					if ((StringUtils.equals(values[1], "null")||StringUtils.isBlank(values[1]) ) && (StringUtils.equals(values[2], "null")||StringUtils.isBlank(values[2])) ){
 						return;
 					}
+					
+					
+					
+					dmpDataJson.put("fileName", fileName);
 					dmpDataJson.put("date", record_date);
 					dmpDataJson.put("hour", record_hour);
 					dmpDataJson.put("memid", values[1]);
