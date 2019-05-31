@@ -134,33 +134,33 @@ public class DmpLogDriver {
 	        List<Path> list = new ArrayList<Path>();
 	        Path inPath = new Path("/home/webuser/akb/storedata/alllog/"+dmpDate+"/"+dmpHour+"/");
 	        FileStatus[] status = fs.listStatus(inPath);
-	        for (FileStatus fileStatus : status) {  
-//			    if (fs.getFileStatus(fileStatus.getPath()).isDir()) {  
-			        list.add(fileStatus.getPath());
-			        log.info("Job1 INPUT PATH:"+fileStatus.getPath());
-//			    }  
-			}  
+			for (FileStatus fileStatus : status) {
+				String pathStr = fileStatus.getPath().toString();
+				String extensionName = pathStr.substring(pathStr.length() - 3, pathStr.length()).toUpperCase();
+				if (extensionName.equals("LZO")) {
+					listPath.add(new Path(fileStatus.getPath().toString()));
+				}
+			}
+			
+			// 載入bu log file
+			Path path2 = new Path("/home/webuser/akb/storedata/bulog/" + dmpDate + "/" + dmpHour);
+			FileStatus[] status2 = fs.listStatus(path2);
+			for (FileStatus fileStatus : status2) {
+				String pathStr = fileStatus.getPath().toString();
+				String extensionName = pathStr.substring(pathStr.length() - 3, pathStr.length()).toUpperCase();
+				if (extensionName.equals("LZO")) {
+					listPath.add(new Path(fileStatus.getPath().toString()));
+				}
+			}
+			
+			
+	        
 	        
 	        Path[] paths = new Path[list.size()];  
 			list.toArray(paths);
-//			for (int j = 0; j < convertDay; j++) {
-//				if(j < convertDay){
-//					inPath = new Path(logPath+sdf.format(cal.getTime()));
-//					log.info(">>>>>>>>>>>>>>"+inPath.getName());
-//					status = fs.listStatus(inPath);  
-//					for (FileStatus fileStatus : status) {  
-//						if(fileStatus.getPath().toString().substring(fileStatus.getPath().toString().length() - 3, fileStatus.getPath().toString().length()).equals("lzo")){
-//							list.add(fileStatus.getPath());
-//							log.info("Job2 INPUT PATH:"+fileStatus.getPath());
-//						}
-//					}  
-//				}
-//				cal.add(Calendar.DATE, -1);  
-//			}
-//			Path paclPath = new Path(akbPaclOutput+"/");
-//			log.info("Job2 INPUT PATH:"+akbPaclOutput+"/");
-//			list.add(paclPath);
-	        
+	        for (Path path : paths) {
+	        	log.info(">>>>>>>>>>>"+path.toString());
+			}
 	        
 	        
 	        
