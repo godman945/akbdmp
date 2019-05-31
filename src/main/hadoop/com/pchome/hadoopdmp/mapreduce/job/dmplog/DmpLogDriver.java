@@ -132,7 +132,7 @@ public class DmpLogDriver {
 	        //載入kdcl log file
 	        
 	        List<Path> list = new ArrayList<Path>();
-	        Path inPath = new Path("/home/webuser/akb/storedata/alllog/"+dmpDate+"/"+dmpHour);
+	        Path inPath = new Path("/home/webuser/akb/storedata/alllog/"+dmpDate+"/"+dmpHour+"/");
 	        FileStatus[] status = fs.listStatus(inPath);
 	        for (FileStatus fileStatus : status) {  
 			    if (fs.getFileStatus(fileStatus.getPath()).isDir()) {  
