@@ -2,6 +2,7 @@ package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
 import java.io.File;
 import java.net.InetAddress;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -197,13 +198,12 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("uuid", values[2]);
 					dmpDataJson.put("referer", values[4]);
 					dmpDataJson.put("domain", "");
-					InetAddress address = InetAddress.getByName(values[4]);
-					if(hostNameMap.get(values[3]) == null) {
-						String domain = ipAddress.getHostName();
-						hostNameMap.put(values[3], domain);
-						dmpDataJson.put("domain", domain);
+					if(hostNameMap.get(values[4]) == null) {
+						URI uri = new URI(values[4]);
+						String domain = uri.getHost();
+						dmpDataJson.put("domain", domain.startsWith("www.") ? domain.substring(4) : domain);
 					}else {
-						dmpDataJson.put("domain", hostNameMap.get(values[3]));
+						dmpDataJson.put("domain", hostNameMap.get(values[4]));
 					}
 					
 					
