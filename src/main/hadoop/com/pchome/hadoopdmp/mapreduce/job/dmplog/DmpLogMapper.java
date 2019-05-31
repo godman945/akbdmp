@@ -191,6 +191,16 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					if ((StringUtils.equals(values[1], "null")||StringUtils.isBlank(values[1]) ) && (StringUtils.equals(values[2], "null")||StringUtils.isBlank(values[2])) ){
 						return;
 					}
+					
+					log.info(">>>>>>>>>>>>fileName:"+fileName);
+					log.info(">>>>>>>>>>>>date:"+record_date);
+					log.info(">>>>>>>>>>>>hour:"+record_hour);
+					log.info(">>>>>>>>>>>>memid:"+values[1]);
+					log.info(">>>>>>>>>>>>uuid:"+values[2]);
+					log.info(">>>>>>>>>>>>referer:"+values[4]);
+					
+					
+					
 					dmpDataJson.put("fileName", fileName);
 					dmpDataJson.put("date", record_date);
 					dmpDataJson.put("hour", record_hour);
