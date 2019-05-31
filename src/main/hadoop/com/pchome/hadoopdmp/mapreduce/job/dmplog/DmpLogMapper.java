@@ -214,6 +214,13 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						}
 					}catch(Exception e) {
 						log.error("*****"+values[4]);
+						log.error("*****"+values[2]);
+						log.error("*****"+fileName);
+						log.error("*****"+record_hour);
+						log.error("*****"+record_date);
+						
+						
+						
 						log.error(e.getMessage());
 					}
 					
