@@ -200,6 +200,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("domain", "");
 					try {
 						if(hostNameMap.get(values[4]) == null) {
+							log.info(">>>>>referer:"+values[4]);
 							URI uri = new URI(values[4]);
 							String domain = uri.getHost();
 							log.info(">>>>>domain:"+domain);
