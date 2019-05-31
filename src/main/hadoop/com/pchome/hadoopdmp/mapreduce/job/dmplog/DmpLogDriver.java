@@ -130,18 +130,7 @@ public class DmpLogDriver {
 	        FileSystem fs = FileSystem.get(conf);
 	        
 	        //載入kdcl log file
-//	        Path path = new Path("/home/webuser/akb/storedata/alllog/"+dmpDate+"/"+dmpHour);
-//	        FileStatus[] status = fs.listStatus(path); 
-//			for (FileStatus fileStatus : status) {
-//				String pathStr = fileStatus.getPath().toString();
-//				String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
-//				if(extensionName.equals("LZO")) {
-////					log.info("JOB INPUT PATH:"+fileStatus.getPath().toString());
-//					listPath.add(new Path(fileStatus.getPath().toString()));
-//				}
-//			}
-			 //載入bu log file
-	        Path path = new Path("/home/webuser/akb/storedata/bulog/"+dmpDate+"/"+dmpHour);
+	        Path path = new Path("/home/webuser/akb/storedata/alllog/"+dmpDate+"/"+dmpHour);
 	        FileStatus[] status = fs.listStatus(path); 
 			for (FileStatus fileStatus : status) {
 				String pathStr = fileStatus.getPath().toString();
@@ -151,12 +140,22 @@ public class DmpLogDriver {
 					listPath.add(new Path(fileStatus.getPath().toString()));
 				}
 			}
+			 //載入bu log file
+	        Path path2 = new Path("/home/webuser/akb/storedata/bulog/"+dmpDate+"/"+dmpHour);
+	        FileStatus[] status2 = fs.listStatus(path2); 
+			for (FileStatus fileStatus : status2) {
+				String pathStr = fileStatus.getPath().toString();
+				String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
+				if(extensionName.equals("LZO")) {
+					listPath.add(new Path(fileStatus.getPath().toString()));
+				}
+			}
 			
 			
 			Path[] paths = new Path[listPath.size()];  
 			listPath.toArray(paths);
-			for (Path path2 : paths) {
-				log.info(">>>>>>>>>>JOB INPUT PATH:"+path2.toString());
+			for (Path path3 : paths) {
+				log.info(">>>>>>>>>>JOB INPUT PATH:"+path3.toString());
 			}
 			
 			
