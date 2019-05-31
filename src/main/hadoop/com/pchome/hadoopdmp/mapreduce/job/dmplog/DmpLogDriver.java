@@ -135,10 +135,10 @@ public class DmpLogDriver {
 	        Path inPath = new Path("/home/webuser/akb/storedata/alllog/"+dmpDate+"/"+dmpHour+"/");
 	        FileStatus[] status = fs.listStatus(inPath);
 	        for (FileStatus fileStatus : status) {  
-			    if (fs.getFileStatus(fileStatus.getPath()).isDir()) {  
+//			    if (fs.getFileStatus(fileStatus.getPath()).isDir()) {  
 			        list.add(fileStatus.getPath());
 			        log.info("Job1 INPUT PATH:"+fileStatus.getPath());
-			    }  
+//			    }  
 			}  
 	        
 	        Path[] paths = new Path[list.size()];  
