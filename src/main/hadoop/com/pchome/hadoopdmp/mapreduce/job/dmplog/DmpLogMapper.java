@@ -158,6 +158,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static String logStr = "";
 	private static net.minidev.json.JSONObject dmpDataJson = new net.minidev.json.JSONObject();
 	private static String logpath = "";
+	private static Map<String,String> hostNameMap = new HashMap<String,String>();
 	@Override
 	public void map(LongWritable offset, Text value, Context context) {
 		try {
@@ -189,9 +190,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					if ((StringUtils.equals(values[1], "null")||StringUtils.isBlank(values[1]) ) && (StringUtils.equals(values[2], "null")||StringUtils.isBlank(values[2])) ){
 						return;
 					}
-					
-					
-					
 					dmpDataJson.put("fileName", fileName);
 					dmpDataJson.put("date", record_date);
 					dmpDataJson.put("hour", record_hour);
@@ -199,6 +197,16 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("uuid", values[2]);
 					dmpDataJson.put("referer", values[4]);
 					dmpDataJson.put("domain", "");
+					InetAddress address = InetAddress.getByName(values[4]);
+					if(hostNameMap.get(values[3]) == null) {
+						String domain = ipAddress.getHostName();
+						hostNameMap.put(values[3], domain);
+						dmpDataJson.put("domain", domain);
+					}else {
+						dmpDataJson.put("domain", hostNameMap.get(values[3]));
+					}
+					
+					
 					dmpDataJson.put("log_source", "kdcl");
 					dmpDataJson.put("pfd_customer_info_id", values[24]);
 					dmpDataJson.put("pfp_customer_info_id", values[6]);
