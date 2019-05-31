@@ -163,6 +163,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	@Override
 	public void map(LongWritable offset, Text value, Context context) {
 		try {
+			log.info(">>>>>>>>>>>>1");
 			inputSplit = (InputSplit)context.getInputSplit(); 
 			logpath = ((FileSplit)inputSplit).getPath().toString();
 //			log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
