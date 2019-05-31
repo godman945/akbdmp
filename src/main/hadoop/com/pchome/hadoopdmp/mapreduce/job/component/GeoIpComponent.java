@@ -1,6 +1,8 @@
 package com.pchome.hadoopdmp.mapreduce.job.component;
 
 import java.net.InetAddress;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -17,7 +19,9 @@ public class GeoIpComponent {
 	private static String ip = ""; 
 	private static IpAdd ipAdd = new IpAdd();
 	private static CityResponse response = null;
+	private static Map<String,String> hostNameMap = new HashMap<String,String>();
 	public net.minidev.json.JSONObject ipTransformGEO(net.minidev.json.JSONObject dmpJSon) throws Exception {
+		System.out.println(">>>>hostNameMap:"+hostNameMap);
 		// 判斷是否為正確ip格式
 		ip = dmpJSon.getAsString("ip");
 		if (!ipAdd.isIP(ip)) {
@@ -26,7 +30,13 @@ public class GeoIpComponent {
 		}
 		// ip轉換國家、城市
 		InetAddress ipAddress = DmpLogMapper.ipAddress.getByName(ip);
-		dmpJSon.put("domain", ipAddress.getHostName());
+		if(hostNameMap.get(ip) == null) {
+			String domain = ipAddress.getHostName();
+			hostNameMap.put(ip, domain);
+		}else {
+			dmpJSon.put("domain", hostNameMap.get(ip));
+		}
+		
 		try {
 			response = DmpLogMapper.reader.city(ipAddress);
 		} catch (Exception e) {
