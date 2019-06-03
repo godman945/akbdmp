@@ -344,6 +344,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				dmpDataJson.put("screen_y", values[10]);
 				dmpDataJson.put("pa_event", values[11]);
 				if(values[11].toUpperCase().equals("TRACKING")) {
+					//pa_event:tracking length 13
+					
 					dmpDataJson.put("event_id", values[12]);
 					dmpDataJson.put("op1", "");
 					dmpDataJson.put("op2", "");
@@ -366,12 +368,16 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				
 				
 				count = count + 1;
-				if(count == 10000) {
+				if("convert".equals(values[11])) {
 					log.info(">>>>>>>>>>>>>>>>>>>>>>:bulog length"+values.length);
 					log.info(">>>>>>>>>>>>>>>>>>>>>>pa_event:"+values[11]);
 					log.info(">>>>>>>>>>>>>>>>>>>>>>event_id:"+values[12]);
 					log.info("****after****:"+dmpDataJson);
-					count = 0;
+				}else if("page_view".equals(values[11])) {
+					log.info(">>>>>>>>>>>>>>>>>>>>>>:bulog length"+values.length);
+					log.info(">>>>>>>>>>>>>>>>>>>>>>pa_event:"+values[11]);
+					log.info(">>>>>>>>>>>>>>>>>>>>>>event_id:"+values[12]);
+					log.info("****after****:"+dmpDataJson);
 				}
 				
 				
