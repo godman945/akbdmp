@@ -248,8 +248,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("op1", "");
 						dmpDataJson.put("op2", "");
 						dmpDataJson.put("email", "");
-						dmpDataJson.put("sex", "");
-						dmpDataJson.put("age", "");
 						dmpDataJson.put("trigger_type", values[13]);
 						dmpDataJson.put("ad_class", values[15]);
 						
@@ -274,6 +272,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("category", "");
 						dmpDataJson.put("class_adclick_classify", "");
 						dmpDataJson.put("category_source", "");
+						//年齡性別資訊
+						dmpDataJson.put("sex", "");
+						dmpDataJson.put("sex_source", "");
+						dmpDataJson.put("age", "");
+						dmpDataJson.put("age_source", "");
 						//pacl才有欄位
 						dmpDataJson.put("pa_id", "");
 						dmpDataJson.put("screen_x", "");
@@ -283,6 +286,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("op1", "");
 						dmpDataJson.put("op2", "");
 						dmpDataJson.put("email", "");
+						
+						
 					}else {
 						return;
 					}
@@ -324,8 +329,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("op1", "");
 					dmpDataJson.put("op2", "");
 					dmpDataJson.put("email", "");
-					dmpDataJson.put("sex", "");
-					dmpDataJson.put("age", "");
 					dmpDataJson.put("trigger_type", "pv");
 					dmpDataJson.put("ad_class", "");
 					
@@ -350,7 +353,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("category", "");
 					dmpDataJson.put("class_adclick_classify", "");
 					dmpDataJson.put("category_source", "");
-					
+					//年齡性別資訊
+					dmpDataJson.put("sex", "");
+					dmpDataJson.put("sex_source", "");
+					dmpDataJson.put("age", "");
+					dmpDataJson.put("age_source", "");
 					
 					dmpDataJson.put("pa_id", values[4]);
 					dmpDataJson.put("screen_x", values[9]);
