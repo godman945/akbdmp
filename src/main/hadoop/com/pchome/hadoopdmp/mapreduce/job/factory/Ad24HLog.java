@@ -4,7 +4,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 
 import com.mongodb.BasicDBObject;
@@ -26,14 +28,14 @@ public class Ad24HLog extends ACategoryLogData {
 	private static List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
 	private static BasicDBObject basicDBObject = new BasicDBObject();
 	
+	private static Map<String,String> urlCodeMapping = new HashedMap<String,String>();
+	private static Map<String,DBObject> urlDBObjectMapping = new HashedMap<String,DBObject>();
 	public Object processCategory(net.minidev.json.JSONObject dmpJSon, DBCollection dbCollectionUrl) throws Exception {
 		category = "";
 		categorySource = "";
 		class24hUrlClassify = "" ;
 		this.dBCollection = dbCollectionUrl;
 		sourceUrl = dmpJSon.getAsString("referer");
-		
-		
 		if (StringUtils.isBlank(sourceUrl)) {
 			dmpJSon.put("class_24h_url_classify", "N");
 			return dmpJSon;
@@ -41,41 +43,56 @@ public class Ad24HLog extends ACategoryLogData {
 		
 		//用url比對24h對照表找出分類代號
 		list = DmpLogMapper.category24hBeanList;
-		for (CategoryCodeBean categoryBean : list) {
-			if(sourceUrl.indexOf(categoryBean.getEnglishCode()) != -1){
-				category = categoryBean.getNumberCode();
+		
+		
+		
+		
+		if(urlCodeMapping.containsKey(sourceUrl)) {
+			category = urlCodeMapping.get(sourceUrl);
+			if(StringUtils.isNotBlank(category)) {
 				categorySource = "24h";
 				class24hUrlClassify = "Y";
-				break;
 			}
+		}else {
+			for (CategoryCodeBean categoryBean : list) {
+				if(sourceUrl.indexOf(categoryBean.getEnglishCode()) != -1){
+					category = categoryBean.getNumberCode();
+					categorySource = "24h";
+					class24hUrlClassify = "Y";
+					urlCodeMapping.put(sourceUrl, category);
+					break;
+				}
+			}
+			urlCodeMapping.put(sourceUrl, "");
 		}
 		
-		if (StringUtils.isBlank(category)){
-			//查詢url
-			dbObject = queryClassUrl(sourceUrl.trim()) ;
-			if(dbObject != null){
-				if(dbObject.get("status").equals("0")){
-					category ="null";
-					categorySource = "null";
-					class24hUrlClassify = "N";
-					// url 存在 status = 0  , mongo update_date 更新(一天一次) query_time+1 如大於 2000 不再加 
-					updateClassUrlUpdateDate(sourceUrl.trim(),dbObject) ;
-					updateClassUrlQueryTime( sourceUrl.trim(),dbObject) ;
-				}else if( (dbObject.get("status").equals("1")) && (StringUtils.isNotBlank(dbObject.get("ad_class").toString())) ){
-					category = dbObject.get("ad_class").toString();
-					categorySource = "24h";
-					class24hUrlClassify = "Y"; 
-					//url 存在 status = 1 取分類代號回傳 mongo update_date 更新(一天一次) class24hUrlClassify = "Y"
-					updateClassUrlUpdateDate(sourceUrl.trim(),dbObject) ;
-				}
-			}else{
-				category = "";
-				categorySource = "";
-				class24hUrlClassify = "N";
-				// url 不存在  ,寫入 mongo url代號 status=0 
-				insertClassUrl(sourceUrl.trim(),"","0",1);
-			}
-		}
+		
+//		if (StringUtils.isBlank(category)){
+//			//查詢url
+//			dbObject = queryClassUrl(sourceUrl.trim());
+//			if(dbObject != null){
+//				if(dbObject.get("status").equals("0")){
+//					category ="null";
+//					categorySource = "null";
+//					class24hUrlClassify = "N";
+//					// url 存在 status = 0  , mongo update_date 更新(一天一次) query_time+1 如大於 2000 不再加 
+//					updateClassUrlUpdateDate(sourceUrl.trim(),dbObject) ;
+//					updateClassUrlQueryTime( sourceUrl.trim(),dbObject) ;
+//				}else if( (dbObject.get("status").equals("1")) && (StringUtils.isNotBlank(dbObject.get("ad_class").toString())) ){
+//					category = dbObject.get("ad_class").toString();
+//					categorySource = "24h";
+//					class24hUrlClassify = "Y"; 
+//					//url 存在 status = 1 取分類代號回傳 mongo update_date 更新(一天一次) class24hUrlClassify = "Y"
+//					updateClassUrlUpdateDate(sourceUrl.trim(),dbObject) ;
+//				}
+//			}else{
+//				category = "";
+//				categorySource = "";
+//				class24hUrlClassify = "N";
+//				// url 不存在  ,寫入 mongo url代號 status=0 
+//				insertClassUrl(sourceUrl.trim(),"","0",1);
+//			}
+//		}
 		
 		dmpJSon.put("category", category);
 		dmpJSon.put("category_source", categorySource);
