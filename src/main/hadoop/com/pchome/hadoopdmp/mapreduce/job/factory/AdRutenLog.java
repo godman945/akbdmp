@@ -73,7 +73,7 @@ public class AdRutenLog extends ACategoryLogData {
 					// url 存在 status = 0 跳過回傳空值 , mongo update_date 更新(一天一次) mongo,query_time+1 如大於 2000 不再加  classRutenUrl = "N"
 					
 					
-					log.info("dbObject:"+dbObject);
+//					log.info("dbObject:"+dbObject);
 					updateClassUrlUpdateDate(sourceUrl.trim(),dbObject);
 					updateClassUrlQueryTime(sourceUrl.trim(),dbObject);
 				}else if((dbObject.get("status").equals("1")) && (StringUtils.isNotBlank(dbObject.get("ad_class").toString()))){
@@ -313,7 +313,7 @@ public class AdRutenLog extends ACategoryLogData {
 	}
 	
 	public void updateClassUrlQueryTime(String url,DBObject dbObject) throws Exception {
-		log.info(">>>>>>>dbObject.get(query_time):"+dbObject.get("query_time"));
+//		log.info(">>>>>>>dbObject.get(query_time):"+dbObject.get("query_time"));
 		query.clear();
 		intModifier.clear();
 		query.put("_id", dbObject.get("_id"));
