@@ -1,6 +1,7 @@
 package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
 import java.nio.charset.Charset;
@@ -202,6 +203,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("hour", record_hour);
 						dmpDataJson.put("memid", values[1]);
 						dmpDataJson.put("uuid", values[2]);
+						if(values[2].contains("xxx-")) {
+							dmpDataJson.put("uuid_flag", "y");
+						}else {
+							dmpDataJson.put("uuid_flag", "n");
+						}
 						dmpDataJson.put("url", "");
 						dmpDataJson.put("referer", values[4]);
 						dmpDataJson.put("domain", "");
@@ -291,6 +297,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("hour", record_hour);
 					dmpDataJson.put("memid","");
 					dmpDataJson.put("uuid", values[2]);
+					if(values[2].contains("xxx-")) {
+						dmpDataJson.put("uuid_flag", "y");
+					}else {
+						dmpDataJson.put("uuid_flag", "n");
+					}
 					dmpDataJson.put("url", values[6]);
 					dmpDataJson.put("referer", values[5]);
 					dmpDataJson.put("domain", values[7]);
@@ -365,6 +376,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("email", "");
 				}catch(Exception e) {
 					log.error(">>>>bulog set json fail");
+					return;
 				}
 				
 				
@@ -402,8 +414,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
 					aCategoryLogData.processCategory(dmpDataJson, dBCollection_class_url);
 				}else if (dmpDataJson.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpDataJson.getAsString("referer")) && dmpDataJson.getAsString("referer").contains("24h")) {		// 24h
-//					ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
-//					aCategoryLogData.processCategory(dmpDataJson, dBCollection_class_url);
+					ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
+					aCategoryLogData.processCategory(dmpDataJson, dBCollection_class_url);
 				}else if (dmpDataJson.getAsString("trigger_type").equals("pv") ){
 					dmpDataJson.put("category", "");
 					dmpDataJson.put("category_source", "");
@@ -429,22 +441,14 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				return;
 			}
 			
-			
-//			keyOut.set(dmpDataJson.getAsString("uuid"));
-//			context.write(keyOut, new Text(dmpDataJson.toString()));
+			try {
+				keyOut.set(dmpDataJson.getAsString("uuid"));
+				context.write(keyOut, new Text(dmpDataJson.toString()));
+			} catch (IOException | InterruptedException e) {
+				log.error(">>>>write to reduce fail:"+e.getMessage());
+			}
 			
 	}
-	
-	
-	
-	private void processKdclLog() {
-		
-	}
-	
-	
-	
-	
-	
 	
 	public DmpLogBean dmpBeanIntegrate(DmpLogBean dmpLogBeanResult) throws Exception {
 		dmpLogBeanResult.setMemid( StringUtils.isBlank(dmpLogBeanResult.getMemid()) ? "null" : dmpLogBeanResult.getMemid());
