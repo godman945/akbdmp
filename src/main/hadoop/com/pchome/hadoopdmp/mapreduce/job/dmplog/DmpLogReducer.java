@@ -157,7 +157,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				dmpJSon.clear();
 				wiriteToDruid.setLength(0);
 				dmpJSon = (net.minidev.json.JSONObject) jsonParser.parse(text.toString());
-				
+				log.info(dmpJSon);
 				
 //				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("memid")).append("\"");
 //				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("date")).append("\"");
