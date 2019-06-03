@@ -199,7 +199,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 							return;
 						}
 						dmpDataJson.put("fileName", fileName);
-						dmpDataJson.put("date", record_date);
+						dmpDataJson.put("date", values[0]);
 						dmpDataJson.put("hour", record_hour);
 						dmpDataJson.put("memid", values[1]);
 						dmpDataJson.put("uuid", values[2]);
@@ -298,7 +298,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				try {
 					String[] values = logStr.split(paclSymbol);
 					dmpDataJson.put("fileName", fileName);
-					dmpDataJson.put("date", record_date);
+					dmpDataJson.put("date", values[0]);
 					dmpDataJson.put("hour", record_hour);
 					dmpDataJson.put("memid","");
 					dmpDataJson.put("uuid", values[2]);
@@ -375,7 +375,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					}
 					
 					if(values[5].contains("24h.pchome.com.tw")) {
-						dmpDataJson.put("op1", (values[5].split("/")[values[5].split("/").length - 1]));
+						String pageCategory = values[5].split("/")[values[5].split("/").length - 1];
+						pageCategory = pageCategory.substring(0, pageCategory.indexOf("?"));
+						dmpDataJson.put("op1", pageCategory);
 					}else {
 						dmpDataJson.put("op1", "");
 					}
