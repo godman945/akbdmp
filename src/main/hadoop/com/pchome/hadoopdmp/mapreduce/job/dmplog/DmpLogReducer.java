@@ -214,8 +214,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					log.error(">>>>>>>>>>>>>>>>>no uuid");
 					break;
 				}
-				keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"");
-				context.write(new Text(mapperKey.toString().trim()), new Text(wiriteToDruid.toString()));
+				keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
+				context.write(keyOut, new Text(wiriteToDruid.toString()));
 			}
 			dmpJSon.clear();
 			wiriteToDruid.setLength(0);
