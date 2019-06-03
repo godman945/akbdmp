@@ -422,7 +422,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				}
 			}catch(Exception e) {
 				log.error(">>>>process source fail");
-				log.error(">>>>>>logStr:" +logStr); 
+				log.error(">>>>>>logStr:" +logStr);
+				log.error(">>>>>>fileName:" +fileName);
+				return;
 			}
 			
 			
