@@ -144,7 +144,7 @@ public class DmpLogDriver {
 				}
 			}
 			
-			
+			listPath.add(new Path("hdfs://hpd11.mypchome.com.tw:9000/home/webuser/akb/alllog/bulog/2019-05-29/16/kdcl1-16.lzo"));
 			Path[] paths = new Path[listPath.size()];  
 			listPath.toArray(paths);
 			for (Path path3 : paths) {
