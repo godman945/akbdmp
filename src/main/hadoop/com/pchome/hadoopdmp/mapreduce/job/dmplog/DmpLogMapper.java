@@ -326,7 +326,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("email", "");
 					dmpDataJson.put("sex", "");
 					dmpDataJson.put("age", "");
-					dmpDataJson.put("trigger_type", "");
+					dmpDataJson.put("trigger_type", "pv");
 					dmpDataJson.put("ad_class", "");
 					
 					//地區資訊 [area_info_classify] null:ip不正確,N:ip比對不到
@@ -358,21 +358,23 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("pa_event", values[11]);
 					if(values[11].toUpperCase().equals("TRACKING")) {
 						//pa_event:tracking length 13
-						
 						dmpDataJson.put("event_id", values[12]);
-						dmpDataJson.put("op1", "");
-						dmpDataJson.put("op2", "");
 					}
 					if(values[11].toUpperCase().equals("PAGE_VIEW")) {
 						dmpDataJson.put("event_id", "");
-						dmpDataJson.put("op1", "");
-						dmpDataJson.put("op2", "");
 					}
 					if(values[11].toUpperCase().equals("CONVERT")) {
 						dmpDataJson.put("event_id", values[12]);
-						dmpDataJson.put("op1", "");
-						dmpDataJson.put("op2", "");
 					}
+					
+					if(values[5].contains("24h.pchome.com.tw")) {
+						dmpDataJson.put("op1", (values[5].split("/")[values[5].split("/").length - 1]));
+					}else {
+						dmpDataJson.put("op1", "");
+					}
+					
+					dmpDataJson.put("op2", "");
+					
 					dmpDataJson.put("email", "");
 				}catch(Exception e) {
 					log.error(">>>>bulog set json fail");
