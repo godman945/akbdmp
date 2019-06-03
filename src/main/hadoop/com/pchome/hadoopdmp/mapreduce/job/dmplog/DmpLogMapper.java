@@ -378,6 +378,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					log.info(">>>>>>>>>>>>>>>>>>>>>>pa_event:"+values[11]);
 					log.info(">>>>>>>>>>>>>>>>>>>>>>event_id:"+values[12]);
 					log.info("****after****:"+dmpDataJson);
+				}else if("tracking".equals(values[11])) {
+					log.info(">>>>>>>>>>>>>>>>>>>>>>:bulog length"+values.length);
+					log.info(">>>>>>>>>>>>>>>>>>>>>>pa_event:"+values[11]);
+					log.info(">>>>>>>>>>>>>>>>>>>>>>event_id:"+values[12]);
+					log.info("****after****:"+dmpDataJson);
 				}
 				
 				
