@@ -173,14 +173,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			log.info(">>>>>>>>>>>>>>>>>>fileName:"+fileName);
 				
 			if(logpath.contains("alllog")) {
-				mapCount = mapCount + 1;
-				if(mapCount == 10000) {
-					log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
-					mapCount = 0;
-				}
 				return;
-			}else {
-				log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
 			}
 			
 			
