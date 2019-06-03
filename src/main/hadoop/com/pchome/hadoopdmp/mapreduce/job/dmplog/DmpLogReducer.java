@@ -163,7 +163,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("memid")).append("\"");
 //				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid_flag")).append("\"");
-				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ip")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("referer")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("url")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("domain")).append("\"");
