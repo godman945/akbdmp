@@ -377,6 +377,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					log.info(">>>>>>>>>>>>>>>>>>>>>>:bulog length"+values.length);
 					log.info(">>>>>>>>>>>>>>>>>>>>>>pa_event:"+values[11]);
 					log.info(">>>>>>>>>>>>>>>>>>>>>>event_id:"+values[12]);
+					log.info("****after****:"+dmpDataJson);
 					count = 0;
 				}
 				
@@ -416,7 +417,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			
 			
 //			if(count == 0) {
-				log.info("****after****:"+dmpDataJson);
+				
 //				count = count + 1;
 //			}
 				
