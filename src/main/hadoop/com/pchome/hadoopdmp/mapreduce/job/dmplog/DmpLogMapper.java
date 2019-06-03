@@ -277,6 +277,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("op1", "");
 						dmpDataJson.put("op2", "");
 						dmpDataJson.put("email", "");
+					}else {
+						return;
 					}
 				}catch(Exception e) {
 					log.error(">>>>kdcl set json fail");
