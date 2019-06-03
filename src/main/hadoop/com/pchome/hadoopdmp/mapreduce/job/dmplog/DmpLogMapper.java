@@ -384,9 +384,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //					log.info("****after****:"+dmpDataJson);
 //				}
 			}
-			
-			
-			
 			try {
 				//開始處理log格式
 				//1.地區處理元件(ip 轉國家、城市)
@@ -425,7 +422,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				}
 			}catch(Exception e) {
 				log.error(">>>>process source fail");
-				log.error(">>>>>>dmpDataJson:" +dmpDataJson); 
+				log.error(">>>>>>logStr:" +logStr); 
 			}
 			
 			
