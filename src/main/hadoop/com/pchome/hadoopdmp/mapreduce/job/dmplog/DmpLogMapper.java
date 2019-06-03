@@ -417,7 +417,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				log.info("****after****:"+dmpDataJson);
 				
 			}
-			if(mapCount == 0 && dmpDataJson.getAsString("log_source").equals("bulog")) {
+			if(mapCount == 0 && dmpDataJson.getAsString("log_source").equals("kdcl")) {
 				mapCount = mapCount + 1;
 				log.info("****after****:"+dmpDataJson);
 			}
