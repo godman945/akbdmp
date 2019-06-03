@@ -423,8 +423,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
 					aCategoryLogData.processCategory(dmpDataJson, dBCollection_class_url);
 				}else if (dmpDataJson.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpDataJson.getAsString("referer")) && dmpDataJson.getAsString("referer").contains("24h")) {		// 24h
-					ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
-					aCategoryLogData.processCategory(dmpDataJson, dBCollection_class_url);
+//					ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
+//					aCategoryLogData.processCategory(dmpDataJson, dBCollection_class_url);
 				}else if (dmpDataJson.getAsString("trigger_type").equals("pv") ){
 					dmpDataJson.put("category", "");
 					dmpDataJson.put("category_source", "");
@@ -436,12 +436,12 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //				personalInfoComponent.processPersonalInfo(dmpDataJson, dBCollection_user_detail);
 				if(count == 0 && dmpDataJson.getAsString("log_source").equals("bulog")) {
 					count = count + 1;
-					log.info("****after****:"+dmpDataJson);
+					log.info("****bulog after****:"+dmpDataJson);
 					
 				}
 				if(mapCount == 0 && dmpDataJson.getAsString("log_source").equals("kdcl")) {
 					mapCount = mapCount + 1;
-					log.info("****after****:"+dmpDataJson);
+					log.info("****kdcl after****:"+dmpDataJson);
 				}
 			}catch(Exception e) {
 				log.error(">>>>process source fail");
