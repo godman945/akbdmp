@@ -77,6 +77,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static InputSplit inputSplit;
 	private static int count = 0;
 	private static int mapCount = 0;
+	
+	
 	@Override
 	public void setup(Context context) {
 		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
@@ -172,9 +174,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			String fileName = ((FileSplit)inputSplit).getPath().getName();
 //			log.info(">>>>>>>>>>>>>>>>>>fileName:"+fileName);
 				
-			if(logpath.contains("alllog")) {
-				return;
-			}
 			
 			
 			
@@ -362,32 +361,23 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				}
 				dmpDataJson.put("email", "");
 				
-				
-				
-				
-				
-				
-				count = count + 1;
-				if("convert".equals(values[11])) {
-					log.info(">>>>>>>>>>>>>>>>>>>>>>:bulog length"+values.length);
-					log.info(">>>>>>>>>>>>>>>>>>>>>>pa_event:"+values[11]);
-					log.info(">>>>>>>>>>>>>>>>>>>>>>event_id:"+values[12]);
-					log.info("****after****:"+dmpDataJson);
-				}else if("page_view".equals(values[11])) {
-					log.info(">>>>>>>>>>>>>>>>>>>>>>:bulog length"+values.length);
-					log.info(">>>>>>>>>>>>>>>>>>>>>>pa_event:"+values[11]);
-					log.info(">>>>>>>>>>>>>>>>>>>>>>event_id:"+values[12]);
-					log.info("****after****:"+dmpDataJson);
-				}else if("tracking".equals(values[11])) {
-					log.info(">>>>>>>>>>>>>>>>>>>>>>:bulog length"+values.length);
-					log.info(">>>>>>>>>>>>>>>>>>>>>>pa_event:"+values[11]);
-					log.info(">>>>>>>>>>>>>>>>>>>>>>event_id:"+values[12]);
-					log.info("****after****:"+dmpDataJson);
-				}
-				
-				
-				
-				
+//				count = count + 1;
+//				if("convert".equals(values[11])) {
+//					log.info(">>>>>>>>>>>>>>>>>>>>>>:bulog length"+values.length);
+//					log.info(">>>>>>>>>>>>>>>>>>>>>>pa_event:"+values[11]);
+//					log.info(">>>>>>>>>>>>>>>>>>>>>>event_id:"+values[12]);
+//					log.info("****after****:"+dmpDataJson);
+//				}else if("page_view".equals(values[11])) {
+//					log.info(">>>>>>>>>>>>>>>>>>>>>>:bulog length"+values.length);
+//					log.info(">>>>>>>>>>>>>>>>>>>>>>pa_event:"+values[11]);
+//					log.info(">>>>>>>>>>>>>>>>>>>>>>event_id:"+values[12]);
+//					log.info("****after****:"+dmpDataJson);
+//				}else if("tracking".equals(values[11])) {
+//					log.info(">>>>>>>>>>>>>>>>>>>>>>:bulog length"+values.length);
+//					log.info(">>>>>>>>>>>>>>>>>>>>>>pa_event:"+values[11]);
+//					log.info(">>>>>>>>>>>>>>>>>>>>>>event_id:"+values[12]);
+//					log.info("****after****:"+dmpDataJson);
+//				}
 			}
 
 			
@@ -420,50 +410,20 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			
 			
 			
-//			if(count == 0) {
+			dmpDataJson.put("log_source", "bulog");
+			
+			if(count == 0 && dmpDataJson.getAsString("log_source").equals("bulog")) {
+				count = count + 1;
+				log.info("****after****:"+dmpDataJson);
 				
-//				count = count + 1;
-//			}
-				
-//			}
+			}
+			if(mapCount == 0 && dmpDataJson.getAsString("log_source").equals("bulog")) {
+				mapCount = mapCount + 1;
+				log.info("****after****:"+dmpDataJson);
+			}
 			
 			
 			
-			
-			
-//			
-//			
-//			//地區處理元件(ip 轉國家、城市)
-//			geoIpComponent.ipTransformGEO(dmpDataJson);
-//			//時間處理元件(日期時間字串轉成小時)		
-//			dateTimeComponent.datetimeTransformHour(dmpDataJson); 
-//			//時間處理元件(日期時間字串轉成小時)
-//			dateTimeComponent.datetimeTransformHour(dmpDataJson); 
-//			//裝置處理元件(UserAgent轉成裝置資訊)
-//			deviceComponent.parseUserAgentToDevice(dmpDataJson);
-//			
-//			//分類處理元件(分析click、24H、Ruten、campaign分類)
-//			if ((dmpDataJson.getAsString("trigger_type").equals("ck") || dmpDataJson.getAsString("trigger_type").equals("campaign")) ) {// kdcl ad_click的adclass  或   campaign log的adclass 	//&& StringUtils.isNotBlank(dmpLogBeanResult.getAdClass())
-//				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
-//				aCategoryLogData.processCategory(dmpDataJson, null);
-//			}else if (dmpDataJson.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpDataJson.getAsString("url")) && dmpDataJson.getAsString("url").contains("ruten")) {	// 露天
-//				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
-//				aCategoryLogData.processCategory(dmpDataJson, dBCollection_class_url);
-//			}else if (dmpDataJson.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpDataJson.getAsString("url")) && dmpDataJson.getAsString("url").contains("24h")) {		// 24h
-//				ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
-//				aCategoryLogData.processCategory(dmpDataJson, dBCollection_class_url);
-//			}else if (dmpDataJson.getAsString("trigger_type").equals("pv") ){
-//				dmpDataJson.put("category", "null");
-//				dmpDataJson.put("category_source", "null");
-//				dmpDataJson.put("class_adclick_classify", "null");
-//				dmpDataJson.put("class_24h_url_classify", "null");
-//				dmpDataJson.put("class_ruten_url_classify", "null");
-//			}
-//			personalInfoComponent.processPersonalInfo(dmpDataJson, dBCollection_user_detail);
-//			if(!dmpDataJson.getAsString("age").equals("null")) {
-//				log.info("****after****:"+dmpDataJson);
-//			}
-//			
 //			keyOut.set(dmpDataJson.getAsString("uuid"));
 //			context.write(keyOut, new Text(dmpDataJson.toString()));
 			
