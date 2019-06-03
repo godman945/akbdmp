@@ -352,8 +352,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				dmpDataJson.put("pa_event", values[11]);
 				if(values[11].toUpperCase().equals("TRACKING")) {
 					dmpDataJson.put("event_id", values[12]);
-					dmpDataJson.put("op1", values[16]);
-					dmpDataJson.put("op2", values[17]);
+					dmpDataJson.put("op1", "");
+					dmpDataJson.put("op2", "");
 				}
 				if(values[11].toUpperCase().equals("PAGE_VIEW")) {
 					dmpDataJson.put("event_id", "");
@@ -362,8 +362,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				}
 				if(values[11].toUpperCase().equals("CONVERT")) {
 					dmpDataJson.put("event_id", values[12]);
-					dmpDataJson.put("op1", values[15]);
-					dmpDataJson.put("op2", values[16]);
+					dmpDataJson.put("op1", "");
+					dmpDataJson.put("op2", "");
 				}
 				dmpDataJson.put("email", "");
 				
@@ -372,7 +372,13 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				
 				
 				
-				
+				count = count + 1;
+				if(count == 10000) {
+					log.info(">>>>>>>>>>>>>>>>>>>>>>:bulog length"+values.length);
+					log.info(">>>>>>>>>>>>>>>>>>>>>>pa_event:"+values[11]);
+					log.info(">>>>>>>>>>>>>>>>>>>>>>event_id:"+values[12]);
+					count = 0;
+				}
 				
 				
 				
