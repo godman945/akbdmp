@@ -152,7 +152,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //			wiriteToDruid.append(",").append("\"").append(dmpJsonObj.get("url")).append("\"");
 //			wiriteToDruid.append(",").append("\"").append(dmpJsonObj.get("ip")).append("\"");
 			
-			log.info(">>>>>>>>>>>mapperKey:"+mapperKey.toString());
+//			log.info(">>>>>>>>>>>mapperKey:"+mapperKey.toString());
 			for (Text text : mapperValue) {
 				dmpJSon.clear();
 				wiriteToDruid.setLength(0);
@@ -215,7 +215,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					break;
 				}
 				keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
-				context.write(keyOut, new Text(wiriteToDruid.toString()));
+				context.write(new Text(dmpJSon.getAsString("uuid").toString().trim()), new Text(wiriteToDruid.toString()));
 			}
 			dmpJSon.clear();
 			wiriteToDruid.setLength(0);
