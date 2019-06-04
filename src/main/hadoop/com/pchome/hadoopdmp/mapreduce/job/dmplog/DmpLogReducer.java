@@ -158,6 +158,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				wiriteToDruid.setLength(0);
 				dmpJSon = (net.minidev.json.JSONObject) jsonParser.parse(text.toString());
 //				log.info(dmpJSon);
+				wiriteToDruid.append(dmpJSon.getAsString("uuid").toString().trim());
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("date")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("hour")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("memid")).append("\"");
@@ -215,7 +216,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					break;
 				}
 				keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
-				context.write(new Text(dmpJSon.getAsString("uuid").toString().trim()), new Text(wiriteToDruid.toString()));
+				context.write(new Text(wiriteToDruid.toString()), null);
 			}
 			dmpJSon.clear();
 			wiriteToDruid.setLength(0);
