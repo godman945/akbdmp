@@ -210,6 +210,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_city")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_info_source")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_info_classify")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("trigger_type")).append("\"");
 				//產出csv
 				if(StringUtils.isBlank(dmpJSon.getAsString("uuid"))) {
 					log.error(">>>>>>>>>>>>>>>>>no uuid");
