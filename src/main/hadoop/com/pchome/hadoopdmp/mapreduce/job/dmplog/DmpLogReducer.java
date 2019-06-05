@@ -151,7 +151,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //			wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_phone_info")).get(0)).get("value")).append("\"");
 //			wiriteToDruid.append(",").append("\"").append(dmpJsonObj.get("url")).append("\"");
 //			wiriteToDruid.append(",").append("\"").append(dmpJsonObj.get("ip")).append("\"");
-			
+			if(dmpJSon.getAsString("uuid").equals("xxx-c33458c6-23b4-4301-b873-c1287b47deea")) {
+				log.info(">>>>>>>>>>>dmpJSon:"+dmpJSon);
+			}
 //			log.info(">>>>>>>>>>>mapperKey:"+mapperKey.toString());
 			for (Text text : mapperValue) {
 				dmpJSon.clear();

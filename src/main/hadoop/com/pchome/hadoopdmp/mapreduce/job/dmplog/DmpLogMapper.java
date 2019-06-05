@@ -297,6 +297,13 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			}else if(logpath.contains("bulog")) {
 				try {
 					String[] values = logStr.split(paclSymbol);
+					
+					
+					if(values[2].equals("xxx-c33458c6-23b4-4301-b873-c1287b47deea")) {
+						log.info(">>>>>>>>>>>xxx-c33458c6-23b4-4301-b873-c1287b47deea UUID:"+values[2]);
+					}
+					
+					
 					dmpDataJson.put("fileName", fileName);
 					dmpDataJson.put("date", values[0]);
 					dmpDataJson.put("hour", record_hour);
