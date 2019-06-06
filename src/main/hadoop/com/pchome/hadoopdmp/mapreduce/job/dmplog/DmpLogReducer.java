@@ -1,5 +1,7 @@
 package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -70,9 +72,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	public Map<String, JSONObject> kafkaDmpMap = null;
 
 	public Map<String, Integer> redisClassifyMap = null;
-
-	
-	
+	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private static String[] weeks = {"sun","mon","tue","wed","thu","fri","sat"};
+	private static Calendar calendar = Calendar.getInstance();
 	private static String partitionHashcode = "1";
 	private static int partition = 0;
 	private static int total = 0;
@@ -142,7 +144,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				dmpJSon = (net.minidev.json.JSONObject) jsonParser.parse(text.toString());
 //				log.info(dmpJSon);
 				wiriteToDruid.append("\""+dmpJSon.getAsString("uuid").toString()+"\"".trim());
-				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("date")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_date")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("hour")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("memid")).append("\"");
 //				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid")).append("\"");
@@ -194,6 +196,14 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_info_source")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_info_classify")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("trigger_type")).append("\"");
+				calendar.setTime(sdf.parse(dmpJSon.getAsString("log_date")));
+				int week_index = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+				if(week_index<0){
+					week_index = 0;
+				}
+				wiriteToDruid.append(",").append("\"").append(weeks[week_index]).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ck")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pv")).append("\"");
 				//產出csv
 				if(StringUtils.isBlank(dmpJSon.getAsString("uuid"))) {
 					log.error(">>>>>>>>>>>>>>>>>no uuid");

@@ -199,7 +199,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 							return;
 						}
 						dmpDataJson.put("fileName", fileName);
-						dmpDataJson.put("date", values[0]);
+						dmpDataJson.put("log_date", values[0]);
 						dmpDataJson.put("hour", record_hour);
 						dmpDataJson.put("memid", values[1]);
 						dmpDataJson.put("uuid", values[2]);
@@ -249,6 +249,13 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("op2", "");
 						dmpDataJson.put("email", "");
 						dmpDataJson.put("trigger_type", values[13]);
+						if(values[13].toUpperCase().equals("CK")) {
+							dmpDataJson.put("ck", 1);
+							dmpDataJson.put("pv", 0);
+						}else if(values[13].toUpperCase().equals("PV")) {
+							dmpDataJson.put("ck", 0);
+							dmpDataJson.put("pv", 1);
+						}
 						dmpDataJson.put("ad_class", values[15]);
 						
 						//地區資訊 [area_info_classify] null:ip不正確,N:ip比對不到
@@ -295,11 +302,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			}else if(logpath.contains("bulog")) {
 				try {
 					String[] values = logStr.split(paclSymbol);
-					if(values[2].equals("xxx-c33458c6-23b4-4301-b873-c1287b47deea")) {
-						log.info("****************************xxx-c33458c6-23b4-4301-b873-c1287b47deea UUID:"+values[2]);
-					}
 					dmpDataJson.put("fileName", fileName);
-					dmpDataJson.put("date", values[0]);
+					dmpDataJson.put("log_date", values[0]);
 					dmpDataJson.put("hour", record_hour);
 					dmpDataJson.put("memid","");
 					dmpDataJson.put("uuid", values[2]);
@@ -331,6 +335,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("op2", "");
 					dmpDataJson.put("email", "");
 					dmpDataJson.put("trigger_type", "pv");
+					dmpDataJson.put("ck", 0);
+					dmpDataJson.put("pv", 1);
 					dmpDataJson.put("ad_class", "");
 					
 					//地區資訊 [area_info_classify] null:ip不正確,N:ip比對不到
