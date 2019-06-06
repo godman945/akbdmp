@@ -180,11 +180,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				try {
 				//kdcl log	raw data格式為一般或是Campaign
 					if(logStr.indexOf(kdclSymbol) > -1 ){
-						
-						if(true) {
-							return;
-						}
-						
 						// values[0]  date time (2018-01-04 04:57:12)
 						// values[1]  memid
 						// values[2]  uuid
@@ -302,12 +297,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			}else if(logpath.contains("bulog")) {
 				String[] values = logStr.split(paclSymbol);
 				try {
-					
 					if(values[2].equals("xxx-c33458c6-23b4-4301-b873-c1287b47deea")) {
 						log.info("****************************xxx-c33458c6-23b4-4301-b873-c1287b47deea UUID:"+values[2]);
 					}
-					
-					
 					dmpDataJson.put("fileName", fileName);
 					dmpDataJson.put("date", values[0]);
 					dmpDataJson.put("hour", record_hour);
@@ -386,9 +378,13 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					}
 					
 					if(values[5].contains("24h.pchome.com.tw")) {
-						log.info(">>>>>values[5]:"+values[5]);
-						String pageCategory = values[5].split("/")[values[5].split("/").length - 1];
-						pageCategory = pageCategory.substring(0, pageCategory.indexOf("?"));
+						String pageCategory = "";
+						if(values[5].contains("?")) {
+							pageCategory = values[5].split("/")[values[5].split("/").length - 1];
+							pageCategory = pageCategory.substring(0, pageCategory.indexOf("?"));
+						}else {
+							pageCategory = values[5].split("/")[values[5].split("/").length - 1];
+						}
 						dmpDataJson.put("op1", pageCategory);
 					}else {
 						dmpDataJson.put("op1", "");
