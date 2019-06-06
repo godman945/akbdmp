@@ -134,27 +134,10 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	@Override
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
 		try {
-			
-//			keyOut.set(((JSONObject)mapEntry.getValue()).getAsString("date_time"));
-//			wiriteToDruid.append(",").append("\"").append(dmpJsonObj.getAsString("record_date")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("time_info")).get(0)).get("value")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(mapEntry.getKey().toString()).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("category_info")).get(0)).get("value")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJsonObj.get("user_agent")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("sex_info")).get(0)).get("value")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("age_info")).get(0)).get("value")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("area_country_info")).get(0)).get("value")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("area_city_info")).get(0)).get("value")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_info")).get(0)).get("value")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_os_info")).get(0)).get("value")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_browser_info")).get(0)).get("value")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(((JSONObject)((JSONArray)dmpJsonDataObj.get("device_phone_info")).get(0)).get("value")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJsonObj.get("url")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJsonObj.get("ip")).append("\"");
 			if(dmpJSon.getAsString("uuid").equals("xxx-c33458c6-23b4-4301-b873-c1287b47deea")) {
 				log.info(">>>>>>>>>>>dmpJSon:"+dmpJSon);
 			}
-//			log.info(">>>>>>>>>>>mapperKey:"+mapperKey.toString());
+			log.info(">>>>>>>>>>>mapperKey:"+mapperKey.toString());
 			for (Text text : mapperValue) {
 				dmpJSon.clear();
 				wiriteToDruid.setLength(0);

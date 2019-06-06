@@ -286,8 +286,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("op1", "");
 						dmpDataJson.put("op2", "");
 						dmpDataJson.put("email", "");
-						
-						
 					}else {
 						return;
 					}
@@ -400,28 +398,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					log.error(">>>>bulog set json fail:"+e.getMessage());
 					return;
 				}
-				
-				
-//				count = count + 1;
-//				if("convert".equals(values[11])) {
-//					log.info(">>>>>>>>>>>>>>>>>>>>>>:bulog length"+values.length);
-//					log.info(">>>>>>>>>>>>>>>>>>>>>>pa_event:"+values[11]);
-//					log.info(">>>>>>>>>>>>>>>>>>>>>>event_id:"+values[12]);
-//					log.info("****after****:"+dmpDataJson);
-//				}else if("page_view".equals(values[11])) {
-//					log.info(">>>>>>>>>>>>>>>>>>>>>>:bulog length"+values.length);
-//					log.info(">>>>>>>>>>>>>>>>>>>>>>pa_event:"+values[11]);
-//					log.info(">>>>>>>>>>>>>>>>>>>>>>event_id:"+values[12]);
-//					log.info("****after****:"+dmpDataJson);
-//				}else if("tracking".equals(values[11])) {
-//					log.info(">>>>>>>>>>>>>>>>>>>>>>:bulog length"+values.length);
-//					log.info(">>>>>>>>>>>>>>>>>>>>>>pa_event:"+values[11]);
-//					log.info(">>>>>>>>>>>>>>>>>>>>>>event_id:"+values[12]);
-//					log.info("****after****:"+dmpDataJson);
-//				}
 			}
+			//開始DMP資訊
 			try {
-				//開始處理log格式
 				//1.地區處理元件(ip 轉國家、城市)
 				geoIpComponent.ipTransformGEO(dmpDataJson);
 				//2.時間處理元件(日期時間字串轉成小時)		
@@ -445,6 +424,18 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("class_24h_url_classify", "");
 					dmpDataJson.put("class_ruten_url_classify", "");
 				}
+			}catch(Exception e) {
+				log.error(">>>>process source fail");
+				log.error(">>>>>>logStr:" +logStr);
+				log.error(">>>>>>fileName:" +fileName);
+				return;
+			}
+			
+			//寫入reduce
+			try {
+				keyOut.set(dmpDataJson.getAsString("uuid"));
+				context.write(keyOut, new Text(dmpDataJson.toString()));
+				
 				//6.個資
 //				personalInfoComponent.processPersonalInfo(dmpDataJson, dBCollection_user_detail);
 				if(count == 0 && dmpDataJson.getAsString("log_source").equals("bulog")) {
@@ -456,16 +447,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					mapCount = mapCount + 1;
 					log.info("****kdcl after****:"+dmpDataJson);
 				}
-			}catch(Exception e) {
-				log.error(">>>>process source fail");
-				log.error(">>>>>>logStr:" +logStr);
-				log.error(">>>>>>fileName:" +fileName);
-				return;
-			}
-			
-			try {
-				keyOut.set(dmpDataJson.getAsString("uuid"));
-				context.write(keyOut, new Text(dmpDataJson.toString()));
+				
 			} catch (IOException | InterruptedException e) {
 				log.error(">>>>write to reduce fail:"+e.getMessage());
 			}
