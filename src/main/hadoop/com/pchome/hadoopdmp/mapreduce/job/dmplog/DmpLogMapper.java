@@ -180,11 +180,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				try {
 				//kdcl log	raw data格式為一般或是Campaign
 					if(logStr.indexOf(kdclSymbol) > -1 ){
-						
-						if(true) {
-							return;
-						}
-						
 						// values[0]  date time (2018-01-04 04:57:12)
 						// values[1]  memid
 						// values[2]  uuid
@@ -384,7 +379,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					
 					if(values[5].contains("24h.pchome.com.tw")) {
 						String pageCategory = "";
-						log.info(values[5]);
 						if(values[5].equals("https://24h.pchome.com.tw/") || values[5].contains("htm") || values[5].contains("index") || values[5].contains("?fq=") || values[5].contains("store/?q=")) {
 							return;
 						}else if(values[5].contains("?")) {
