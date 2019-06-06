@@ -300,8 +300,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //			// processKafakDmpMapKeyIsExist();
 //			// }
 		} catch (Throwable e) {
-//			// log.error(">>>>>> reduce error redis key:"
-//			// +reducerMapKey.toString());
+			 log.error(">>>>>> reduce error :"+e.getMessage());
 //			log.error("reduce error>>>>>> " + e);
 //			// log.error(">>>>>>reduce error>> redisClassifyMap:" +
 //			// redisClassifyMap);
