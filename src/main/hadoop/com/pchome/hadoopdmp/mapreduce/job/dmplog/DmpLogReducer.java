@@ -134,9 +134,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	@Override
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
 		try {
-			if(dmpJSon.getAsString("uuid").equals("xxx-c33458c6-23b4-4301-b873-c1287b47deea")) {
-				log.info(">>>>>>>>>>>dmpJSon:"+dmpJSon);
-			}
+			log.info(">>>>>>>>>>>dmpJSon:"+dmpJSon);
 			log.info(">>>>>>>>>>>mapperKey:"+mapperKey.toString());
 			for (Text text : mapperValue) {
 				dmpJSon.clear();
