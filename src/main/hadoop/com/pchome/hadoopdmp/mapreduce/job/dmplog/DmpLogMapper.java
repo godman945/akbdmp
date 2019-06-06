@@ -180,6 +180,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				try {
 				//kdcl log	raw data格式為一般或是Campaign
 					if(logStr.indexOf(kdclSymbol) > -1 ){
+						
+						if(true) {
+							return;
+						}
+						
 						// values[0]  date time (2018-01-04 04:57:12)
 						// values[1]  memid
 						// values[2]  uuid
@@ -381,6 +386,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					}
 					
 					if(values[5].contains("24h.pchome.com.tw")) {
+						log.info(">>>>>values[5]:"+values[5]);
 						String pageCategory = values[5].split("/")[values[5].split("/").length - 1];
 						pageCategory = pageCategory.substring(0, pageCategory.indexOf("?"));
 						dmpDataJson.put("op1", pageCategory);
@@ -442,7 +448,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("class_ruten_url_classify", "");
 				}
 				//6.個資
-//				personalInfoComponent.processPersonalInfo(dmpDataJson, dBCollection_user_detail);
+				personalInfoComponent.processPersonalInfo(dmpDataJson, dBCollection_user_detail);
 				if(count == 0 && dmpDataJson.getAsString("log_source").equals("bulog")) {
 					count = count + 1;
 					log.info("****bulog after****:"+dmpDataJson);
