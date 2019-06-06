@@ -446,7 +446,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("class_ruten_url_classify", "");
 				}
 				//6.個資
-				personalInfoComponent.processPersonalInfo(dmpDataJson, dBCollection_user_detail);
+//				personalInfoComponent.processPersonalInfo(dmpDataJson, dBCollection_user_detail);
 				if(count == 0 && dmpDataJson.getAsString("log_source").equals("bulog")) {
 					count = count + 1;
 					log.info("****bulog after****:"+dmpDataJson);
