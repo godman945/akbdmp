@@ -300,7 +300,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					
 					
 					if(values[2].equals("xxx-c33458c6-23b4-4301-b873-c1287b47deea")) {
-						log.info(">>>>>>>>>>>xxx-c33458c6-23b4-4301-b873-c1287b47deea UUID:"+values[2]);
+						log.info("****************************xxx-c33458c6-23b4-4301-b873-c1287b47deea UUID:"+values[2]);
 					}
 					
 					
@@ -393,7 +393,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					
 					dmpDataJson.put("email", "");
 				}catch(Exception e) {
-					log.error(">>>>bulog set json fail");
+					log.error(">>>>bulog set json fail:"+e.getMessage());
 					return;
 				}
 				
