@@ -385,7 +385,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					if(values[5].contains("24h.pchome.com.tw")) {
 						String pageCategory = "";
 						log.info(values[5]);
-						if(values[5].contains("?")) {
+						if(values[5].equals("https://24h.pchome.com.tw/") || values[5].contains("htm") ||  values[5].contains("?fq=")) {
+							return;
+						}else if(values[5].contains("?")) {
 							pageCategory = values[5].split("/")[values[5].split("/").length - 1];
 							pageCategory = pageCategory.substring(0, pageCategory.indexOf("?"));
 						}else {
