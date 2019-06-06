@@ -293,8 +293,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					log.error(">>>>kdcl set json fail");
 				}
 			}else if(logpath.contains("bulog")) {
-				String[] values = logStr.split(paclSymbol);
 				try {
+					String[] values = logStr.split(paclSymbol);
 					if(values[2].equals("xxx-c33458c6-23b4-4301-b873-c1287b47deea")) {
 						log.info("****************************xxx-c33458c6-23b4-4301-b873-c1287b47deea UUID:"+values[2]);
 					}
@@ -394,7 +394,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					
 					dmpDataJson.put("email", "");
 				}catch(Exception e) {
-					log.error(">>>>bulog set json fail values length:"+values.length);
 					log.error(">>>>bulog set json fail:"+e.getMessage());
 					return;
 				}
