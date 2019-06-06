@@ -338,7 +338,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("ck", 0);
 					dmpDataJson.put("pv", 1);
 					dmpDataJson.put("ad_class", "");
-					
 					//地區資訊 [area_info_classify] null:ip不正確,N:ip比對不到
 					dmpDataJson.put("ip", values[1]);
 					dmpDataJson.put("area_country", "");
