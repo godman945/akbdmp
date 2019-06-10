@@ -18,11 +18,6 @@ public class DeviceComponent {
 	private static OperatingSystem operatingSystem = null;
 	public net.minidev.json.JSONObject parseUserAgentToDevice(net.minidev.json.JSONObject dmpJSon) throws Exception {
 		if (StringUtils.isBlank(dmpJSon.getAsString("user_agent"))){
-			dmpJSon.put("device_info", "null");
-			dmpJSon.put("device_phone_info", "null");
-			dmpJSon.put("device_os_info", "null");
-			dmpJSon.put("device_browser_info", "null");
-			dmpJSon.put("device_info_source", "null");
 			dmpJSon.put("device_info_classify", "null");
 		}else {
 			userAgent = null;
@@ -37,7 +32,6 @@ public class DeviceComponent {
 			dmpJSon.put("device_os_info", operatingSystem.getGroup().toString());
 			dmpJSon.put("device_browser_info", browser.getGroup().toString());
 			dmpJSon.put("device_info_source", "user-agent");
-			dmpJSon.put("device_info_classify", "null");
 			if ((!StringUtils.equals(dmpJSon.getAsString("device_info"),"UNKNOWN")) && 
 			   (!StringUtils.equals(dmpJSon.getAsString("device_phone_info"),"UNKNOWN")) &&
 			   (!StringUtils.equals(dmpJSon.getAsString("device_os_info"),"UNKNOWN")) && 

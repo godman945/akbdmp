@@ -1,8 +1,6 @@
 package com.pchome.hadoopdmp.mapreduce.job.component;
 
 import java.net.InetAddress;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
