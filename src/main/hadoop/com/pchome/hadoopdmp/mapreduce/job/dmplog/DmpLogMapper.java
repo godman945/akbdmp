@@ -348,7 +348,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("time_info_source", "bulog");
 					dmpDataJson.put("time_info_classify", "Y");
 					//裝置資訊 [device_info_classify] null:user_agent為空
-					dmpDataJson.put("user_agent", values[8]);
+					dmpDataJson.put("user_agent", values[8].replaceAll("\"", ""));
 					dmpDataJson.put("device_info", "");
 					dmpDataJson.put("device_phone_info", "");
 					dmpDataJson.put("device_os_info", "");
