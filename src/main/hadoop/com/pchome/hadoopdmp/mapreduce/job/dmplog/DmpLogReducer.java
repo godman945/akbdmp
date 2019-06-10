@@ -136,8 +136,13 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	@Override
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
 		try {
-			log.info(">>>>>>>>>>>dmpJSon:"+dmpJSon);
-			log.info(">>>>>>>>>>>mapperKey:"+mapperKey.toString());
+//			log.info(">>>>>>>>>>>dmpJSon:"+dmpJSon);
+//			log.info(">>>>>>>>>>>mapperKey:"+mapperKey.toString());
+			
+			if(mapperKey.equals("xxx-79632c50-a016-4e9c-87ed-2221acf8eec9")) {
+				
+			}
+			
 			for (Text text : mapperValue) {
 				dmpJSon.clear();
 				wiriteToDruid.setLength(0);
