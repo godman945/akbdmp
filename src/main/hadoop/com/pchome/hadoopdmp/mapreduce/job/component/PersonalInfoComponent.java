@@ -57,36 +57,43 @@ public class PersonalInfoComponent {
 			
 		}else {
 			if (StringUtils.isNotBlank(memid)) {
-				log.info(">>>>>>memid:"+memid);
+//				log.info(">>>>>>memid:"+memid);
 				msex = "";
 				mage = "";
 				Map<String, String> memberInfoMapApi = null;
 				dbObject = queryUserDetail(memid);
+				//mongo DB中有資料
 				if (dbObject != null) {
 //					log.info(">>>>>>1");
 					userInfoStr = dbObject.get("user_info").toString();
-					log.info(">>>>>>userInfoStr:"+userInfoStr);
-					// mongo user_detail舊資料中有無mage、msex
+//					log.info(">>>>>>userInfoStr:"+userInfoStr);
+					// mongo DB中尚未打過會員中心取得年齡性別資訊
 					if ((!userInfoStr.contains("mage")) || (!userInfoStr.contains("msex"))){
-						log.info(">>>>>>1-1");
+//						log.info(">>>>>>1-1");
+						//呼叫會員中心
 						memberInfoMapApi = findMemberInfoAPI(memid);
 						msex = (String) memberInfoMapApi.get("msex");
 						mage = (String) memberInfoMapApi.get("mage");
 						//更新user資料
 						updateUserDetail(memid,msex,mage);
-						if(msex.equals("NA")) {
-							dmpJSon.put("sex", "");
-							memberInfoMapApi.put("msex", "");
+						int age = 0;
+						if(!mage.equals("NA") && StringUtils.isNotBlank(mage)) {
+							calendar.setTime(new Date());
+							age = calendar.get(Calendar.YEAR) - Integer.parseInt(mage);
+							dmpJSon.put("age", age);
 						}else {
-							dmpJSon.put("sex", msex);
-						}
-						if(mage.equals("NA")) {
 							dmpJSon.put("age", "");
-							memberInfoMapApi.put("mage", "");
-						}else {
-							dmpJSon.put("age", mage);
 						}
-					}else {
+						if(!msex.equals("NA") && StringUtils.isNotBlank(msex)) {
+							dmpJSon.put("sex", msex.toUpperCase());
+						}else {
+							dmpJSon.put("sex", "");
+						}
+						dmpJSon.put("sex_source","member_api");
+						dmpJSon.put("age_source","member_api");
+					}
+					//已經打過會員中心資料
+					if ((userInfoStr.contains("mage")) && (userInfoStr.contains("msex"))){
 //						log.info(">>>>>>1-2");
 						msex = (String) ((DBObject)dbObject.get("user_info")).get("msex");
 						mage = (String) ((DBObject)dbObject.get("user_info")).get("mage");
@@ -123,26 +130,32 @@ public class PersonalInfoComponent {
 //					log.info(">>>>>>1-2 age_source:"+dmpJSon.getAsString("age_source"));
 //					log.info(">>>>>>1-2 sex_source:"+dmpJSon.getAsString("sex_source"));
 					sexAgeInfoMap.put(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid, memberInfoMapApi);
-				}else {
-					log.info(">>>>>>2");
+				}
+				
+				//mongo DB中無資料
+				if (dbObject == null) {
+//					log.info(">>>>>>2");
 					// mongo尚未新增user_detail，直接新增一筆mongo資料，塞會員中心打回來的性別、年齡(空的轉成NA寫入)
 					memberInfoMapApi = findMemberInfoAPI(memid);
 					msex = (String) memberInfoMapApi.get("msex");
 					mage = (String) memberInfoMapApi.get("mage");
 					//新增user
 					insertUserDetail(memid,msex,mage);
-					if(msex.equals("NA")) {
-						dmpJSon.put("sex", "");
-						memberInfoMapApi.put("msex", "");
+					int age = 0;
+					if(!mage.equals("NA") && StringUtils.isNotBlank(mage)) {
+						calendar.setTime(new Date());
+						age = calendar.get(Calendar.YEAR) - Integer.parseInt(mage);
+						dmpJSon.put("age", age);
 					}else {
-						dmpJSon.put("sex", msex);
-					}
-					if(mage.equals("NA")) {
 						dmpJSon.put("age", "");
-						memberInfoMapApi.put("mage", "");
-					}else {
-						dmpJSon.put("age", mage);
 					}
+					if(!msex.equals("NA") && StringUtils.isNotBlank(msex)) {
+						dmpJSon.put("sex", msex.toUpperCase());
+					}else {
+						dmpJSon.put("sex", "");
+					}
+					dmpJSon.put("sex_source","member_api");
+					dmpJSon.put("age_source","member_api");
 					
 					if ((!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA"))) {
 						dmpJSon.put("personal_info_api_classify", "Y");
@@ -155,11 +168,10 @@ public class PersonalInfoComponent {
 				
 				sexAgeInfoMap.put(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid, memberInfoMapApi);
 				
-				log.info(">>>>>>memberInfoMapApi:"+memberInfoMapApi);
+//				log.info(">>>>>>memberInfoMapApi:"+memberInfoMapApi);
 				
 			}else {
-				
-//				log.info(">>>>>>category:"+dmpJSon.getAsString(category));
+				log.info(">>>>>>category:"+dmpJSon.getAsString(category));
 				
 				//處理個資推估
 				Map<String, String> forecastPersonalInfoMap = processForecastPersonalInfo(dmpJSon,dmpJSon.getAsString(category));
