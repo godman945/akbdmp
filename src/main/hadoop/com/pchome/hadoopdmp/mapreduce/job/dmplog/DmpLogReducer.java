@@ -24,7 +24,11 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.pchome.hadoopdmp.mapreduce.job.component.PersonalInfoComponent;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
+import com.pchome.hadoopdmp.spring.config.bean.mongodborg.MongodbOrgHadoopConfig;
 
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -82,6 +86,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	private static JSONObject dmpJsonObj = null;
 	private static JSONObject dmpJsonDataObj = null;
 	private static net.minidev.json.JSONObject dmpJSon =  new net.minidev.json.JSONObject();
+	public static PersonalInfoComponent personalInfoComponent = new PersonalInfoComponent();
+	private static DBCollection dBCollection_user_detail;
+	private DB mongoOrgOperations;
 	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"
@@ -99,6 +106,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			this.kafkaSerializerClass = ctx.getEnvironment().getProperty("kafka.serializer.class");
 			this.kafkaKeySerializer = ctx.getEnvironment().getProperty("kafka.key.serializer");
 			this.kafkaValueSerializer = ctx.getEnvironment().getProperty("kafka.value.serializer");
+			this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
+			
+			dBCollection_user_detail = this.mongoOrgOperations.getCollection("user_detail");
 
 			Properties props = new Properties();
 			props.put("bootstrap.servers", kafkaMetadataBrokerlist);
@@ -128,6 +138,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				redisClassifyMap.put(redisFountKey + enumClassifyKeyInfo.toString(), 0);
 			}
 
+			
+			
+			
 		} catch (Throwable e) {
 			log.error("reduce setup error>>>>>> " + e);
 		}
@@ -138,15 +151,23 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		try {
 //			log.info(">>>>>>>>>>>dmpJSon:"+dmpJSon);
 //			log.info(">>>>>>>>>>>mapperKey:"+mapperKey.toString());
-			
-			if(mapperKey.equals("xxx-79632c50-a016-4e9c-87ed-2221acf8eec9")) {
-				
-			}
-			
+			int procsee = 0;
 			for (Text text : mapperValue) {
 				dmpJSon.clear();
 				wiriteToDruid.setLength(0);
 				dmpJSon = (net.minidev.json.JSONObject) jsonParser.parse(text.toString());
+				
+				//6.個資
+				try {
+					if(procsee == 0) {
+						personalInfoComponent.processPersonalInfo(dmpJSon, dBCollection_user_detail);
+						procsee = procsee + 1;
+					}
+				}catch(Exception e) {
+					log.error(">>>>>>>fail process processPersonalInfo:"+e.getMessage());
+				}
+				
+				
 //				log.info(dmpJSon);
 				wiriteToDruid.append("\""+dmpJSon.getAsString("uuid").toString()+"\"".trim());
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_date")).append("\"");
@@ -207,8 +228,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					week_index = 0;
 				}
 				wiriteToDruid.append(",").append("\"").append(weeks[week_index]).append("\"");
-				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ck")).append("\"");
-				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pv")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_ck")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_pv")).append("\"");
 				//產出csv
 				if(StringUtils.isBlank(dmpJSon.getAsString("uuid"))) {
 					log.error(">>>>>>>>>>>>>>>>>no uuid");

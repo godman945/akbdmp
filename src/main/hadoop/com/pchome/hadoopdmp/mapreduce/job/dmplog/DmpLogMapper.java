@@ -74,7 +74,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public static DatabaseReader reader = null;
 	public static InetAddress ipAddress = null;
 	private static DBCollection dBCollection_class_url;
-	private static DBCollection dBCollection_user_detail;
+	
 	private static InputSplit inputSplit;
 	private static int count = 0;
 	private static int mapCount = 0;
@@ -94,7 +94,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
 			dBCollection_class_url =  this.mongoOrgOperations.getCollection("class_url");
-			dBCollection_user_detail = this.mongoOrgOperations.getCollection("user_detail");
 			//load 推估分類個資表(ClsfyGndAgeCrspTable.txt)
 			Configuration conf = context.getConfiguration();
 			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
@@ -250,11 +249,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("email", "");
 						dmpDataJson.put("trigger_type", values[13]);
 						if(values[13].toUpperCase().equals("CK")) {
-							dmpDataJson.put("ck", 1);
-							dmpDataJson.put("pv", 0);
+							dmpDataJson.put("ad_ck", 1);
+							dmpDataJson.put("ad_pv", 0);
 						}else if(values[13].toUpperCase().equals("PV")) {
-							dmpDataJson.put("ck", 0);
-							dmpDataJson.put("pv", 1);
+							dmpDataJson.put("ad_ck", 0);
+							dmpDataJson.put("ad_pv", 1);
 						}
 						dmpDataJson.put("ad_class", values[15]);
 						
@@ -284,6 +283,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("sex_source", "");
 						dmpDataJson.put("age", "");
 						dmpDataJson.put("age_source", "");
+						dmpDataJson.put("personal_info_api_classify", "");
 						//pacl才有欄位
 						dmpDataJson.put("pa_id", "");
 						dmpDataJson.put("screen_x", "");
@@ -335,8 +335,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("op2", "");
 					dmpDataJson.put("email", "");
 					dmpDataJson.put("trigger_type", "pv");
-					dmpDataJson.put("ck", 0);
-					dmpDataJson.put("pv", 1);
+					dmpDataJson.put("ad_ck", 0);
+					dmpDataJson.put("ad_pv", 1);
 					dmpDataJson.put("ad_class", "");
 					//地區資訊 [area_info_classify] null:ip不正確,N:ip比對不到
 					dmpDataJson.put("ip", values[1]);
@@ -364,6 +364,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("sex_source", "");
 					dmpDataJson.put("age", "");
 					dmpDataJson.put("age_source", "");
+					dmpDataJson.put("personal_info_api_classify", "");
+					
 					
 					dmpDataJson.put("pa_id", values[4]);
 					dmpDataJson.put("screen_x", values[9]);
@@ -439,9 +441,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			try {
 				keyOut.set(dmpDataJson.getAsString("uuid"));
 				context.write(keyOut, new Text(dmpDataJson.toString()));
-				
-				//6.個資
-//				personalInfoComponent.processPersonalInfo(dmpDataJson, dBCollection_user_detail);
 				if(count == 0 && dmpDataJson.getAsString("log_source").equals("bulog")) {
 					count = count + 1;
 					log.info("****bulog after****:"+dmpDataJson);
