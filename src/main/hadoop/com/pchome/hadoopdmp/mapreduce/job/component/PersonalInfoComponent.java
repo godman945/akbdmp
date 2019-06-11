@@ -51,8 +51,8 @@ public class PersonalInfoComponent {
 		
 		
 		
-		if(StringUtils.isNotBlank(dmpJSon.getAsString(category))) {
-			log.info(">>>>>>init category:"+dmpJSon.getAsString(category));
+		if(StringUtils.isNotBlank(this.category)) {
+			log.info(">>>>>>init category:"+this.category);
 		}
 		
 		
