@@ -87,6 +87,12 @@ public class PersonalInfoComponent {
 						}else {
 							dmpJSon.put("age", mage);
 						}
+					}else {
+						log.info(">>>>>>1-2");
+						msex = (String) ((DBObject)dbObject.get("user_info")).get("msex");
+						mage = (String) ((DBObject)dbObject.get("user_info")).get("mage");
+						log.info(">>>>>>1-2 msex:"+msex);
+						log.info(">>>>>>1-2 mage:"+mage);
 					}
 						
 					if ((!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA"))) {
