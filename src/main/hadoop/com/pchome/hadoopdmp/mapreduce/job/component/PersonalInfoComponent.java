@@ -21,6 +21,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
+import com.pchome.hadoopdmp.enumerate.CategoryAgeEnum;
 import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogReducer;
 import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogReducer.combinedValue;
 import com.pchome.hadoopdmp.mapreduce.job.factory.DmpLogBean;
@@ -60,12 +61,9 @@ public class PersonalInfoComponent {
 				dbObject = queryUserDetail(memid);
 				//mongo DB中有資料
 				if (dbObject != null) {
-//					log.info(">>>>>>1");
 					userInfoStr = dbObject.get("user_info").toString();
-//					log.info(">>>>>>userInfoStr:"+userInfoStr);
 					// mongo DB中尚未打過會員中心取得年齡性別資訊
 					if ((!userInfoStr.contains("mage")) || (!userInfoStr.contains("msex"))){
-//						log.info(">>>>>>1-1");
 						//呼叫會員中心
 						memberInfoMapApi = findMemberInfoAPI(memid);
 						msex = (String) memberInfoMapApi.get("msex");
@@ -90,7 +88,6 @@ public class PersonalInfoComponent {
 					}
 					//已經打過會員中心資料
 					if ((userInfoStr.contains("mage")) && (userInfoStr.contains("msex"))){
-//						log.info(">>>>>>1-2");
 						msex = (String) ((DBObject)dbObject.get("user_info")).get("msex");
 						mage = (String) ((DBObject)dbObject.get("user_info")).get("mage");
 						int age = 0;
@@ -119,12 +116,6 @@ public class PersonalInfoComponent {
 					} else {
 						dmpJSon.put("personal_info_api_classify", "N");
 					}
-					
-//					log.info(">>>>>>1-2 sex:"+dmpJSon.getAsString("sex"));
-//					log.info(">>>>>>1-2 age:"+dmpJSon.getAsString("age"));
-//					log.info(">>>>>>1-2 personal_info_api_classify:"+dmpJSon.getAsString("personal_info_api_classify"));
-//					log.info(">>>>>>1-2 age_source:"+dmpJSon.getAsString("age_source"));
-//					log.info(">>>>>>1-2 sex_source:"+dmpJSon.getAsString("sex_source"));
 					sexAgeInfoMap.put(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid, memberInfoMapApi);
 				}
 				
@@ -163,21 +154,16 @@ public class PersonalInfoComponent {
 				dmpJSon.put("age_source","member_api");
 				
 				sexAgeInfoMap.put(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid, memberInfoMapApi);
-				
 //				log.info(">>>>>>memberInfoMapApi:"+memberInfoMapApi);
 				
 			}else {
 				if(StringUtils.isNotBlank(dmpJSon.getAsString("category"))) {
-					log.info(">>>>>>category:"+dmpJSon.getAsString("category"));
 					//處理個資推估
 					Map<String, String> forecastPersonalInfoMap = processForecastPersonalInfo(dmpJSon,dmpJSon.getAsString("category"));
 					String msex = forecastPersonalInfoMap.get("msex");
 					String mage = forecastPersonalInfoMap.get("mage");
-					int age = 0;
 					if(!mage.equals("NA") && StringUtils.isNotBlank(mage)) {
-						calendar.setTime(new Date());
-						age = calendar.get(Calendar.YEAR) - Integer.parseInt(mage);
-						dmpJSon.put("age", age);
+						dmpJSon.put("age", mage);
 					}else {
 						dmpJSon.put("age", "");
 					}
@@ -186,31 +172,41 @@ public class PersonalInfoComponent {
 					}else {
 						dmpJSon.put("sex", "");
 					}
-					dmpJSon.put("sex_source", StringUtils.equals(msex, "") ? "" : "excel");
-					dmpJSon.put("age_source", StringUtils.equals(mage, "") ? "" : "excel");
-					if ((!StringUtils.equals(mage, "")) && (!StringUtils.equals(msex, ""))) {
+					dmpJSon.put("sex_source", StringUtils.equals(msex, "NA") ? "" : "excel");
+					dmpJSon.put("age_source", StringUtils.equals(mage, "NA") ? "" : "excel");
+					if ((!StringUtils.equals(mage, "NA")) && (!StringUtils.equals(msex, "NA"))) {
 						dmpJSon.put("personal_info_classify", "Y");
 					} else {
 						dmpJSon.put("personal_info_classify", "N");
 					}
 					sexAgeInfoMap.put(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid, forecastPersonalInfoMap);
-					
-					
-					log.info(">>>>>>sex:"+msex);
-					log.info(">>>>>>age:"+mage);
-					
 				}
-			
-				
-			
-				
-//				log.info(">>>>>>forecastPersonalInfoMap:"+forecastPersonalInfoMap);
 			}
 		}
 		
 		
-		
-		
+		if(StringUtils.isNotBlank(dmpJSon.getAsString("age"))) {
+			int age = Integer.parseInt(dmpJSon.getAsString("age"));
+			log.info(">>>>>>>>age:"+age);
+			for (CategoryAgeEnum categoryAgeEnum : CategoryAgeEnum.values()) {
+				if(age >= categoryAgeEnum.getMinimun() && age <= categoryAgeEnum.getMinimun()) {
+					dmpJSon.put("age", categoryAgeEnum.getCode());
+					log.info(">>>>>>>>age code:"+categoryAgeEnum.getCode());
+					break;
+				}
+			}
+			
+			
+			
+		}		
+//		"a:18歲(不含)以下
+//		b:18歲~24歲
+//		c:25歲~34歲
+//		d:35歲~44歲
+//		e:45歲~54歲
+//		f:55歲~64歲
+//		g:65歲~74歲
+//		h:75歲以上"
 		
 		
 //		// 如有memid資料，先查mongo，再撈會員中心查個資
