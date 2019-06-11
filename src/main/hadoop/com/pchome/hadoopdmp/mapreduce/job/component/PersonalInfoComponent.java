@@ -63,7 +63,7 @@ public class PersonalInfoComponent {
 				Map<String, String> memberInfoMapApi = null;
 				dbObject = queryUserDetail(memid);
 				if (dbObject != null) {
-					log.info(">>>>>>1");
+//					log.info(">>>>>>1");
 					userInfoStr = dbObject.get("user_info").toString();
 					log.info(">>>>>>userInfoStr:"+userInfoStr);
 					// mongo user_detail舊資料中有無mage、msex
@@ -87,7 +87,7 @@ public class PersonalInfoComponent {
 							dmpJSon.put("age", mage);
 						}
 					}else {
-						log.info(">>>>>>1-2");
+//						log.info(">>>>>>1-2");
 						msex = (String) ((DBObject)dbObject.get("user_info")).get("msex");
 						mage = (String) ((DBObject)dbObject.get("user_info")).get("mage");
 						int age = 0;
@@ -117,14 +117,11 @@ public class PersonalInfoComponent {
 						dmpJSon.put("personal_info_api_classify", "N");
 					}
 					
-					
-					log.info(">>>>>>1-2 sex:"+dmpJSon.getAsString("sex"));
-					log.info(">>>>>>1-2 age:"+dmpJSon.getAsString("age"));
-					log.info(">>>>>>1-2 personal_info_api_classify:"+dmpJSon.getAsString("personal_info_api_classify"));
-					log.info(">>>>>>1-2 age_source:"+dmpJSon.getAsString("age_source"));
-					log.info(">>>>>>1-2 sex_source:"+dmpJSon.getAsString("sex_source"));
-					
-					
+//					log.info(">>>>>>1-2 sex:"+dmpJSon.getAsString("sex"));
+//					log.info(">>>>>>1-2 age:"+dmpJSon.getAsString("age"));
+//					log.info(">>>>>>1-2 personal_info_api_classify:"+dmpJSon.getAsString("personal_info_api_classify"));
+//					log.info(">>>>>>1-2 age_source:"+dmpJSon.getAsString("age_source"));
+//					log.info(">>>>>>1-2 sex_source:"+dmpJSon.getAsString("sex_source"));
 					sexAgeInfoMap.put(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid, memberInfoMapApi);
 				}else {
 					log.info(">>>>>>2");
