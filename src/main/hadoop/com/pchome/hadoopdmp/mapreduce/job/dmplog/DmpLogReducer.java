@@ -91,8 +91,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	private DB mongoOrgOperations;
 	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
-		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"
-				+ context.getConfiguration().get("spring.profiles.active"));
+		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
 		try {
 			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
@@ -138,7 +137,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				redisClassifyMap.put(redisFountKey + enumClassifyKeyInfo.toString(), 0);
 			}
 
-			
+			System.out.println(">>>>>>>>>>>clsfyCraspMap:"+DmpLogMapper.clsfyCraspMap);
 			
 			
 		} catch (Throwable e) {
