@@ -1,9 +1,14 @@
 package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -13,6 +18,8 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -27,6 +34,7 @@ import org.springframework.stereotype.Component;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.pchome.hadoopdmp.mapreduce.job.component.PersonalInfoComponent;
+import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper.combinedValue;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 import com.pchome.hadoopdmp.spring.config.bean.mongodborg.MongodbOrgHadoopConfig;
 
@@ -89,6 +97,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	public static PersonalInfoComponent personalInfoComponent = new PersonalInfoComponent();
 	private static DBCollection dBCollection_user_detail;
 	private DB mongoOrgOperations;
+	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();
 	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
@@ -137,7 +146,23 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				redisClassifyMap.put(redisFountKey + enumClassifyKeyInfo.toString(), 0);
 			}
 
-			log.info(">>>>>>>>>>>clsfyCraspMap:"+DmpLogMapper.clsfyCraspMap);
+			
+			
+			//load 推估分類個資表(ClsfyGndAgeCrspTable.txt)
+			Configuration conf = context.getConfiguration();
+			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
+			Path clsfyTable = Paths.get(path[1].toString());
+			Charset charset = Charset.forName("UTF-8");
+			List<String> lines = Files.readAllLines(clsfyTable, charset);
+			for (String line : lines) {
+				String[] tmpStrAry = line.split(";"); // 0001000000000000;M,35
+				String[] tmpStrAry2 = tmpStrAry[1].split(",");
+				clsfyCraspMap.put(tmpStrAry[0],new combinedValue(tmpStrAry[1].split(",")[0], tmpStrAry2.length > 1 ? tmpStrAry2[1] : ""));
+			}
+			log.info(">>>>>>>>>>>>>>>>>>>>>>List<String> lines:"+lines);
+			log.info(">>>>>>>>>>>>>>>>>>>>>>clsfyCraspMap:"+clsfyCraspMap);
+			
+			log.info(">>>>>>>>>>>clsfyCraspMap:"+clsfyCraspMap);
 			
 			
 		} catch (Throwable e) {
@@ -440,6 +465,15 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //		log.info("processKafakDmpMapKeyIsExist >>>>>>>> 2");
 	}
 	
+	public class combinedValue {
+		public String gender;
+		public String age;
+
+		public combinedValue(String gender, String age) {
+			this.gender = gender;
+			this.age = age;
+		}
+	}
 	
 	public void cleanup(Context context) {
 		try {
@@ -585,4 +619,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		// }
 
 	}
+	
+	
 }

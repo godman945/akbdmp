@@ -21,8 +21,8 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper;
-import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper.combinedValue;
+import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogReducer;
+import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogReducer.combinedValue;
 import com.pchome.hadoopdmp.mapreduce.job.factory.DmpLogBean;
 
 public class PersonalInfoComponent {
@@ -379,7 +379,7 @@ public class PersonalInfoComponent {
 	}
 	
 	public Map<String, String> forecastPersonalInfo(String category) throws Exception {
-		combinedValue combineObj = DmpLogMapper.clsfyCraspMap.get(category);
+		combinedValue combineObj = DmpLogReducer.clsfyCraspMap.get(category);
 		String sex = (combineObj != null) ? combineObj.gender : "NA";
 		String age = (combineObj != null) ? combineObj.age : "NA";
 

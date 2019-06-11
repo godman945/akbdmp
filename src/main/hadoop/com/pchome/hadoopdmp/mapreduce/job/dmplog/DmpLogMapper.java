@@ -97,25 +97,18 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			//load 推估分類個資表(ClsfyGndAgeCrspTable.txt)
 			Configuration conf = context.getConfiguration();
 			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
-			log.info(">>>>>>>>>>>>>>>>>>>>>>DistributedCache path:"+path);
-			log.info(">>>>>>>>>>>>>>>>>>>>>>path[1].toString():"+path[1].toString());
-			
-			
-			
-			
 			Path clsfyTable = Paths.get(path[1].toString());
 			Charset charset = Charset.forName("UTF-8");
 			List<String> lines = Files.readAllLines(clsfyTable, charset);
-			
-			
-			log.info(">>>>>>>>>>>>>>>>>>>>>>List<String> lines:"+lines);
-			
-			
 			for (String line : lines) {
 				String[] tmpStrAry = line.split(";"); // 0001000000000000;M,35
 				String[] tmpStrAry2 = tmpStrAry[1].split(",");
 				clsfyCraspMap.put(tmpStrAry[0],new combinedValue(tmpStrAry[1].split(",")[0], tmpStrAry2.length > 1 ? tmpStrAry2[1] : ""));
 			}
+			log.info(">>>>>>>>>>>>>>>>>>>>>>List<String> lines:"+lines);
+			log.info(">>>>>>>>>>>>>>>>>>>>>>clsfyCraspMap:"+clsfyCraspMap);
+			
+			
 			
 			// load 分類表(pfp_ad_category_new.csv)
 			Path cate_path = Paths.get(path[0].toString());
