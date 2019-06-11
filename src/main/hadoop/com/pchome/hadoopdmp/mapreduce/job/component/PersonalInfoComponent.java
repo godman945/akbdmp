@@ -171,30 +171,34 @@ public class PersonalInfoComponent {
 //				log.info(">>>>>>memberInfoMapApi:"+memberInfoMapApi);
 				
 			}else {
-				log.info(">>>>>>category:"+dmpJSon.getAsString(category));
+				if(StringUtils.isNotBlank(dmpJSon.getAsString(category))) {
+					log.info(">>>>>>category:"+dmpJSon.getAsString(category));
+					//處理個資推估
+					Map<String, String> forecastPersonalInfoMap = processForecastPersonalInfo(dmpJSon,dmpJSon.getAsString(category));
+					String sex = forecastPersonalInfoMap.get("msex");
+					String age = forecastPersonalInfoMap.get("mage");
+					if(StringUtils.isBlank(sex)) {
+						dmpJSon.put("sex", "");
+					}else {
+						dmpJSon.put("sex", sex);
+					}
+					if(StringUtils.isBlank(age)) {
+						dmpJSon.put("age", "");
+					}else {
+						dmpJSon.put("age", age);
+					}
+					dmpJSon.put("sex_source", StringUtils.equals(sex, "") ? "" : "excel");
+					dmpJSon.put("age_source", StringUtils.equals(age, "") ? "" : "excel");
+					if ((!StringUtils.equals(age, "")) && (!StringUtils.equals(sex, ""))) {
+						dmpJSon.put("personal_info_classify", "Y");
+					} else {
+						dmpJSon.put("personal_info_classify", "N");
+					}
+					sexAgeInfoMap.put(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid, forecastPersonalInfoMap);
+				}
+			
 				
-				//處理個資推估
-				Map<String, String> forecastPersonalInfoMap = processForecastPersonalInfo(dmpJSon,dmpJSon.getAsString(category));
-				String sex = forecastPersonalInfoMap.get("msex");
-				String age = forecastPersonalInfoMap.get("mage");
-				if(StringUtils.isBlank(sex)) {
-					dmpJSon.put("sex", "");
-				}else {
-					dmpJSon.put("sex", sex);
-				}
-				if(StringUtils.isBlank(age)) {
-					dmpJSon.put("age", "");
-				}else {
-					dmpJSon.put("age", age);
-				}
-				dmpJSon.put("sex_source", StringUtils.equals(sex, "") ? "" : "excel");
-				dmpJSon.put("age_source", StringUtils.equals(age, "") ? "" : "excel");
-				if ((!StringUtils.equals(age, "")) && (!StringUtils.equals(sex, ""))) {
-					dmpJSon.put("personal_info_classify", "Y");
-				} else {
-					dmpJSon.put("personal_info_classify", "N");
-				}
-				sexAgeInfoMap.put(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid, forecastPersonalInfoMap);
+			
 				
 //				log.info(">>>>>>forecastPersonalInfoMap:"+forecastPersonalInfoMap);
 			}
