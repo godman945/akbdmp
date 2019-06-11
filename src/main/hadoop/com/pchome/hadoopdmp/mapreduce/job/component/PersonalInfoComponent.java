@@ -171,21 +171,24 @@ public class PersonalInfoComponent {
 					log.info(">>>>>>category:"+dmpJSon.getAsString("category"));
 					//處理個資推估
 					Map<String, String> forecastPersonalInfoMap = processForecastPersonalInfo(dmpJSon,dmpJSon.getAsString("category"));
-					String sex = forecastPersonalInfoMap.get("msex");
-					String age = forecastPersonalInfoMap.get("mage");
-					if(StringUtils.isBlank(sex)) {
-						dmpJSon.put("sex", "");
-					}else {
-						dmpJSon.put("sex", sex);
-					}
-					if(StringUtils.isBlank(age)) {
-						dmpJSon.put("age", "");
-					}else {
+					String msex = forecastPersonalInfoMap.get("msex");
+					String mage = forecastPersonalInfoMap.get("mage");
+					int age = 0;
+					if(!mage.equals("NA") && StringUtils.isNotBlank(mage)) {
+						calendar.setTime(new Date());
+						age = calendar.get(Calendar.YEAR) - Integer.parseInt(mage);
 						dmpJSon.put("age", age);
+					}else {
+						dmpJSon.put("age", "");
 					}
-					dmpJSon.put("sex_source", StringUtils.equals(sex, "") ? "" : "excel");
-					dmpJSon.put("age_source", StringUtils.equals(age, "") ? "" : "excel");
-					if ((!StringUtils.equals(age, "")) && (!StringUtils.equals(sex, ""))) {
+					if(!msex.equals("NA") && StringUtils.isNotBlank(msex)) {
+						dmpJSon.put("sex", msex.toUpperCase());
+					}else {
+						dmpJSon.put("sex", "");
+					}
+					dmpJSon.put("sex_source", StringUtils.equals(msex, "") ? "" : "excel");
+					dmpJSon.put("age_source", StringUtils.equals(mage, "") ? "" : "excel");
+					if ((!StringUtils.equals(mage, "")) && (!StringUtils.equals(msex, ""))) {
 						dmpJSon.put("personal_info_classify", "Y");
 					} else {
 						dmpJSon.put("personal_info_classify", "N");
@@ -193,8 +196,8 @@ public class PersonalInfoComponent {
 					sexAgeInfoMap.put(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid, forecastPersonalInfoMap);
 					
 					
-					log.info(">>>>>>sex:"+sex);
-					log.info(">>>>>>age:"+age);
+					log.info(">>>>>>sex:"+msex);
+					log.info(">>>>>>age:"+mage);
 					
 				}
 			
@@ -377,8 +380,8 @@ public class PersonalInfoComponent {
 	
 	public Map<String, String> forecastPersonalInfo(String category) throws Exception {
 		combinedValue combineObj = DmpLogMapper.clsfyCraspMap.get(category);
-		String sex = (combineObj != null) ? combineObj.gender : "";
-		String age = (combineObj != null) ? combineObj.age : "";
+		String sex = (combineObj != null) ? combineObj.gender : "NA";
+		String age = (combineObj != null) ? combineObj.age : "NA";
 
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("msex", sex);
