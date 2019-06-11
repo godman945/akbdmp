@@ -103,9 +103,12 @@ public class PersonalInfoComponent {
 						}else {
 							dmpJSon.put("sex", "");
 						}
-						
 						dmpJSon.put("sex_source","member_api");
 						dmpJSon.put("age_source","member_api");
+						
+						memberInfoMapApi = new HashMap<String, String>();
+						memberInfoMapApi.put("msex", msex);
+						memberInfoMapApi.put("mage", mage);
 					}
 						
 					if ((!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA"))) {
@@ -120,6 +123,9 @@ public class PersonalInfoComponent {
 					log.info(">>>>>>1-2 personal_info_api_classify:"+dmpJSon.getAsString("personal_info_api_classify"));
 					log.info(">>>>>>1-2 age_source:"+dmpJSon.getAsString("age_source"));
 					log.info(">>>>>>1-2 sex_source:"+dmpJSon.getAsString("sex_source"));
+					
+					
+					sexAgeInfoMap.put(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid, memberInfoMapApi);
 				}else {
 					log.info(">>>>>>2");
 					// mongo尚未新增user_detail，直接新增一筆mongo資料，塞會員中心打回來的性別、年齡(空的轉成NA寫入)
