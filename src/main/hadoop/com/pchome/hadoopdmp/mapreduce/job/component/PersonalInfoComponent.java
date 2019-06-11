@@ -189,7 +189,7 @@ public class PersonalInfoComponent {
 			int age = Integer.parseInt(dmpJSon.getAsString("age"));
 			log.info(">>>>>>>>age:"+age);
 			for (CategoryAgeEnum categoryAgeEnum : CategoryAgeEnum.values()) {
-				if(age >= categoryAgeEnum.getMinimun() && age <= categoryAgeEnum.getMinimun()) {
+				if(age >= categoryAgeEnum.getMinimun() && age <= categoryAgeEnum.getMaximun()) {
 					dmpJSon.put("age", categoryAgeEnum.getCode());
 					log.info(">>>>>>>>age code:"+categoryAgeEnum.getCode());
 					break;
