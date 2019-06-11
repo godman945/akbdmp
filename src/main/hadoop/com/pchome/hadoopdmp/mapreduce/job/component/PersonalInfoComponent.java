@@ -39,7 +39,7 @@ public class PersonalInfoComponent {
 	private static Map<String, Map<String, String>> sexAgeInfoMap = new HashMap<String, Map<String,String>>();
 	private static StringBuffer url = new StringBuffer();
 	private static String prsnlData = "";
-	
+	private static Calendar calendar = Calendar.getInstance();
 	private static int count = 0;
 	// 處理個資元件
 	public net.minidev.json.JSONObject processPersonalInfo(net.minidev.json.JSONObject dmpJSon ,DBCollection dbCollectionUser) throws Exception {
@@ -64,7 +64,6 @@ public class PersonalInfoComponent {
 				dbObject = queryUserDetail(memid);
 				if (dbObject != null) {
 					log.info(">>>>>>1");
-					
 					userInfoStr = dbObject.get("user_info").toString();
 					log.info(">>>>>>userInfoStr:"+userInfoStr);
 					// mongo user_detail舊資料中有無mage、msex
@@ -91,8 +90,22 @@ public class PersonalInfoComponent {
 						log.info(">>>>>>1-2");
 						msex = (String) ((DBObject)dbObject.get("user_info")).get("msex");
 						mage = (String) ((DBObject)dbObject.get("user_info")).get("mage");
-						log.info(">>>>>>1-2 msex:"+msex);
-						log.info(">>>>>>1-2 mage:"+mage);
+						int age = 0;
+						if(!mage.equals("NA") && StringUtils.isNotBlank(mage)) {
+							calendar.setTime(new Date());
+							age = calendar.get(Calendar.YEAR) - Integer.parseInt(mage);
+							dmpJSon.put("age", age);
+						}else {
+							dmpJSon.put("age", "");
+						}
+						if(!msex.equals("NA") && StringUtils.isNotBlank(msex)) {
+							dmpJSon.put("sex", msex.toUpperCase());
+						}else {
+							dmpJSon.put("sex", "");
+						}
+						
+						dmpJSon.put("sex_source","member_api");
+						dmpJSon.put("age_source","member_api");
 					}
 						
 					if ((!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA"))) {
@@ -100,6 +113,13 @@ public class PersonalInfoComponent {
 					} else {
 						dmpJSon.put("personal_info_api_classify", "N");
 					}
+					
+					
+					log.info(">>>>>>1-2 sex:"+dmpJSon.getAsString("sex"));
+					log.info(">>>>>>1-2 age:"+dmpJSon.getAsString("age"));
+					log.info(">>>>>>1-2 personal_info_api_classify:"+dmpJSon.getAsString("personal_info_api_classify"));
+					log.info(">>>>>>1-2 age_source:"+dmpJSon.getAsString("age_source"));
+					log.info(">>>>>>1-2 sex_source:"+dmpJSon.getAsString("sex_source"));
 				}else {
 					log.info(">>>>>>2");
 					// mongo尚未新增user_detail，直接新增一筆mongo資料，塞會員中心打回來的性別、年齡(空的轉成NA寫入)
