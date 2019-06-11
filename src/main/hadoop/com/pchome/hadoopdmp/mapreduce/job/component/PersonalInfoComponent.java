@@ -31,7 +31,6 @@ public class PersonalInfoComponent {
 	
 	private static DBCollection dBCollection;
 	private static String memid = "";
-	private static String category = "";
 	private static DBObject dbObject;
 	private static String userInfoStr;
 	private static String msex = "";
@@ -46,23 +45,12 @@ public class PersonalInfoComponent {
 		this.userInfoStr = "";
 		this.dBCollection = dbCollectionUser;
 		this.memid = dmpJSon.getAsString("memid");
-		this.category = dmpJSon.getAsString("category");
 		dbObject = null;
-		
-		
-		
-		if(StringUtils.isNotBlank(this.category)) {
-			log.info(">>>>>>init category:"+this.category);
-		}
-		
-		
 		// 如有memid資料，先查mongo，再撈會員中心查個資
 		if(sexAgeInfoMap.containsKey(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid)) {
 			Map<String, String> personalInfoMap = sexAgeInfoMap.get(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid);
 			count = count + 1 ;
 			log.info(">>>>>count:"+count);
-			
-			
 		}else {
 			if (StringUtils.isNotBlank(memid)) {
 //				log.info(">>>>>>memid:"+memid);
@@ -179,10 +167,10 @@ public class PersonalInfoComponent {
 //				log.info(">>>>>>memberInfoMapApi:"+memberInfoMapApi);
 				
 			}else {
-				if(StringUtils.isNotBlank(dmpJSon.getAsString(category))) {
-					log.info(">>>>>>category:"+dmpJSon.getAsString(category));
+				if(StringUtils.isNotBlank(dmpJSon.getAsString("category"))) {
+					log.info(">>>>>>category:"+dmpJSon.getAsString("category"));
 					//處理個資推估
-					Map<String, String> forecastPersonalInfoMap = processForecastPersonalInfo(dmpJSon,dmpJSon.getAsString(category));
+					Map<String, String> forecastPersonalInfoMap = processForecastPersonalInfo(dmpJSon,dmpJSon.getAsString("category"));
 					String sex = forecastPersonalInfoMap.get("msex");
 					String age = forecastPersonalInfoMap.get("mage");
 					if(StringUtils.isBlank(sex)) {
@@ -203,6 +191,11 @@ public class PersonalInfoComponent {
 						dmpJSon.put("personal_info_classify", "N");
 					}
 					sexAgeInfoMap.put(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid, forecastPersonalInfoMap);
+					
+					
+					log.info(">>>>>>sex:"+sex);
+					log.info(">>>>>>age:"+age);
+					
 				}
 			
 				
