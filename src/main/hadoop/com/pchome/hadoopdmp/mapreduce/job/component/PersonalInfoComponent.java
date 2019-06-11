@@ -48,6 +48,14 @@ public class PersonalInfoComponent {
 		this.memid = dmpJSon.getAsString("memid");
 		this.category = dmpJSon.getAsString("category");
 		dbObject = null;
+		
+		
+		
+		if(StringUtils.isNotBlank(dmpJSon.getAsString(category))) {
+			log.info(">>>>>>init category:"+dmpJSon.getAsString(category));
+		}
+		
+		
 		// 如有memid資料，先查mongo，再撈會員中心查個資
 		if(sexAgeInfoMap.containsKey(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid)) {
 			Map<String, String> personalInfoMap = sexAgeInfoMap.get(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid);
