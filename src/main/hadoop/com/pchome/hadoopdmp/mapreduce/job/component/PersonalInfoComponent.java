@@ -58,11 +58,13 @@ public class PersonalInfoComponent {
 		}else {
 			if (StringUtils.isNotBlank(memid)) {
 				log.info(">>>>>>memid:"+memid);
-				dbObject = queryUserDetail(memid);
 				msex = "";
 				mage = "";
 				Map<String, String> memberInfoMapApi = null;
+				dbObject = queryUserDetail(memid);
 				if (dbObject != null) {
+					log.info(">>>>>>1");
+					
 					userInfoStr = dbObject.get("user_info").toString();
 					// mongo user_detail舊資料中有無mage、msex
 					if ((!userInfoStr.contains("mage")) || (!userInfoStr.contains("msex"))){
@@ -91,6 +93,7 @@ public class PersonalInfoComponent {
 						dmpJSon.put("personal_info_api_classify", "N");
 					}
 				}else {
+					log.info(">>>>>>2");
 					// mongo尚未新增user_detail，直接新增一筆mongo資料，塞會員中心打回來的性別、年齡(空的轉成NA寫入)
 					memberInfoMapApi = findMemberInfoAPI(memid);
 					msex = (String) memberInfoMapApi.get("msex");
@@ -125,7 +128,7 @@ public class PersonalInfoComponent {
 				
 			}else {
 				
-				log.info(">>>>>>category:"+dmpJSon.getAsString(category));
+//				log.info(">>>>>>category:"+dmpJSon.getAsString(category));
 				
 				//處理個資推估
 				Map<String, String> forecastPersonalInfoMap = processForecastPersonalInfo(dmpJSon,dmpJSon.getAsString(category));
@@ -150,7 +153,7 @@ public class PersonalInfoComponent {
 				}
 				sexAgeInfoMap.put(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid, forecastPersonalInfoMap);
 				
-				log.info(">>>>>>forecastPersonalInfoMap:"+forecastPersonalInfoMap);
+//				log.info(">>>>>>forecastPersonalInfoMap:"+forecastPersonalInfoMap);
 			}
 		}
 		
@@ -341,6 +344,7 @@ public class PersonalInfoComponent {
 		url.append("http://member.pchome.com.tw/findMemberInfo4ADAPI.html?ad_user_id=");
 		url.append(memid);
 		prsnlData = httpGet(url.toString());
+		log.info(">>>>>>>>>>>prsnlData:"+prsnlData);
 		String msex = JsonPath.parse(prsnlData).read("sexuality");
 		String mage = JsonPath.parse(prsnlData).read("birthday");
 		Map<String, String> memberInfoMapApi = new HashMap<String, String>();
