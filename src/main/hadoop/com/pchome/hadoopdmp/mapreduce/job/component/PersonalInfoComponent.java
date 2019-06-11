@@ -66,8 +66,10 @@ public class PersonalInfoComponent {
 					log.info(">>>>>>1");
 					
 					userInfoStr = dbObject.get("user_info").toString();
+					log.info(">>>>>>userInfoStr:"+userInfoStr);
 					// mongo user_detail舊資料中有無mage、msex
 					if ((!userInfoStr.contains("mage")) || (!userInfoStr.contains("msex"))){
+						log.info(">>>>>>1-1");
 						memberInfoMapApi = findMemberInfoAPI(memid);
 						msex = (String) memberInfoMapApi.get("msex");
 						mage = (String) memberInfoMapApi.get("mage");
