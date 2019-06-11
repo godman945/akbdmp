@@ -137,7 +137,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				redisClassifyMap.put(redisFountKey + enumClassifyKeyInfo.toString(), 0);
 			}
 
-			System.out.println(">>>>>>>>>>>clsfyCraspMap:"+DmpLogMapper.clsfyCraspMap);
+			log.info(">>>>>>>>>>>clsfyCraspMap:"+DmpLogMapper.clsfyCraspMap);
 			
 			
 		} catch (Throwable e) {
