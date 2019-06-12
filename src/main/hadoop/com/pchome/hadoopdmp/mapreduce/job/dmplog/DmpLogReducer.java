@@ -182,13 +182,13 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			FSDataInputStream inputStream = fs.open(category24MappingFile);
 			Reader reader = new InputStreamReader(inputStream);
             this.csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
-            for (CSVRecord csvRecord : this.csvParser) {
-                // Accessing Values by Column Index
-                log.info(csvRecord.get(1));
-//                log.info(csvRecord.get(3));
-//                log.info(csvRecord.get(5));
-                log.info("-----");
-            }
+//            for (CSVRecord csvRecord : this.csvParser) {
+//                // Accessing Values by Column Index
+//                log.info(csvRecord.get(1));
+////                log.info(csvRecord.get(3));
+////                log.info(csvRecord.get(5));
+//                log.info("-----");
+//            }
 			
 			
 			
@@ -235,7 +235,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				//7.館別階層
 				try {
 					if(StringUtils.isNotBlank(dmpJSon.getAsString("op1"))) {
-//						process24CategoryLevel(dmpJSon);
+						process24CategoryLevel(dmpJSon);
 					}
 				}catch(Exception e) {
 					log.error(">>>>>>>fail process 24 category level:"+e.getMessage());
