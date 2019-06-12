@@ -1,10 +1,12 @@
 package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -23,6 +25,11 @@ import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -167,10 +174,26 @@ public class DmpLogDriver {
 				Path path3 = new Path("/home/webuser/dmp/jobfile/24h_menu-1.xls");
 				
 				FSDataInputStream inputStream = fs.open(path3);
-				String out = IOUtils.toString(inputStream, "UTF-8");
-				log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>> out:"+out);
+//				File file = new File("d:/24h_menu-1.xls");
+				Workbook workbook = WorkbookFactory.create(inputStream);
+				DataFormatter dataFormatter = new DataFormatter();
+				Sheet sheet = workbook.getSheetAt(0);
+				Iterator<Row> rowIterator = sheet.rowIterator();
+		        while (rowIterator.hasNext()) {
+		            Row row = rowIterator.next();
+		            log.info(row.getCell(0));
+		            log.info(row.getCell(1));
+		            log.info(row.getCell(2));
+		            log.info(row.getCell(3));
+		            log.info(row.getCell(4));
+		            log.info(row.getCell(5));
+		            log.info("-----------");
+		        }
 				
 				
+				
+				inputStream.close();
+				fs.close();
 				
 				
 				return;
