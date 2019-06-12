@@ -7,10 +7,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.filecache.DistributedCache;
+import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -150,6 +153,34 @@ public class DmpLogDriver {
 			for (Path path3 : paths) {
 				log.info(">>>>>>>>>>JOB INPUT PATH:"+path3.toString());
 			}
+			
+			
+			
+			
+			
+			
+			
+			
+			if(true) {
+				log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>> return");
+				
+				Path path3 = new Path("/home/webuser/dmp/jobfile/24h_menu-1.xls");
+				
+				FSDataInputStream inputStream = fs.open(path3);
+				String out = IOUtils.toString(inputStream, "UTF-8");
+				log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>> out:"+out);
+				
+				
+				
+				
+				return;
+			}
+			
+			
+			
+			
+			
+			
 			
 			
 			Job job = new Job(jobConf, "dmp_log_"+ env + "_druid_test");
