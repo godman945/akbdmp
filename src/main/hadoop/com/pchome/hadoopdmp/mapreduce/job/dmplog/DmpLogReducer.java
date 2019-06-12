@@ -10,13 +10,10 @@ import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -32,13 +29,6 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -47,7 +37,6 @@ import org.springframework.stereotype.Component;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.pchome.hadoopdmp.mapreduce.job.component.PersonalInfoComponent;
-import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper.combinedValue;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 import com.pchome.hadoopdmp.spring.config.bean.mongodborg.MongodbOrgHadoopConfig;
 import com.pchome.soft.util.MysqlUtil;
@@ -56,6 +45,7 @@ import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 
+@SuppressWarnings("deprecation")
 @Component
 public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 
@@ -191,13 +181,13 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			FSDataInputStream inputStream = fs.open(category24MappingFile);
 			Reader reader = new InputStreamReader(inputStream);
             this.csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
-//            for (CSVRecord csvRecord : csvParser) {
-//                // Accessing Values by Column Index
-//                System.out.println(csvRecord.get(1));
-//                System.out.println(csvRecord.get(3));
-//                System.out.println(csvRecord.get(5));
-//                System.out.println("-----");
-//            }
+            for (CSVRecord csvRecord : csvParser) {
+                // Accessing Values by Column Index
+                log.info(csvRecord.get(1));
+                log.info(csvRecord.get(3));
+                log.info(csvRecord.get(5));
+                log.info("-----");
+            }
 			
 			
 			
@@ -244,7 +234,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				//7.館別階層
 				try {
 					if(StringUtils.isNotBlank(dmpJSon.getAsString("op1"))) {
-						process24CategoryLevel(dmpJSon);
+//						process24CategoryLevel(dmpJSon);
 					}
 				}catch(Exception e) {
 					log.error(">>>>>>>fail process 24 category level:"+e.getMessage());
