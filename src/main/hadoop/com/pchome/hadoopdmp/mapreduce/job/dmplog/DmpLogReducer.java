@@ -1,5 +1,7 @@
 package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
+import java.io.DataInputStream;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
@@ -104,6 +106,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();
 	public static Map<String, String> pfbxWebsiteCategory = new HashMap<String, String>();
 	public static CSVParser csvParser = null;
+	public static FSDataInputStream inputStream = null;
 	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
@@ -179,9 +182,10 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			log.info("**********24 csv");
 			FileSystem fs = FileSystem.get(conf);
 			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.csv");
-			FSDataInputStream inputStream = fs.open(category24MappingFile);
-			Reader reader = new InputStreamReader(inputStream);
-            this.csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
+			inputStream = fs.open(category24MappingFile);
+//			FSDataInputStream inputStream = fs.open(category24MappingFile);
+//			Reader reader = new InputStreamReader(inputStream);
+//            this.csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
 //            for (CSVRecord csvRecord : this.csvParser) {
 //                // Accessing Values by Column Index
 //                log.info(csvRecord.get(1));
@@ -404,7 +408,10 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	//處理24館別階層
 	private void process24CategoryLevel(net.minidev.json.JSONObject dmpJSon) throws Exception{
-        String op1 = dmpJSon.getAsString("op1");
+		Reader reader = new InputStreamReader(inputStream);
+		this.csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
+		
+		String op1 = dmpJSon.getAsString("op1");
 //        log.info(">>>>>>>>>>>>1 op1:"+dmpJSon.getAsString("op1"));
 		int level = 0;
         if(op1.length() == 4) {
@@ -417,17 +424,19 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
         int alex = 0;
         log.info(op1+":level***********"+level+"---"+(level == 2));
         for (CSVRecord csvRecord : csvParser) {
-        	if(alex == 0) {
-              log.info("TEST>>>>>>>>>START");
-              log.info("TEST>>>>>>>>>level-1:"+csvRecord.get(1));
-              log.info("TEST>>>>>>>>>level-2:"+csvRecord.get(3));
-              log.info("TEST>>>>>>>>>level-3:"+csvRecord.get(5));
-              alex = alex + 1;
-        	}
+        	
+        	if(alex < 5) {
+                log.info("TEST>>>>>>>>>START");
+                log.info("TEST>>>>>>>>>level-1:"+csvRecord.get(1));
+                log.info("TEST>>>>>>>>>level-2:"+csvRecord.get(3));
+                log.info("TEST>>>>>>>>>level-3:"+csvRecord.get(5));
+                alex = alex + 1;
+          	}
         	
         	
-        	if(level == 2) {
-        		
+        	
+        	
+        	if(level == 2 ) {
         		log.info(">>>>>>csvRecord:"+csvRecord.get(3)+" --"+op1.equals(csvRecord.get(3)));
         	}
         	
