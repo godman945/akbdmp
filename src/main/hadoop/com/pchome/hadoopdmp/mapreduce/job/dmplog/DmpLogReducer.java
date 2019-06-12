@@ -202,7 +202,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	            log.info("-----------");
 	        }
 			inputStream.close();
-			fs.close();
+//			fs.close();
 			
 		} catch (Throwable e) {
 			log.error("reduce setup error>>>>>> " + e);
