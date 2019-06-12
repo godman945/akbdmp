@@ -224,10 +224,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				}
 				//7.館別階層
 				try {
-					log.info(">>>>>>>>>>>>1 op1:"+dmpJSon.getAsString("op1"));
-					
-					
 					if(StringUtils.isNotBlank(dmpJSon.getAsString("op1"))) {
+						log.info(">>>>>>>>>>>>1 op1:"+dmpJSon.getAsString("op1"));
 						process24CategoryLevel(dmpJSon);
 					}
 				}catch(Exception e) {
@@ -405,7 +403,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
         if(op1.length() == 6) {
         	level = 3;
 		}
-        
+        log.info(">>>>>level:"+level);
         while (rowIterator.hasNext()) {
             Row row = rowIterator.next();
             if(level == 2 && row.getCell(3).equals(op1)) {
