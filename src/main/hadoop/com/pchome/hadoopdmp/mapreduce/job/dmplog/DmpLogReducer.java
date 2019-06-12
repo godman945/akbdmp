@@ -178,7 +178,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			//24館別階層對應表
 			log.info("**********24 csv");
 			FileSystem fs = FileSystem.get(conf);
-			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.xls");
+			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.csv");
 			FSDataInputStream inputStream = fs.open(category24MappingFile);
 			Reader reader = new InputStreamReader(inputStream);
             this.csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
