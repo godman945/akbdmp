@@ -4,6 +4,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -37,6 +38,7 @@ import com.pchome.hadoopdmp.mapreduce.job.component.PersonalInfoComponent;
 import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper.combinedValue;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 import com.pchome.hadoopdmp.spring.config.bean.mongodborg.MongodbOrgHadoopConfig;
+import com.pchome.soft.util.MysqlUtil;
 
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -98,6 +100,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	private static DBCollection dBCollection_user_detail;
 	private DB mongoOrgOperations;
 	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();
+	
+	public static Map<String, String> pfbxWebsiteCategory = new HashMap<String, String>();
+	
 	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
@@ -146,8 +151,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				redisClassifyMap.put(redisFountKey + enumClassifyKeyInfo.toString(), 0);
 			}
 
-			
-			
 			//load 推估分類個資表(ClsfyGndAgeCrspTable.txt)
 			Configuration conf = context.getConfiguration();
 			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
@@ -159,10 +162,22 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				String[] tmpStrAry2 = tmpStrAry[1].split(",");
 				clsfyCraspMap.put(tmpStrAry[0],new combinedValue(tmpStrAry[1].split(",")[0], tmpStrAry2.length > 1 ? tmpStrAry2[1] : ""));
 			}
-			log.info(">>>>>>>>>>>>>>>>>>>>>>List<String> lines:"+lines);
-			log.info(">>>>>>>>>>>>>>>>>>>>>>clsfyCraspMap:"+clsfyCraspMap);
 			
-			log.info(">>>>>>>>>>>clsfyCraspMap:"+clsfyCraspMap);
+			
+			//取得DB所有網站分類代號
+			MysqlUtil mysqlUtil = MysqlUtil.getInstance();
+			mysqlUtil.setConnection(context.getConfiguration().get("spring.profiles.active"));
+			StringBuffer sql = new StringBuffer();
+			sql.append(" SELECT a.customer_info_id,a.category_code FROM pfbx_allow_url a WHERE 1 = 1 and a.default_type = 'Y' ORDER BY a.customer_info_id  ");
+			ResultSet resultSet = mysqlUtil.query(sql.toString());
+			while(resultSet.next()){
+				pfbxWebsiteCategory.put(resultSet.getString("customer_info_id"), resultSet.getString("category_code"));
+			}
+			mysqlUtil.closeConnection();
+			
+			
+			log.info("pfbxWebsiteCategory:"+pfbxWebsiteCategory);
+			
 			
 			
 		} catch (Throwable e) {
@@ -250,7 +265,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				int week_index = calendar.get(Calendar.DAY_OF_WEEK) - 1;
 				if(week_index<0){
 					week_index = 0;
-				}
+				} 
 				wiriteToDruid.append(",").append("\"").append(weeks[week_index]).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_ck")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_pv")).append("\"");
