@@ -413,8 +413,19 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
         if(op1.length() == 6) {
         	level = 3;
 		}
+        
+        int alex = 0;
         log.info(op1+":level***********"+level+"---"+(level == 2));
         for (CSVRecord csvRecord : csvParser) {
+        	if(alex == 0) {
+              log.info("TEST>>>>>>>>>START");
+              log.info("TEST>>>>>>>>>level-1:"+csvRecord.get(1));
+              log.info("TEST>>>>>>>>>level-2:"+csvRecord.get(3));
+              log.info("TEST>>>>>>>>>level-3:"+csvRecord.get(5));
+              alex = alex + 1;
+        	}
+        	
+        	
         	if(level == 2) {
         		
         		log.info(">>>>>>csvRecord:"+csvRecord.get(3)+" --"+op1.equals(csvRecord.get(3)));
