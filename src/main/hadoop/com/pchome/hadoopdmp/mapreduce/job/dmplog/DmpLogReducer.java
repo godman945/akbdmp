@@ -224,6 +224,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				}
 				//7.館別階層
 				try {
+					log.info(">>>>>>>>>>>>1 op1:"+dmpJSon.getAsString("op1"));
+					
+					
 					if(StringUtils.isNotBlank(dmpJSon.getAsString("op1"))) {
 						process24CategoryLevel(dmpJSon);
 					}
