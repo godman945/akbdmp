@@ -403,7 +403,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
         if(op1.length() == 6) {
         	level = 3;
 		}
-        log.info(">>>>>level:"+level);
+//        log.info(">>>>>level:"+level);
         int alex = 0;
         while (rowIterator.hasNext()) {
             Row row = rowIterator.next();
@@ -411,16 +411,17 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //            log.info("TEST>>>>>>>>>level-1:"+row.getCell(1));
 //        	log.info("TEST>>>>>>>>>level-2:"+row.getCell(3));
 //        	log.info("TEST>>>>>>>>>level-3:"+row.getCell(5));
-            if(alex == 0) {
-              log.info("TEST>>>>>>>>>START");
-              log.info("TEST>>>>>>>>>level-1:"+row.getCell(1));
-          		log.info("TEST>>>>>>>>>level-2:"+row.getCell(3));
-          		log.info("TEST>>>>>>>>>level-3:"+row.getCell(5));
-          		alex = alex + 1;
-            }
+           
             
             if(level == 2) {
-            	log.info(">>>>>>>>>op1:"+op1+"["+row.getCell(3)+"]");
+            	 if(alex == 0) {
+                     log.info("TEST>>>>>>>>>START");
+                     log.info("TEST>>>>>>>>>level-1:"+row.getCell(1));
+                     log.info("TEST>>>>>>>>>level-2:"+row.getCell(3));
+                     log.info("TEST>>>>>>>>>level-3:"+row.getCell(5));
+                     alex = alex + 1;
+            	 }
+            	 log.info(">>>>>>>>>op1:"+op1+"["+row.getCell(3)+"]");
             }
             
             
