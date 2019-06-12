@@ -108,7 +108,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	private DB mongoOrgOperations;
 	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();
 	public static Map<String, String> pfbxWebsiteCategory = new HashMap<String, String>();
-	
+	private static Iterator<Row> rowIterator = null;
 	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
@@ -126,7 +126,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			this.kafkaKeySerializer = ctx.getEnvironment().getProperty("kafka.key.serializer");
 			this.kafkaValueSerializer = ctx.getEnvironment().getProperty("kafka.value.serializer");
 			this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
-			
 			dBCollection_user_detail = this.mongoOrgOperations.getCollection("user_detail");
 
 			Properties props = new Properties();
@@ -183,25 +182,14 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			
 			//24館別階層對應表
 			FileSystem fs = FileSystem.get(conf);
-			org.apache.hadoop.fs.Path path3 = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.xls");
-			
-			FSDataInputStream inputStream = fs.open(path3);
-//			File file = new File("d:/24h_menu-1.xls");
+			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.xls");
+			FSDataInputStream inputStream = fs.open(category24MappingFile);
 			Workbook workbook = WorkbookFactory.create(inputStream);
 			DataFormatter dataFormatter = new DataFormatter();
 			Sheet sheet = workbook.getSheetAt(0);
-			Iterator<Row> rowIterator = sheet.rowIterator();
-	        while (rowIterator.hasNext()) {
-	            Row row = rowIterator.next();
-//	            log.info(row.getCell(0));
-//	            log.info(row.getCell(1));
-//	            log.info(row.getCell(2));
-	            log.info(row.getCell(3));
-//	            log.info(row.getCell(4));
-	            log.info(row.getCell(5));
-	            log.info("-----------");
-	        }
-			inputStream.close();
+			this.rowIterator = sheet.rowIterator();
+
+//			inputStream.close();
 //			fs.close();
 			
 		} catch (Throwable e) {
@@ -216,9 +204,13 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //			log.info(">>>>>>>>>>>mapperKey:"+mapperKey.toString());
 			int procsee = 0;
 			for (Text text : mapperValue) {
-				dmpJSon.clear();
 				wiriteToDruid.setLength(0);
+				dmpJSon.clear();
 				dmpJSon = (net.minidev.json.JSONObject) jsonParser.parse(text.toString());
+				if(StringUtils.isBlank(dmpJSon.getAsString("uuid"))) {
+					log.error(">>>>>>>>>>>>>>>>>no uuid");
+					break;
+				}
 				
 				//6.個資
 				try {
@@ -228,7 +220,19 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					}
 				}catch(Exception e) {
 					log.error(">>>>>>>fail process processPersonalInfo:"+e.getMessage());
+					continue;
 				}
+				//7.館別階層
+				try {
+					if(StringUtils.isNotBlank(dmpJSon.getAsString("op1"))) {
+						process24CategoryLevel(dmpJSon);
+					}
+				}catch(Exception e) {
+					log.error(">>>>>>>fail process 24 category level:"+e.getMessage());
+					continue;
+				}
+				
+				
 				
 				
 //				log.info(dmpJSon);
@@ -297,10 +301,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					wiriteToDruid.append(",").append("\"").append(pfbxWebsiteCategory.get(dmpJSon.getAsString("pfbx_customer_info_id"))).append("\"");
 				}else {
 					wiriteToDruid.append(",").append("\"").append("").append("\"");
-				}
-				if(StringUtils.isBlank(dmpJSon.getAsString("uuid"))) {
-					log.error(">>>>>>>>>>>>>>>>>no uuid");
-					break;
 				}
 				//產出csv
 				keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
@@ -392,6 +392,52 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		}
 	}
 
+	//處理24館別階層
+	private void process24CategoryLevel(net.minidev.json.JSONObject dmpJSon) throws Exception{
+        String op1 = dmpJSon.getAsString("op1");
+		int level = 0;
+        if(op1.length() == 4) {
+        	level = 2;
+		}
+        if(op1.length() == 6) {
+        	level = 3;
+		}
+        
+        while (rowIterator.hasNext()) {
+            Row row = rowIterator.next();
+            if(level == 2 && row.getCell(3).equals(op1)) {
+            	log.info(">>>>>>>>>op1:"+op1);
+            	log.info(">>>>>>>>>level-1:"+row.getCell(1));
+            	log.info(">>>>>>>>>level-2:"+row.getCell(3));
+            	log.info(">>>>>>>>>level-3:"+row.getCell(5));
+            	break;
+            }else if(level == 3 && row.getCell(5).equals(op1)) {
+            	log.info(">>>>>>>>>op1:"+op1);
+            	log.info(">>>>>>>>>level-1:"+row.getCell(1));
+            	log.info(">>>>>>>>>level-2:"+row.getCell(3));
+            	log.info(">>>>>>>>>level-3:"+row.getCell(5));
+            	break;
+            }
+            
+            
+            
+            
+            
+            
+            
+//            
+////            log.info(row.getCell(0));
+//            log.info(row.getCell(1));
+////            log.info(row.getCell(2));
+//            log.info(row.getCell(3));
+////            log.info(row.getCell(4));
+//            log.info(row.getCell(5));
+//            log.info("-----------");
+        }
+	}
+	
+	
+	
 	// 處理mdp map不存在時
 	private void processKafakDmpMapKeyNotExist(String recordDate, JSONObject jsonObjOrg, String reducerMapKey)
 			throws Exception {
