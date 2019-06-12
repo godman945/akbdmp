@@ -176,16 +176,17 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			mysqlUtil.closeConnection();
 			
 			//24館別階層對應表
+			log.info("**********24 csv");
 			FileSystem fs = FileSystem.get(conf);
 			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.xls");
 			FSDataInputStream inputStream = fs.open(category24MappingFile);
 			Reader reader = new InputStreamReader(inputStream);
             this.csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
-            for (CSVRecord csvRecord : csvParser) {
+            for (CSVRecord csvRecord : this.csvParser) {
                 // Accessing Values by Column Index
                 log.info(csvRecord.get(1));
-                log.info(csvRecord.get(3));
-                log.info(csvRecord.get(5));
+//                log.info(csvRecord.get(3));
+//                log.info(csvRecord.get(5));
                 log.info("-----");
             }
 			
