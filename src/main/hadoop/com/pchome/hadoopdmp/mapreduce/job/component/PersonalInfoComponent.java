@@ -187,26 +187,13 @@ public class PersonalInfoComponent {
 		
 		if(StringUtils.isNotBlank(dmpJSon.getAsString("age"))) {
 			int age = Integer.parseInt(dmpJSon.getAsString("age"));
-			log.info(">>>>>>>>age:"+age);
 			for (CategoryAgeEnum categoryAgeEnum : CategoryAgeEnum.values()) {
 				if(age >= categoryAgeEnum.getMinimun() && age <= categoryAgeEnum.getMaximun()) {
 					dmpJSon.put("age", categoryAgeEnum.getCode());
-					log.info(">>>>>>>>age code:"+categoryAgeEnum.getCode());
 					break;
 				}
 			}
-			
-			
-			
 		}		
-//		"a:18歲(不含)以下
-//		b:18歲~24歲
-//		c:25歲~34歲
-//		d:35歲~44歲
-//		e:45歲~54歲
-//		f:55歲~64歲
-//		g:65歲~74歲
-//		h:75歲以上"
 		
 		
 //		// 如有memid資料，先查mongo，再撈會員中心查個資

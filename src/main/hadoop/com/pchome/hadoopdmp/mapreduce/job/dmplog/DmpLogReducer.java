@@ -100,7 +100,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	private static DBCollection dBCollection_user_detail;
 	private DB mongoOrgOperations;
 	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();
-	
 	public static Map<String, String> pfbxWebsiteCategory = new HashMap<String, String>();
 	
 	@SuppressWarnings("unchecked")
@@ -174,12 +173,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				pfbxWebsiteCategory.put(resultSet.getString("customer_info_id"), resultSet.getString("category_code"));
 			}
 			mysqlUtil.closeConnection();
-			
-			
-			log.info("pfbxWebsiteCategory:"+pfbxWebsiteCategory);
-			
-			
-			
 		} catch (Throwable e) {
 			log.error("reduce setup error>>>>>> " + e);
 		}
@@ -269,6 +262,11 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				wiriteToDruid.append(",").append("\"").append(weeks[week_index]).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_ck")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_pv")).append("\"");
+				if(StringUtils.isNotBlank(dmpJSon.getAsString("pfbx_customer_info_id"))) {
+					wiriteToDruid.append(",").append("\"").append(pfbxWebsiteCategory.get(dmpJSon.getAsString("pfbx_customer_info_id"))).append("\"");
+				}else {
+					wiriteToDruid.append(",").append("\"").append("").append("\"");
+				}
 				//產出csv
 				if(StringUtils.isBlank(dmpJSon.getAsString("uuid"))) {
 					log.error(">>>>>>>>>>>>>>>>>no uuid");
