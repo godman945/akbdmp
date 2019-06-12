@@ -406,10 +406,15 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
         log.info(">>>>>level:"+level);
         while (rowIterator.hasNext()) {
             Row row = rowIterator.next();
-            log.info("TEST>>>>>>>>>START");
-            log.info("TEST>>>>>>>>>level-1:"+row.getCell(1));
-        	log.info("TEST>>>>>>>>>level-2:"+row.getCell(3));
-        	log.info("TEST>>>>>>>>>level-3:"+row.getCell(5));
+//            log.info("TEST>>>>>>>>>START");
+//            log.info("TEST>>>>>>>>>level-1:"+row.getCell(1));
+//        	log.info("TEST>>>>>>>>>level-2:"+row.getCell(3));
+//        	log.info("TEST>>>>>>>>>level-3:"+row.getCell(5));
+            
+            if(level == 2) {
+            	log.info(">>>>>>>>>op1:"+op1+"["+row.getCell(3)+"]");
+            }
+            
             
             if(level == 2 && row.getCell(3).equals(op1)) {
             	log.info(">>>>>>>>>op1:"+op1);
@@ -418,10 +423,10 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
             	log.info(">>>>>>>>>level-3:"+row.getCell(5));
             	break;
             }else if(level == 3 && row.getCell(5).equals(op1)) {
-            	log.info(">>>>>>>>>op1:"+op1);
-            	log.info(">>>>>>>>>level-1:"+row.getCell(1));
-            	log.info(">>>>>>>>>level-2:"+row.getCell(3));
-            	log.info(">>>>>>>>>level-3:"+row.getCell(5));
+//            	log.info(">>>>>>>>>op1:"+op1);
+//            	log.info(">>>>>>>>>level-1:"+row.getCell(1));
+//            	log.info(">>>>>>>>>level-2:"+row.getCell(3));
+//            	log.info(">>>>>>>>>level-3:"+row.getCell(5));
             	break;
             }
         }
