@@ -21,12 +21,19 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.filecache.DistributedCache;
+import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -173,6 +180,30 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				pfbxWebsiteCategory.put(resultSet.getString("customer_info_id"), resultSet.getString("category_code"));
 			}
 			mysqlUtil.closeConnection();
+			
+			//24館別階層對應表
+			FileSystem fs = FileSystem.get(conf);
+			org.apache.hadoop.fs.Path path3 = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.xls");
+			
+			FSDataInputStream inputStream = fs.open(path3);
+//			File file = new File("d:/24h_menu-1.xls");
+			Workbook workbook = WorkbookFactory.create(inputStream);
+			DataFormatter dataFormatter = new DataFormatter();
+			Sheet sheet = workbook.getSheetAt(0);
+			Iterator<Row> rowIterator = sheet.rowIterator();
+	        while (rowIterator.hasNext()) {
+	            Row row = rowIterator.next();
+//	            log.info(row.getCell(0));
+//	            log.info(row.getCell(1));
+//	            log.info(row.getCell(2));
+	            log.info(row.getCell(3));
+//	            log.info(row.getCell(4));
+	            log.info(row.getCell(5));
+	            log.info("-----------");
+	        }
+			inputStream.close();
+			fs.close();
+			
 		} catch (Throwable e) {
 			log.error("reduce setup error>>>>>> " + e);
 		}
@@ -267,11 +298,11 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				}else {
 					wiriteToDruid.append(",").append("\"").append("").append("\"");
 				}
-				//產出csv
 				if(StringUtils.isBlank(dmpJSon.getAsString("uuid"))) {
 					log.error(">>>>>>>>>>>>>>>>>no uuid");
 					break;
 				}
+				//產出csv
 				keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
 				context.write(new Text(wiriteToDruid.toString()), null);
 			}

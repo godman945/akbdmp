@@ -105,11 +105,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				String[] tmpStrAry2 = tmpStrAry[1].split(",");
 				clsfyCraspMap.put(tmpStrAry[0],new combinedValue(tmpStrAry[1].split(",")[0], tmpStrAry2.length > 1 ? tmpStrAry2[1] : ""));
 			}
-			log.info(">>>>>>>>>>>>>>>>>>>>>>List<String> lines:"+lines);
-			log.info(">>>>>>>>>>>>>>>>>>>>>>clsfyCraspMap:"+clsfyCraspMap);
-			
-			
-			
 			// load 分類表(pfp_ad_category_new.csv)
 			Path cate_path = Paths.get(path[0].toString());
 			charset = Charset.forName("UTF-8");
@@ -425,8 +420,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
 					aCategoryLogData.processCategory(dmpDataJson, dBCollection_class_url);
 				}else if (dmpDataJson.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpDataJson.getAsString("referer")) && dmpDataJson.getAsString("referer").contains("24h")) {		// 24h
-//					ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
-//					aCategoryLogData.processCategory(dmpDataJson, dBCollection_class_url);
+					ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
+					aCategoryLogData.processCategory(dmpDataJson, dBCollection_class_url);
 				}else if (dmpDataJson.getAsString("trigger_type").equals("pv") ){
 					dmpDataJson.put("category", "");
 					dmpDataJson.put("category_source", "");

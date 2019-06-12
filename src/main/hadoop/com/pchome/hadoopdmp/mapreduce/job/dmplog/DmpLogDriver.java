@@ -168,36 +168,6 @@ public class DmpLogDriver {
 			
 			
 			
-			if(true) {
-				log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>> return");
-				
-				Path path3 = new Path("/home/webuser/dmp/jobfile/24h_menu-1.xls");
-				
-				FSDataInputStream inputStream = fs.open(path3);
-//				File file = new File("d:/24h_menu-1.xls");
-				Workbook workbook = WorkbookFactory.create(inputStream);
-				DataFormatter dataFormatter = new DataFormatter();
-				Sheet sheet = workbook.getSheetAt(0);
-				Iterator<Row> rowIterator = sheet.rowIterator();
-		        while (rowIterator.hasNext()) {
-		            Row row = rowIterator.next();
-		            log.info(row.getCell(0));
-		            log.info(row.getCell(1));
-		            log.info(row.getCell(2));
-		            log.info(row.getCell(3));
-		            log.info(row.getCell(4));
-		            log.info(row.getCell(5));
-		            log.info("-----------");
-		        }
-				
-				
-				
-				inputStream.close();
-				fs.close();
-				
-				
-				return;
-			}
 			
 			
 			
