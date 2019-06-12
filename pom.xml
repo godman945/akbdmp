@@ -474,6 +474,12 @@
 			<version>3.17</version>
 		</dependency>
 		
+		<dependency>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-csv</artifactId>
+		    <version>1.5</version>
+		</dependency>
+		
 		
 		<!-- IP轉國家、城市-->
 		<dependency>

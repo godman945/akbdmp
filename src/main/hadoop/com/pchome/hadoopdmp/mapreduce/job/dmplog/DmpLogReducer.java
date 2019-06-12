@@ -1,5 +1,7 @@
 package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,6 +18,9 @@ import java.util.Properties;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -108,7 +113,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	private DB mongoOrgOperations;
 	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();
 	public static Map<String, String> pfbxWebsiteCategory = new HashMap<String, String>();
-	private static Iterator<Row> rowIterator = null;
+	public static CSVParser csvParser = null;
 	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
@@ -184,10 +189,24 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			FileSystem fs = FileSystem.get(conf);
 			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.xls");
 			FSDataInputStream inputStream = fs.open(category24MappingFile);
-			Workbook workbook = WorkbookFactory.create(inputStream);
-			DataFormatter dataFormatter = new DataFormatter();
-			Sheet sheet = workbook.getSheetAt(0);
-			this.rowIterator = sheet.rowIterator();
+			Reader reader = new InputStreamReader(inputStream);
+            this.csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
+//            for (CSVRecord csvRecord : csvParser) {
+//                // Accessing Values by Column Index
+//                System.out.println(csvRecord.get(1));
+//                System.out.println(csvRecord.get(3));
+//                System.out.println(csvRecord.get(5));
+//                System.out.println("-----");
+//            }
+			
+			
+			
+			
+			
+//			Workbook workbook = WorkbookFactory.create(inputStream);
+//			DataFormatter dataFormatter = new DataFormatter();
+//			Sheet sheet = workbook.getSheetAt(0);
+//			this.rowIterator = sheet.rowIterator();
 
 //			inputStream.close();
 //			fs.close();
@@ -225,7 +244,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				//7.館別階層
 				try {
 					if(StringUtils.isNotBlank(dmpJSon.getAsString("op1"))) {
-						log.info(">>>>>>>>>>>>1 op1:"+dmpJSon.getAsString("op1"));
 						process24CategoryLevel(dmpJSon);
 					}
 				}catch(Exception e) {
@@ -396,6 +414,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	//處理24館別階層
 	private void process24CategoryLevel(net.minidev.json.JSONObject dmpJSon) throws Exception{
         String op1 = dmpJSon.getAsString("op1");
+//        log.info(">>>>>>>>>>>>1 op1:"+dmpJSon.getAsString("op1"));
 		int level = 0;
         if(op1.length() == 4) {
         	level = 2;
@@ -403,42 +422,64 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
         if(op1.length() == 6) {
         	level = 3;
 		}
-//        log.info(">>>>>level:"+level);
-        int alex = 0;
-        while (rowIterator.hasNext()) {
-            Row row = rowIterator.next();
-//            log.info("TEST>>>>>>>>>START");
-//            log.info("TEST>>>>>>>>>level-1:"+row.getCell(1));
-//        	log.info("TEST>>>>>>>>>level-2:"+row.getCell(3));
-//        	log.info("TEST>>>>>>>>>level-3:"+row.getCell(5));
-           
-            
-            if(level == 2) {
-            	 if(alex == 0) {
-                     log.info("TEST>>>>>>>>>START");
-                     log.info("TEST>>>>>>>>>level-1:"+row.getCell(1));
-                     log.info("TEST>>>>>>>>>level-2:"+row.getCell(3));
-                     log.info("TEST>>>>>>>>>level-3:"+row.getCell(5));
-                     alex = alex + 1;
-            	 }
-            	 log.info(">>>>>>>>>op1:"+op1+"["+row.getCell(3)+"]");
-            }
-            
-            
-            if(level == 2 && row.getCell(3).equals(op1)) {
-            	log.info(">>>>>>>>>op1:"+op1);
-            	log.info(">>>>>>>>>level-1:"+row.getCell(1));
-            	log.info(">>>>>>>>>level-2:"+row.getCell(3));
-            	log.info(">>>>>>>>>level-3:"+row.getCell(5));
-            	break;
-            }else if(level == 3 && row.getCell(5).equals(op1)) {
-//            	log.info(">>>>>>>>>op1:"+op1);
-//            	log.info(">>>>>>>>>level-1:"+row.getCell(1));
-//            	log.info(">>>>>>>>>level-2:"+row.getCell(3));
-//            	log.info(">>>>>>>>>level-3:"+row.getCell(5));
-            	break;
-            }
+        
+        for (CSVRecord csvRecord : csvParser) {
+        	if(level == 2) {
+        		log.info("level2***********");
+        		
+        		log.info(">>>>>>csvRecord:"+csvRecord.get(3));
+        		break;
+        	}
+        	
+//            System.out.println(csvRecord.get(1));
+//            System.out.println(csvRecord.get(3));
+//            System.out.println(csvRecord.get(5));
+//            System.out.println("-----");
         }
+		
+        
+        
+        
+        
+        
+        
+//        log.info(">>>>>level:"+level);
+//        int alex = 0;
+        
+//        while (rowIterator.hasNext()) {
+//            Row row = rowIterator.next();
+////            log.info("TEST>>>>>>>>>START");
+////            log.info("TEST>>>>>>>>>level-1:"+row.getCell(1));
+////        	log.info("TEST>>>>>>>>>level-2:"+row.getCell(3));
+////        	log.info("TEST>>>>>>>>>level-3:"+row.getCell(5));
+//           
+//            
+//            if(level == 2) {
+//            	 if(alex == 0) {
+//                     log.info("TEST>>>>>>>>>START");
+//                     log.info("TEST>>>>>>>>>level-1:"+row.getCell(1));
+//                     log.info("TEST>>>>>>>>>level-2:"+row.getCell(3));
+//                     log.info("TEST>>>>>>>>>level-3:"+row.getCell(5));
+//                     alex = alex + 1;
+//            	 }
+//            	 log.info(">>>>>>>>>op1:"+op1+"["+row.getCell(3)+"]");
+//            }
+//            
+//            
+////            if(level == 2 && row.getCell(3).equals(op1)) {
+////            	log.info(">>>>>>>>>op1:"+op1);
+////            	log.info(">>>>>>>>>level-1:"+row.getCell(1));
+////            	log.info(">>>>>>>>>level-2:"+row.getCell(3));
+////            	log.info(">>>>>>>>>level-3:"+row.getCell(5));
+////            	break;
+////            }else if(level == 3 && row.getCell(5).equals(op1)) {
+//////            	log.info(">>>>>>>>>op1:"+op1);
+//////            	log.info(">>>>>>>>>level-1:"+row.getCell(1));
+//////            	log.info(">>>>>>>>>level-2:"+row.getCell(3));
+//////            	log.info(">>>>>>>>>level-3:"+row.getCell(5));
+////            	break;
+////            }
+//        }
 	}
 	
 	
