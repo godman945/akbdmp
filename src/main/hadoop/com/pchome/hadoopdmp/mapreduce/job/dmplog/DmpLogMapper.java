@@ -2,6 +2,8 @@ package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.InetAddress;
 import java.net.URI;
 import java.nio.charset.Charset;
@@ -13,11 +15,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.filecache.DistributedCache;
+import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.InputSplit;
@@ -79,7 +86,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static int count = 0;
 	private static int mapCount = 0;
 	
-	
+	public static List<String> categoryLevelMappingList = new ArrayList<String>();
+	public static Map<String, String> categoryLevelMappingMap = new HashMap<String, String>();
 	@Override
 	public void setup(Context context) {
 		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
@@ -152,6 +160,24 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			//IP轉城市
 			File database = new File(path[5].toString());
 			reader = new DatabaseReader.Builder(database).build();  
+			
+			
+			
+			
+			
+			//24館別階層對應表
+			log.info("**********24 csv");
+			FileSystem fs = FileSystem.get(conf);
+			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.csv");
+			FSDataInputStream inputStream = fs.open(category24MappingFile);
+			Reader reader = new InputStreamReader(inputStream);
+			CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
+			for (CSVRecord csvRecord : csvParser) {
+				String data = csvRecord.get(1)+"<PCHOME>"+csvRecord.get(3)+"<PCHOME>"+csvRecord.get(5);
+				categoryLevelMappingList.add(data);
+			}
+			log.info("**********categoryLevelMappingList:"+categoryLevelMappingList.size());
+			
 			
 			
 		} catch (Exception e) {
@@ -429,6 +455,18 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("class_24h_url_classify", "");
 					dmpDataJson.put("class_ruten_url_classify", "");
 				}
+				
+				
+				//館別分類
+				//7.館別階層
+				try {
+					if(StringUtils.isNotBlank(dmpDataJson.getAsString("op1"))) {
+						process24CategoryLevel(dmpDataJson);
+					}
+				}catch(Exception e) {
+					log.error(">>>>>>>fail process 24 category level:"+e.getMessage());
+					return;
+				}
 			}catch(Exception e) {
 				log.error(">>>>process source fail");
 				log.error(">>>>>>logStr:" +logStr);
@@ -455,6 +493,80 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			}
 			
 	}
+	
+	
+	//處理24館別階層
+		private static String level1 = "";
+		private static String level2 = "";
+		private static String level3 = "";
+		private static String op1 = "";
+		private static long totalCount = 0;
+		private void process24CategoryLevel(net.minidev.json.JSONObject dmpDataJson) throws Exception{
+			long startTime = System.currentTimeMillis();
+			totalCount = totalCount + 1;
+			op1 = dmpDataJson.getAsString("op1");
+			int level = 0;
+	        if(op1.length() == 4) {
+	        	level = 2;
+			}
+	        if(op1.length() == 6) {
+	        	level = 3;
+			}
+	        if(categoryLevelMappingMap.containsKey(op1)) {
+	        	level1 = "";
+	    		level2 = "";
+	    		level3 = "";
+	        	
+	        	String categoryLevel = categoryLevelMappingMap.get(op1);
+	        	level1 = categoryLevel.split("<PCHOME>")[0];
+				level2 = categoryLevel.split("<PCHOME>")[1];
+				level3 = categoryLevel.split("<PCHOME>")[2];
+//				log.info(">>>>>>>>>>>>>>>>>1");
+//	    		log.info(">>>>>>>>>>>>>>>>>1 level:"+level);
+//				log.info(level1);
+//	    		log.info(level2);
+//	    		log.info(level3);
+//	    		log.info("************1");
+	        }else {
+	        	 for (String string : categoryLevelMappingList) {
+	        		level1 = "";
+	        		level2 = "";
+	        		level3 = "";
+	        		 
+	        		 
+	        		level1 = string.split("<PCHOME>")[0];
+	     			level2 = string.split("<PCHOME>")[1];
+	     			level3 = string.split("<PCHOME>")[2];
+	     			if(level == 2 && level2.equals(op1)) {
+//	     				log.info(">>>>>>>>>>>>>>>>>2");
+//	             		log.info(">>>>>>>>>>>>>>>>>2 level:"+level);
+//	         			log.info(level1);
+//	             		log.info(level2);
+//	             		log.info(level3);
+//	             		log.info("************");
+	             		categoryLevelMappingMap.put(op1, string);
+	             		break;
+	     			}else if(level == 3 && level3.equals(op1)) {
+//	     				log.info(">>>>>>>>>>>>>>>>>2");
+//	             		log.info(">>>>>>>>>>>>>>>>>2 level:"+level);
+//	         			log.info(level1);
+//	             		log.info(level2);
+//	             		log.info(level3);
+//	             		log.info("************");
+	             		categoryLevelMappingMap.put(op1, string);
+	             		break;
+	     			}
+	     		}
+	        }
+	        long endTime = System.currentTimeMillis();
+	        float excTime=(float)(endTime-startTime);
+	        log.info("cost time:"+ excTime+" process:"+totalCount);
+		}
+	
+	
+	
+	
+	
 	
 	public DmpLogBean dmpBeanIntegrate(DmpLogBean dmpLogBeanResult) throws Exception {
 		dmpLogBeanResult.setMemid( StringUtils.isBlank(dmpLogBeanResult.getMemid()) ? "null" : dmpLogBeanResult.getMemid());

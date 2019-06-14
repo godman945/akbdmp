@@ -178,18 +178,18 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			}
 			mysqlUtil.closeConnection();
 			
-			//24館別階層對應表
-			log.info("**********24 csv");
-			FileSystem fs = FileSystem.get(conf);
-			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.csv");
-			FSDataInputStream inputStream = fs.open(category24MappingFile);
-			Reader reader = new InputStreamReader(inputStream);
-			CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
-			for (CSVRecord csvRecord : csvParser) {
-				String data = csvRecord.get(1)+"<PCHOME>"+csvRecord.get(3)+"<PCHOME>"+csvRecord.get(5);
-				categoryLevelMappingList.add(data);
-			}
-			log.info("**********categoryLevelMappingList:"+categoryLevelMappingList.size());
+//			//24館別階層對應表
+//			log.info("**********24 csv");
+//			FileSystem fs = FileSystem.get(conf);
+//			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.csv");
+//			FSDataInputStream inputStream = fs.open(category24MappingFile);
+//			Reader reader = new InputStreamReader(inputStream);
+//			CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
+//			for (CSVRecord csvRecord : csvParser) {
+//				String data = csvRecord.get(1)+"<PCHOME>"+csvRecord.get(3)+"<PCHOME>"+csvRecord.get(5);
+//				categoryLevelMappingList.add(data);
+//			}
+//			log.info("**********categoryLevelMappingList:"+categoryLevelMappingList.size());
 //			FileSystem fs = FileSystem.get(conf);
 //			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.csv");
 //			inputStream = fs.open(category24MappingFile);
@@ -249,15 +249,15 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					log.error(">>>>>>>fail process processPersonalInfo:"+e.getMessage());
 					continue;
 				}
-				//7.館別階層
-				try {
-					if(StringUtils.isNotBlank(dmpJSon.getAsString("op1"))) {
-						process24CategoryLevel(dmpJSon);
-					}
-				}catch(Exception e) {
-					log.error(">>>>>>>fail process 24 category level:"+e.getMessage());
-					continue;
-				}
+//				//7.館別階層
+//				try {
+//					if(StringUtils.isNotBlank(dmpJSon.getAsString("op1"))) {
+//						process24CategoryLevel(dmpJSon);
+//					}
+//				}catch(Exception e) {
+//					log.error(">>>>>>>fail process 24 category level:"+e.getMessage());
+//					continue;
+//				}
 				
 				
 				
