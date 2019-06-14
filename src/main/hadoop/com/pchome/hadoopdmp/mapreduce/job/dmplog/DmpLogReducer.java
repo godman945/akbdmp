@@ -418,6 +418,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
         if(op1.length() == 6) {
         	level = 3;
 		}
+        log.info(">>>>>>level:"+level);
         for (CSVRecord csvRecord : csvParser) {
         	if(level == 2 && op1.equals(csvRecord.get(3))) {
         		log.info(">>>>>>csvRecord:"+csvRecord.get(3)+" --"+op1.equals(csvRecord.get(3)));
@@ -426,8 +427,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
         		log.info(csvRecord.get(5));
         		log.info("-----");
         		break;
-        	}
-        	if(level == 3 && op1.equals(csvRecord.get(5))) {
+        	}else if(level == 3 && op1.equals(csvRecord.get(5))) {
         		log.info(">>>>>>csvRecord:"+csvRecord.get(5)+" --"+op1.equals(csvRecord.get(5)));
         		log.info(csvRecord.get(1));
         		log.info(csvRecord.get(3));
