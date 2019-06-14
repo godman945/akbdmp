@@ -423,17 +423,14 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
         if(level == 3) {
         	return;
         }
-        log.info(">>>>>>>>>>>>1 level:"+level);
+//        log.info(">>>>>>>>>>>>1 level:"+level);
         for (CSVRecord csvRecord : csvParser) {
-        	
-        	if(csvRecord.get(3).length() != 4) {
-        		continue;
-        	}
-        	
-        	
-        	log.info(">>>>>>>>>>>>1 csv category:"+(csvRecord.get(3)));
-        	log.info(">>>>>>>>>>>>1 level == 2:"+(level == 2));
-        	log.info(">>>>>>>>>>>>1 op1.equals(csvRecord.get(3):"+(op1.equals(csvRecord.get(3))));
+//        	if(csvRecord.get(3).length() != 4) {
+//        		continue;
+//        	}
+//        	log.info(">>>>>>>>>>>>1 csv category:"+(csvRecord.get(3)));
+//        	log.info(">>>>>>>>>>>>1 level == 2:"+(level == 2));
+//        	log.info(">>>>>>>>>>>>1 op1.equals(csvRecord.get(3):"+(op1.equals(csvRecord.get(3))));
         	
         	if(level == 2 && op1.equals(csvRecord.get(3))) {
         		log.info(">>>>>>csvRecord:"+csvRecord.get(3)+" --"+op1.equals(csvRecord.get(3)));
