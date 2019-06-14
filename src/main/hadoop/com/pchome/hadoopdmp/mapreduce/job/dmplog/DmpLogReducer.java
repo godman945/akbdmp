@@ -189,6 +189,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				String data = csvRecord.get(1)+"<PCHOME>"+csvRecord.get(3)+"<PCHOME>"+csvRecord.get(5);
 				categoryLevelMappingList.add(data);
 			}
+			log.info("**********categoryLevelMappingList:"+categoryLevelMappingList.size());
 //			FileSystem fs = FileSystem.get(conf);
 //			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.csv");
 //			inputStream = fs.open(category24MappingFile);
@@ -248,7 +249,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				//7.館別階層
 				try {
 					if(StringUtils.isNotBlank(dmpJSon.getAsString("op1"))) {
-//						process24CategoryLevel(dmpJSon);
+						process24CategoryLevel(dmpJSon);
 					}
 				}catch(Exception e) {
 					log.error(">>>>>>>fail process 24 category level:"+e.getMessage());
@@ -417,8 +418,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	//處理24館別階層
 	private void process24CategoryLevel(net.minidev.json.JSONObject dmpJSon) throws Exception{
-		
-		
 		String op1 = dmpJSon.getAsString("op1");
 		int level = 0;
         if(op1.length() == 4) {
@@ -427,9 +426,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
         if(op1.length() == 6) {
         	level = 3;
 		}
-        
-        
-        
         if(categoryLevelMappingMap.containsKey(op1)) {
         	String categoryLevel = categoryLevelMappingMap.get(op1);
         	String level1 = categoryLevel.split("<PCHOME>")[0];
@@ -446,6 +442,11 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
      			String level1 = string.split("<PCHOME>")[0];
      			String level2 = string.split("<PCHOME>")[1];
      			String level3 = string.split("<PCHOME>")[2];
+     			
+     			log.info(">>>>>>>>"+level1);
+     			log.info(">>>>>>>>"+level2);
+     			log.info(">>>>>>>>"+level3);
+     			
      			if(level == 3 && level3.equals(op1)) {
      				log.info(">>>>>>>>>>>>>>>>>2");
              		log.info(">>>>>>>>>>>>>>>>>2 level:"+level);
