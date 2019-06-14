@@ -469,8 +469,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				
 				
 				//館別分類
-				//7.館別階層
 				try {
+					if(dmpDataJson.get("uuid").equals("0042751e-2a10-4566-9cb4-abe05b204787")) {
+						log.info("><><><><><><<><>< uuid:"+dmpDataJson.get("uuid"));
+					}
 					if(StringUtils.isNotBlank(dmpDataJson.getAsString("op1"))) {
 						process24CategoryLevel(dmpDataJson);
 					}
@@ -547,7 +549,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		}
 		
 		if(dmpDataJson.getAsString("uuid").equals("0042751e-2a10-4566-9cb4-abe05b204787")) {
-			log.info(">>>>>>>>>>>>>>>>>>"+dmpDataJson);
+			log.info("ALEX>>>>>>>>>>>>>>>>>>"+dmpDataJson);
 		}
 		
 	}
