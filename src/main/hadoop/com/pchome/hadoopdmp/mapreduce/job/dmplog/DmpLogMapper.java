@@ -51,7 +51,6 @@ import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryRutenCodeBean;
 import com.pchome.hadoopdmp.mapreduce.job.factory.DmpLogBean;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 import com.pchome.hadoopdmp.spring.config.bean.mongodborg.MongodbOrgHadoopConfig;
-import com.sun.tools.javac.code.Attribute.Array;
 
 @Component
 public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
@@ -318,6 +317,15 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("op1", "");
 						dmpDataJson.put("op2", "");
 						dmpDataJson.put("email", "");
+						
+						dmpDataJson.put("bu_layer1", "");
+						dmpDataJson.put("bu_layer2", "");
+						dmpDataJson.put("bu_layer3", "");
+						dmpDataJson.put("bu_layer4", "");
+						
+						
+						
+						
 					}else {
 						return;
 					}
@@ -421,10 +429,13 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					}else {
 						dmpDataJson.put("op1", "");
 					}
-					
 					dmpDataJson.put("op2", "");
-					
 					dmpDataJson.put("email", "");
+					
+					dmpDataJson.put("bu_layer1", "");
+					dmpDataJson.put("bu_layer2", "");
+					dmpDataJson.put("bu_layer3", "");
+					dmpDataJson.put("bu_layer4", "");
 				}catch(Exception e) {
 					log.error(">>>>bulog set json fail:"+e.getMessage());
 					return;
@@ -496,76 +507,46 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	
 	
 	//處理24館別階層
-		private static String level1 = "";
-		private static String level2 = "";
-		private static String level3 = "";
-		private static String op1 = "";
-		private static long totalCount = 0;
-		private void process24CategoryLevel(net.minidev.json.JSONObject dmpDataJson) throws Exception{
-			long startTime = System.currentTimeMillis();
-			totalCount = totalCount + 1;
-			op1 = dmpDataJson.getAsString("op1");
-			int level = 0;
-	        if(op1.length() == 4) {
-	        	level = 2;
-			}
-	        if(op1.length() == 6) {
-	        	level = 3;
-			}
-	        if(categoryLevelMappingMap.containsKey(op1)) {
-	        	level1 = "";
-	    		level2 = "";
-	    		level3 = "";
-	        	
-	        	String categoryLevel = categoryLevelMappingMap.get(op1);
-	        	level1 = categoryLevel.split("<PCHOME>")[0];
-				level2 = categoryLevel.split("<PCHOME>")[1];
-				level3 = categoryLevel.split("<PCHOME>")[2];
-//				log.info(">>>>>>>>>>>>>>>>>1");
-//	    		log.info(">>>>>>>>>>>>>>>>>1 level:"+level);
-//				log.info(level1);
-//	    		log.info(level2);
-//	    		log.info(level3);
-//	    		log.info("************1");
-	        }else {
-	        	 for (String string : categoryLevelMappingList) {
-	        		level1 = "";
-	        		level2 = "";
-	        		level3 = "";
-	        		 
-	        		 
-	        		level1 = string.split("<PCHOME>")[0];
-	     			level2 = string.split("<PCHOME>")[1];
-	     			level3 = string.split("<PCHOME>")[2];
-	     			if(level == 2 && level2.equals(op1)) {
-//	     				log.info(">>>>>>>>>>>>>>>>>2");
-//	             		log.info(">>>>>>>>>>>>>>>>>2 level:"+level);
-//	         			log.info(level1);
-//	             		log.info(level2);
-//	             		log.info(level3);
-//	             		log.info("************");
-	             		categoryLevelMappingMap.put(op1, string);
-	             		break;
-	     			}else if(level == 3 && level3.equals(op1)) {
-//	     				log.info(">>>>>>>>>>>>>>>>>2");
-//	             		log.info(">>>>>>>>>>>>>>>>>2 level:"+level);
-//	         			log.info(level1);
-//	             		log.info(level2);
-//	             		log.info(level3);
-//	             		log.info("************");
-	             		categoryLevelMappingMap.put(op1, string);
-	             		break;
-	     			}
-	     		}
-	        }
-	        long endTime = System.currentTimeMillis();
-	        float excTime=(float)(endTime-startTime);
-	        log.info("cost time:"+ excTime+" process:"+totalCount);
+	private static String op1 = "";
+	private void process24CategoryLevel(net.minidev.json.JSONObject dmpDataJson) throws Exception{
+		op1 = dmpDataJson.getAsString("op1");
+		int level = 0;
+		if(op1.length() == 4) {
+			level = 2;
 		}
-	
-	
-	
-	
+		if(op1.length() == 6) {
+			level = 3;
+		}
+		if(categoryLevelMappingMap.containsKey(op1)) {
+			String categoryLevel = categoryLevelMappingMap.get(op1);
+			String level1 = categoryLevel.split("<PCHOME>")[0];
+			String level2 = categoryLevel.split("<PCHOME>")[1];
+			String level3 = categoryLevel.split("<PCHOME>")[2];
+			dmpDataJson.put("bu_layer1", level1);
+			dmpDataJson.put("bu_layer2", level2);
+			dmpDataJson.put("bu_layer3", level3);
+		}else {
+			for (String string : categoryLevelMappingList) {
+				String level2 = string.split("<PCHOME>")[1];
+				String level3 = string.split("<PCHOME>")[2];
+				if(level == 2 && level2.equals(op1)) {
+					String level1 = string.split("<PCHOME>")[0];
+					dmpDataJson.put("bu_layer1", level1);
+					dmpDataJson.put("bu_layer2", level2);
+					dmpDataJson.put("bu_layer3", level3);
+					categoryLevelMappingMap.put(op1, string);
+					break;
+				}else if(level == 3 && level3.equals(op1)) {
+					String level1 = string.split("<PCHOME>")[0];
+					dmpDataJson.put("bu_layer1", level1);
+					dmpDataJson.put("bu_layer2", level2);
+					dmpDataJson.put("bu_layer3", level3);
+					categoryLevelMappingMap.put(op1, string);
+					break;
+				}
+			}
+		}
+	}
 	
 	
 	public DmpLogBean dmpBeanIntegrate(DmpLogBean dmpLogBeanResult) throws Exception {

@@ -177,45 +177,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				pfbxWebsiteCategory.put(resultSet.getString("customer_info_id"), resultSet.getString("category_code"));
 			}
 			mysqlUtil.closeConnection();
-			
-//			//24館別階層對應表
-//			log.info("**********24 csv");
-//			FileSystem fs = FileSystem.get(conf);
-//			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.csv");
-//			FSDataInputStream inputStream = fs.open(category24MappingFile);
-//			Reader reader = new InputStreamReader(inputStream);
-//			CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
-//			for (CSVRecord csvRecord : csvParser) {
-//				String data = csvRecord.get(1)+"<PCHOME>"+csvRecord.get(3)+"<PCHOME>"+csvRecord.get(5);
-//				categoryLevelMappingList.add(data);
-//			}
-//			log.info("**********categoryLevelMappingList:"+categoryLevelMappingList.size());
-//			FileSystem fs = FileSystem.get(conf);
-//			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.csv");
-//			inputStream = fs.open(category24MappingFile);
-//			FSDataInputStream inputStream = fs.open(category24MappingFile);
-//			Reader reader = new InputStreamReader(inputStream);
-//            this.csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
-//            for (CSVRecord csvRecord : this.csvParser) {
-//                // Accessing Values by Column Index
-//                log.info(csvRecord.get(1));
-////                log.info(csvRecord.get(3));
-////                log.info(csvRecord.get(5));
-//                log.info("-----");
-//            }
-			
-			
-			
-			
-			
-//			Workbook workbook = WorkbookFactory.create(inputStream);
-//			DataFormatter dataFormatter = new DataFormatter();
-//			Sheet sheet = workbook.getSheetAt(0);
-//			this.rowIterator = sheet.rowIterator();
-
-//			inputStream.close();
-//			fs.close();
-			
 		} catch (Throwable e) {
 			log.error("reduce setup error>>>>>> " + e);
 		}
@@ -226,9 +187,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		try {
 //			log.info(">>>>>>>>>>>dmpJSon:"+dmpJSon);
 //			log.info(">>>>>>>>>>>mapperKey:"+mapperKey.toString());
-			
-			
-			long startTime = System.currentTimeMillis();
 			int procsee = 0;
 			for (Text text : mapperValue) {
 				wiriteToDruid.setLength(0);
@@ -249,19 +207,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					log.error(">>>>>>>fail process processPersonalInfo:"+e.getMessage());
 					continue;
 				}
-//				//7.館別階層
-//				try {
-//					if(StringUtils.isNotBlank(dmpJSon.getAsString("op1"))) {
-//						process24CategoryLevel(dmpJSon);
-//					}
-//				}catch(Exception e) {
-//					log.error(">>>>>>>fail process 24 category level:"+e.getMessage());
-//					continue;
-//				}
-				
-				
-				
-				
 //				log.info(dmpJSon);
 				wiriteToDruid.append("\""+dmpJSon.getAsString("uuid").toString()+"\"".trim());
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_date")).append("\"");
@@ -324,11 +269,13 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				wiriteToDruid.append(",").append("\"").append(weeks[week_index]).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_ck")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_pv")).append("\"");
-				if(StringUtils.isNotBlank(dmpJSon.getAsString("pfbx_customer_info_id"))) {
-					wiriteToDruid.append(",").append("\"").append(pfbxWebsiteCategory.get(dmpJSon.getAsString("pfbx_customer_info_id"))).append("\"");
-				}else {
-					wiriteToDruid.append(",").append("\"").append("").append("\"");
-				}
+				String pfbxCustomerInfoId = dmpJSon.getAsString("pfbx_customer_info_id");
+				wiriteToDruid.append(",").append("\"").append(pfbxCustomerInfoId).append("\"");
+				
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("bu_layer1")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("bu_layer2")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("bu_layer3")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("bu_layer4")).append("\"");
 				//產出csv
 				keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
 				context.write(new Text(wiriteToDruid.toString()), null);
@@ -337,9 +284,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			wiriteToDruid.setLength(0);
 			
 			
-			long endTime = System.currentTimeMillis();
-			float excTime=(float)(endTime-startTime);
-			log.info("reduce time:"+ excTime+" total process:"+totalCount);
 			
 			
 			
@@ -429,186 +373,11 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		}
 	}
 
-	//處理24館別階層
-	private static String level1 = "";
-	private static String level2 = "";
-	private static String level3 = "";
-	private static String op1 = "";
-	private static long totalCount = 0;
-	private void process24CategoryLevel(net.minidev.json.JSONObject dmpJSon) throws Exception{
-		long startTime = System.currentTimeMillis();
-		totalCount = totalCount + 1;
-		op1 = dmpJSon.getAsString("op1");
-		int level = 0;
-        if(op1.length() == 4) {
-        	level = 2;
-		}
-        if(op1.length() == 6) {
-        	level = 3;
-		}
-        if(categoryLevelMappingMap.containsKey(op1)) {
-        	level1 = "";
-    		level2 = "";
-    		level3 = "";
-        	
-        	String categoryLevel = categoryLevelMappingMap.get(op1);
-        	level1 = categoryLevel.split("<PCHOME>")[0];
-			level2 = categoryLevel.split("<PCHOME>")[1];
-			level3 = categoryLevel.split("<PCHOME>")[2];
-//			log.info(">>>>>>>>>>>>>>>>>1");
-//    		log.info(">>>>>>>>>>>>>>>>>1 level:"+level);
-//			log.info(level1);
-//    		log.info(level2);
-//    		log.info(level3);
-//    		log.info("************1");
-        }else {
-        	 for (String string : categoryLevelMappingList) {
-        		level1 = "";
-        		level2 = "";
-        		level3 = "";
-        		 
-        		 
-        		level1 = string.split("<PCHOME>")[0];
-     			level2 = string.split("<PCHOME>")[1];
-     			level3 = string.split("<PCHOME>")[2];
-     			if(level == 2 && level2.equals(op1)) {
-//     				log.info(">>>>>>>>>>>>>>>>>2");
-//             		log.info(">>>>>>>>>>>>>>>>>2 level:"+level);
-//         			log.info(level1);
-//             		log.info(level2);
-//             		log.info(level3);
-//             		log.info("************");
-             		categoryLevelMappingMap.put(op1, string);
-             		break;
-     			}else if(level == 3 && level3.equals(op1)) {
-//     				log.info(">>>>>>>>>>>>>>>>>2");
-//             		log.info(">>>>>>>>>>>>>>>>>2 level:"+level);
-//         			log.info(level1);
-//             		log.info(level2);
-//             		log.info(level3);
-//             		log.info("************");
-             		categoryLevelMappingMap.put(op1, string);
-             		break;
-     			}
-     		}
-        }
-        long endTime = System.currentTimeMillis();
-        float excTime=(float)(endTime-startTime);
-        log.info("cost time:"+ excTime+" process:"+totalCount);
-//        log.info("@@>>>>>>level:"+level+" op1:"+op1);
-//        for (CSVRecord csvRecord : csvParser) {
-//        	if(csvRecord.get(5).equals(op1)){
-//        		log.info(">>>>>>>>>>>>>>>>>2");
-//        		log.info(">>>>>>>>>>>>>>>>>2 level:"+level);
-//        		log.info(level == 3);
-//    			log.info(csvRecord.get(1));
-//        		log.info(csvRecord.get(3));
-//        		log.info(csvRecord.get(5));
-//        		log.info("************");
-//        		break;
-//        	}
-        	
-        	
-        	
-        	
-//        	if(op1.equals("DYAJBR")) {
-//        		log.info(">>>>>>>>>>>>>>>>>2");
-//        		if(level == 3) {
-//        			log.info(">>>>>>>>>>>>>>>>>2 level:"+level);
-//        			log.info(csvRecord.get(1));
-//            		log.info(csvRecord.get(3));
-//            		log.info(csvRecord.get(5));
-//            		log.info("************");
-//        		}
-//        		if(String.valueOf(level).equals("3")) {
-//        			log.info("AA>>>>>>>>>>>>>>>>>2 level:"+level);
-//        			log.info(csvRecord.get(1));
-//            		log.info(csvRecord.get(3));
-//            		log.info(csvRecord.get(5));
-//            		log.info("************");
-//        		}
-//        		
-//        	}
-        	
-        	
-//        	if(level == 2 && op1.equals(csvRecord.get(3))) {
-//        		log.info(">>>>>>csvRecord:"+csvRecord.get(3)+" --"+op1.equals(csvRecord.get(3)));
-//        		log.info(csvRecord.get(1));
-//        		log.info(csvRecord.get(3));
-//        		log.info(csvRecord.get(5));
-//        		log.info("-----");
-//        		break;
-//        	}else if(op1.equals("DYAJBR")) {
-//        		if(op1.equals("DYAJBR")) {
-//        			log.info(">>>>>>>>>>>>>>>>>2");
-//        			log.info(csvRecord == null);
-//            		log.info(csvRecord.get(1));
-//            		log.info(csvRecord.get(3));
-//            		log.info(csvRecord.get(5));
-//        		}
-////        		if(op1.equals(csvRecord.get(5))) {
-////        			log.info(">>>>>>csvRecord:"+csvRecord.get(5)+" --"+op1.equals(csvRecord.get(5)));
-////            		log.info(csvRecord.get(1));
-////            		log.info(csvRecord.get(3));
-////            		log.info(csvRecord.get(5));
-////            		log.info("-----");
-////            		break;
-////        		}
-//        		
-//        		
-//        	}
-//        }
-		
-        
-        
-        
-        
-        
-        
-//        log.info(">>>>>level:"+level);
-//        int alex = 0;
-        
-//        while (rowIterator.hasNext()) {
-//            Row row = rowIterator.next();
-////            log.info("TEST>>>>>>>>>START");
-////            log.info("TEST>>>>>>>>>level-1:"+row.getCell(1));
-////        	log.info("TEST>>>>>>>>>level-2:"+row.getCell(3));
-////        	log.info("TEST>>>>>>>>>level-3:"+row.getCell(5));
-//           
-//            
-//            if(level == 2) {
-//            	 if(alex == 0) {
-//                     log.info("TEST>>>>>>>>>START");
-//                     log.info("TEST>>>>>>>>>level-1:"+row.getCell(1));
-//                     log.info("TEST>>>>>>>>>level-2:"+row.getCell(3));
-//                     log.info("TEST>>>>>>>>>level-3:"+row.getCell(5));
-//                     alex = alex + 1;
-//            	 }
-//            	 log.info(">>>>>>>>>op1:"+op1+"["+row.getCell(3)+"]");
-//            }
-//            
-//            
-////            if(level == 2 && row.getCell(3).equals(op1)) {
-////            	log.info(">>>>>>>>>op1:"+op1);
-////            	log.info(">>>>>>>>>level-1:"+row.getCell(1));
-////            	log.info(">>>>>>>>>level-2:"+row.getCell(3));
-////            	log.info(">>>>>>>>>level-3:"+row.getCell(5));
-////            	break;
-////            }else if(level == 3 && row.getCell(5).equals(op1)) {
-//////            	log.info(">>>>>>>>>op1:"+op1);
-//////            	log.info(">>>>>>>>>level-1:"+row.getCell(1));
-//////            	log.info(">>>>>>>>>level-2:"+row.getCell(3));
-//////            	log.info(">>>>>>>>>level-3:"+row.getCell(5));
-////            	break;
-////            }
-//        }
-	}
 	
 	
 	
 	// 處理mdp map不存在時
-	private void processKafakDmpMapKeyNotExist(String recordDate, JSONObject jsonObjOrg, String reducerMapKey)
-			throws Exception {
+	private void processKafakDmpMapKeyNotExist(String recordDate, JSONObject jsonObjOrg, String reducerMapKey) throws Exception {
 		// 處理info資訊
 //		log.info("processKafakDmpMapKeyNotExist >>>>>>>> 1");
 		JSONObject hadoopData = ((JSONObject) jsonObjOrg.get("data"));
@@ -658,8 +427,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	}
 
 	// 處理mdp map存在時
-	private void processKafakDmpMapKeyIsExist(String recordDate, JSONObject jsonObjOrg, String reducerMapKey,
-			JSONObject dmpJson) throws Exception {
+	private void processKafakDmpMapKeyIsExist(String recordDate, JSONObject jsonObjOrg, String reducerMapKey,JSONObject dmpJson) throws Exception {
 //		log.info("processKafakDmpMapKeyIsExist >>>>>>>> 1");
 		JSONObject hadoopDataOrg = ((JSONObject) jsonObjOrg.get("data"));
 		JSONObject hadoopDataDmpMap = ((JSONObject) dmpJson.get("data"));
@@ -667,8 +435,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			String source = ((JSONObject) hadoopDataOrg.get(enumDataKeyInfo.toString())).getAsString("source");
 			String value = ((JSONObject) hadoopDataOrg.get(enumDataKeyInfo.toString())).getAsString("value");
 			// 此次log資訊來源及值都不為null才取出資料進行判斷是否加1邏輯
-			if ((StringUtils.isNotBlank(source) && !source.equals("null"))
-					&& (StringUtils.isNotBlank(value) && !value.equals("null"))) {
+			if ((StringUtils.isNotBlank(source) && !source.equals("null"))	&& (StringUtils.isNotBlank(value) && !value.equals("null"))) {
 				boolean newDetail = true;
 				JSONArray array = (JSONArray) hadoopDataDmpMap.get(enumDataKeyInfo.toString());
 				for (Object object : array) {
