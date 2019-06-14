@@ -180,9 +180,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			
 			//24館別階層對應表
 			log.info("**********24 csv");
-			FileSystem fs = FileSystem.get(conf);
-			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.csv");
-			inputStream = fs.open(category24MappingFile);
+//			FileSystem fs = FileSystem.get(conf);
+//			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.csv");
+//			inputStream = fs.open(category24MappingFile);
 //			FSDataInputStream inputStream = fs.open(category24MappingFile);
 //			Reader reader = new InputStreamReader(inputStream);
 //            this.csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
@@ -239,7 +239,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				//7.館別階層
 				try {
 					if(StringUtils.isNotBlank(dmpJSon.getAsString("op1"))) {
-						process24CategoryLevel(dmpJSon);
+						process24CategoryLevel(dmpJSon,context);
 					}
 				}catch(Exception e) {
 					log.error(">>>>>>>fail process 24 category level:"+e.getMessage());
@@ -407,9 +407,14 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	}
 
 	//處理24館別階層
-	private void process24CategoryLevel(net.minidev.json.JSONObject dmpJSon) throws Exception{
+	private void process24CategoryLevel(net.minidev.json.JSONObject dmpJSon,Context context) throws Exception{
+		Configuration conf = context.getConfiguration();
+		FileSystem fs = FileSystem.get(conf);
+		org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.csv");
+		inputStream = fs.open(category24MappingFile);
 		Reader reader = new InputStreamReader(inputStream);
-		this.csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
+		CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
+		
 		String op1 = dmpJSon.getAsString("op1");
 		int level = 0;
         if(op1.length() == 4) {
@@ -420,8 +425,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		}
         log.info("@@>>>>>>level:"+level+" op1:"+op1);
         for (CSVRecord csvRecord : csvParser) {
-        	
-        	
         	if(csvRecord.get(5).equals(op1)){
         		log.info(">>>>>>>>>>>>>>>>>2");
         		log.info(">>>>>>>>>>>>>>>>>2 level:"+level);
@@ -432,7 +435,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
         		log.info("************");
         		break;
         	}
-        	
         	
         	
         	
