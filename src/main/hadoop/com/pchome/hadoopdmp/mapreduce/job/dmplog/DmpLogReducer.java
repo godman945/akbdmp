@@ -420,32 +420,44 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		}
         log.info(">>>>>>level:"+level+" op1:"+op1);
         for (CSVRecord csvRecord : csvParser) {
-        	if(level == 2 && op1.equals(csvRecord.get(3))) {
-        		log.info(">>>>>>csvRecord:"+csvRecord.get(3)+" --"+op1.equals(csvRecord.get(3)));
-        		log.info(csvRecord.get(1));
-        		log.info(csvRecord.get(3));
-        		log.info(csvRecord.get(5));
-        		log.info("-----");
-        		break;
-        	}else if(level == 3) {
-        		if(op1.equals("DYAJBR")) {
-        			log.info(">>>>>>>>>>>>>>>>>2");
-        			log.info(csvRecord == null);
-            		log.info(csvRecord.get(1));
+        	if(op1.equals("DYAJBR")) {
+        		log.info(">>>>>>>>>>>>>>>>>2");
+        		if(level == 3) {
+        			log.info(">>>>>>>>>>>>>>>>>2 level:"+level);
+        			log.info(csvRecord.get(1));
             		log.info(csvRecord.get(3));
             		log.info(csvRecord.get(5));
+            		log.info("************");
         		}
-//        		if(op1.equals(csvRecord.get(5))) {
-//        			log.info(">>>>>>csvRecord:"+csvRecord.get(5)+" --"+op1.equals(csvRecord.get(5)));
+        	}
+        	
+        	
+//        	if(level == 2 && op1.equals(csvRecord.get(3))) {
+//        		log.info(">>>>>>csvRecord:"+csvRecord.get(3)+" --"+op1.equals(csvRecord.get(3)));
+//        		log.info(csvRecord.get(1));
+//        		log.info(csvRecord.get(3));
+//        		log.info(csvRecord.get(5));
+//        		log.info("-----");
+//        		break;
+//        	}else if(op1.equals("DYAJBR")) {
+//        		if(op1.equals("DYAJBR")) {
+//        			log.info(">>>>>>>>>>>>>>>>>2");
+//        			log.info(csvRecord == null);
 //            		log.info(csvRecord.get(1));
 //            		log.info(csvRecord.get(3));
 //            		log.info(csvRecord.get(5));
-//            		log.info("-----");
-//            		break;
 //        		}
-        		
-        		
-        	}
+////        		if(op1.equals(csvRecord.get(5))) {
+////        			log.info(">>>>>>csvRecord:"+csvRecord.get(5)+" --"+op1.equals(csvRecord.get(5)));
+////            		log.info(csvRecord.get(1));
+////            		log.info(csvRecord.get(3));
+////            		log.info(csvRecord.get(5));
+////            		log.info("-----");
+////            		break;
+////        		}
+//        		
+//        		
+//        	}
         }
 		
         
