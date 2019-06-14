@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -105,8 +106,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	private DB mongoOrgOperations;
 	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();
 	public static Map<String, String> pfbxWebsiteCategory = new HashMap<String, String>();
-	public static CSVParser csvParser = null;
-	public static FSDataInputStream inputStream = null;
+	public static List<String> categoryLevelMappingList = new ArrayList<String>();
 	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
@@ -180,6 +180,15 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			
 			//24館別階層對應表
 			log.info("**********24 csv");
+			FileSystem fs = FileSystem.get(conf);
+			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.csv");
+			FSDataInputStream inputStream = fs.open(category24MappingFile);
+			Reader reader = new InputStreamReader(inputStream);
+			CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
+			for (CSVRecord csvRecord : csvParser) {
+				String data = csvRecord.get(1)+"<PCHOME>"+csvRecord.get(3)+"<PCHOME>"+csvRecord.get(5);
+				categoryLevelMappingList.add(data);
+			}
 //			FileSystem fs = FileSystem.get(conf);
 //			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.csv");
 //			inputStream = fs.open(category24MappingFile);
@@ -239,7 +248,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				//7.館別階層
 				try {
 					if(StringUtils.isNotBlank(dmpJSon.getAsString("op1"))) {
-						process24CategoryLevel(dmpJSon,context);
+						process24CategoryLevel(dmpJSon);
 					}
 				}catch(Exception e) {
 					log.error(">>>>>>>fail process 24 category level:"+e.getMessage());
@@ -407,13 +416,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	}
 
 	//處理24館別階層
-	private void process24CategoryLevel(net.minidev.json.JSONObject dmpJSon,Context context) throws Exception{
-		Configuration conf = context.getConfiguration();
-		FileSystem fs = FileSystem.get(conf);
-		org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.csv");
-		inputStream = fs.open(category24MappingFile);
-		Reader reader = new InputStreamReader(inputStream);
-		CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
+	private void process24CategoryLevel(net.minidev.json.JSONObject dmpJSon) throws Exception{
+		
 		
 		String op1 = dmpJSon.getAsString("op1");
 		int level = 0;
@@ -423,18 +427,37 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
         if(op1.length() == 6) {
         	level = 3;
 		}
-        log.info("@@>>>>>>level:"+level+" op1:"+op1);
-        for (CSVRecord csvRecord : csvParser) {
-        	if(csvRecord.get(5).equals(op1)){
-        		log.info(">>>>>>>>>>>>>>>>>2");
+        
+        for (String string : categoryLevelMappingList) {
+			String level1 = string.split("<PCHOME>")[0];
+			String level2 = string.split("<PCHOME>")[1];
+			String level3 = string.split("<PCHOME>")[2];
+			
+			if(level == 3 && level3.equals(op1)) {
+				log.info(">>>>>>>>>>>>>>>>>2");
         		log.info(">>>>>>>>>>>>>>>>>2 level:"+level);
-        		log.info(level == 3);
-    			log.info(csvRecord.get(1));
-        		log.info(csvRecord.get(3));
-        		log.info(csvRecord.get(5));
+    			log.info(level1);
+        		log.info(level2);
+        		log.info(level3);
         		log.info("************");
         		break;
-        	}
+			}
+			
+			
+		}
+        
+//        log.info("@@>>>>>>level:"+level+" op1:"+op1);
+//        for (CSVRecord csvRecord : csvParser) {
+//        	if(csvRecord.get(5).equals(op1)){
+//        		log.info(">>>>>>>>>>>>>>>>>2");
+//        		log.info(">>>>>>>>>>>>>>>>>2 level:"+level);
+//        		log.info(level == 3);
+//    			log.info(csvRecord.get(1));
+//        		log.info(csvRecord.get(3));
+//        		log.info(csvRecord.get(5));
+//        		log.info("************");
+//        		break;
+//        	}
         	
         	
         	
