@@ -28,7 +28,7 @@ public class GeoIpComponent {
 		try {
 			response = DmpLogMapper.reader.city(ipAddress);
 		} catch (Exception e) {
-			log.info("The address is not in the database:"+ip);
+//			log.info("The address is not in the database:"+ip);
 		}
 		if (response == null) {
 			dmpJSon.put("area_info_classify", "N");
