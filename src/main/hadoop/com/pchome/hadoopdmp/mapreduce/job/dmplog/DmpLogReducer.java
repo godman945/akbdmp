@@ -1,7 +1,5 @@
 package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
-import java.io.DataInputStream;
-import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
@@ -508,7 +506,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //        		
 //        		
 //        	}
-        }
+//        }
 		
         
         
