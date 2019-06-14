@@ -507,9 +507,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	
 	
 	//處理24館別階層
-	private static String op1 = "";
 	private void process24CategoryLevel(net.minidev.json.JSONObject dmpDataJson) throws Exception{
-		op1 = dmpDataJson.getAsString("op1");
+		String op1 = dmpDataJson.getAsString("op1");
 		int level = 0;
 		if(op1.length() == 4) {
 			level = 2;
@@ -546,6 +545,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				}
 			}
 		}
+		
+		if(dmpDataJson.getAsString("uuid").equals("0042751e-2a10-4566-9cb4-abe05b204787")) {
+			log.info(">>>>>>>>>>>>>>>>>>"+dmpDataJson);
+		}
+		
 	}
 	
 	
