@@ -420,6 +420,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
         if(op1.length() == 6) {
         	level = 3;
 		}
+        if(level == 3) {
+        	return;
+        }
         log.info(">>>>>>>>>>>>1 level:"+level);
         for (CSVRecord csvRecord : csvParser) {
         	
