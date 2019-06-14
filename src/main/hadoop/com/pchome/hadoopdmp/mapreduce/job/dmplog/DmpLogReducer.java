@@ -105,6 +105,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();
 	public static Map<String, String> pfbxWebsiteCategory = new HashMap<String, String>();
 	public static List<String> categoryLevelMappingList = new ArrayList<String>();
+	public static Map<String, String> categoryLevelMappingMap = new HashMap<String, String>();
+	
 	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
@@ -426,23 +428,38 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
         	level = 3;
 		}
         
-        for (String string : categoryLevelMappingList) {
-			String level1 = string.split("<PCHOME>")[0];
-			String level2 = string.split("<PCHOME>")[1];
-			String level3 = string.split("<PCHOME>")[2];
-			
-			if(level == 3 && level3.equals(op1)) {
-				log.info(">>>>>>>>>>>>>>>>>2");
-        		log.info(">>>>>>>>>>>>>>>>>2 level:"+level);
-    			log.info(level1);
-        		log.info(level2);
-        		log.info(level3);
-        		log.info("************");
-        		break;
-			}
-			
-			
-		}
+        
+        
+        if(categoryLevelMappingMap.containsKey(op1)) {
+        	String categoryLevel = categoryLevelMappingMap.get(op1);
+        	String level1 = categoryLevel.split("<PCHOME>")[0];
+			String level2 = categoryLevel.split("<PCHOME>")[1];
+			String level3 = categoryLevel.split("<PCHOME>")[2];
+			log.info(">>>>>>>>>>>>>>>>>1");
+    		log.info(">>>>>>>>>>>>>>>>>1 level:"+level);
+			log.info(level1);
+    		log.info(level2);
+    		log.info(level3);
+    		log.info("************1");
+        }else {
+        	 for (String string : categoryLevelMappingList) {
+     			String level1 = string.split("<PCHOME>")[0];
+     			String level2 = string.split("<PCHOME>")[1];
+     			String level3 = string.split("<PCHOME>")[2];
+     			if(level == 3 && level3.equals(op1)) {
+     				log.info(">>>>>>>>>>>>>>>>>2");
+             		log.info(">>>>>>>>>>>>>>>>>2 level:"+level);
+         			log.info(level1);
+             		log.info(level2);
+             		log.info(level3);
+             		log.info("************");
+             		categoryLevelMappingMap.put(op1, string);
+             		break;
+     			}
+     		}
+        	 
+        }
+       
         
 //        log.info("@@>>>>>>level:"+level+" op1:"+op1);
 //        for (CSVRecord csvRecord : csvParser) {
