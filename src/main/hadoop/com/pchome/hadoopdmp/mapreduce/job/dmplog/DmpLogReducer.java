@@ -421,7 +421,10 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	private static String level2 = "";
 	private static String level3 = "";
 	private static String op1 = "";
+	private static long totalCount = 0;
 	private void process24CategoryLevel(net.minidev.json.JSONObject dmpJSon) throws Exception{
+		long startTime = System.currentTimeMillis();
+		totalCount = totalCount + 1;
 		op1 = dmpJSon.getAsString("op1");
 		int level = 0;
         if(op1.length() == 4) {
@@ -439,12 +442,12 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
         	level1 = categoryLevel.split("<PCHOME>")[0];
 			level2 = categoryLevel.split("<PCHOME>")[1];
 			level3 = categoryLevel.split("<PCHOME>")[2];
-			log.info(">>>>>>>>>>>>>>>>>1");
-    		log.info(">>>>>>>>>>>>>>>>>1 level:"+level);
-			log.info(level1);
-    		log.info(level2);
-    		log.info(level3);
-    		log.info("************1");
+//			log.info(">>>>>>>>>>>>>>>>>1");
+//    		log.info(">>>>>>>>>>>>>>>>>1 level:"+level);
+//			log.info(level1);
+//    		log.info(level2);
+//    		log.info(level3);
+//    		log.info("************1");
         }else {
         	 for (String string : categoryLevelMappingList) {
         		level1 = "";
@@ -456,28 +459,29 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
      			level2 = string.split("<PCHOME>")[1];
      			level3 = string.split("<PCHOME>")[2];
      			if(level == 2 && level2.equals(op1)) {
-     				log.info(">>>>>>>>>>>>>>>>>2");
-             		log.info(">>>>>>>>>>>>>>>>>2 level:"+level);
-         			log.info(level1);
-             		log.info(level2);
-             		log.info(level3);
-             		log.info("************");
+//     				log.info(">>>>>>>>>>>>>>>>>2");
+//             		log.info(">>>>>>>>>>>>>>>>>2 level:"+level);
+//         			log.info(level1);
+//             		log.info(level2);
+//             		log.info(level3);
+//             		log.info("************");
              		categoryLevelMappingMap.put(op1, string);
              		break;
      			}else if(level == 3 && level3.equals(op1)) {
-     				log.info(">>>>>>>>>>>>>>>>>2");
-             		log.info(">>>>>>>>>>>>>>>>>2 level:"+level);
-         			log.info(level1);
-             		log.info(level2);
-             		log.info(level3);
-             		log.info("************");
+//     				log.info(">>>>>>>>>>>>>>>>>2");
+//             		log.info(">>>>>>>>>>>>>>>>>2 level:"+level);
+//         			log.info(level1);
+//             		log.info(level2);
+//             		log.info(level3);
+//             		log.info("************");
              		categoryLevelMappingMap.put(op1, string);
              		break;
      			}
      		}
         }
-       
-        
+        long endTime = System.currentTimeMillis();
+        float excTime=(float)(endTime-startTime);
+        log.info("cost time："+ excTime+" process:"+totalCount);
 //        log.info("@@>>>>>>level:"+level+" op1:"+op1);
 //        for (CSVRecord csvRecord : csvParser) {
 //        	if(csvRecord.get(5).equals(op1)){
