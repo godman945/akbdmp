@@ -443,12 +443,12 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
      			String level2 = string.split("<PCHOME>")[1];
      			String level3 = string.split("<PCHOME>")[2];
      			
-     			if(level3.length() == 6) {
-     				log.info(">>>>>>>>"+level1);
-         			log.info(">>>>>>>>"+level2);
-         			log.info(">>>>>>>>"+level3);
-         			log.info("***************************");
-     			}
+//     			if(level3.length() == 6) {
+//     				log.info(">>>>>>>>"+level1);
+//         			log.info(">>>>>>>>"+level2);
+//         			log.info(">>>>>>>>"+level3);
+//         			log.info("***************************");
+//     			}
      			if(level == 3 && level3.equals(op1)) {
      				log.info(">>>>>>>>>>>>>>>>>2");
              		log.info(">>>>>>>>>>>>>>>>>2 level:"+level);
