@@ -180,15 +180,15 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			
 			//24館別階層對應表
 			log.info("**********24 csv");
-//			FileSystem fs = FileSystem.get(conf);
-//			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.csv");
-//			FSDataInputStream inputStream = fs.open(category24MappingFile);
-//			Reader reader = new InputStreamReader(inputStream);
-//			CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
-//			for (CSVRecord csvRecord : csvParser) {
-//				String data = csvRecord.get(1)+"<PCHOME>"+csvRecord.get(3)+"<PCHOME>"+csvRecord.get(5);
-//				categoryLevelMappingList.add(data);
-//			}
+			FileSystem fs = FileSystem.get(conf);
+			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.csv");
+			FSDataInputStream inputStream = fs.open(category24MappingFile);
+			Reader reader = new InputStreamReader(inputStream);
+			CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
+			for (CSVRecord csvRecord : csvParser) {
+				String data = csvRecord.get(1)+"<PCHOME>"+csvRecord.get(3)+"<PCHOME>"+csvRecord.get(5);
+				categoryLevelMappingList.add(data);
+			}
 //			FileSystem fs = FileSystem.get(conf);
 //			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.csv");
 //			inputStream = fs.open(category24MappingFile);
