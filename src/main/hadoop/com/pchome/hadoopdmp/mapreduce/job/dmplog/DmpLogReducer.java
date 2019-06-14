@@ -417,8 +417,12 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	}
 
 	//處理24館別階層
+	private static String level1 = "";
+	private static String level2 = "";
+	private static String level3 = "";
+	private static String op1 = "";
 	private void process24CategoryLevel(net.minidev.json.JSONObject dmpJSon) throws Exception{
-		String op1 = dmpJSon.getAsString("op1");
+		op1 = dmpJSon.getAsString("op1");
 		int level = 0;
         if(op1.length() == 4) {
         	level = 2;
@@ -427,10 +431,14 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
         	level = 3;
 		}
         if(categoryLevelMappingMap.containsKey(op1)) {
+        	level1 = "";
+    		level2 = "";
+    		level3 = "";
+        	
         	String categoryLevel = categoryLevelMappingMap.get(op1);
-        	String level1 = categoryLevel.split("<PCHOME>")[0];
-			String level2 = categoryLevel.split("<PCHOME>")[1];
-			String level3 = categoryLevel.split("<PCHOME>")[2];
+        	level1 = categoryLevel.split("<PCHOME>")[0];
+			level2 = categoryLevel.split("<PCHOME>")[1];
+			level3 = categoryLevel.split("<PCHOME>")[2];
 			log.info(">>>>>>>>>>>>>>>>>1");
     		log.info(">>>>>>>>>>>>>>>>>1 level:"+level);
 			log.info(level1);
@@ -439,17 +447,24 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
     		log.info("************1");
         }else {
         	 for (String string : categoryLevelMappingList) {
-     			String level1 = string.split("<PCHOME>")[0];
-     			String level2 = string.split("<PCHOME>")[1];
-     			String level3 = string.split("<PCHOME>")[2];
-     			
-//     			if(level3.length() == 6) {
-//     				log.info(">>>>>>>>"+level1);
-//         			log.info(">>>>>>>>"+level2);
-//         			log.info(">>>>>>>>"+level3);
-//         			log.info("***************************");
-//     			}
-     			if(level == 3 && level3.equals(op1)) {
+        		level1 = "";
+        		level2 = "";
+        		level3 = "";
+        		 
+        		 
+        		level1 = string.split("<PCHOME>")[0];
+     			level2 = string.split("<PCHOME>")[1];
+     			level3 = string.split("<PCHOME>")[2];
+     			if(level == 2 && level2.equals(op1)) {
+     				log.info(">>>>>>>>>>>>>>>>>2");
+             		log.info(">>>>>>>>>>>>>>>>>2 level:"+level);
+         			log.info(level1);
+             		log.info(level2);
+             		log.info(level3);
+             		log.info("************");
+             		categoryLevelMappingMap.put(op1, string);
+             		break;
+     			}else if(level == 3 && level3.equals(op1)) {
      				log.info(">>>>>>>>>>>>>>>>>2");
              		log.info(">>>>>>>>>>>>>>>>>2 level:"+level);
          			log.info(level1);
@@ -460,7 +475,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
              		break;
      			}
      		}
-        	 
         }
        
         
