@@ -438,6 +438,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("bu_layer4", "");
 				}catch(Exception e) {
 					log.error(">>>>bulog set json fail:"+e.getMessage());
+					log.error(">>>>bulog set json fail log size:"+logStr.split(paclSymbol).length);
 					return;
 				}
 			}
