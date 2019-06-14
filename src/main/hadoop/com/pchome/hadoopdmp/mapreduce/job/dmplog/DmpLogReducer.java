@@ -422,6 +422,12 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		}
         log.info(">>>>>>>>>>>>1 level:"+level);
         for (CSVRecord csvRecord : csvParser) {
+        	
+        	if(csvRecord.get(3).length() != 4) {
+        		continue;
+        	}
+        	
+        	
         	log.info(">>>>>>>>>>>>1 csv category:"+(csvRecord.get(3)));
         	log.info(">>>>>>>>>>>>1 level == 2:"+(level == 2));
         	log.info(">>>>>>>>>>>>1 op1.equals(csvRecord.get(3):"+(op1.equals(csvRecord.get(3))));
