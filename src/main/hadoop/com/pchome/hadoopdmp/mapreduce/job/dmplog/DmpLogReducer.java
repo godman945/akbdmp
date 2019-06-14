@@ -226,6 +226,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		try {
 //			log.info(">>>>>>>>>>>dmpJSon:"+dmpJSon);
 //			log.info(">>>>>>>>>>>mapperKey:"+mapperKey.toString());
+			
+			
+			long startTime = System.currentTimeMillis();
 			int procsee = 0;
 			for (Text text : mapperValue) {
 				wiriteToDruid.setLength(0);
@@ -332,6 +335,16 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			}
 			dmpJSon.clear();
 			wiriteToDruid.setLength(0);
+			
+			
+			long endTime = System.currentTimeMillis();
+			float excTime=(float)(endTime-startTime);
+			log.info("reduce time:"+ excTime+" total process:"+totalCount);
+			
+			
+			
+			
+			
 			
 //			// log.info(">>>>>> reduce start : " + mapperKey.toString());
 //			String data = mapperKey.toString();
@@ -481,7 +494,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
         }
         long endTime = System.currentTimeMillis();
         float excTime=(float)(endTime-startTime);
-        log.info("cost time："+ excTime+" process:"+totalCount);
+        log.info("cost time:"+ excTime+" process:"+totalCount);
 //        log.info("@@>>>>>>level:"+level+" op1:"+op1);
 //        for (CSVRecord csvRecord : csvParser) {
 //        	if(csvRecord.get(5).equals(op1)){
