@@ -420,26 +420,41 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		}
         log.info("@@>>>>>>level:"+level+" op1:"+op1);
         for (CSVRecord csvRecord : csvParser) {
-        	if(op1.equals("DYAJBR")) {
+        	
+        	
+        	if(csvRecord.get(5).equals(op1)){
         		log.info(">>>>>>>>>>>>>>>>>2");
-        		if(level == 3) {
-        			log.info(">>>>>>>>>>>>>>>>>2 level:"+level);
-        			log.info(csvRecord.get(1));
-            		log.info(csvRecord.get(3));
-            		log.info(csvRecord.get(5));
-            		log.info("************");
-        		}
-        		if(String.valueOf(level).equals("3")) {
-        			log.info("AA>>>>>>>>>>>>>>>>>2 level:"+level);
-        			log.info(csvRecord.get(1));
-            		log.info(csvRecord.get(3));
-            		log.info(csvRecord.get(5));
-            		log.info("************");
-        		}
-        		
-        		
-        		
+        		log.info(">>>>>>>>>>>>>>>>>2 level:"+level);
+        		log.info(level == 3);
+    			log.info(csvRecord.get(1));
+        		log.info(csvRecord.get(3));
+        		log.info(csvRecord.get(5));
+        		log.info("************");
+        		break;
         	}
+        	
+        	
+        	
+        	
+        	
+//        	if(op1.equals("DYAJBR")) {
+//        		log.info(">>>>>>>>>>>>>>>>>2");
+//        		if(level == 3) {
+//        			log.info(">>>>>>>>>>>>>>>>>2 level:"+level);
+//        			log.info(csvRecord.get(1));
+//            		log.info(csvRecord.get(3));
+//            		log.info(csvRecord.get(5));
+//            		log.info("************");
+//        		}
+//        		if(String.valueOf(level).equals("3")) {
+//        			log.info("AA>>>>>>>>>>>>>>>>>2 level:"+level);
+//        			log.info(csvRecord.get(1));
+//            		log.info(csvRecord.get(3));
+//            		log.info(csvRecord.get(5));
+//            		log.info("************");
+//        		}
+//        		
+//        	}
         	
         	
 //        	if(level == 2 && op1.equals(csvRecord.get(3))) {
