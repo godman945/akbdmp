@@ -16,7 +16,7 @@ public class DateTimeComponent {
 	
 	public net.minidev.json.JSONObject datetimeTransformHour(net.minidev.json.JSONObject dmpJSon) throws Exception {
 		dmpJSon.put("time_info_source", dmpJSon.getAsString("hour"));
-		dmpJSon.put("time_info_classify", dmpJSon.getAsString("Y"));
+		dmpJSon.put("time_info_classify", "Y");
 		return dmpJSon;
 		
 		
