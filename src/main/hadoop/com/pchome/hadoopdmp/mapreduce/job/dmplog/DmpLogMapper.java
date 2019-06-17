@@ -289,7 +289,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("area_info_classify", "");
 						//時間資訊
 						dmpDataJson.put("time_info_source", "kdcl");
-						dmpDataJson.put("time_info_classify", "Y");
+						dmpDataJson.put("time_info_classify", "");
 						//裝置資訊 [device_info_classify] null:user_agent為空
 						dmpDataJson.put("user_agent", values[5].replaceAll("\"", ""));
 						dmpDataJson.put("device_info", "");
@@ -392,7 +392,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("area_info_classify", "");
 					//時間資訊
 					dmpDataJson.put("time_info_source", "bulog");
-					dmpDataJson.put("time_info_classify", "Y");
+					dmpDataJson.put("time_info_classify", "");
 					//裝置資訊 [device_info_classify] null:user_agent為空
 					dmpDataJson.put("user_agent", values[8].replaceAll("\"", ""));
 					dmpDataJson.put("device_info", "");
@@ -482,19 +482,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				}
 				//館別分類
 				try {
-					if(dmpDataJson.get("uuid").equals("0042751e-2a10-4566-9cb4-abe05b204787")) {
-						log.info("><><><><><><<><>< uuid:"+dmpDataJson.get("uuid"));
-						log.info("><><><><><><<><>< dmpDataJson:"+dmpDataJson);
-					}
 					if(StringUtils.isNotBlank(dmpDataJson.getAsString("op1"))) {
 						process24CategoryLevel(dmpDataJson);
 					}
-					
-					if(dmpDataJson.get("uuid").equals("0042751e-2a10-4566-9cb4-abe05b204787")) {
-						log.info("DDDDD><><><><><><<><>< uuid:"+dmpDataJson.get("uuid"));
-						log.info("DDDDD><><><><><><<><>< dmpDataJson:"+dmpDataJson);
-					}
-					
 				}catch(Exception e) {
 					log.error(">>>>>>>fail process 24 category level:"+e.getMessage());
 					return;
