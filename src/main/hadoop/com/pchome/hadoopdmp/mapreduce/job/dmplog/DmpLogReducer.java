@@ -187,7 +187,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		try {
 //			log.info(">>>>>>>>>>>dmpJSon:"+dmpJSon);
 //			log.info(">>>>>>>>>>>mapperKey:"+mapperKey.toString());
-			int procsee = 0;
 			for (Text text : mapperValue) {
 				wiriteToDruid.setLength(0);
 				dmpJSon.clear();
@@ -199,10 +198,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				
 				//6.個資
 				try {
-//					if(procsee == 0) {
 					personalInfoComponent.processPersonalInfo(dmpJSon, dBCollection_user_detail);
-//						procsee = procsee + 1;
-//					}
 				}catch(Exception e) {
 					log.error(">>>>>>>fail process processPersonalInfo:"+e.getMessage());
 					continue;

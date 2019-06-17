@@ -50,6 +50,46 @@ public class PersonalInfoComponent {
 		// 如有memid資料，先查mongo，再撈會員中心查個資
 		if(sexAgeInfoMap.containsKey(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid)) {
 			Map<String, String> personalInfoMap = sexAgeInfoMap.get(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid);
+			if(dmpJSon.get("uuid").equals("00ae07ab-f9d8-4d5a-ba09-79e88d4b8bd2")) {
+				log.info(">>>>>>>>>>>>>1 personalInfoMap:"+personalInfoMap);
+				log.info(">>>>>>>>>>>>>1 dmpJSon:"+dmpJSon);
+			}
+			msex = (String) personalInfoMap.get("msex");
+			mage = (String) personalInfoMap.get("mage");
+			int age = 0;
+			if(!mage.equals("NA") && StringUtils.isNotBlank(mage)) {
+				calendar.setTime(new Date());
+				age = calendar.get(Calendar.YEAR) - Integer.parseInt(mage);
+				dmpJSon.put("age", age);
+			}else {
+				dmpJSon.put("age", "");
+			}
+			if(!msex.equals("NA") && StringUtils.isNotBlank(msex)) {
+				dmpJSon.put("sex", msex.toUpperCase());
+			}else {
+				dmpJSon.put("sex", "");
+			}
+			
+			if(StringUtils.isNotBlank(memid)) {
+				dmpJSon.put("sex_source","member_api");
+				dmpJSon.put("age_source","member_api");
+			}else if(StringUtils.isNotBlank(dmpJSon.getAsString("category"))) {
+				dmpJSon.put("sex_source", StringUtils.equals(msex, "NA") ? "" : "excel");
+				dmpJSon.put("age_source", StringUtils.equals(mage, "NA") ? "" : "excel");
+			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 			count = count + 1 ;
 			log.info(">>>>>count:"+count);
 		}else {
