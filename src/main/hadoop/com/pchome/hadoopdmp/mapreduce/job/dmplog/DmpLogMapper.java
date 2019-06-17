@@ -452,6 +452,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				}catch(Exception e) {
 					log.error(">>>>bulog set json fail:"+e.getMessage());
 					log.error(">>>>bulog set json fail log size:"+logStr.split(paclSymbol).length);
+					log.error(">>>>bulog set json dmpDataJson:"+dmpDataJson);
 					return;
 				}
 			}

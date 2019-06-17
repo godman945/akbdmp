@@ -160,22 +160,6 @@ public class DmpLogDriver {
 			for (Path path3 : paths) {
 				log.info(">>>>>>>>>>JOB INPUT PATH:"+path3.toString());
 			}
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
 			Job job = new Job(jobConf, "dmp_log_"+ env + "_druid_test");
 			job.setJarByClass(DmpLogDriver.class);
 			job.setMapperClass(DmpLogMapper.class);
@@ -199,7 +183,7 @@ public class DmpLogDriver {
 			FileInputFormat.setInputPaths(job, paths);
 			FileOutputFormat.setCompressOutput(job, true);  //job使用压缩  
 	        FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);  
-			
+		
 			
 	      //load jar path
 			String[] jarPaths = {
