@@ -322,10 +322,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("bu_layer2", "");
 						dmpDataJson.put("bu_layer3", "");
 						dmpDataJson.put("bu_layer4", "");
-						
-						
-						
-						
 					}else {
 						return;
 					}
@@ -467,14 +463,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("class_24h_url_classify", "");
 					dmpDataJson.put("class_ruten_url_classify", "");
 				}
-				
-				
 				//館別分類
 				try {
-					if(dmpDataJson.get("uuid").equals("0042751e-2a10-4566-9cb4-abe05b204787")) {
-						log.info("><><><><><><<><>< uuid:"+dmpDataJson.get("uuid"));
-						log.info("><><><><><><<><>< dmpDataJson:"+dmpDataJson);
-					}
 					if(StringUtils.isNotBlank(dmpDataJson.getAsString("op1"))) {
 						process24CategoryLevel(dmpDataJson);
 					}
