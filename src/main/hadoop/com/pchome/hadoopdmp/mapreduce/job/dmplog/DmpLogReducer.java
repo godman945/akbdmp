@@ -199,10 +199,10 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				
 				//6.個資
 				try {
-					if(procsee == 0) {
-						personalInfoComponent.processPersonalInfo(dmpJSon, dBCollection_user_detail);
-						procsee = procsee + 1;
-					}
+//					if(procsee == 0) {
+					personalInfoComponent.processPersonalInfo(dmpJSon, dBCollection_user_detail);
+//						procsee = procsee + 1;
+//					}
 				}catch(Exception e) {
 					log.error(">>>>>>>fail process processPersonalInfo:"+e.getMessage());
 					continue;
@@ -212,7 +212,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_date")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("hour")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("memid")).append("\"");
-//				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid_flag")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("referer")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("url")).append("\"");
