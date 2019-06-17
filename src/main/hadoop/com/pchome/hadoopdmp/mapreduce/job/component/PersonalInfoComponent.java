@@ -53,7 +53,7 @@ public class PersonalInfoComponent {
 			if(dmpJSon.get("uuid").equals("00ae07ab-f9d8-4d5a-ba09-79e88d4b8bd2")) {
 				log.info(">>>>>>>>>>>>>1 personalInfoMap:"+personalInfoMap);
 				log.info(">>>>>>>>>>>>>1 dmpJSon:"+dmpJSon);
-			}
+			} 
 			msex = (String) personalInfoMap.get("msex");
 			mage = (String) personalInfoMap.get("mage");
 			int age = 0;
