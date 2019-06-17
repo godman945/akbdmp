@@ -314,7 +314,24 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("screen_y", "");
 						dmpDataJson.put("pa_event", "");
 						dmpDataJson.put("event_id", "");
-						dmpDataJson.put("op1", "");
+						
+						if(values[4].contains("24h.pchome.com.tw")) {
+							String pageCategory = "";
+							if(values[4].equals("https://24h.pchome.com.tw/") || values[4].contains("htm") || values[4].contains("index") || values[4].contains("?fq=") || values[4].contains("store/?q=")) {
+								return;
+							}else if(values[4].contains("?")) {
+								pageCategory = values[4].split("/")[values[4].split("/").length - 1];
+								pageCategory = pageCategory.substring(0, pageCategory.indexOf("?"));
+							}else {
+								pageCategory = values[4].split("/")[values[4].split("/").length - 1];
+							}
+							dmpDataJson.put("op1", pageCategory);
+						}else {
+							dmpDataJson.put("op1", "");
+						}
+						
+						
+						
 						dmpDataJson.put("op2", "");
 						dmpDataJson.put("email", "");
 						
@@ -411,15 +428,15 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("event_id", values[12]);
 					}
 					
-					if(values[4].contains("24h.pchome.com.tw")) {
+					if(values[5].contains("24h.pchome.com.tw")) {
 						String pageCategory = "";
-						if(values[4].equals("https://24h.pchome.com.tw/") || values[4].contains("htm") || values[4].contains("index") || values[4].contains("?fq=") || values[4].contains("store/?q=")) {
+						if(values[5].equals("https://24h.pchome.com.tw/") || values[5].contains("htm") || values[5].contains("index") || values[5].contains("?fq=") || values[5].contains("store/?q=")) {
 							return;
-						}else if(values[4].contains("?")) {
-							pageCategory = values[4].split("/")[values[4].split("/").length - 1];
+						}else if(values[5].contains("?")) {
+							pageCategory = values[5].split("/")[values[5].split("/").length - 1];
 							pageCategory = pageCategory.substring(0, pageCategory.indexOf("?"));
 						}else {
-							pageCategory = values[4].split("/")[values[4].split("/").length - 1];
+							pageCategory = values[5].split("/")[values[5].split("/").length - 1];
 						}
 						dmpDataJson.put("op1", pageCategory);
 					}else {

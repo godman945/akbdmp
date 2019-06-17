@@ -270,8 +270,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_ck")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_pv")).append("\"");
 				String pfbxCustomerInfoId = dmpJSon.getAsString("pfbx_customer_info_id");
-				wiriteToDruid.append(",").append("\"").append(pfbxCustomerInfoId).append("\"");
-				
+				String webClass = StringUtils.isBlank(pfbxWebsiteCategory.get(pfbxCustomerInfoId)) ? "" : pfbxWebsiteCategory.get(pfbxCustomerInfoId);
+				wiriteToDruid.append(",").append("\"").append(webClass).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("bu_layer1")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("bu_layer2")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("bu_layer3")).append("\"");
