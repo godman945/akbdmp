@@ -347,6 +347,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				try {
 					log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
 					String[] values = logStr.split(paclSymbol);
+					
+					log.info(">>>>>>>length:"+values.length);
+					log.info(">>>>>>>event_id:"+values[12]);
+					
+					
 					dmpDataJson.put("fileName", fileName);
 					dmpDataJson.put("log_date", values[0]);
 					dmpDataJson.put("hour", record_hour);
