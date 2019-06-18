@@ -32,6 +32,7 @@ public class PersonalInfoComponent {
 	
 	private static DBCollection dBCollection;
 	private static String memid = "";
+	private static String category = "";
 	private static DBObject dbObject;
 	private static String userInfoStr;
 	private static String msex = "";
@@ -46,10 +47,11 @@ public class PersonalInfoComponent {
 		this.userInfoStr = "";
 		this.dBCollection = dbCollectionUser;
 		this.memid = dmpJSon.getAsString("memid");
+		this.category = dmpJSon.getAsString("category");
 		dbObject = null;
 		// 如有memid資料，先查mongo，再撈會員中心查個資
 		if(dmpJSon.get("uuid").equals("d5a981dc-477d-4dff-83bf-982dbccc035a")) {
-			log.info(">>>>>>>>>>>>> dmpJSon:"+dmpJSon);
+			log.info(">>>>>>>>>>>>> category:"+category+" memid:"+memid);
 		} 
 		if(sexAgeInfoMap.containsKey(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid+"<PCHOME>"+dmpJSon.getAsString("category"))) {
 			Map<String, String> personalInfoMap = sexAgeInfoMap.get(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid);
@@ -81,12 +83,6 @@ public class PersonalInfoComponent {
 			} else {
 				dmpJSon.put("personal_info_api_classify", "N");
 			}
-			
-			
-			if(dmpJSon.get("uuid").equals("d5a981dc-477d-4dff-83bf-982dbccc035a")) {
-				log.info(">>>>>>>>>>>>>1 dmpJSon:"+dmpJSon);
-			} 
-			
 		}else {
 			if (StringUtils.isNotBlank(memid)) {
 //				log.info(">>>>>>memid:"+memid);
@@ -151,7 +147,7 @@ public class PersonalInfoComponent {
 					} else {
 						dmpJSon.put("personal_info_api_classify", "N");
 					}
-					sexAgeInfoMap.put(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid+"<PCHOME>"+dmpJSon.getAsString("category"), memberInfoMapApi);
+					sexAgeInfoMap.put(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid+"<PCHOME>"+category, memberInfoMapApi);
 				}
 				
 				//mongo DB中無資料
@@ -188,13 +184,13 @@ public class PersonalInfoComponent {
 				dmpJSon.put("sex_source","member_api");
 				dmpJSon.put("age_source","member_api");
 				
-				sexAgeInfoMap.put(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid+"<PCHOME>"+dmpJSon.getAsString("category"), memberInfoMapApi);
+				sexAgeInfoMap.put(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid+"<PCHOME>"+category, memberInfoMapApi);
 //				log.info(">>>>>>memberInfoMapApi:"+memberInfoMapApi);
 				
 			}else {
 				if(StringUtils.isNotBlank(dmpJSon.getAsString("category"))) {
 					//處理個資推估
-					Map<String, String> forecastPersonalInfoMap = processForecastPersonalInfo(dmpJSon,dmpJSon.getAsString("category"));
+					Map<String, String> forecastPersonalInfoMap = processForecastPersonalInfo(dmpJSon,category);
 					String msex = forecastPersonalInfoMap.get("msex");
 					String mage = forecastPersonalInfoMap.get("mage");
 					if(!mage.equals("NA") && StringUtils.isNotBlank(mage)) {
@@ -218,11 +214,6 @@ public class PersonalInfoComponent {
 				}
 			}
 		}
-		
-		
-		if(dmpJSon.get("uuid").equals("d5a981dc-477d-4dff-83bf-982dbccc035a")) {
-			log.info(">>>>>>>>>>>>>2 dmpJSon:"+dmpJSon);
-		} 
 		
 		if(StringUtils.isNotBlank(dmpJSon.getAsString("age"))) {
 			int age = Integer.parseInt(dmpJSon.getAsString("age"));
