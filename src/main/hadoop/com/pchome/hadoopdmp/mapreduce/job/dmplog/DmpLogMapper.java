@@ -200,7 +200,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public void map(LongWritable offset, Text value, Context context) {
 			inputSplit = (InputSplit)context.getInputSplit(); 
 			logpath = ((FileSplit)inputSplit).getPath().toString();
-//			log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
+			log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
 			String fileName = ((FileSplit)inputSplit).getPath().getName();
 //			log.info(">>>>>>>>>>>>>>>>>>fileName:"+fileName);
 			
@@ -433,8 +433,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //						dmpDataJson.put("prod_dis", "");
 						
 						
-						log.info(">>>>>>>bu length:"+values.length);
-						log.info(">>>>>>>bu event_id:"+values[12]);
+//						log.info(">>>>>>>bu length:"+values.length);
+//						log.info(">>>>>>>bu event_id:"+values[12]);
 						
 						
 					}
