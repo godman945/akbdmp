@@ -48,12 +48,11 @@ public class PersonalInfoComponent {
 		this.memid = dmpJSon.getAsString("memid");
 		dbObject = null;
 		// 如有memid資料，先查mongo，再撈會員中心查個資
+		if(dmpJSon.get("uuid").equals("d5a981dc-477d-4dff-83bf-982dbccc035a")) {
+			log.info(">>>>>>>>>>>>> dmpJSon:"+dmpJSon);
+		} 
 		if(sexAgeInfoMap.containsKey(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid)) {
 			Map<String, String> personalInfoMap = sexAgeInfoMap.get(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid);
-			if(dmpJSon.get("uuid").equals("00ae07ab-f9d8-4d5a-ba09-79e88d4b8bd2")) {
-				log.info(">>>>>>>>>>>>>1 personalInfoMap:"+personalInfoMap);
-				log.info(">>>>>>>>>>>>>1 dmpJSon:"+dmpJSon);
-			} 
 			msex = (String) personalInfoMap.get("msex");
 			mage = (String) personalInfoMap.get("mage");
 			int age = 0;
@@ -69,7 +68,6 @@ public class PersonalInfoComponent {
 			}else {
 				dmpJSon.put("sex", "");
 			}
-			
 			if(StringUtils.isNotBlank(memid)) {
 				dmpJSon.put("sex_source","member_api");
 				dmpJSon.put("age_source","member_api");
@@ -79,19 +77,10 @@ public class PersonalInfoComponent {
 			}
 			
 			
+			if(dmpJSon.get("uuid").equals("d5a981dc-477d-4dff-83bf-982dbccc035a")) {
+				log.info(">>>>>>>>>>>>>1 dmpJSon:"+dmpJSon);
+			} 
 			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			count = count + 1 ;
-			log.info(">>>>>count:"+count);
 		}else {
 			if (StringUtils.isNotBlank(memid)) {
 //				log.info(">>>>>>memid:"+memid);
@@ -225,6 +214,10 @@ public class PersonalInfoComponent {
 		}
 		
 		
+		if(dmpJSon.get("uuid").equals("d5a981dc-477d-4dff-83bf-982dbccc035a")) {
+			log.info(">>>>>>>>>>>>>2 dmpJSon:"+dmpJSon);
+		} 
+		
 		if(StringUtils.isNotBlank(dmpJSon.getAsString("age"))) {
 			int age = Integer.parseInt(dmpJSon.getAsString("age"));
 			for (CategoryAgeEnum categoryAgeEnum : CategoryAgeEnum.values()) {
@@ -291,6 +284,11 @@ public class PersonalInfoComponent {
 //		//處理個資推估
 //		processForecastPersonalInfo(dmpJSon,category);
 		
+		
+		
+		if(dmpJSon.get("uuid").equals("d5a981dc-477d-4dff-83bf-982dbccc035a")) {
+			log.info(">>>>>>>>>>>>>end:");
+		}
 		return dmpJSon;
 		
 		
