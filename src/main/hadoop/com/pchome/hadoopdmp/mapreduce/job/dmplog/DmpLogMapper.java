@@ -166,11 +166,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			//IP轉城市
 			File database = new File(path[5].toString());
 			reader = new DatabaseReader.Builder(database).build();  
-			
-			
-			
-			
-			
 			//24館別階層對應表
 			log.info("**********24 csv");
 			FileSystem fs = FileSystem.get(conf);
@@ -183,9 +178,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				categoryLevelMappingList.add(data);
 			}
 			log.info("**********categoryLevelMappingList:"+categoryLevelMappingList.size());
-			
-			
-			
 		} catch (Exception e) {
 			log.error("Mapper setup error>>>>>> " +e);
 		}
@@ -200,13 +192,13 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public void map(LongWritable offset, Text value, Context context) {
 			inputSplit = (InputSplit)context.getInputSplit(); 
 			logpath = ((FileSplit)inputSplit).getPath().toString();
-			log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
+//			log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
 			String fileName = ((FileSplit)inputSplit).getPath().getName();
 //			log.info(">>>>>>>>>>>>>>>>>>fileName:"+fileName);
 			
 			logStr = value.toString();
 			//1.判斷log來源為kdcl或bu
-			if(logpath.contains("alllog")) {
+			if(logpath.contains("/akb/storedata/alllog/")) {
 				try {
 				//kdcl log	raw data格式為一般或是Campaign
 					if(logStr.indexOf(kdclSymbol) > -1 ){
@@ -351,8 +343,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				}catch(Exception e) {
 					log.error(">>>>kdcl set json fail");
 				}
-			}else if(logpath.contains("bulog")) {
+			}else if(logpath.contains("/akb/storedata/bulog/") || logpath.contains("/pa/storedata/alllog/") ) {
 				try {
+					log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
 					String[] values = logStr.split(paclSymbol);
 					dmpDataJson.put("fileName", fileName);
 					dmpDataJson.put("log_date", values[0]);
