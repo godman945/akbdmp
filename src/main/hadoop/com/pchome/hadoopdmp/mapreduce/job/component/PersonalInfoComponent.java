@@ -50,9 +50,6 @@ public class PersonalInfoComponent {
 		this.category = dmpJSon.getAsString("category");
 		dbObject = null;
 		// 如有memid資料，先查mongo，再撈會員中心查個資
-		if(dmpJSon.get("uuid").equals("d5a981dc-477d-4dff-83bf-982dbccc035a")) {
-			log.info(">>>>>>>>>>>>> category:"+category+" memid:"+memid);
-		} 
 		if(sexAgeInfoMap.containsKey(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid+"<PCHOME>"+category)) {
 			Map<String, String> personalInfoMap = sexAgeInfoMap.get(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid+"<PCHOME>"+category);
 			msex = (String) personalInfoMap.get("msex");
@@ -280,12 +277,6 @@ public class PersonalInfoComponent {
 //		}
 //		//處理個資推估
 //		processForecastPersonalInfo(dmpJSon,category);
-		
-		
-		
-		if(dmpJSon.get("uuid").equals("d5a981dc-477d-4dff-83bf-982dbccc035a")) {
-			log.info(">>>>>>>>>>>>>end:");
-		}
 		return dmpJSon;
 		
 		
