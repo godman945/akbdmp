@@ -431,6 +431,12 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //						dmpDataJson.put("prod_id", "");
 //						dmpDataJson.put("prod_price", "");
 //						dmpDataJson.put("prod_dis", "");
+						
+						
+						log.info(">>>>>>>bu length:"+values.length);
+						log.info(">>>>>>>bu event_id:"+values[12]);
+						
+						
 					}
 					if(values[11].toUpperCase().equals("PAGE_VIEW")) {
 						dmpDataJson.put("event_id", "");
