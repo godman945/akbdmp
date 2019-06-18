@@ -53,8 +53,8 @@ public class PersonalInfoComponent {
 		if(dmpJSon.get("uuid").equals("d5a981dc-477d-4dff-83bf-982dbccc035a")) {
 			log.info(">>>>>>>>>>>>> category:"+category+" memid:"+memid);
 		} 
-		if(sexAgeInfoMap.containsKey(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid+"<PCHOME>"+dmpJSon.getAsString("category"))) {
-			Map<String, String> personalInfoMap = sexAgeInfoMap.get(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid);
+		if(sexAgeInfoMap.containsKey(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid+"<PCHOME>"+category)) {
+			Map<String, String> personalInfoMap = sexAgeInfoMap.get(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid+"<PCHOME>"+category);
 			msex = (String) personalInfoMap.get("msex");
 			mage = (String) personalInfoMap.get("mage");
 			int age = 0;

@@ -87,18 +87,25 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	
 	public static List<String> categoryLevelMappingList = new ArrayList<String>();
 	public static Map<String, String> categoryLevelMappingMap = new HashMap<String, String>();
+	
+	public static ACategoryLogData aCategoryLogDataClick = null;
+	public static ACategoryLogData aCategoryLogDataRetun = null;
+	public static ACategoryLogData aCategoryLogData24H = null;
+	
 	@Override
 	public void setup(Context context) {
 		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
 		try {
 			record_date = context.getConfiguration().get("job.date");
 			record_hour = context.getConfiguration().get("job.hour");
-			
 			log.info("record_date:"+record_date);
 			log.info("record_hour:"+record_hour);
-			
 			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+			this.aCategoryLogDataClick = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
+			this.aCategoryLogDataRetun = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
+			this.aCategoryLogData24H = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
+			
 			this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
 			dBCollection_class_url =  this.mongoOrgOperations.getCollection("class_url");
 			//load 推估分類個資表(ClsfyGndAgeCrspTable.txt)
@@ -314,7 +321,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("screen_y", "");
 						dmpDataJson.put("pa_event", "");
 						dmpDataJson.put("event_id", "");
-						
+						dmpDataJson.put("prod_id", "");
+						dmpDataJson.put("prod_price", "");
+						dmpDataJson.put("prod_dis", "");
 						if(values[4].contains("24h.pchome.com.tw")) {
 							String pageCategory = "";
 							if(values[4].equals("https://24h.pchome.com.tw/") || values[4].contains("htm") || values[4].contains("index") || values[4].contains("?fq=") || values[4].contains("store/?q=")) {
@@ -330,11 +339,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 							dmpDataJson.put("op1", "");
 						}
 						
-						
-						
 						dmpDataJson.put("op2", "");
 						dmpDataJson.put("email", "");
-						
 						dmpDataJson.put("bu_layer1", "");
 						dmpDataJson.put("bu_layer2", "");
 						dmpDataJson.put("bu_layer3", "");
@@ -412,14 +418,19 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("age_source", "");
 					dmpDataJson.put("personal_info_api_classify", "");
 					
-					
 					dmpDataJson.put("pa_id", values[4]);
 					dmpDataJson.put("screen_x", values[9]);
 					dmpDataJson.put("screen_y", values[10]);
 					dmpDataJson.put("pa_event", values[11]);
+					dmpDataJson.put("prod_id", "");
+					dmpDataJson.put("prod_price", "");
+					dmpDataJson.put("prod_dis", "");
 					if(values[11].toUpperCase().equals("TRACKING")) {
 						//pa_event:tracking length 13
 						dmpDataJson.put("event_id", values[12]);
+//						dmpDataJson.put("prod_id", "");
+//						dmpDataJson.put("prod_price", "");
+//						dmpDataJson.put("prod_dis", "");
 					}
 					if(values[11].toUpperCase().equals("PAGE_VIEW")) {
 						dmpDataJson.put("event_id", "");
@@ -444,7 +455,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					}
 					dmpDataJson.put("op2", "");
 					dmpDataJson.put("email", "");
-					
 					dmpDataJson.put("bu_layer1", "");
 					dmpDataJson.put("bu_layer2", "");
 					dmpDataJson.put("bu_layer3", "");
@@ -466,14 +476,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				deviceComponent.parseUserAgentToDevice(dmpDataJson);
 				//5.分類處理元件(分析click、24H、Ruten、campaign分類)
 				if ((dmpDataJson.getAsString("trigger_type").equals("ck") || dmpDataJson.getAsString("log_source").equals("campaign")) ) {// kdcl ad_click的adclass  或   campaign log的adclass 	//&& StringUtils.isNotBlank(dmpLogBeanResult.getAdClass())
-					ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
-					aCategoryLogData.processCategory(dmpDataJson, null);
+					DmpLogMapper.aCategoryLogDataClick.processCategory(dmpDataJson, null);
 				}else if (dmpDataJson.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpDataJson.getAsString("referer")) && dmpDataJson.getAsString("referer").contains("ruten")) {	// 露天
-					ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
-					aCategoryLogData.processCategory(dmpDataJson, dBCollection_class_url);
+					DmpLogMapper.aCategoryLogDataRetun.processCategory(dmpDataJson, dBCollection_class_url);
 				}else if (dmpDataJson.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpDataJson.getAsString("referer")) && dmpDataJson.getAsString("referer").contains("24h")) {		// 24h
-					ACategoryLogData aCategoryLogData = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
-					aCategoryLogData.processCategory(dmpDataJson, dBCollection_class_url);
+					DmpLogMapper.aCategoryLogData24H.processCategory(dmpDataJson, dBCollection_class_url);
 				}else if (dmpDataJson.getAsString("trigger_type").equals("pv") ){
 					dmpDataJson.put("category", "");
 					dmpDataJson.put("category_source", "");
