@@ -51,45 +51,41 @@ public class PersonalInfoComponent {
 		if(dmpJSon.get("uuid").equals("d5a981dc-477d-4dff-83bf-982dbccc035a")) {
 			log.info(">>>>>>>>>>>>> dmpJSon:"+dmpJSon);
 		} 
-		if(sexAgeInfoMap.containsKey(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid)) {
+		if(sexAgeInfoMap.containsKey(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid+"<PCHOME>"+dmpJSon.getAsString("category"))) {
+			Map<String, String> personalInfoMap = sexAgeInfoMap.get(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid);
+			msex = (String) personalInfoMap.get("msex");
+			mage = (String) personalInfoMap.get("mage");
+			int age = 0;
+			if(!mage.equals("NA") && StringUtils.isNotBlank(mage)) {
+				calendar.setTime(new Date());
+				age = calendar.get(Calendar.YEAR) - Integer.parseInt(mage);
+				dmpJSon.put("age", age);
+			}else {
+				dmpJSon.put("age", "");
+			}
+			if(!msex.equals("NA") && StringUtils.isNotBlank(msex)) {
+				dmpJSon.put("sex", msex.toUpperCase());
+			}else {
+				dmpJSon.put("sex", "");
+			}
+			if(StringUtils.isNotBlank(memid)) {
+				dmpJSon.put("sex_source","member_api");
+				dmpJSon.put("age_source","member_api");
+			}else if(StringUtils.isNotBlank(dmpJSon.getAsString("category"))) {
+				dmpJSon.put("sex_source", StringUtils.equals(msex, "NA") ? "" : "excel");
+				dmpJSon.put("age_source", StringUtils.equals(mage, "NA") ? "" : "excel");
+			}
+			
+			if ((!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA"))) {
+				dmpJSon.put("personal_info_api_classify", "Y");
+			} else {
+				dmpJSon.put("personal_info_api_classify", "N");
+			}
 			
 			
-			
-			
-//			Map<String, String> personalInfoMap = sexAgeInfoMap.get(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid);
-//			msex = (String) personalInfoMap.get("msex");
-//			mage = (String) personalInfoMap.get("mage");
-//			int age = 0;
-//			if(!mage.equals("NA") && StringUtils.isNotBlank(mage)) {
-//				calendar.setTime(new Date());
-//				age = calendar.get(Calendar.YEAR) - Integer.parseInt(mage);
-//				dmpJSon.put("age", age);
-//			}else {
-//				dmpJSon.put("age", "");
-//			}
-//			if(!msex.equals("NA") && StringUtils.isNotBlank(msex)) {
-//				dmpJSon.put("sex", msex.toUpperCase());
-//			}else {
-//				dmpJSon.put("sex", "");
-//			}
-//			if(StringUtils.isNotBlank(memid)) {
-//				dmpJSon.put("sex_source","member_api");
-//				dmpJSon.put("age_source","member_api");
-//			}else if(StringUtils.isNotBlank(dmpJSon.getAsString("category"))) {
-//				dmpJSon.put("sex_source", StringUtils.equals(msex, "NA") ? "" : "excel");
-//				dmpJSon.put("age_source", StringUtils.equals(mage, "NA") ? "" : "excel");
-//			}
-//			
-//			if ((!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA"))) {
-//				dmpJSon.put("personal_info_api_classify", "Y");
-//			} else {
-//				dmpJSon.put("personal_info_api_classify", "N");
-//			}
-//			
-//			
-//			if(dmpJSon.get("uuid").equals("d5a981dc-477d-4dff-83bf-982dbccc035a")) {
-//				log.info(">>>>>>>>>>>>>1 dmpJSon:"+dmpJSon);
-//			} 
+			if(dmpJSon.get("uuid").equals("d5a981dc-477d-4dff-83bf-982dbccc035a")) {
+				log.info(">>>>>>>>>>>>>1 dmpJSon:"+dmpJSon);
+			} 
 			
 		}else {
 			if (StringUtils.isNotBlank(memid)) {
@@ -155,7 +151,7 @@ public class PersonalInfoComponent {
 					} else {
 						dmpJSon.put("personal_info_api_classify", "N");
 					}
-					sexAgeInfoMap.put(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid, memberInfoMapApi);
+					sexAgeInfoMap.put(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid+"<PCHOME>"+dmpJSon.getAsString("category"), memberInfoMapApi);
 				}
 				
 				//mongo DB中無資料
