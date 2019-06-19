@@ -357,7 +357,14 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				}
 			}else if(logpath.contains("/akb/storedata/bulog/") || logpath.contains("/pa/storedata/alllog/") ) {
 				try {
+					
+					
 					String[] values = logStr.split(paclSymbol,-1);
+					if(values[2].equals("xxx-b1d59332-9007-4df3-be1a-489f8c553641")) {
+						log.info(">>>>>>>>>>>>>>>0");
+					}
+					
+					
 					dmpDataJson.put("fileName", fileName);
 					dmpDataJson.put("log_date", values[0]);
 					dmpDataJson.put("hour", record_hour);
