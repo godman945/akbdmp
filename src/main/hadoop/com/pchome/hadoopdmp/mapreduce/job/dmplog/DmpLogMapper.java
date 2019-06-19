@@ -188,6 +188,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static net.minidev.json.JSONObject dmpDataJson = new net.minidev.json.JSONObject();
 	private static String logpath = "";
 	private static Map<String,String> hostNameMap = new HashMap<String,String>();
+	
+	
+	private static long bulogCount = 0;
+	private static long pacllogCount = 0;
 	@Override
 	public void map(LongWritable offset, Text value, Context context) {
 			inputSplit = (InputSplit)context.getInputSplit(); 
@@ -345,11 +349,28 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				}
 			}else if(logpath.contains("/akb/storedata/bulog/") || logpath.contains("/pa/storedata/alllog/") ) {
 				try {
-					log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
 					String[] values = logStr.split(paclSymbol);
 					
-					log.info(">>>>>>>length:"+values.length);
-					log.info(">>>>>>>event_id:"+values[12]);
+					
+					if(bulogCount == 0 && logpath.contains("/akb/storedata/bulog/")) {
+						log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
+						log.info(">>>>>>>length:"+values.length);
+						for (int i = 0; i < values.length; i++) {
+							log.info("bulog>>>>>>>["+i+"]:"+values[i]);
+						}
+						bulogCount = bulogCount + 1;
+					}
+					if(pacllogCount == 0 && logpath.contains("/pa/storedata/alllog/")) {
+						log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
+						log.info(">>>>>>>length:"+values.length);
+						for (int i = 0; i < values.length; i++) {
+							log.info("pacllog>>>>>>>["+i+"]:"+values[i]);
+						}
+						bulogCount = bulogCount + 1;
+					}
+					
+					
+					
 					
 					
 					dmpDataJson.put("fileName", fileName);
