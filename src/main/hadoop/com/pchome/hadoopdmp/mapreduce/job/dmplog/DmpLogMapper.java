@@ -207,10 +207,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			//1.判斷log來源為kdcl或bu
 			if(logpath.contains("/akb/storedata/alllog/")) {
 				try {
-					if(true) {
-						return;
-					}
-					
 					//kdcl log	raw data格式為一般或是Campaign
 					if(logStr.indexOf(kdclSymbol) > -1 ){
 						// values[0]  date time (2018-01-04 04:57:12)
@@ -456,8 +452,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					}else {
 						dmpDataJson.put("op1", "");
 					}
-					
-					
 					dmpDataJson.put("op2", "");
 					dmpDataJson.put("email", "");
 					dmpDataJson.put("bu_layer1", "");
