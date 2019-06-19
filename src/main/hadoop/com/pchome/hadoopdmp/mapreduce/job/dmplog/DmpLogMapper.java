@@ -151,6 +151,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				categoryBean.setEnglishCode(tmpStrAry[3].replaceAll("\"", ""));
 				category24hBeanList.add(categoryBean);
 			}
+			log.info("**********category24hBeanList:"+category24hBeanList.size());
 			
 			// load Ruten分類表(DMP_Ruten_category.csv)
 			Path categoryRutenPath = Paths.get(path[4].toString());
@@ -162,6 +163,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				categoryRutenBean.setChineseDesc(tmpStrAry[1].replaceAll("\"", ""));
 				categoryRutenBeanList.add(categoryRutenBean);
 			}
+			log.info("**********categoryRutenBeanList:"+categoryRutenBeanList.size());
 			
 			//IP轉城市
 			File database = new File(path[5].toString());
