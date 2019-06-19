@@ -207,6 +207,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			//1.判斷log來源為kdcl或bu
 			if(logpath.contains("/akb/storedata/alllog/")) {
 				try {
+					
+					if(true) {
+						return;
+					}
+					
 				//kdcl log	raw data格式為一般或是Campaign
 					if(logStr.indexOf(kdclSymbol) > -1 ){
 						// values[0]  date time (2018-01-04 04:57:12)
@@ -355,13 +360,24 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				try {
 					String[] values = logStr.split(paclSymbol);
 					if(bulogCount == 0 && logpath.contains("/akb/storedata/bulog/")) {
+						
+						
+						if(values[2].equals("xxx-b1d59332-9007-4df3-be1a-489f8c553641")) {
+							log.info("xxx-b1d59332-9007-4df3-be1a-489f8c553641>>>>>>>>>>>>>>>>>>logpath:"+logpath);
+							log.info("xxx-b1d59332-9007-4df3-be1a-489f8c553641>>>>>>>length:"+values.length);
+							for (int i = 0; i < values.length; i++) {
+								log.info("xxx-b1d59332-9007-4df3-be1a-489f8c553641>>>>>>>["+i+"]:"+values[i]);
+							}
+						}
+						
+						
 						if(values.length == 13 && values[11].equals("tracking")) {
 							log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
 							log.info(">>>>>>>length:"+values.length);
 							for (int i = 0; i < values.length; i++) {
 								log.info("bulog>>>>>>>["+i+"]:"+values[i]);
 							}
-//							bulogCount = bulogCount + 1;
+							bulogCount = bulogCount + 1;
 						}
 						
 						if(values.length != 13 && values[11].equals("tracking")) {
@@ -399,9 +415,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					
 					
 					
-					if(bulogCount == 0 && logpath.contains("/akb/storedata/bulog/")) {
-						log.info("bulog>>>>>>>1-1");
-					}
 					
 					dmpDataJson.put("fileName", fileName);
 					dmpDataJson.put("log_date", values[0]);
@@ -457,9 +470,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("device_info_source", "");
 					dmpDataJson.put("device_info_classify", "");
 					
-					if(bulogCount == 0 && logpath.contains("/akb/storedata/bulog/")) {
-						log.info("bulog>>>>>>>1-2");
-					}
 					
 					//分類資訊
 					dmpDataJson.put("category", "");
@@ -480,10 +490,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("prod_price", "");
 					dmpDataJson.put("prod_dis", "");
 					
-					if(bulogCount == 0 && logpath.contains("/akb/storedata/bulog/")) {
-						log.info("bulog>>>>>>>1-3");
-					}
-					
 					if(values[11].toUpperCase().equals("TRACKING")) {
 						//pa_event:tracking length 13
 						dmpDataJson.put("event_id", values[12]);
@@ -502,9 +508,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("event_id", values[12]);
 					}
 					
-					if(bulogCount == 0 && logpath.contains("/akb/storedata/bulog/")) {
-						log.info("bulog>>>>>>>1-4");
-					}
 					
 					if(values[5].contains("24h.pchome.com.tw")) {
 						String pageCategory = "";
@@ -527,10 +530,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("bu_layer3", "");
 					dmpDataJson.put("bu_layer4", "");
 					
-					if(bulogCount == 0 && logpath.contains("/akb/storedata/bulog/")) {
-						log.info("bulog>>>>>>>1-5");
-						bulogCount = bulogCount + 1;
-					}
 					
 				}catch(Exception e) {
 					log.error(">>>>bulog set json fail:"+e.getMessage());
