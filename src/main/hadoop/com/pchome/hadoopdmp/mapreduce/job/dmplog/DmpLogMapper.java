@@ -196,7 +196,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static long bulogCount2 = 0;
 	private static long pacllogCount2 = 0;
 	@Override
-	public void map(LongWritable offset, Text value, Context context) {
+	public synchronized void map(LongWritable offset, Text value, Context context) {
 			inputSplit = (InputSplit)context.getInputSplit(); 
 			logpath = ((FileSplit)inputSplit).getPath().toString();
 //			log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
@@ -526,10 +526,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("bu_layer2", "");
 					dmpDataJson.put("bu_layer3", "");
 					dmpDataJson.put("bu_layer4", "");
-					
-					if(bulogCount == 0 && logpath.contains("/akb/storedata/bulog/")) {
-						log.info("bulog>>>>>>>1-5");
-					}
 					
 					if(bulogCount == 0 && logpath.contains("/akb/storedata/bulog/")) {
 						log.info("bulog>>>>>>>1-5");
