@@ -352,21 +352,31 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					String[] values = logStr.split(paclSymbol);
 					
 					
-					if(bulogCount == 0 && logpath.contains("/akb/storedata/bulog/") && values[12].equals("tracking")) {
-						log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
-						log.info(">>>>>>>length:"+values.length);
-						for (int i = 0; i < values.length; i++) {
-							log.info("bulog>>>>>>>["+i+"]:"+values[i]);
+					if(bulogCount == 0 && logpath.contains("/akb/storedata/bulog/")) {
+						if(values.length == 13 && values[12].equals("tracking")) {
+							log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
+							log.info(">>>>>>>length:"+values.length);
+							for (int i = 0; i < values.length; i++) {
+								log.info("bulog>>>>>>>["+i+"]:"+values[i]);
+							}
+							bulogCount = bulogCount + 1;
+						}else {
+							log.info("bulog>>>>>>>>>>>>>>>>>>logpath:"+logpath);
+							log.info("bulog>>>>>>>length:"+values.length);
 						}
-						bulogCount = bulogCount + 1;
 					}
-					if(pacllogCount == 0 && logpath.contains("/pa/storedata/alllog/") && values[12].equals("tracking") ) {
-						log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
-						log.info(">>>>>>>length:"+values.length);
-						for (int i = 0; i < values.length; i++) {
-							log.info("pacllog>>>>>>>["+i+"]:"+values[i]);
+					if(pacllogCount == 0 && logpath.contains("/pa/storedata/alllog/")) {
+						if(values.length == 13 && values[12].equals("tracking")) {
+							log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
+							log.info(">>>>>>>length:"+values.length);
+							for (int i = 0; i < values.length; i++) {
+								log.info("pacllogCount>>>>>>>["+i+"]:"+values[i]);
+							}
+							pacllogCount = pacllogCount + 1;
+						}else {
+							log.info("pacllog>>>>>>>>>>>>>>>>>>logpath:"+logpath);
+							log.info("pacllog>>>>>>>length:"+values.length);
 						}
-						pacllogCount = pacllogCount + 1;
 					}
 					
 					
