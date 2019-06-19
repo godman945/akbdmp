@@ -50,7 +50,6 @@ public class AdRutenLog extends ACategoryLogData {
 	private static String breadcrumbResult = "";
 	private static String[] breadcrumbAry = null;
 	private static boolean hasCategory = false;
-	private static List<CategoryRutenCodeBean> categoryRutenList;
 	private static Document doc;
 	private static Elements breadcrumbE;
 	private static BasicDBObject intModifier = new BasicDBObject();
@@ -71,8 +70,6 @@ public class AdRutenLog extends ACategoryLogData {
 				if(dbObject.get("status").equals("0")){
 					classRutenUrlClassify = "N"; 
 					// url 存在 status = 0 跳過回傳空值 , mongo update_date 更新(一天一次) mongo,query_time+1 如大於 2000 不再加  classRutenUrl = "N"
-					
-					
 //					log.info("dbObject:"+dbObject);
 					updateClassUrlUpdateDate(sourceUrl.trim(),dbObject);
 					updateClassUrlQueryTime(sourceUrl.trim(),dbObject);
@@ -109,13 +106,12 @@ public class AdRutenLog extends ACategoryLogData {
 							}
 							// 比對爬蟲回來的分類，由最底層分類開始比對Ruten分類表
 							breadcrumbAry = breadcrumbResult.split(">");
-							categoryRutenList = DmpLogMapper.categoryRutenBeanList;
 							hasCategory = false;
 							for (int i = breadcrumbAry.length - 1; i >= 0; i--) {
 								if (hasCategory) {
 									break;
 								}
-								for (CategoryRutenCodeBean categoryRutenBean : categoryRutenList) {
+								for (CategoryRutenCodeBean categoryRutenBean : DmpLogMapper.categoryRutenBeanList) {
 									if (categoryRutenBean.getChineseDesc().trim().equals(breadcrumbAry[i].trim())) {
 										category = categoryRutenBean.getNumberCode();
 										hasCategory = true;

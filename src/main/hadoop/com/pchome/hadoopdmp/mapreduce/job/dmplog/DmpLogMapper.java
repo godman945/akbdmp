@@ -514,15 +514,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			try {
 				keyOut.set(dmpDataJson.getAsString("uuid"));
 				context.write(keyOut, new Text(dmpDataJson.toString()));
-				if(count == 0 && dmpDataJson.getAsString("log_source").equals("bulog")) {
-					count = count + 1;
-					log.info("****bulog after****:"+dmpDataJson);
-					
-				}
-				if(mapCount == 0 && dmpDataJson.getAsString("log_source").equals("kdcl")) {
-					mapCount = mapCount + 1;
-					log.info("****kdcl after****:"+dmpDataJson);
-				}
 			} catch (Exception e) {
 				log.error(">>>>write to reduce fail:"+e.getMessage());
 			}
@@ -568,10 +559,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					break;
 				}
 			}
-		}
-		
-		if(dmpDataJson.getAsString("uuid").equals("0042751e-2a10-4566-9cb4-abe05b204787")) {
-			log.info("ALEX>>>>>>>>>>>>>>>>>>"+dmpDataJson);
 		}
 		
 	}
