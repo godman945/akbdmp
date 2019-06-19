@@ -355,7 +355,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				try {
 					String[] values = logStr.split(paclSymbol);
 					if(bulogCount == 0 && logpath.contains("/akb/storedata/bulog/")) {
-						if(values.length == 13 && values[12].equals("tracking")) {
+						if(values.length == 13 && values[11].equals("tracking")) {
 							log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
 							log.info(">>>>>>>length:"+values.length);
 							for (int i = 0; i < values.length; i++) {
@@ -372,7 +372,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						}
 					}
 					if(pacllogCount == 0 && logpath.contains("/pa/storedata/alllog/")) {
-						if(values.length == 13 && values[12].equals("tracking")) {
+						if(values.length == 13 && values[11].equals("tracking")) {
 							log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
 							log.info(">>>>>>>length:"+values.length);
 							for (int i = 0; i < values.length; i++) {
