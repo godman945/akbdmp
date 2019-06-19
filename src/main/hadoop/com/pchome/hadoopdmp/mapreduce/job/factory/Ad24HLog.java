@@ -84,6 +84,9 @@ public class Ad24HLog extends ACategoryLogData {
 			log.info(">>>>>>>>>>>>>>>>>>>>>5-1");
 			if (dbObject != null) { //mongo db有資料
 				log.info(">>>>>>>>>>>>>>>>>>>>>5-2");
+				
+				log.info("dbObject:"+dbObject);
+				
 				if (dbObject.get("status").equals("0")) {
 					category = "";
 					categorySource = "";
