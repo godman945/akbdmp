@@ -357,26 +357,12 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				}
 			}else if(logpath.contains("/akb/storedata/bulog/") || logpath.contains("/pa/storedata/alllog/") ) {
 				try {
-					
-					
 					String[] values = logStr.split(paclSymbol,-1);
-					if(values[2].equals("xxx-b1d59332-9007-4df3-be1a-489f8c553641")) {
-						log.info(">>>>>>>>>>>>>>>0");
-					}
-					
-					
 					dmpDataJson.put("fileName", fileName);
 					dmpDataJson.put("log_date", values[0]);
 					dmpDataJson.put("hour", record_hour);
 					dmpDataJson.put("memid","");
 					dmpDataJson.put("uuid", values[2]);
-					
-					if(values[2].equals("xxx-b1d59332-9007-4df3-be1a-489f8c553641")) {
-						log.info(">>>>>>>>>>>>>>>1");
-					}
-					
-					
-					
 					if(values[2].contains("xxx-")) {
 						dmpDataJson.put("uuid_flag", "y");
 					}else {
@@ -426,11 +412,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("device_info_source", "");
 					dmpDataJson.put("device_info_classify", "");
 					
-					if(values[2].equals("xxx-b1d59332-9007-4df3-be1a-489f8c553641")) {
-						log.info(">>>>>>>>>>>>>>>2");
-					}
-					
-					
 					//分類資訊
 					dmpDataJson.put("category", "");
 					dmpDataJson.put("class_adclick_classify", "");
@@ -450,11 +431,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("prod_price", "");
 					dmpDataJson.put("prod_dis", "");
 					
-					if(values[2].equals("xxx-b1d59332-9007-4df3-be1a-489f8c553641")) {
-						log.info(">>>>>>>>>>>>>>>3");
-					}
-					
-					
 					if(values[11].toUpperCase().equals("TRACKING")) {
 						dmpDataJson.put("event_id", values[12]);
 						dmpDataJson.put("prod_id", values[13]);
@@ -466,19 +442,13 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("event_id", values[12]);
 					}
 					
-					
-					if(values[2].equals("xxx-b1d59332-9007-4df3-be1a-489f8c553641")) {
-						log.info(">>>>>>>>>>>>>>>4");
-					}
-					
-					
 					if(values[5].contains("24h.pchome.com.tw")) {
 						String pageCategory = "";
 						if(values[5].equals("https://24h.pchome.com.tw/") || values[5].contains("htm") || values[5].contains("index") || values[5].contains("?fq=") || values[5].contains("store/?q=")) {
 							return;
 						}else if(values[5].contains("?")) {
-							pageCategory = values[5].split("/")[values[5].split("/").length - 1];
-							pageCategory = pageCategory.substring(0, pageCategory.indexOf("?"));
+							pageCategory = values[5].substring(0, values[5].indexOf("?"));
+							pageCategory = pageCategory.split("/")[pageCategory.split("/").length - 1];
 						}else {
 							pageCategory = values[5].split("/")[values[5].split("/").length - 1];
 						}
@@ -487,9 +457,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("op1", "");
 					}
 					
-					if(values[2].equals("xxx-b1d59332-9007-4df3-be1a-489f8c553641")) {
-						log.info(">>>>>>>>>>>>>>>5");
-					}
 					
 					dmpDataJson.put("op2", "");
 					dmpDataJson.put("email", "");
@@ -497,11 +464,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("bu_layer2", "");
 					dmpDataJson.put("bu_layer3", "");
 					dmpDataJson.put("bu_layer4", "");
-					
-					
-					if(values[2].equals("xxx-b1d59332-9007-4df3-be1a-489f8c553641")) {
-						log.info(">>>>>>>>>>>>>>>END");
-					}
 					
 				}catch(Exception e) {
 					log.error(">>>>pa set json fail:"+e.getMessage());
