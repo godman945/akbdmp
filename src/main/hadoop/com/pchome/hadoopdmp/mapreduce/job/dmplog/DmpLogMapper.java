@@ -361,7 +361,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 							for (int i = 0; i < values.length; i++) {
 								log.info("bulog>>>>>>>["+i+"]:"+values[i]);
 							}
-							bulogCount = bulogCount + 1;
+//							bulogCount = bulogCount + 1;
 						}
 						
 						if(values.length != 13 && values[11].equals("tracking")) {
@@ -382,7 +382,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 							for (int i = 0; i < values.length; i++) {
 								log.info("pacllogCount>>>>>>>["+i+"]:"+values[i]);
 							}
-							pacllogCount = pacllogCount + 1;
+//							pacllogCount = pacllogCount + 1;
 						}
 						
 						if(values.length != 13 && values[11].equals("tracking")) {
@@ -399,7 +399,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					
 					
 					
-					
+					if(bulogCount == 0 && logpath.contains("/akb/storedata/bulog/")) {
+						log.info("bulog>>>>>>>1-1");
+					}
 					
 					dmpDataJson.put("fileName", fileName);
 					dmpDataJson.put("log_date", values[0]);
@@ -454,6 +456,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("device_browser_info", "");
 					dmpDataJson.put("device_info_source", "");
 					dmpDataJson.put("device_info_classify", "");
+					
+					if(bulogCount == 0 && logpath.contains("/akb/storedata/bulog/")) {
+						log.info("bulog>>>>>>>1-2");
+					}
+					
 					//分類資訊
 					dmpDataJson.put("category", "");
 					dmpDataJson.put("class_adclick_classify", "");
@@ -472,6 +479,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("prod_id", "");
 					dmpDataJson.put("prod_price", "");
 					dmpDataJson.put("prod_dis", "");
+					
+					if(bulogCount == 0 && logpath.contains("/akb/storedata/bulog/")) {
+						log.info("bulog>>>>>>>1-3");
+					}
+					
 					if(values[11].toUpperCase().equals("TRACKING")) {
 						//pa_event:tracking length 13
 						dmpDataJson.put("event_id", values[12]);
@@ -488,6 +500,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("event_id", "");
 					}else if(values[11].toUpperCase().equals("CONVERT")) {
 						dmpDataJson.put("event_id", values[12]);
+					}
+					
+					if(bulogCount == 0 && logpath.contains("/akb/storedata/bulog/")) {
+						log.info("bulog>>>>>>>1-4");
 					}
 					
 					if(values[5].contains("24h.pchome.com.tw")) {
@@ -510,6 +526,16 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("bu_layer2", "");
 					dmpDataJson.put("bu_layer3", "");
 					dmpDataJson.put("bu_layer4", "");
+					
+					if(bulogCount == 0 && logpath.contains("/akb/storedata/bulog/")) {
+						log.info("bulog>>>>>>>1-5");
+					}
+					
+					if(bulogCount == 0 && logpath.contains("/akb/storedata/bulog/")) {
+						log.info("bulog>>>>>>>1-5");
+						bulogCount = bulogCount + 1;
+					}
+					
 				}catch(Exception e) {
 					log.error(">>>>bulog set json fail:"+e.getMessage());
 					log.error(">>>>bulog set json fail log size:"+logStr.split(paclSymbol).length);
