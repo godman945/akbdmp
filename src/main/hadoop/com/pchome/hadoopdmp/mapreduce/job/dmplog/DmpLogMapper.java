@@ -362,13 +362,17 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 								log.info("bulog>>>>>>>["+i+"]:"+values[i]);
 							}
 							bulogCount = bulogCount + 1;
-						}else {
+						}
+						
+						if(values.length != 13 && values[11].equals("tracking")) {
 							if(bulogCount2 == 0) {
-								log.info("bulog>>>>>>>>>>>>>>>>>>logpath:"+logpath);
-								log.info("bulog>>>>>>>length:"+values.length);
+								log.info("bulog2>>>>>>>>>>>>>>>>>>logpath:"+logpath);
+								log.info("bulog2>>>>>>>length:"+values.length);
+								for (int i = 0; i < values.length; i++) {
+									log.info("bulog2>>>>>>>["+i+"]:"+values[i]);
+								}
 								bulogCount2 = bulogCount2 + 1;
 							}
-							
 						}
 					}
 					if(pacllogCount == 0 && logpath.contains("/pa/storedata/alllog/")) {
@@ -379,13 +383,17 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 								log.info("pacllogCount>>>>>>>["+i+"]:"+values[i]);
 							}
 							pacllogCount = pacllogCount + 1;
-						}else {
+						}
+						
+						if(values.length != 13 && values[11].equals("tracking")) {
 							if(pacllogCount2 == 0) {
-								log.info("pacllog>>>>>>>>>>>>>>>>>>logpath:"+logpath);
-								log.info("pacllog>>>>>>>length:"+values.length);
+								log.info("pacllog2>>>>>>>>>>>>>>>>>>logpath:"+logpath);
+								log.info("pacllog2>>>>>>>length:"+values.length);
+								for (int i = 0; i < values.length; i++) {
+									log.info("pacllog2>>>>>>>["+i+"]:"+values[i]);
+								}
 								pacllogCount2 = pacllogCount2 + 1;
 							}
-							
 						}
 					}
 					
