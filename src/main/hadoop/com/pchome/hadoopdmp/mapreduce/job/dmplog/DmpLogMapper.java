@@ -459,9 +459,13 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("bu_layer3", "");
 					dmpDataJson.put("bu_layer4", "");
 				}catch(Exception e) {
-					log.error(">>>>bulog set json fail:"+e.getMessage());
-					log.error(">>>>bulog set json fail log size:"+logStr.split(paclSymbol).length);
-					log.error(">>>>bulog set json logStr:"+logStr);
+					log.error(">>>>pa set json fail:"+e.getMessage());
+					log.error(">>>>pa set json fail log size:"+logStr.split(paclSymbol,-1).length);
+					String[] logarray = logStr.split(paclSymbol,-1);
+					for (int i = 0; i < logarray.length; i++) {
+						log.error(">>>>pa set json fail:["+i+"]:"+logarray[i]);
+					}
+					log.error(">>>>pa set json logStr:"+logStr);
 					return;
 				}
 			}
