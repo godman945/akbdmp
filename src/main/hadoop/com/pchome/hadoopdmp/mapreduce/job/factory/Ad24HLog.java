@@ -35,7 +35,7 @@ public class Ad24HLog extends ACategoryLogData {
 	private static Map<String,String> urlCodeMapping = new HashedMap<String,String>();
 	private static Map<String,DBObject> urlDBObjectMapping = new HashedMap<String,DBObject>();
 	
-	
+	private static int totalcount = 0;
 	public Object processCategory(net.minidev.json.JSONObject dmpJSon, DBCollection dbCollectionUrl) throws Exception {
 		log.info(">>>>>>>>>>>>>>>>>>>>>1");
 		category = "";
@@ -86,6 +86,10 @@ public class Ad24HLog extends ACategoryLogData {
 				log.info(">>>>>>>>>>>>>>>>>>>>>5-2");
 				
 				log.info("dbObject:"+dbObject);
+				log.info("status:"+dbObject.get("status"));
+				log.info("ad_class:"+dbObject.get("ad_class"));
+				
+				
 				
 				if (dbObject.get("status").equals("0")) {
 					category = "";
