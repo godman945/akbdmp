@@ -349,7 +349,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						return;
 					}
 				}catch(Exception e) {
-					log.error(">>>>kdcl set json fail");
+					log.error(">>>>kdcl set json fail:"+logStr);
 				}
 			}else if(logpath.contains("/akb/storedata/bulog/") || logpath.contains("/pa/storedata/alllog/") ) {
 				try {
@@ -484,11 +484,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //						log.info(">>>>>>>bu event_id:"+values[12]);
 						
 						
-					}
-					if(values[11].toUpperCase().equals("PAGE_VIEW")) {
+					}else if(values[11].toUpperCase().equals("PAGE_VIEW")) {
 						dmpDataJson.put("event_id", "");
-					}
-					if(values[11].toUpperCase().equals("CONVERT")) {
+					}else if(values[11].toUpperCase().equals("CONVERT")) {
 						dmpDataJson.put("event_id", values[12]);
 					}
 					
@@ -515,7 +513,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				}catch(Exception e) {
 					log.error(">>>>bulog set json fail:"+e.getMessage());
 					log.error(">>>>bulog set json fail log size:"+logStr.split(paclSymbol).length);
-					log.error(">>>>bulog set json dmpDataJson:"+dmpDataJson);
+					log.error(">>>>bulog set json logStr:"+logStr);
 					return;
 				}
 			}
