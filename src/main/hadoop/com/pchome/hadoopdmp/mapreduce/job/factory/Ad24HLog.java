@@ -8,6 +8,8 @@ import java.util.Map;
 
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -16,7 +18,9 @@ import com.mongodb.DBObject;
 import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper;
 
 
+
 public class Ad24HLog extends ACategoryLogData {
+	Log log = LogFactory.getLog("Ad24HLog");
 	private DBCollection dBCollection;
 	private static String referer = "";
 	private static String class24hUrlClassify = "";
@@ -33,6 +37,7 @@ public class Ad24HLog extends ACategoryLogData {
 	
 	
 	public Object processCategory(net.minidev.json.JSONObject dmpJSon, DBCollection dbCollectionUrl) throws Exception {
+		log.info(">>>>>>>>>>>>>>>>>>>>>1");
 		category = "";
 		categorySource = "";
 		class24hUrlClassify = "" ;
@@ -42,16 +47,18 @@ public class Ad24HLog extends ACategoryLogData {
 			dmpJSon.put("class_24h_url_classify", "N");
 			return dmpJSon;
 		}
-		
+		log.info(">>>>>>>>>>>>>>>>>>>>>2");
 		//用url比對24h對照表找出分類代號
 		list = DmpLogMapper.category24hBeanList;
 		if(urlCodeMapping.containsKey(referer)) {
+			log.info(">>>>>>>>>>>>>>>>>>>>>3");
 			category = urlCodeMapping.get(referer);
 			if(StringUtils.isNotBlank(category)) {
 				categorySource = "24h";
 				class24hUrlClassify = "Y";
 			}
 		}else {
+			log.info(">>>>>>>>>>>>>>>>>>>>>4");
 			for (CategoryCodeBean categoryBean : DmpLogMapper.category24hBeanList) {
 				if(this.referer.indexOf(categoryBean.getEnglishCode()) != -1){
 					category = categoryBean.getNumberCode();
@@ -66,6 +73,7 @@ public class Ad24HLog extends ACategoryLogData {
 		
 		//	url比對不到24H分類
 		if (StringUtils.isBlank(category)){
+			log.info(">>>>>>>>>>>>>>>>>>>>>5");
 			//查詢url
 			if(urlDBObjectMapping.containsKey(this.referer)) {
 				dbObject = urlDBObjectMapping.get(this.referer);
@@ -73,8 +81,9 @@ public class Ad24HLog extends ACategoryLogData {
 				dbObject = queryClassUrl(this.referer);
 				urlDBObjectMapping.put(this.referer, dbObject);
 			}
-			
+			log.info(">>>>>>>>>>>>>>>>>>>>>5-1");
 			if (dbObject != null) { //mongo db有資料
+				log.info(">>>>>>>>>>>>>>>>>>>>>5-2");
 				if (dbObject.get("status").equals("0")) {
 					category = "";
 					categorySource = "";
@@ -83,6 +92,7 @@ public class Ad24HLog extends ACategoryLogData {
 					updateClassUrlUpdateDate(this.referer, dbObject);
 					updateClassUrlQueryTime(this.referer, dbObject);
 				} else if ((dbObject.get("status").equals("1"))	&& (StringUtils.isNotBlank(dbObject.get("ad_class").toString()))) {
+					log.info(">>>>>>>>>>>>>>>>>>>>>5-3");
 					category = dbObject.get("ad_class").toString();
 					categorySource = "24h";
 					class24hUrlClassify = "Y";
@@ -91,6 +101,7 @@ public class Ad24HLog extends ACategoryLogData {
 					updateClassUrlUpdateDate(this.referer, dbObject);
 				}
 			}else { //mongo db無資料
+				log.info(">>>>>>>>>>>>>>>>>>>>>5-4");
 				category = "";
 				categorySource = "";
 				class24hUrlClassify = "N";
@@ -102,6 +113,7 @@ public class Ad24HLog extends ACategoryLogData {
 		dmpJSon.put("category", category);
 		dmpJSon.put("category_source", categorySource);
 		dmpJSon.put("class_24h_url_classify", class24hUrlClassify);
+		log.info(">>>>>>>>>>>>>>>>>>>>>END");
 		return dmpJSon;
 		
 		
