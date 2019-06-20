@@ -79,6 +79,9 @@ public class Ad24HLog extends ACategoryLogData {
 				dbObject = urlDBObjectMapping.get(this.referer);
 			}else {
 				dbObject = queryClassUrl(this.referer);
+				if(dbObject.get("query_time") == null) {
+					dbObject.put("query_time", new Integer(1));
+				}
 				urlDBObjectMapping.put(this.referer, dbObject);
 			}
 //			log.info(">>>>>>>>>>>>>>>>>>>>>5-1");
@@ -201,7 +204,7 @@ public class Ad24HLog extends ACategoryLogData {
 		log.info(">>>>>>>>>>>>>>>>>>>>>1-1:"+dbObject);
 		String todayStr = sdf.format(today);
 		String updateDateStr = sdf.format(dbObject.get("update_date"));
-		if ( (!todayStr.equals(updateDateStr)) ){
+		if ((!todayStr.equals(updateDateStr)) ){
 			Date date = new Date();
 		    DBObject olddbObject = new BasicDBObject();
 		    olddbObject.put("url", url);
