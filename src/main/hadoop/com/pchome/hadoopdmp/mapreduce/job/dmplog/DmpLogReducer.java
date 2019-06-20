@@ -246,10 +246,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					week_index = 0;
 				} 
 				wiriteToDruid.append(",").append("\"").append(weeks[week_index]).append("\"");
-//				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_ck")).append("\"");
-//				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_pv")).append("\"");
-				wiriteToDruid.append(",").append(dmpJSon.getAsString("ad_ck"));
-				wiriteToDruid.append(",").append(dmpJSon.getAsNumber("ad_pv").intValue());
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_ck")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_pv")).append("\"");
 				String pfbxCustomerInfoId = dmpJSon.getAsString("pfbx_customer_info_id");
 				String webClass = StringUtils.isBlank(pfbxWebsiteCategory.get(pfbxCustomerInfoId)) ? "" : pfbxWebsiteCategory.get(pfbxCustomerInfoId);
 				wiriteToDruid.append(",").append("\"").append(webClass).append("\"");
