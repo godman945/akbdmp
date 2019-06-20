@@ -258,6 +258,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_id")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_price")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_dis")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("classify")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("behavior")).append("\"");
 				//產出csv
 				keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
 				context.write(new Text(wiriteToDruid.toString()), null);
