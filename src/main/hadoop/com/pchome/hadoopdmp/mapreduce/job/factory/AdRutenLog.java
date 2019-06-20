@@ -61,7 +61,7 @@ public class AdRutenLog extends ACategoryLogData {
 		this.dBCollection = dbCollectionUrl;
 		sourceUrl = dmpJSon.getAsString("referer");
 		if (StringUtils.isBlank(sourceUrl)) {
-			dmpJSon.put("class_ruten_url_classify", "N");
+//			dmpJSon.put("class_ruten_url_classify", "N");
 			dmpJSon.put("classify", "N");
 			dmpJSon.put("behavior", "ruten");
 			return dmpJSon;
@@ -159,11 +159,11 @@ public class AdRutenLog extends ACategoryLogData {
 		}
 		dmpJSon.put("classify", classRutenUrlClassify);
 		dmpJSon.put("behavior", categorySource);
-		
-		
 		dmpJSon.put("category", category);
-		dmpJSon.put("category_source", categorySource);
-		dmpJSon.put("class_ruten_url_classify", classRutenUrlClassify);
+		
+//		dmpJSon.put("category", category);
+//		dmpJSon.put("category_source", categorySource);
+//		dmpJSon.put("class_ruten_url_classify", classRutenUrlClassify);
 		return dmpJSon;
 		
 //		this.dBCollection= mongoOperations.getCollection("class_url");

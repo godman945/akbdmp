@@ -363,7 +363,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					String[] values = logStr.split(paclSymbol,-1);
 					dmpDataJson.put("fileName", fileName);
 					dmpDataJson.put("log_date", values[0]);
-					dmpDataJson.put("hour", record_hour);
+//					dmpDataJson.put("hour", record_hour);
 					dmpDataJson.put("memid","");
 					dmpDataJson.put("uuid", values[2]);
 					if(values[2].contains("xxx-")) {
@@ -497,9 +497,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				}else if (dmpDataJson.getAsString("trigger_type").equals("pv") ){
 					dmpDataJson.put("category", "");
 					dmpDataJson.put("category_source", "");
-					dmpDataJson.put("class_adclick_classify", "");
-					dmpDataJson.put("class_24h_url_classify", "");
-					dmpDataJson.put("class_ruten_url_classify", "");
+//					dmpDataJson.put("class_adclick_classify", "");
+//					dmpDataJson.put("class_24h_url_classify", "");
+//					dmpDataJson.put("class_ruten_url_classify", "");
 				}
 				//館別分類
 				try {
