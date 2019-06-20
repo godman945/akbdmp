@@ -45,6 +45,8 @@ public class Ad24HLog extends ACategoryLogData {
 		this.referer = dmpJSon.getAsString("referer").trim();
 		if (StringUtils.isBlank(referer)) {
 			dmpJSon.put("class_24h_url_classify", "N");
+			dmpJSon.put("classify", "N");
+			dmpJSon.put("behavior", "24h");
 			return dmpJSon;
 		}
 //		log.info(">>>>>>>>>>>>>>>>>>>>>2");
@@ -114,6 +116,9 @@ public class Ad24HLog extends ACategoryLogData {
 				insertClassUrl(this.referer, "", "0", 1);
 			}
 		}
+		
+		dmpJSon.put("classify", class24hUrlClassify);
+		dmpJSon.put("behavior", "24h");
 		
 		dmpJSon.put("category", category);
 		dmpJSon.put("category_source", categorySource);

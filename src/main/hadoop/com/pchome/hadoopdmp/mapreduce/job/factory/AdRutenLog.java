@@ -62,6 +62,8 @@ public class AdRutenLog extends ACategoryLogData {
 		sourceUrl = dmpJSon.getAsString("referer");
 		if (StringUtils.isBlank(sourceUrl)) {
 			dmpJSon.put("class_ruten_url_classify", "N");
+			dmpJSon.put("classify", "N");
+			dmpJSon.put("behavior", "ruten");
 			return dmpJSon;
 		}else {
 			//查詢url
@@ -155,6 +157,10 @@ public class AdRutenLog extends ACategoryLogData {
 				}
 			}
 		}
+		dmpJSon.put("classify", classRutenUrlClassify);
+		dmpJSon.put("behavior", categorySource);
+		
+		
 		dmpJSon.put("category", category);
 		dmpJSon.put("category_source", categorySource);
 		dmpJSon.put("class_ruten_url_classify", classRutenUrlClassify);

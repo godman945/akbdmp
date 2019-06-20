@@ -347,6 +347,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("bu_layer2", "");
 						dmpDataJson.put("bu_layer3", "");
 						dmpDataJson.put("bu_layer4", "");
+						dmpDataJson.put("behavior", "");
+						dmpDataJson.put("classify", "");
 					}else {
 						return;
 					}
@@ -381,7 +383,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("ad_id", "");
 					dmpDataJson.put("pfbx_customer_info_id", "");
 					dmpDataJson.put("pfbx_position_id", "");
-					dmpDataJson.put("ad_view", "");
+					dmpDataJson.put("ad_view", 0);
 					dmpDataJson.put("vpv", "");
 					dmpDataJson.put("pa_id", "");
 					dmpDataJson.put("screen_x", "");
@@ -463,6 +465,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("bu_layer2", "");
 					dmpDataJson.put("bu_layer3", "");
 					dmpDataJson.put("bu_layer4", "");
+					dmpDataJson.put("behavior", "");
+					dmpDataJson.put("classify", "");
 					
 				}catch(Exception e) {
 					log.error(">>>>pa set json fail:"+e.getMessage());
