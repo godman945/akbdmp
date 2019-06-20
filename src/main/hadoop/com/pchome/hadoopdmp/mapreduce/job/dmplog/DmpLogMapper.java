@@ -1,7 +1,6 @@
 package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.InetAddress;
@@ -61,7 +60,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static int campaignLogLength = 9;
 	private static String kdclSymbol = String.valueOf(new char[] { 9, 31 });
 	private static String paclSymbol = String.valueOf(new char[] { 9, 31 });
-	private static String campaignSymbol = ",";
 
 	private Text keyOut = new Text();
 	private Text valueOut = new Text();
@@ -80,14 +78,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public static DatabaseReader reader = null;
 	public static InetAddress ipAddress = null;
 	private static DBCollection dBCollection_class_url;
-	
 	private static InputSplit inputSplit;
-	private static int count = 0;
-	private static int mapCount = 0;
-	
 	public static List<String> categoryLevelMappingList = new ArrayList<String>();
 	public static Map<String, String> categoryLevelMappingMap = new HashMap<String, String>();
-	
 	public static ACategoryLogData aCategoryLogDataClick = null;
 	public static ACategoryLogData aCategoryLogDataRetun = null;
 	public static ACategoryLogData aCategoryLogData24H = null;
@@ -151,7 +144,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				categoryBean.setEnglishCode(tmpStrAry[3].replaceAll("\"", ""));
 				category24hBeanList.add(categoryBean);
 			}
-			log.info("**********category24hBeanList:"+category24hBeanList.size());
+//			log.info("**********category24hBeanList:"+category24hBeanList.size());
 			
 			// load Ruten分類表(DMP_Ruten_category.csv)
 			Path categoryRutenPath = Paths.get(path[4].toString());
@@ -163,13 +156,13 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				categoryRutenBean.setChineseDesc(tmpStrAry[1].replaceAll("\"", ""));
 				categoryRutenBeanList.add(categoryRutenBean);
 			}
-			log.info("**********categoryRutenBeanList:"+categoryRutenBeanList.size());
+//			log.info("**********categoryRutenBeanList:"+categoryRutenBeanList.size());
 			
 			//IP轉城市
 			File database = new File(path[5].toString());
 			reader = new DatabaseReader.Builder(database).build();  
 			//24館別階層對應表
-			log.info("**********24 csv");
+//			log.info("**********24 csv");
 			FileSystem fs = FileSystem.get(conf);
 			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.csv");
 			FSDataInputStream inputStream = fs.open(category24MappingFile);
@@ -179,7 +172,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				String data = csvRecord.get(1)+"<PCHOME>"+csvRecord.get(3)+"<PCHOME>"+csvRecord.get(5);
 				categoryLevelMappingList.add(data);
 			}
-			log.info("**********categoryLevelMappingList:"+categoryLevelMappingList.size());
+//			log.info("**********categoryLevelMappingList:"+categoryLevelMappingList.size());
 		} catch (Exception e) {
 			log.error("Mapper setup error>>>>>> " +e);
 		}
@@ -191,12 +184,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static String logpath = "";
 	private static Map<String,String> hostNameMap = new HashMap<String,String>();
 	
-	
-	private static long bulogCount = 0;
-	private static long pacllogCount = 0;
-	
-	private static long bulogCount2 = 0;
-	private static long pacllogCount2 = 0;
 	@Override
 	public synchronized void map(LongWritable offset, Text value, Context context) {
 			inputSplit = (InputSplit)context.getInputSplit(); 
@@ -204,7 +191,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
 			String fileName = ((FileSplit)inputSplit).getPath().getName();
 //			log.info(">>>>>>>>>>>>>>>>>>fileName:"+fileName);
-			
 			logStr = value.toString();
 			//1.判斷log來源為kdcl或bu
 			if(logpath.contains("/akb/storedata/alllog/")) {
@@ -363,7 +349,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					String[] values = logStr.split(paclSymbol,-1);
 					dmpDataJson.put("fileName", fileName);
 					dmpDataJson.put("log_date", values[0]);
-//					dmpDataJson.put("hour", record_hour);
 					dmpDataJson.put("memid","");
 					dmpDataJson.put("uuid", values[2]);
 					if(values[2].contains("xxx-")) {
@@ -497,9 +482,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				}else if (dmpDataJson.getAsString("trigger_type").equals("pv") ){
 					dmpDataJson.put("category", "");
 					dmpDataJson.put("category_source", "");
-//					dmpDataJson.put("class_adclick_classify", "");
-//					dmpDataJson.put("class_24h_url_classify", "");
-//					dmpDataJson.put("class_ruten_url_classify", "");
 				}
 				//館別分類
 				try {

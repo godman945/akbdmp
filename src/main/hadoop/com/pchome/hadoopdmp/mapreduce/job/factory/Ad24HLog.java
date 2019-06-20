@@ -12,7 +12,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper;
@@ -116,87 +115,12 @@ public class Ad24HLog extends ACategoryLogData {
 				insertClassUrl(this.referer, "", "0", 1);
 			}
 		}
-		
 		dmpJSon.put("classify", class24hUrlClassify);
 		dmpJSon.put("behavior", "24h");
 		dmpJSon.put("category", category);
-		
-//		dmpJSon.put("category", category);
-//		dmpJSon.put("category_source", categorySource);
-//		dmpJSon.put("class_24h_url_classify", class24hUrlClassify);
-//		log.info(">>>>>>>>>>>>>>>>>>>>>END");
 		return dmpJSon;
-		
-		
-		
-		
-		
-		
-//		this.dBCollection= mongoOperations.getCollection("class_url");
-//		
-//		dmpDataBean.setSource("kdcl");
-//		
-//		String sourceUrl = dmpDataBean.getUrl();
-//		String category = "null";
-//		String categorySource = "null";
-//		String class24hUrlClassify = "null";
-//		
-//		if (StringUtils.isBlank(sourceUrl)) {
-//			dmpDataBean.setUrl("null");
-//			dmpDataBean.setCategory("null");
-//			dmpDataBean.setCategorySource("null");
-//			dmpDataBean.setClass24hUrlClassify("N");
-//			return dmpDataBean;
-//		}
-//		
-//		//用url比對24h對照表找出分類代號
-//		List<CategoryCodeBean> list = DmpLogMapper.category24hBeanList;
-//		for (CategoryCodeBean categoryBean : list) {
-//			if(sourceUrl.indexOf(categoryBean.getEnglishCode()) != -1){
-//				category = categoryBean.getNumberCode();
-//				categorySource = "24h";
-//				class24hUrlClassify = "Y";
-//				break;
-//			}
-//		}
-//		
-//		if (StringUtils.isBlank(category)){
-//			//查詢url
-//			DBObject dbObject =queryClassUrl(sourceUrl.trim()) ;
-//			
-//			if(dbObject != null){
-//				if(dbObject.get("status").equals("0")){
-//					category ="null";
-//					categorySource = "null";
-//					class24hUrlClassify = "N";
-//					// url 存在 status = 0  , mongo update_date 更新(一天一次) query_time+1 如大於 2000 不再加 
-//					updateClassUrlUpdateDate(sourceUrl.trim(),dbObject) ;
-//					updateClassUrlQueryTime( sourceUrl.trim(),dbObject) ;
-//				}else if( (dbObject.get("status").equals("1")) && (StringUtils.isNotBlank(dbObject.get("ad_class").toString())) ){
-//					category = dbObject.get("ad_class").toString();
-//					categorySource = "24h";
-//					class24hUrlClassify = "Y"; 
-//					//url 存在 status = 1 取分類代號回傳 mongo update_date 更新(一天一次) class24hUrlClassify = "Y"
-//					updateClassUrlUpdateDate(sourceUrl.trim(),dbObject) ;
-//				}
-//			}else{
-//				category = "null";
-//				categorySource = "null";
-//				class24hUrlClassify = "N";
-//				// url 不存在  ,寫入 mongo url代號 status=0 
-//				insertClassUrl(sourceUrl.trim(),"","0",1);
-//			}
-//		}
-//		
-//		dmpDataBean.setCategory(category);
-//		dmpDataBean.setCategorySource(categorySource);
-//		dmpDataBean.setClass24hUrlClassify(class24hUrlClassify);
-//		
-//		return dmpDataBean;
 	}
 	
-	
-
 	public DBObject queryClassUrl(String url) throws Exception {
 		andQuery.clear();
 		obj.clear();
