@@ -49,7 +49,7 @@ public class Ad24HLog extends ACategoryLogData {
 		}
 //		log.info(">>>>>>>>>>>>>>>>>>>>>2");
 		//用url比對24h對照表找出分類代號
-		list = DmpLogMapper.category24hBeanList;
+//		list = DmpLogMapper.category24hBeanList;
 		if(urlCodeMapping.containsKey(referer)) {
 //			log.info(">>>>>>>>>>>>>>>>>>>>>3");
 			category = urlCodeMapping.get(referer);
@@ -80,7 +80,7 @@ public class Ad24HLog extends ACategoryLogData {
 			}else {
 				dbObject = queryClassUrl(this.referer);
 				if(dbObject.get("query_time") == null) {
-					dbObject.put("query_time", new Integer(1));
+					dbObject.put("query_time", new Integer(0));
 				}
 				urlDBObjectMapping.put(this.referer, dbObject);
 			}
@@ -201,31 +201,24 @@ public class Ad24HLog extends ACategoryLogData {
 	}
 	
 	public void updateClassUrlUpdateDate(String url,DBObject dbObject) throws Exception {
-		log.info(">>>>>>>>>>>>>>>>>>>>>1-1:"+dbObject);
 		String todayStr = sdf.format(today);
 		String updateDateStr = sdf.format(dbObject.get("update_date"));
 		if ((!todayStr.equals(updateDateStr)) ){
-			Date date = new Date();
 		    DBObject olddbObject = new BasicDBObject();
 		    olddbObject.put("url", url);
-		    log.info(">>>>>>>>>>>>>>>>>>>>>1-2");
 		    dBCollection.update(olddbObject, dbObject);
 		}
-		log.info(">>>>>>>>>>>>>>>>>>>>>1-3");
 	}
 	
 	public void updateClassUrlQueryTime(String url,DBObject dbObject) throws Exception {
-		log.info(">>>>>>>>>>>>>>>>>>>>>2-1:"+dbObject);
 		if ((Integer.parseInt(dbObject.get("query_time").toString()) <2000) ){
 			BasicDBObject newDocument = new BasicDBObject();
 			newDocument.append("$inc", new BasicDBObject().append("query_time", 1));
 			DBObject filter = new BasicDBObject(); 
 			filter.put("url", url);
 			filter.put("_id", dbObject.get("_id"));
-			log.info(">>>>>>>>>>>>>>>>>>>>>2-2");
 			dBCollection.update(filter,newDocument);
 		}
-		log.info(">>>>>>>>>>>>>>>>>>>>>2-3");
 	}
 	
 	public void insertClassUrl(String url, String ad_class, String status,int query_time) throws Exception {
