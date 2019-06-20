@@ -190,7 +190,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //				log.info(dmpJSon);
 				wiriteToDruid.append("\""+dmpJSon.getAsString("uuid").toString()+"\"".trim());
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_date")).append("\"");
-//				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("hour")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("memid")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid_flag")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("referer")).append("\"");
@@ -223,7 +222,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age_source")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("category")).append("\"");
-				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("class_adclick_classify")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("category_source")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("user_agent")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_info")).append("\"");
