@@ -203,31 +203,25 @@ public class Ad24HLog extends ACategoryLogData {
 	}
 	
 	public void updateClassUrlUpdateDate(String url,DBObject dbObject) throws Exception {
-		log.info(">>>>updateClassUrlUpdateDate");
 		String todayStr = sdf.format(today);
 		String updateDateStr = sdf.format(dbObject.get("update_date"));
 		if ( (!todayStr.equals(updateDateStr)) ){
 			Date date = new Date();
-			dbObject.put("update_date", date);
 		    DBObject olddbObject = new BasicDBObject();
 		    olddbObject.put("url", url);
-		    log.info(">>>>@@@@@@@@@@@@@");
 		    dBCollection.update(olddbObject, dbObject);
 		}
-		log.info(">>>>updateClassUrlUpdateDate end");
 	}
 	
 	public void updateClassUrlQueryTime(String url,DBObject dbObject) throws Exception {
-		log.info(">>>>updateClassUrlQueryTime");
-		if ( (Integer.parseInt( dbObject.get("query_time").toString()) <2000) ){
+		if ((Integer.parseInt(dbObject.get("query_time").toString()) <2000) ){
 			BasicDBObject newDocument = new BasicDBObject();
 			newDocument.append("$inc", new BasicDBObject().append("query_time", 1));
 			DBObject filter = new BasicDBObject(); 
 			filter.put("url", url);
-			log.info(">>>>#########");
+			filter.put("_id", dbObject.get("_id"));
 			dBCollection.update(filter,newDocument);
 		}
-		log.info(">>>>updateClassUrlQueryTime end");
 	}
 	
 	public void insertClassUrl(String url, String ad_class, String status,int query_time) throws Exception {
