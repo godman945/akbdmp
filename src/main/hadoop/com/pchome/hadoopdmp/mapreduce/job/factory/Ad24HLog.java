@@ -31,10 +31,10 @@ public class Ad24HLog extends ACategoryLogData {
 	private static BasicDBObject andQuery = new BasicDBObject();
 	private static List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
 	private static BasicDBObject basicDBObject = new BasicDBObject();
-	
+	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	private static Map<String,String> urlCodeMapping = new HashedMap<String,String>();
 	private static Map<String,DBObject> urlDBObjectMapping = new HashedMap<String,DBObject>();
-	
+	private static Date today = new Date();
 	private static int totalcount = 0;
 	public Object processCategory(net.minidev.json.JSONObject dmpJSon, DBCollection dbCollectionUrl) throws Exception {
 		log.info(">>>>>>>>>>>>>>>>>>>>>1");
@@ -203,8 +203,7 @@ public class Ad24HLog extends ACategoryLogData {
 	}
 	
 	public void updateClassUrlUpdateDate(String url,DBObject dbObject) throws Exception {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		Date today = new Date();
+		log.info(">>>>updateClassUrlUpdateDate");
 		String todayStr = sdf.format(today);
 		String updateDateStr = sdf.format(dbObject.get("update_date"));
 		if ( (!todayStr.equals(updateDateStr)) ){
@@ -218,6 +217,7 @@ public class Ad24HLog extends ACategoryLogData {
 	}
 	
 	public void updateClassUrlQueryTime(String url,DBObject dbObject) throws Exception {
+		log.info(">>>>updateClassUrlQueryTime");
 		if ( (Integer.parseInt( dbObject.get("query_time").toString()) <2000) ){
 			BasicDBObject newDocument = new BasicDBObject();
 			newDocument.append("$inc", new BasicDBObject().append("query_time", 1));
