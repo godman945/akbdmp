@@ -82,111 +82,10 @@ public class PersonalInfoComponent {
 			} else {
 				dmpJSon.put("personal_info_api_classify", "N");
 			}
-			
-			
 			if(StringUtils.isNotBlank(dmpJSon.getAsString("category"))) {
 				dmpJSon.put("sex_source", StringUtils.equals(msex, "NA") ? "" : "excel");
 				dmpJSon.put("age_source", StringUtils.equals(mage, "NA") ? "" : "excel");
 			}
-			
-			
-			
-			
-			
-			
-			
-			
-			
-//			if(StringUtils.isNotBlank(memid)) {
-//				dmpJSon.put("sex_source","member_api");
-//				dmpJSon.put("age_source","member_api");
-//				
-//				if(!msex.equals("NA") && StringUtils.isNotBlank(msex)) {
-//					dmpJSon.put("sex", msex.toUpperCase());
-//				}else {
-//					dmpJSon.put("sex", "");
-//				}
-//				
-//				
-//				
-//				
-//				if(!mage.equals("NA") && StringUtils.isNotBlank(mage) && mage.length() == 4) {
-//					calendar.setTime(new Date());
-//					age = calendar.get(Calendar.YEAR) - Integer.parseInt(mage);
-//					dmpJSon.put("age", age);
-//				}else {
-//					dmpJSon.put("age", "");
-//				}
-//				
-//			}
-//			
-//			
-//			if ((!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA"))) {
-//				dmpJSon.put("personal_info_api_classify", "Y");
-//			} else {
-//				dmpJSon.put("personal_info_api_classify", "N");
-//			}
-			
-			
-//			if(StringUtils.isNotBlank(dmpJSon.getAsString("category"))) {
-//				dmpJSon.put("sex_source", StringUtils.equals(msex, "NA") ? "" : "excel");
-//				dmpJSon.put("age_source", StringUtils.equals(mage, "NA") ? "" : "excel");
-//			}
-			
-			
-			
-			
-			
-//			if(StringUtils.isNotBlank(memid)) {
-//				dmpJSon.put("sex_source","member_api");
-//				dmpJSon.put("age_source","member_api");
-//			}else if(StringUtils.isNotBlank(dmpJSon.getAsString("category"))) {
-//				
-//				dmpJSon.put("sex_source", StringUtils.equals(msex, "NA") ? "" : "excel");
-//				dmpJSon.put("age_source", StringUtils.equals(mage, "NA") ? "" : "excel");
-//			}
-//			if ((!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA"))) {
-//				dmpJSon.put("personal_info_api_classify", "Y");
-//			} else {
-//				dmpJSon.put("personal_info_api_classify", "N");
-//			}
-			
-			
-			
-			
-			
-			
-//			int age = 0;
-//			if(!mage.equals("NA") && StringUtils.isNotBlank(mage) && mage.length() == 4) {
-//				calendar.setTime(new Date());
-//				age = calendar.get(Calendar.YEAR) - Integer.parseInt(mage);
-//				dmpJSon.put("age", age);
-//			}else {
-//				dmpJSon.put("age", "");
-//			}
-//			if(!msex.equals("NA") && StringUtils.isNotBlank(msex)) {
-//				dmpJSon.put("sex", msex.toUpperCase());
-//			}else {
-//				dmpJSon.put("sex", "");
-//			}
-//			
-//			
-//			if(StringUtils.isNotBlank(memid)) {
-//				dmpJSon.put("sex_source","member_api");
-//				dmpJSon.put("age_source","member_api");
-//			}else if(StringUtils.isNotBlank(dmpJSon.getAsString("category"))) {
-//				
-//				dmpJSon.put("sex_source", StringUtils.equals(msex, "NA") ? "" : "excel");
-//				dmpJSon.put("age_source", StringUtils.equals(mage, "NA") ? "" : "excel");
-//			}
-//			if ((!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA"))) {
-//				dmpJSon.put("personal_info_api_classify", "Y");
-//			} else {
-//				dmpJSon.put("personal_info_api_classify", "N");
-//			}
-			
-			
-			
 		}else {
 			//memid資料是否存在時  1.有資料-->查詢mongodb是否已存-->未存則打會員API新增一筆資料，已存則取出 
 			if (StringUtils.isNotBlank(memid)) {
@@ -265,12 +164,16 @@ public class PersonalInfoComponent {
 					//新增user
 					insertUserDetail(memid,msex,mage);
 					int age = 0;
-					if(!mage.equals("NA") && StringUtils.isNotBlank(mage)) {
-						calendar.setTime(new Date());
-						age = calendar.get(Calendar.YEAR) - Integer.parseInt(mage);
-						dmpJSon.put("age", age);
-					}else {
+					if(mage.equals("NA") || StringUtils.isBlank(mage)) {
 						dmpJSon.put("age", "");
+					}else {
+						if(mage.length() == 4) {
+							calendar.setTime(new Date());
+							age = calendar.get(Calendar.YEAR) - Integer.parseInt(mage);
+							dmpJSon.put("age", age);
+						}else {
+							dmpJSon.put("age", mage);
+						}
 					}
 					if(!msex.equals("NA") && StringUtils.isNotBlank(msex)) {
 						dmpJSon.put("sex", msex.toUpperCase());
@@ -279,7 +182,6 @@ public class PersonalInfoComponent {
 					}
 					dmpJSon.put("sex_source","member_api");
 					dmpJSon.put("age_source","member_api");
-					
 					if ((!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA"))) {
 						dmpJSon.put("personal_info_api_classify", "Y");
 					} else {
