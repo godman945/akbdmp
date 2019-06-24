@@ -32,6 +32,7 @@ public class PersonalInfoComponent {
 	
 	private static DBCollection dBCollection;
 	private static String memid = "";
+	private static String uuid = "";
 	private static String category = "";
 	private static DBObject dbObject;
 	private static String userInfoStr;
@@ -48,10 +49,24 @@ public class PersonalInfoComponent {
 		this.dBCollection = dbCollectionUser;
 		this.memid = dmpJSon.getAsString("memid");
 		this.category = dmpJSon.getAsString("category");
+		this.uuid = dmpJSon.getAsString("uuid");
 		dbObject = null;
 		// 如有memid資料，先查mongo，再撈會員中心查個資
-		if(sexAgeInfoMap.containsKey(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid+"<PCHOME>"+category)) {
-			Map<String, String> personalInfoMap = sexAgeInfoMap.get(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid+"<PCHOME>"+category);
+		
+		
+		
+		
+		if(this.uuid.equals("744d82cd-b1d3-4fd8-a7c1-1724901fe5f6")) {
+			log.info(">>>>>>>>>>>1 memid:"+this.memid+" category:"+category);
+		}
+		
+		
+		if(sexAgeInfoMap.containsKey(this.uuid+"<PCHOME>"+memid+"<PCHOME>"+category)) {
+			Map<String, String> personalInfoMap = sexAgeInfoMap.get(this.uuid+"<PCHOME>"+memid+"<PCHOME>"+category);
+			if(this.uuid.equals("744d82cd-b1d3-4fd8-a7c1-1724901fe5f6")) {
+				log.info(">>>>>>>>>>>1-2 personalInfoMap:"+personalInfoMap);
+			}
+			
 			msex = (String) personalInfoMap.get("msex");
 			mage = (String) personalInfoMap.get("mage");
 			int age = 0;
@@ -82,6 +97,9 @@ public class PersonalInfoComponent {
 			}
 		}else {
 			if (StringUtils.isNotBlank(memid)) {
+				if(this.uuid.equals("744d82cd-b1d3-4fd8-a7c1-1724901fe5f6")) {
+					log.info(">>>>>>>>>>>1-3");
+				}
 //				log.info(">>>>>>memid:"+memid);
 				msex = "";
 				mage = "";
@@ -181,7 +199,7 @@ public class PersonalInfoComponent {
 				dmpJSon.put("sex_source","member_api");
 				dmpJSon.put("age_source","member_api");
 				
-				sexAgeInfoMap.put(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid+"<PCHOME>"+category, memberInfoMapApi);
+				sexAgeInfoMap.put(this.uuid+"<PCHOME>"+memid+"<PCHOME>"+category, memberInfoMapApi);
 //				log.info(">>>>>>memberInfoMapApi:"+memberInfoMapApi);
 				
 			}else {
@@ -388,7 +406,15 @@ public class PersonalInfoComponent {
 	}
 	
 	public Map<String, String> forecastPersonalInfo(String category) throws Exception {
+		
+		
 		combinedValue combineObj = DmpLogReducer.clsfyCraspMap.get(category);
+		
+		if(this.uuid.equals("744d82cd-b1d3-4fd8-a7c1-1724901fe5f6")) {
+			log.info(">>>>>>>>>>>1-5:"+combineObj.age);
+		}
+		
+		
 		String sex = (combineObj != null) ? combineObj.gender : "NA";
 		String age = (combineObj != null) ? combineObj.age : "NA";
 
