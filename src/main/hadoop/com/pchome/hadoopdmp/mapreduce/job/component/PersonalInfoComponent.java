@@ -53,22 +53,12 @@ public class PersonalInfoComponent {
 		dbObject = null;
 		// 如有memid資料，先查mongo，再撈會員中心查個資
 		
-		
-		if(this.uuid.equals("744d82cd-b1d3-4fd8-a7c1-1724901fe5f6")) {
-			log.info(">>>>>>>>>>>1 memid:"+this.memid+" category:"+category);
-		}
-		
-		
 		if(sexAgeInfoMap.containsKey(this.uuid+"<PCHOME>"+memid+"<PCHOME>"+category)) {
 			Map<String, String> personalInfoMap = sexAgeInfoMap.get(this.uuid+"<PCHOME>"+memid+"<PCHOME>"+category);
-			if(this.uuid.equals("744d82cd-b1d3-4fd8-a7c1-1724901fe5f6")) {
-				log.info(">>>>>>>>>>>1-2 personalInfoMap:"+personalInfoMap);
-			}
-			
 			msex = (String) personalInfoMap.get("msex");
 			mage = (String) personalInfoMap.get("mage");
 			int age = 0;
-			if(!mage.equals("NA") && StringUtils.isNotBlank(mage)) {
+			if(!mage.equals("NA") && StringUtils.isNotBlank(mage) && mage.length() == 4) {
 				calendar.setTime(new Date());
 				age = calendar.get(Calendar.YEAR) - Integer.parseInt(mage);
 				dmpJSon.put("age", age);
@@ -95,9 +85,6 @@ public class PersonalInfoComponent {
 			}
 		}else {
 			if (StringUtils.isNotBlank(memid)) {
-				if(this.uuid.equals("744d82cd-b1d3-4fd8-a7c1-1724901fe5f6")) {
-					log.info(">>>>>>>>>>>1-3");
-				}
 //				log.info(">>>>>>memid:"+memid);
 				msex = "";
 				mage = "";
@@ -202,8 +189,8 @@ public class PersonalInfoComponent {
 				
 			}else {
 				if(StringUtils.isNotBlank(dmpJSon.getAsString("category"))) {
-					//處理個資推估
-					Map<String, String> forecastPersonalInfoMap = processForecastPersonalInfo(dmpJSon,category);
+					//處理個資推估 
+					Map<String, String> forecastPersonalInfoMap = forecastPersonalInfo(category);
 					String msex = forecastPersonalInfoMap.get("msex");
 					String mage = forecastPersonalInfoMap.get("mage");
 					if(!mage.equals("NA") && StringUtils.isNotBlank(mage)) {
@@ -373,10 +360,6 @@ public class PersonalInfoComponent {
 	
 
 	
-	public Map<String, String> processForecastPersonalInfo(net.minidev.json.JSONObject dmpJSon, String category) throws Exception {
-		// 讀取ClsfyGndAgeCrspTable.txt做age、sex個資推估
-		return forecastPersonalInfo(category);
-	}
 	
 	public DBObject queryUserDetail(String memid) throws Exception {
 		BasicDBObject andQuery = new BasicDBObject();
@@ -391,8 +374,7 @@ public class PersonalInfoComponent {
 		DBObject updateCondition = new BasicDBObject();
 		updateCondition.put("user_id", memid);
 		DBObject updatedValue = new BasicDBObject();
-		updatedValue.put("user_info", new BasicDBObject("msex", msex).append("mage", mage)
-				.append("type", "memid").append("memid", ""));
+		updatedValue.put("user_info", new BasicDBObject("msex", msex).append("mage", mage).append("type", "memid").append("memid", ""));
 		DBObject updateSetValue = new BasicDBObject("$set", updatedValue);
 		dBCollection.update(updateCondition, updateSetValue); 
 	}
@@ -401,29 +383,17 @@ public class PersonalInfoComponent {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date today = new Date();
 		String todayStr = sdf.format(today);
-		DBObject documents = new BasicDBObject("user_id",memid).append("create_date", todayStr).append("update_date", todayStr)
-				.append("user_info", new BasicDBObject("msex", msex).append("mage", mage).append("memid", "").append("type", "memid"));
+		DBObject documents = new BasicDBObject("user_id",memid).append("create_date", todayStr).append("update_date", todayStr).append("user_info", new BasicDBObject("msex", msex).append("mage", mage).append("memid", "").append("type", "memid"));
 		dBCollection.insert(documents);
 	}
-	
+	// 讀取ClsfyGndAgeCrspTable.txt做age、sex個資推估
 	public Map<String, String> forecastPersonalInfo(String category) throws Exception {
-		
-		
 		combinedValue combineObj = DmpLogReducer.clsfyCraspMap.get(category);
-		
-		if(this.uuid.equals("744d82cd-b1d3-4fd8-a7c1-1724901fe5f6")) {
-			log.info(">>>>>>>>>>>1-5:"+combineObj.age);
-		}
-		
-		
 		String sex = (combineObj != null) ? combineObj.gender : "NA";
 		String age = (combineObj != null) ? combineObj.age : "NA";
-
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("msex", sex);
 		map.put("mage", age);
-		
-		sexAgeInfoMap.put(this.uuid+"<PCHOME>"+memid+"<PCHOME>"+category, map);
 		return map;
 	}
 	
