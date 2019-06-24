@@ -54,8 +54,6 @@ public class PersonalInfoComponent {
 		// 如有memid資料，先查mongo，再撈會員中心查個資
 		
 		
-		
-		
 		if(this.uuid.equals("744d82cd-b1d3-4fd8-a7c1-1724901fe5f6")) {
 			log.info(">>>>>>>>>>>1 memid:"+this.memid+" category:"+category);
 		}
@@ -225,7 +223,7 @@ public class PersonalInfoComponent {
 					} else {
 						dmpJSon.put("personal_info_classify", "N");
 					}
-					sexAgeInfoMap.put(dmpJSon.getAsString("uuid")+"<PCHOME>"+memid+"<PCHOME>"+dmpJSon.getAsString("category"), forecastPersonalInfoMap);
+					sexAgeInfoMap.put(this.uuid+"<PCHOME>"+memid+"<PCHOME>"+dmpJSon.getAsString("category"), forecastPersonalInfoMap);
 				}
 			}
 		}
@@ -295,6 +293,9 @@ public class PersonalInfoComponent {
 //		}
 //		//處理個資推估
 //		processForecastPersonalInfo(dmpJSon,category);
+		if(this.uuid.equals("744d82cd-b1d3-4fd8-a7c1-1724901fe5f6")) {
+			log.info(">>>>>>>>>>>end:"+dmpJSon);
+		}
 		return dmpJSon;
 		
 		
@@ -421,6 +422,8 @@ public class PersonalInfoComponent {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("msex", sex);
 		map.put("mage", age);
+		
+		sexAgeInfoMap.put(this.uuid+"<PCHOME>"+memid+"<PCHOME>"+category, map);
 		return map;
 	}
 	
