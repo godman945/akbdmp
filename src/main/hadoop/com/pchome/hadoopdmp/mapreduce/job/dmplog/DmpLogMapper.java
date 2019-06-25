@@ -84,6 +84,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public static ACategoryLogData aCategoryLogDataClick = null;
 	public static ACategoryLogData aCategoryLogDataRetun = null;
 	public static ACategoryLogData aCategoryLogData24H = null;
+	public static String logSource = "";
 	
 	@Override
 	public void setup(Context context) {
@@ -220,6 +221,14 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("hour", record_hour);
 						dmpDataJson.put("memid", values[1]);
 						dmpDataJson.put("uuid", values[2]);
+						
+						
+						if(values[2].equals("xxx-531ffc6f-dc07-4f65-a72e-0b03848b6e49")) {
+							log.info(">>>>>>>>>>>>>>>>1 xxx-531ffc6f-dc07-4f65-a72e-0b03848b6e49");
+							log.info(">>>>>>>>>>>>>>>>date:"+values[0]);
+						}
+						
+						
 						if(values[2].contains("xxx-")) {
 							dmpDataJson.put("uuid_flag", "y");
 						}else {
@@ -335,6 +344,12 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("bu_layer4", "");
 						dmpDataJson.put("behavior", "");
 						dmpDataJson.put("classify", "");
+						
+						
+						if(values[2].equals("xxx-531ffc6f-dc07-4f65-a72e-0b03848b6e49")) {
+							log.info(">>>>>>>>>>>>>>>>2 end");
+						}
+						
 					}else {
 						return;
 					}
@@ -343,9 +358,14 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				}
 			}else if(logpath.contains("/akb/storedata/bulog/") || logpath.contains("/pa/storedata/alllog/") ) {
 				try {
-					if(true) {
-						return;
+					if(logpath.contains("/akb/storedata/bulog/")) {
+						logSource = "bulog";
+					}else if(logpath.contains("/pa/storedata/alllog/")) {
+						logSource = "pacl";
 					}
+					
+					
+					
 					String[] values = logStr.split(paclSymbol,-1);
 					dmpDataJson.put("fileName", fileName);
 					dmpDataJson.put("log_date", values[0]);
@@ -359,7 +379,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("url", values[6]);
 					dmpDataJson.put("referer", values[5]);
 					dmpDataJson.put("domain", values[7]);
-					dmpDataJson.put("log_source", "bulog");
+					dmpDataJson.put("log_source", logSource);
 					dmpDataJson.put("pfd_customer_info_id", "");
 					dmpDataJson.put("pfp_customer_info_id", "");
 					dmpDataJson.put("style_id", "");
@@ -389,7 +409,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("area_info_source", "ip");
 					dmpDataJson.put("area_info_classify", "");
 					//時間資訊
-					dmpDataJson.put("time_info_source", "bulog");
+					dmpDataJson.put("time_info_source", logSource);
 					dmpDataJson.put("time_info_classify", "");
 					//裝置資訊 [device_info_classify] null:user_agent為空
 					dmpDataJson.put("user_agent", values[8].replaceAll("\"", ""));
