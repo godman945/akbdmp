@@ -357,8 +357,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						if(values[2].equals("xxx-531ffc6f-dc07-4f65-a72e-0b03848b6e49")) {
 							log.info(">>>>>>>>>>>>>>>>2 end");
 						}
-						
 					}else {
+						
 						return;
 					}
 				}catch(Exception e) {
@@ -506,48 +506,48 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					return;
 				}
 			}
-			//開始DMP資訊
-			try {
-				//1.地區處理元件(ip 轉國家、城市)
-				geoIpComponent.ipTransformGEO(dmpDataJson);
-				//2.時間處理元件(日期時間字串轉成小時)		
-				dateTimeComponent.datetimeTransformHour(dmpDataJson); 
-				//3.裝置處理元件(UserAgent轉成裝置資訊)
-				deviceComponent.parseUserAgentToDevice(dmpDataJson);
-				//5.分類處理元件(分析click、24H、Ruten、campaign分類)
-				if ((dmpDataJson.getAsString("trigger_type").equals("ck") || dmpDataJson.getAsString("log_source").equals("campaign")) ) {// kdcl ad_click的adclass  或   campaign log的adclass 	//&& StringUtils.isNotBlank(dmpLogBeanResult.getAdClass())
-					DmpLogMapper.aCategoryLogDataClick.processCategory(dmpDataJson, null);
-				}else if (dmpDataJson.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpDataJson.getAsString("referer")) && dmpDataJson.getAsString("referer").contains("ruten")) {	// 露天
-					DmpLogMapper.aCategoryLogDataRetun.processCategory(dmpDataJson, dBCollection_class_url);
-				}else if (dmpDataJson.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpDataJson.getAsString("referer")) && dmpDataJson.getAsString("referer").contains("24h")) {		// 24h
-					DmpLogMapper.aCategoryLogData24H.processCategory(dmpDataJson, dBCollection_class_url);
-				}else if (dmpDataJson.getAsString("trigger_type").equals("pv") ){
-					dmpDataJson.put("category", "");
-					dmpDataJson.put("category_source", "");
-				}
-				//館別分類
-				try {
-					if(StringUtils.isNotBlank(dmpDataJson.getAsString("op1"))) {
-						process24CategoryLevel(dmpDataJson);
-					}
-				}catch(Exception e) {
-					log.error(">>>>>>>fail process 24 category level:"+e.getMessage());
-					return;
-				}
-			}catch(Exception e) {
-				log.error(">>>>process source fail");
-				log.error(">>>>>>logStr:" +logStr);
-				log.error(">>>>>>fileName:" +fileName);
-				return;
-			}
-			
-//			寫入reduce
-			try {
-				keyOut.set(dmpDataJson.getAsString("uuid"));
-				context.write(keyOut, new Text(dmpDataJson.toString()));
-			} catch (Exception e) {
-				log.error(">>>>write to reduce fail:"+e.getMessage());
-			}
+//			//開始DMP資訊
+//			try {
+//				//1.地區處理元件(ip 轉國家、城市)
+//				geoIpComponent.ipTransformGEO(dmpDataJson);
+//				//2.時間處理元件(日期時間字串轉成小時)		
+//				dateTimeComponent.datetimeTransformHour(dmpDataJson); 
+//				//3.裝置處理元件(UserAgent轉成裝置資訊)
+//				deviceComponent.parseUserAgentToDevice(dmpDataJson);
+//				//5.分類處理元件(分析click、24H、Ruten、campaign分類)
+//				if ((dmpDataJson.getAsString("trigger_type").equals("ck") || dmpDataJson.getAsString("log_source").equals("campaign")) ) {// kdcl ad_click的adclass  或   campaign log的adclass 	//&& StringUtils.isNotBlank(dmpLogBeanResult.getAdClass())
+//					DmpLogMapper.aCategoryLogDataClick.processCategory(dmpDataJson, null);
+//				}else if (dmpDataJson.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpDataJson.getAsString("referer")) && dmpDataJson.getAsString("referer").contains("ruten")) {	// 露天
+//					DmpLogMapper.aCategoryLogDataRetun.processCategory(dmpDataJson, dBCollection_class_url);
+//				}else if (dmpDataJson.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpDataJson.getAsString("referer")) && dmpDataJson.getAsString("referer").contains("24h")) {		// 24h
+//					DmpLogMapper.aCategoryLogData24H.processCategory(dmpDataJson, dBCollection_class_url);
+//				}else if (dmpDataJson.getAsString("trigger_type").equals("pv") ){
+//					dmpDataJson.put("category", "");
+//					dmpDataJson.put("category_source", "");
+//				}
+//				//館別分類
+//				try {
+//					if(StringUtils.isNotBlank(dmpDataJson.getAsString("op1"))) {
+//						process24CategoryLevel(dmpDataJson);
+//					}
+//				}catch(Exception e) {
+//					log.error(">>>>>>>fail process 24 category level:"+e.getMessage());
+//					return;
+//				}
+//			}catch(Exception e) {
+//				log.error(">>>>process source fail");
+//				log.error(">>>>>>logStr:" +logStr);
+//				log.error(">>>>>>fileName:" +fileName);
+//				return;
+//			}
+//			
+////			寫入reduce
+//			try {
+//				keyOut.set(dmpDataJson.getAsString("uuid"));
+//				context.write(keyOut, new Text(dmpDataJson.toString()));
+//			} catch (Exception e) {
+//				log.error(">>>>write to reduce fail:"+e.getMessage());
+//			}
 			
 	}
 	
