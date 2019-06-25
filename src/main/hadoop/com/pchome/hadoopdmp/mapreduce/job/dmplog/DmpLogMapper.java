@@ -213,6 +213,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 							log.info(">>>>>>>>>>>>>>>>1 xxx-531ffc6f-dc07-4f65-a72e-0b03848b6e49");
 							log.info(">>>>>>>>>>>>>>>>date:"+values[0]);
 							log.info(">>>>>>>>>>>>>>>>fileName:"+fileName);
+							log.info(">>>>>>>>>>>>>>>>logpath:"+logpath);
 						}
 						
 						
@@ -365,17 +366,24 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				}
 			}else if(logpath.contains("/akb/storedata/bulog/") || logpath.contains("/pa/storedata/alllog/") ) {
 				try {
-					
-					if(true) {
-						return;
-					}
-					
 					if(logpath.contains("/akb/storedata/bulog/")) {
 						logSource = "bulog";
 					}else if(logpath.contains("/pa/storedata/alllog/")) {
 						logSource = "pacl";
 					}
 					String[] values = logStr.split(paclSymbol,-1);
+					
+					
+					if(values[2].equals("xxx-531ffc6f-dc07-4f65-a72e-0b03848b6e49")) {
+						log.info(">>>>>>>>>>>>>>>>3 xxx-531ffc6f-dc07-4f65-a72e-0b03848b6e49");
+						log.info(">>>>>>>>>>>>>>>>date:"+values[0]);
+						log.info(">>>>>>>>>>>>>>>>fileName:"+fileName);
+						log.info(">>>>>>>>>>>>>>>>logpath:"+logpath);
+					}
+					
+					
+					
+					
 					dmpDataJson.put("fileName", fileName);
 					dmpDataJson.put("log_date", values[0]);
 					dmpDataJson.put("memid","");
@@ -481,6 +489,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("bu_layer4", "");
 					dmpDataJson.put("behavior", "");
 					dmpDataJson.put("classify", "");
+					
+					
+					if(values[2].equals("xxx-531ffc6f-dc07-4f65-a72e-0b03848b6e49")) {
+						log.info(">>>>>>>>>>>>>>>>4 end");
+					}
 					
 				}catch(Exception e) {
 					log.error(">>>>pa set json fail:"+e.getMessage());
