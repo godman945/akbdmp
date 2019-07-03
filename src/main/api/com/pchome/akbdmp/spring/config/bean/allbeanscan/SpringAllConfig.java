@@ -28,6 +28,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 	+ "com.pchome.akbdmp.mysql.db.*,"
 	+ "com.pchome.dmp.mapreduce.crawlbreadcrumb,"
 	+ "alex.test,"
+	+ "com.pchome.akbdmp.spring.config.bean.util,"
 //	+ "com.pchome.akbdmp.spring.config.bean.quartz,"
 	+ "com.pchome.akbdmp.cron.job"
 // + "com.pchome.soft.depot.utils,"

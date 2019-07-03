@@ -6,8 +6,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import com.pchome.akbdmp.spring.config.bean.allbeanscan.SpringAllConfig;
+import com.pchome.akbdmp.spring.config.bean.redis.RedisConfig;
 import com.pchome.soft.depot.utils.DateFormatUtil;
 import com.pchome.soft.depot.utils.KafkaUtil;
 
@@ -47,9 +50,11 @@ public class TestRun {
 		
 //		stg:pa:codecheck:TAC20181210000000001
 		
-		System.out.println(redisTemplate.opsForValue().get("stg:pa:codecheck:CAC20181210000000001:RLE20190111000000006"));
+//		System.out.println(redisTemplate.opsForValue().get("stg:pa:codecheck:CAC20181210000000001:RLE20190111000000006"));
 		
+//		redisTemplate.opsForValue().set("prd:dmp:callfc:dtjrpllptjzv", 1);
 		
+		System.out.println(redisTemplate.opsForValue().get("prd:dmp:callfc:dtjrpllptjzv"));
 		
 //		redisTemplate.opsForValue().set("alex", "AAA");
 //		redisTemplate.expire("alex", 1, TimeUnit.DAYS);
@@ -249,11 +254,132 @@ public class TestRun {
 //		redisTemplate.delete(key);
 	}
 
+	
+
+	
+	
 	public static void main(String[] args) throws Exception {
-//		System.setProperty("spring.profiles.active", "stg");
-//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
-//		TestRun TestRun = (TestRun) ctx.getBean(TestRun.class);
-//		TestRun.redisTest();
+		
+		
+//		Map<String,int[]> sexWeightMap = new HashMap<String,int[]>();
+//		int[] m_random = new int[2]; 
+//		m_random[0] = 1;
+//		m_random[1] = 54;
+//		int[] f_random = new int[2]; 
+//		f_random[0] = 55;
+//		f_random[1] = 100;
+//		
+//		sexWeightMap.put("M", m_random);
+//		sexWeightMap.put("F", f_random);
+//		String sex = "";
+//		double a =0;
+//		double b =0;
+//		int count = 100;
+//		for (int i = 0; i < count; i++) {
+//			Random random = new Random();
+//			int sexNum = random.nextInt(100) + 1;
+//			System.out.println("sexNum:"+sexNum);
+//			for (String key : sexWeightMap.keySet()) {
+//				if(sexWeightMap.get(key)[0] <= sexNum && sexNum <= sexWeightMap.get(key)[1]) {
+//					sex = key;
+//					break;
+//				}
+//			}
+//			if(sex.equals("M")) {
+//				a = a + 1;
+//			}else {
+//				b = b + 1;
+//			}
+//		}
+//		
+//		System.out.println("sex:"+sex);
+//		System.out.println("男比例" + a / count);
+//		System.out.println("女比例" + b / count);
+//		
+//		for (int[] sexRandomRange : sexWeightMap.values()) {
+//			
+////			if(sexRandomRange[0] <= sexNum && sexNum <= sexRandomRange[1]) {
+////				sex = sexWeightMap.keySet()
+////			}
+//			
+//			
+//			
+//			
+//			System.out.println(sexRandomRange[0]);
+//			System.out.println(sexRandomRange[1]);
+//		}
+		
+		
+		
+		
+		
+		
+		
+//		
+//		Random random = new Random();
+//		int sexNum = random.nextInt(100) + 1;
+		
+		
+//		double a =0;
+//		double b =0;
+//		for (int i = 0; i < 100; i++) {
+//			Random r = new Random();
+//			int n5 = r.nextInt(100) + 1;
+//			String m = null;
+//			if(n5 <= 54){ //54%的機率
+//			    m = "a";
+//			}else if(n5 >= 55){//46%的機率
+//			    m = "b";
+//			}
+//			if(m.equals("a")) {
+//				a = a + 1;
+//			}else {
+//				b = b + 1;
+//			}
+//			System.out.println("times:"+m);
+//		}
+//		System.out.println("男比例" + a / 100);
+//		System.out.println("女比例" + b / 100);
+//		
+		
+		
+		
+		
+//		先分為8個區間
+//		A B C D E F G H
+//		用比例挑出區間後
+//		再用亂數挑一個區間年齡吐出
+//
+//		18歲以下 5%
+//		18歲-24歲 12%
+//		25歲-34歲 22%
+//		35歲-44歲 26%
+//		45歲-54歲 20% 
+//		55歲-64歲 10%
+//		65歲-74歲 4%
+//		75歲以上 1% 
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		System.setProperty("spring.profiles.active", "stg");
+		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
+		TestRun TestRun = (TestRun) ctx.getBean(TestRun.class);
+		TestRun.redisTest();
 		
 		
 //		List<JSONObject> paclJsonInfoList = new ArrayList<JSONObject>();
@@ -267,35 +393,34 @@ public class TestRun {
 //		}
 //		System.out.println(paclJsonInfoList);
 //		
-		JSONParser jsonParser = new JSONParser();
-		
-		
-		
-		String data = "[{'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'10','kdclSourceDate':'2019-01-18 10:25:06','actionSeq':'aa_201901080003','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201711060005','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0151','groupSeq':'ag_201901080004','age':'0','fileName':'kwstg1-10.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg2.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-18','adSeq':'ad_201901080002'}, {'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'18','kdclSourceDate':'2019-01-22 18:29:32','actionSeq':'aa_201901170002','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201711060005','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0134','groupSeq':'ag_201901170002','age':'0','fileName':'kwstg1-18.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg2.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-22','adSeq':'ad_201901170003'}, {'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'18','kdclSourceDate':'2019-01-22 18:25:33','actionSeq':'aa_201901170002','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201711040015','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0129','groupSeq':'ag_201901170002','age':'0','fileName':'kwstg1-18.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg1.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-22','adSeq':'ad_201901170003'}, {'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'18','kdclSourceDate':'2019-01-22 18:23:44','actionSeq':'aa_201901170002','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201711040015','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0129','groupSeq':'ag_201901170002','age':'0','fileName':'kwstg1-18.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg1.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-22','adSeq':'ad_201901170003'}, {'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'18','kdclSourceDate':'2019-01-22 18:23:40','actionSeq':'aa_201901170002','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201509250003','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0128','groupSeq':'ag_201901170002','age':'0','fileName':'kwstg1-18.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg1.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-22','adSeq':'ad_201901170003'}, {'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'18','kdclSourceDate':'2019-01-22 18:23:36','actionSeq':'aa_201901170002','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201512170007','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0135','groupSeq':'ag_201901170002','age':'0','fileName':'kwstg1-18.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg1.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-22','adSeq':'ad_201901170003'}, {'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'09','kdclSourceDate':'2019-01-22 09:47:44','actionSeq':'aa_201901170002','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201510070007','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0124','groupSeq':'ag_201901170002','age':'0','fileName':'kwstg1-09.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg1.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-22','adSeq':'ad_201901170003'}, {'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'09','kdclSourceDate':'2019-01-22 09:47:28','actionSeq':'aa_201901170002','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201711040015','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0144','groupSeq':'ag_201901170002','age':'0','fileName':'kwstg1-09.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg1.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-22','adSeq':'ad_201901170003'}, {'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'09','kdclSourceDate':'2019-01-22 09:47:18','actionSeq':'aa_201901170002','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201711040015','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0144','groupSeq':'ag_201901170002','age':'0','fileName':'kwstg1-09.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg1.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-22','adSeq':'ad_201901170003'}, {'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'09','kdclSourceDate':'2019-01-22 09:47:08','actionSeq':'aa_201901170002','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201509250003','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0128','groupSeq':'ag_201901170002','age':'0','fileName':'kwstg1-09.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg1.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-22','adSeq':'ad_201901170003'}]";
-		
-		JSONArray arr =  (JSONArray) jsonParser.parse(data);
-		List<JSONObject> list = new ArrayList<>();
-		for (Object jsonObject : arr) {
-			list.add((JSONObject)jsonObject);
-		}
-
-		
-		Iterator<JSONObject> iterator = list.iterator();
-		while (iterator.hasNext()) {
-			JSONObject iteratorJson = (JSONObject)iterator.next();
-			iteratorJson.put("alex", "alex");
-			if(iteratorJson.getAsString("adSeq").equals("ad_201901080002")){
-				iterator.remove();
-				continue;
-			}
-		}
-		
-		
-		for (JSONObject jsonObject : list) {
-			System.out.println(jsonObject);
-		}
-		
-		
+//		JSONParser jsonParser = new JSONParser();
+//		
+//		
+//		
+//		String data = "[{'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'10','kdclSourceDate':'2019-01-18 10:25:06','actionSeq':'aa_201901080003','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201711060005','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0151','groupSeq':'ag_201901080004','age':'0','fileName':'kwstg1-10.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg2.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-18','adSeq':'ad_201901080002'}, {'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'18','kdclSourceDate':'2019-01-22 18:29:32','actionSeq':'aa_201901170002','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201711060005','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0134','groupSeq':'ag_201901170002','age':'0','fileName':'kwstg1-18.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg2.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-22','adSeq':'ad_201901170003'}, {'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'18','kdclSourceDate':'2019-01-22 18:25:33','actionSeq':'aa_201901170002','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201711040015','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0129','groupSeq':'ag_201901170002','age':'0','fileName':'kwstg1-18.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg1.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-22','adSeq':'ad_201901170003'}, {'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'18','kdclSourceDate':'2019-01-22 18:23:44','actionSeq':'aa_201901170002','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201711040015','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0129','groupSeq':'ag_201901170002','age':'0','fileName':'kwstg1-18.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg1.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-22','adSeq':'ad_201901170003'}, {'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'18','kdclSourceDate':'2019-01-22 18:23:40','actionSeq':'aa_201901170002','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201509250003','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0128','groupSeq':'ag_201901170002','age':'0','fileName':'kwstg1-18.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg1.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-22','adSeq':'ad_201901170003'}, {'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'18','kdclSourceDate':'2019-01-22 18:23:36','actionSeq':'aa_201901170002','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201512170007','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0135','groupSeq':'ag_201901170002','age':'0','fileName':'kwstg1-18.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg1.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-22','adSeq':'ad_201901170003'}, {'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'09','kdclSourceDate':'2019-01-22 09:47:44','actionSeq':'aa_201901170002','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201510070007','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0124','groupSeq':'ag_201901170002','age':'0','fileName':'kwstg1-09.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg1.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-22','adSeq':'ad_201901170003'}, {'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'09','kdclSourceDate':'2019-01-22 09:47:28','actionSeq':'aa_201901170002','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201711040015','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0144','groupSeq':'ag_201901170002','age':'0','fileName':'kwstg1-09.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg1.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-22','adSeq':'ad_201901170003'}, {'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'09','kdclSourceDate':'2019-01-22 09:47:18','actionSeq':'aa_201901170002','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201711040015','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0144','groupSeq':'ag_201901170002','age':'0','fileName':'kwstg1-09.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg1.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-22','adSeq':'ad_201901170003'}, {'styleId':'','sex':'','userAgent':'Mozilla-5.0 (Windows NT 6.1; Win64; x64) AppleWebKit-537.36 (KHTML, like Gecko) Chrome-71.0.3578.98 Safari-537.36','priceType':'CPC','categoryCode':'00014000000000000000','pfpCustomerInfoId':'AC2013071700004','keclTime':'09','kdclSourceDate':'2019-01-22 09:47:08','actionSeq':'aa_201901170002','pfbxCustomerInfoId':'PFBC20150519001','pfbxPositionId':'PFBP201509250003','pfdCustomerInfoId':'PFDC20140520001','kdclType':'ck','tproId':'c_x05_pad_tpro_0128','groupSeq':'ag_201901170002','age':'0','fileName':'kwstg1-09.lzo','payType':'1','referer':'http:--showstg.pchome.com.tw-adm-adteststg1.jsp','adType':'2','uuid':'fe06708897d46cdba71d80826f3fae20','kdclDate':'2019-01-22','adSeq':'ad_201901170003'}]";
+//		
+//		JSONArray arr =  (JSONArray) jsonParser.parse(data);
+//		List<JSONObject> list = new ArrayList<>();
+//		for (Object jsonObject : arr) {
+//			list.add((JSONObject)jsonObject);
+//		}
+//
+//		
+//		Iterator<JSONObject> iterator = list.iterator();
+//		while (iterator.hasNext()) {
+//			JSONObject iteratorJson = (JSONObject)iterator.next();
+//			iteratorJson.put("alex", "alex");
+//			if(iteratorJson.getAsString("adSeq").equals("ad_201901080002")){
+//				iterator.remove();
+//				continue;
+//			}
+//		}
+//		
+//		
+//		for (JSONObject jsonObject : list) {
+//			System.out.println(jsonObject);
+//		}
+//		
 		
 		
 		
@@ -413,3 +538,4 @@ public class TestRun {
 		
 	}
 }
+
