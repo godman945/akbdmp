@@ -97,6 +97,11 @@ public class AdController extends BaseController {
 			}else if(StringUtils.isNotBlank(uuid)){
 				key = uuid;
 			}
+			
+			if(active.equals("stg")) {
+				log.info(">>>>>>>>>>>>>>>>>>key:"+key);
+			}
+			
 			String mapKey = redisCallmapKey+key;
 			String fcKey = redisCallfcKey+key;
 			String classKey = redisClassKey+key;
