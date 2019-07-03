@@ -98,7 +98,7 @@ public class AdController extends BaseController {
 				key = uuid;
 			}
 			
-			if(active.equals("stg")) {
+			if(key.equals("dtjrpllptjzv")) {
 				log.info(">>>>>>>>>>>>>>>>>>key:"+key);
 			}
 			
