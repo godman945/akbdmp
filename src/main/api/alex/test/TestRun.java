@@ -18,8 +18,15 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 import com.pchome.akbdmp.spring.config.bean.allbeanscan.SpringAllConfig;
 import com.pchome.akbdmp.spring.config.bean.redis.RedisConfig;
+import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
+import com.pchome.hadoopdmp.spring.config.bean.mongodborg.MongodbOrgHadoopConfig;
 import com.pchome.soft.depot.utils.DateFormatUtil;
 import com.pchome.soft.depot.utils.KafkaUtil;
 
@@ -54,7 +61,7 @@ public class TestRun {
 		
 //		redisTemplate.opsForValue().set("prd:dmp:callfc:dtjrpllptjzv", 1);
 		
-		System.out.println(redisTemplate.opsForValue().get("prd:dmp:callfc:dtjrpllptjzv"));
+		
 		
 //		redisTemplate.opsForValue().set("alex", "AAA");
 //		redisTemplate.expire("alex", 1, TimeUnit.DAYS);
@@ -371,15 +378,61 @@ public class TestRun {
 		
 		
 		
+//		System.setProperty("spring.profiles.active", "prd");
+//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//		
+//		DB mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
+//		DBCollection user_detail = mongoOrgOperations.getCollection("user_detail");
+//		System.out.println(user_detail.count());
+//		
+//		
+//		BasicDBObject andQuery = new BasicDBObject();
+//		List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+//		
+//		BasicDBObject sort = new BasicDBObject();
+//		sort.put("update_date",1);
+//		boolean flag = true;
+//		while(flag) {
+//			obj.clear();
+//			obj.add(new BasicDBObject("update_date", new BasicDBObject("$regex", "2017-")));
+////			obj.add(new BasicDBObject("update_date", new BasicDBObject("$lt", "2018-07-04")));
+////			obj.add(new BasicDBObject("update_date", new BasicDBObject("$gte", "2018-07-01")));
+//			andQuery.put("$or", obj);
+//			System.out.println(andQuery);
+//			DBCursor dbCursor = user_detail.find(andQuery);
+//			int count = 0;
+//			for (DBObject dbObject : dbCursor) {
+//				if(String.valueOf(dbObject.get("update_date")).contains("2017")) {
+//					System.out.println("delete oid:"+dbObject.get("_id")+" update_date:"+dbObject.get("update_date"));
+//					user_detail.remove(dbObject);
+//					count = count + 1;
+//					System.out.println("delete count:"+count+"筆");
+//				}
+//			}
+//			flag = false;
+//		}
 		
 		
 		
+		
+//		System.setProperty("spring.profiles.active", "stg");
+//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//		DB mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
+//		DBCollection user_detail = mongoOrgOperations.getCollection("user_detail");
+//		BasicDBObject andQuery = new BasicDBObject();
+//		andQuery.append("user_id", "1fb0722f-79d0-4081-8e80-20c38158801d");
+//		System.out.println(user_detail.find(andQuery));
+		
+		
+//		ctx.getBean(RedisConfig.class).getRedisTemplate();
+//		System.out.println(redisTemplate.opsForValue().get("prd:dmp:callfc:1fb0722f-79d0-4081-8e80-20c38158801d"));
 		
 		
 		System.setProperty("spring.profiles.active", "stg");
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
-		TestRun TestRun = (TestRun) ctx.getBean(TestRun.class);
-		TestRun.redisTest();
+		System.out.println(ctx.getBean(RedisConfig.class).getRedisTemplate().opsForValue().get("prd:dmp:callfc:1fb0722f-79d0-4081-8e80-20c38158801d"));
+//		TestRun TestRun = (TestRun) ctx.getBean(TestRun.class);
+//		TestRun.redisTest();
 		
 		
 //		List<JSONObject> paclJsonInfoList = new ArrayList<JSONObject>();
