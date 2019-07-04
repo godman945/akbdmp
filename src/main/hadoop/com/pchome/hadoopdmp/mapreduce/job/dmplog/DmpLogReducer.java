@@ -80,7 +80,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	public Map<String, Integer> redisClassifyMap = null;
 	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	private static String[] weeks = {"sun","mon","tue","wed","thu","fri","sat"};
+	private static String[] weeks = {"SUN","MON","TUE","WED","THU","FRI","SAT"};
 	private static Calendar calendar = Calendar.getInstance();
 	private static StringBuffer wiriteToDruid = new StringBuffer();
 	private static net.minidev.json.JSONObject dmpJSon =  new net.minidev.json.JSONObject();
