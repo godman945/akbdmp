@@ -219,19 +219,24 @@ public class MongoDbDriver {
 		boolean flag = true;
 		while(flag) {
 			obj.clear();
-			obj.add(new BasicDBObject("update_date", new BasicDBObject("$regex", "2017-")));
+			obj.add(new BasicDBObject("update_date", new BasicDBObject("$regex", "2018")));
+			obj.add(new BasicDBObject("user_info.type", "uuid"));
+//			obj.add(new BasicDBObject("update_date", "/2018-01/"));
 //			obj.add(new BasicDBObject("update_date", new BasicDBObject("$lt", "2018-07-04")));
 //			obj.add(new BasicDBObject("update_date", new BasicDBObject("$gte", "2018-07-01")));
-			andQuery.put("$or", obj);
+			andQuery.put("$and", obj);
 			System.out.println(andQuery);
 			DBCursor dbCursor = user_detail.find(andQuery);
 			int count = 0;
 			for (DBObject dbObject : dbCursor) {
-				if(String.valueOf(dbObject.get("update_date")).contains("2017")) {
+//				System.out.println(dbObject);
+				if(String.valueOf(dbObject.get("update_date")).contains("2018-01")) {
 					System.out.println("delete oid:"+dbObject.get("_id")+" update_date:"+dbObject.get("update_date"));
 					user_detail.remove(dbObject);
 					count = count + 1;
 					System.out.println("delete count:"+count+"筆");
+				}else {
+					System.out.println("not delete oid:"+dbObject.get("_id")+" update_date:"+dbObject.get("update_date"));
 				}
 			}
 			flag = false;

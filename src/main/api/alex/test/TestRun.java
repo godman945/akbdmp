@@ -430,6 +430,10 @@ public class TestRun {
 		
 		System.setProperty("spring.profiles.active", "stg");
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
+		
+		ctx.getBean(RedisConfig.class).getRedisTemplate().delete("prd:dmp:callmap:1fb0722f-79d0-4081-8e80-20c38158801d");
+		
+		System.out.println(ctx.getBean(RedisConfig.class).getRedisTemplate().opsForValue().get("prd:dmp:callmap:1fb0722f-79d0-4081-8e80-20c38158801d"));
 		System.out.println(ctx.getBean(RedisConfig.class).getRedisTemplate().opsForValue().get("prd:dmp:callfc:1fb0722f-79d0-4081-8e80-20c38158801d"));
 //		TestRun TestRun = (TestRun) ctx.getBean(TestRun.class);
 //		TestRun.redisTest();

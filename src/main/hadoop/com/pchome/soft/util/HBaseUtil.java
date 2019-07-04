@@ -22,42 +22,40 @@ import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.json.JSONObject;
+import org.springframework.stereotype.Component;
 
 
 
+@Component
 public class HBaseUtil {
-	
-	private static HBaseUtil singleton = new HBaseUtil();
-	
-	private static Log log = LogFactory.getLog("HBaseUtil");
-	
+	Log log = LogFactory.getLog(KafkaUtil.class);
+	private Configuration config;
 	HBaseAdmin admin = null;
-	
 	Configuration conf = HBaseConfiguration.create();
-	
-	HBaseUtil() {
-		try{
-			
-			log.info("**********HBASE INIT 2*********");
-			
-			conf = HBaseConfiguration.create();
-			conf.set("hbase.zookeeper.quorum", "192.168.2.150,192.168.2.151,192.168.2.152");
-			conf.set("hbase.zookeeper.property.clientPort", "3333");
-			conf.set("hbase.master", "192.168.2.149:16010");   
-//			File workaround = new File(".");         
-//			System.getProperties().put("hadoop.home.dir", workaround.getAbsolutePath());         
-			conf = HBaseConfiguration.create(conf);
-			Connection connection = ConnectionFactory.createConnection(conf);
-			admin = (HBaseAdmin) connection.getAdmin();
-		}catch(Exception e){
-			log.error(e.getMessage());
-		}
-	}
-	
-	synchronized static public HBaseUtil getInstance() {
-		log.info("**********HBASE INIT 1*********");
-		return singleton;
-	}
+	public HBaseUtil() throws Exception {  
+		conf = HBaseConfiguration.create();
+		conf.set("hbase.zookeeper.quorum", "192.168.2.150,192.168.2.151,192.168.2.152");
+		conf.set("hbase.zookeeper.property.clientPort", "3333");
+		conf.set("hbase.master", "192.168.2.149:16010");
+		conf.set("hbase.rpc.timeout", "10000");
+		conf.set("hbase.client.scanner.timeout.period", "10000");
+		conf.set("hbase.cells.scanned.per.heartbeat.check", "10000");
+		conf.set("zookeeper.session.timeout", "10000");
+		conf.set("phoenix.query.timeoutMs", "10000");
+		conf.set("phoenix.query.keepAliveMs", "10000");
+		conf.set("hbase.client.retries.number", "3");
+		conf.set("hbase.client.pause", "1000");
+		conf.set("zookeeper.recovery.retry", "1");
+		
+		
+		File workaround = new File(".");         
+		System.getProperties().put("hadoop.home.dir", workaround.getAbsolutePath());         
+		new File("./bin").mkdirs();         
+		new File("./bin/winutils.exe").createNewFile();
+		conf = HBaseConfiguration.create(conf);
+		Connection connection = ConnectionFactory.createConnection(conf);
+		admin = (HBaseAdmin) connection.getAdmin();
+	}  
 	
 	
 	 /**
@@ -132,7 +130,6 @@ public class HBaseUtil {
 		 if(row == null){
 			 return null;
 		 }else{
-			 log.info("HBASE:"+Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
 			 return new JSONObject(Bytes.toString(result.getValue(family.getBytes(), qualifier.getBytes())));
 		 }
 	 }
@@ -158,19 +155,11 @@ public class HBaseUtil {
 	 
 	    public static void main(String args[]){
 	    	 try {
-	    		 HBaseUtil hbaseUtil = HBaseUtil.getInstance();
-	    		 
+	    		 HBaseUtil hbaseUtil = new HBaseUtil();
 	    		 JSONObject json = new JSONObject();
-	    		 json.put("traceId001_prodId008", "2018-08-10");
-	    		 hbaseUtil.putData("pacl_retargeting","alex","type","retargeting",json.toString());
-	    		 
-	    		 
-	    		 
-	    		 org.json.JSONObject hbaseValue = hbaseUtil.getData("pacl_retargeting", "alex", "type", "retargeting");
-	    		 System.out.println(hbaseValue);
-	    		 
-	    		 
-	    		 
+	    		 System.out.println(hbaseUtil.getData("pacl_retargeting_prd", "0b4224b8-3427-4a82-a29d-3eee83de521f","type", "retargeting"));
+//	    		 json.put("traceId001_prodId008", "2018-08-10");
+//	    		 hbaseUtil.putData("pacl_retargeting","nico","type","retargeting",json.toString());
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.out.println(e);
