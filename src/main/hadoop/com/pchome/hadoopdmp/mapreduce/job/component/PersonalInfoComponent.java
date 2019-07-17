@@ -18,13 +18,11 @@ import org.apache.commons.logging.LogFactory;
 
 import com.jayway.jsonpath.JsonPath;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.pchome.hadoopdmp.enumerate.CategoryAgeEnum;
 import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogReducer;
 import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogReducer.combinedValue;
-import com.pchome.hadoopdmp.mapreduce.job.factory.DmpLogBean;
 
 public class PersonalInfoComponent {
 	

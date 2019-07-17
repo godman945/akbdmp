@@ -19,6 +19,10 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.data.authentication.UserCredentials;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.stereotype.Component;
 
 import com.mongodb.BasicDBObject;
@@ -26,6 +30,7 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import com.mongodb.Mongo;
 import com.mongodb.hadoop.MongoInputFormat;
 import com.mongodb.hadoop.io.BSONWritable;
 import com.mongodb.hadoop.util.MongoConfigUtil;
@@ -203,49 +208,151 @@ public class MongoDbDriver {
 //	  log.info("====driver end====");
 		
 		
-		System.setProperty("spring.profiles.active", "prd");
-		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//		System.setProperty("spring.profiles.active", "prd");
+//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//		
+//		DB mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
+//		DBCollection user_detail = mongoOrgOperations.getCollection("user_detail");
+//		System.out.println(user_detail.count());
+//		
+//		
+//		BasicDBObject andQuery = new BasicDBObject();
+//		List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+//		
+//		BasicDBObject sort = new BasicDBObject();
+//		sort.put("update_date",1);
+//		boolean flag = true;
+//		
+//		
+//		System.out.println(user_detail.getIndexInfo());
+//		
+//		
+//		
+//		user_detail.createIndex(new BasicDBObject("update_date", 1));
+
 		
-		DB mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
-		DBCollection user_detail = mongoOrgOperations.getCollection("user_detail");
+		
+		
+//		user_detail.ensureIndex(keys);
+//		[{ "v" : 1 , "key" : { "_id" : 1} , "ns" : "dmp.user_detail" , "name" : "_id_"}, { "v" : 1 , "key" : { "user_id" : 1} , "ns" : "dmp.user_detail" , "name" : "user_id"}]
+		
+		
+		
+		
+		   
+		
+//		while(flag) {
+//			obj.clear();
+//			obj.add(new BasicDBObject("update_date", new BasicDBObject("$regex", "2018")));
+//			obj.add(new BasicDBObject("user_info.type", "uuid"));
+////			obj.add(new BasicDBObject("update_date", "/2018-01/"));
+////			obj.add(new BasicDBObject("update_date", new BasicDBObject("$lt", "2018-07-04")));
+////			obj.add(new BasicDBObject("update_date", new BasicDBObject("$gte", "2018-07-01")));
+//			andQuery.put("$and", obj);
+//			System.out.println(andQuery);
+//			DBCursor dbCursor = user_detail.find(andQuery);
+//			int count = 0;
+//			int total = 0;
+//			for (DBObject dbObject : dbCursor) {
+//				total = total + 1;
+//				if(total == 5000) {
+//					System.out.println(dbObject);
+//					System.out.println(dbObject.get("update_date"));
+//					System.out.println((String.valueOf(dbObject.get("update_date")).indexOf("2018-06") >=0));
+//					total = 0;
+//				}
+//				if(String.valueOf(dbObject.get("update_date")).indexOf("2018-06") >=0) {
+//					System.out.println("delete oid:"+dbObject.get("_id")+" update_date:"+dbObject.get("update_date"));
+//					user_detail.remove(dbObject);
+//					count = count + 1;
+//					System.out.println("delete count:"+count+"筆");
+//				}
+//			}
+//			flag = false;
+//		}
+		
+		UserCredentials userCredentials = new UserCredentials("webuser","MonG0Dmp");
+		MongoOperations mongoOperations = new MongoTemplate(new SimpleMongoDbFactory(new Mongo("mongodb.mypchome.com.tw",27017),"dmp", userCredentials));
+		DBCollection user_detail = mongoOperations.getCollection("user_detail");
 		System.out.println(user_detail.count());
-		
 		
 		BasicDBObject andQuery = new BasicDBObject();
 		List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+		obj.add(new BasicDBObject("update_date", new BasicDBObject("$lt", "2018-08-31")));
+		//obj.add(new BasicDBObject("user_info.type", "memid"));
+		andQuery.put("$and", obj);
+		DBCursor dbCursor = user_detail.find(andQuery);
+		System.out.println(andQuery);
+		System.out.println(dbCursor.size()); //10949933
 		
-		BasicDBObject sort = new BasicDBObject();
-		sort.put("update_date",1);
-		boolean flag = true;
-		while(flag) {
-			obj.clear();
-			obj.add(new BasicDBObject("update_date", new BasicDBObject("$regex", "2018")));
-			obj.add(new BasicDBObject("user_info.type", "uuid"));
-//			obj.add(new BasicDBObject("update_date", "/2018-01/"));
-//			obj.add(new BasicDBObject("update_date", new BasicDBObject("$lt", "2018-07-04")));
-//			obj.add(new BasicDBObject("update_date", new BasicDBObject("$gte", "2018-07-01")));
-			andQuery.put("$and", obj);
-			System.out.println(andQuery);
-			DBCursor dbCursor = user_detail.find(andQuery);
-			int count = 0;
-			for (DBObject dbObject : dbCursor) {
+//		dbCursor.limit(5);
+//		dbCursor.skip(0);
+//		for (DBObject dbObject : dbCursor) {
+//			
+//			
+//			
+//			System.out.println("delete oid:"+dbObject.get("_id")+" update_date:"+dbObject.get("update_date"));
+////			user_detail.remove(dbObject);
+////			break;
+//		}
+		
+		
+		
+		
+		
+		
+//		for (DBObject dbObject : dbCursor) {
+//			System.out.println("delete oid:"+dbObject.get("_id")+" update_date:"+dbObject.get("update_date"));
+//		}
+		
+		
+		
+//		int count = 0;
+//		for (DBObject dbObject : dbCursor) {
+//			count = count + 1;
+////			System.out.println("delete oid:"+dbObject.get("_id")+" update_date:"+dbObject.get("update_date"));
+////			System.out.println("delete :"+dbObject.get("user_id"));
+//			System.out.println("delete update_date:"+dbObject.get("update_date")+" user_id:"+dbObject.get("user_id"));
+//			user_detail.remove(dbObject);
+//			System.out.println("刪除總數:"+count);
+//		}
+		
+		
+		
+//		boolean flag = true;
+//		while(flag) {
+//		obj.clear();
+//		obj.add(new BasicDBObject("update_date", new BasicDBObject("$regex", "2018")));
+//		obj.add(new BasicDBObject("user_info.type", "uuid"));
+////		obj.add(new BasicDBObject("update_date", "/2018-01/"));
+////		obj.add(new BasicDBObject("update_date", new BasicDBObject("$lt", "2018-07-04")));
+////		obj.add(new BasicDBObject("update_date", new BasicDBObject("$gte", "2018-07-01")));
+//		andQuery.put("$and", obj);
+//		System.out.println(andQuery);
+//		DBCursor dbCursor = user_detail.find(andQuery);
+//		int count = 0;
+//		int total = 0;
+//		for (DBObject dbObject : dbCursor) {
+//			total = total + 1;
+//			if(total == 5000) {
 //				System.out.println(dbObject);
-				if(String.valueOf(dbObject.get("update_date")).contains("2018-01")) {
-					System.out.println("delete oid:"+dbObject.get("_id")+" update_date:"+dbObject.get("update_date"));
-					user_detail.remove(dbObject);
-					count = count + 1;
-					System.out.println("delete count:"+count+"筆");
-				}else {
-					System.out.println("not delete oid:"+dbObject.get("_id")+" update_date:"+dbObject.get("update_date"));
-				}
-			}
-			flag = false;
-		}
+//				System.out.println(dbObject.get("update_date"));
+//				System.out.println((String.valueOf(dbObject.get("update_date")).indexOf("2018-06") >=0));
+//				total = 0;
+//			}
+//			if(String.valueOf(dbObject.get("update_date")).indexOf("2018-06") >=0) {
+//				System.out.println("delete oid:"+dbObject.get("_id")+" update_date:"+dbObject.get("update_date"));
+//				user_detail.remove(dbObject);
+//				count = count + 1;
+//				System.out.println("delete count:"+count+"筆");
+//			}
+//		}
+//		flag = false;
+//	}
 		
 		
 		
-		
-		
+//		user_detail.createIndex(new BasicDBObject("update_date", 1));
 		
 	 }
 }

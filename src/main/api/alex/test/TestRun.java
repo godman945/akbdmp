@@ -263,9 +263,40 @@ public class TestRun {
 
 	
 
-	
-	
+
 	public static void main(String[] args) throws Exception {
+		
+		for (int i = 0; i < 10; i+=2) {
+			System.out.println(i);
+		}
+		
+		
+		
+//		int x = 0;
+//		int i=1;
+//		while(i<10) {
+//			for (int j = 1; j < 5; i+=2) {
+//				x += i+j;
+//				i += 5;
+//			}
+//		}
+//		
+//		System.out.println(x);
+		
+		
+		
+		
+		
+//		long time1, time2;
+//		time1 = System.currentTimeMillis();
+//		ArrayList<String> temp = new ArrayList<>() ; 
+//		temp.add("1"); 
+//		temp.add("2"); 
+//		temp.add("3"); 
+//		time2 = System.currentTimeMillis();
+//		System.out.println(temp);
+//		System.out.println("doSomething()花了：" + (time2 - time1));
+		
 		
 		
 //		Map<String,int[]> sexWeightMap = new HashMap<String,int[]>();
@@ -428,13 +459,13 @@ public class TestRun {
 //		System.out.println(redisTemplate.opsForValue().get("prd:dmp:callfc:1fb0722f-79d0-4081-8e80-20c38158801d"));
 		
 		
-		System.setProperty("spring.profiles.active", "stg");
-		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
-		
-		ctx.getBean(RedisConfig.class).getRedisTemplate().delete("prd:dmp:callmap:1fb0722f-79d0-4081-8e80-20c38158801d");
-		
-		System.out.println(ctx.getBean(RedisConfig.class).getRedisTemplate().opsForValue().get("prd:dmp:callmap:1fb0722f-79d0-4081-8e80-20c38158801d"));
-		System.out.println(ctx.getBean(RedisConfig.class).getRedisTemplate().opsForValue().get("prd:dmp:callfc:1fb0722f-79d0-4081-8e80-20c38158801d"));
+//		System.setProperty("spring.profiles.active", "stg");
+//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
+//		
+//		ctx.getBean(RedisConfig.class).getRedisTemplate().delete("prd:dmp:callmap:1fb0722f-79d0-4081-8e80-20c38158801d");
+//		
+//		System.out.println(ctx.getBean(RedisConfig.class).getRedisTemplate().opsForValue().get("prd:dmp:callmap:1fb0722f-79d0-4081-8e80-20c38158801d"));
+//		System.out.println(ctx.getBean(RedisConfig.class).getRedisTemplate().opsForValue().get("prd:dmp:callfc:1fb0722f-79d0-4081-8e80-20c38158801d"));
 //		TestRun TestRun = (TestRun) ctx.getBean(TestRun.class);
 //		TestRun.redisTest();
 		
