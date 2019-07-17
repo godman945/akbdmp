@@ -273,7 +273,6 @@ public class DmpLogDriver {
 	 * */
 	public static void main(String[] args)  {
 		try {
-			log.info("====HADOOP JOB START====");
 			if(args.length != 3) {
 				System.out.println("arg length fail");
 			}
@@ -285,7 +284,6 @@ public class DmpLogDriver {
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			DmpLogDriver dmpLogDriver = (DmpLogDriver) ctx.getBean(DmpLogDriver.class);
 			dmpLogDriver.drive(args[0],args[1],args[2]);
-			log.info("====HADOOP JOB END====");
 		}catch(Exception e) {
 			log.error(e.getMessage());
 		}
