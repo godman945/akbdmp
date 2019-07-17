@@ -532,6 +532,12 @@
 			</exclusions>
 		</dependency>
  		
+		<dependency>
+		    <groupId>org.apache.hbase</groupId>
+		    <artifactId>hbase-client</artifactId>
+		    <version>1.2.0</version>
+		</dependency>
+ 			
  			
  		<dependency>
 		    <groupId>net.sourceforge.htmlunit</groupId>
