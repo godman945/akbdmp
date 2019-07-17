@@ -185,6 +185,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static String logpath = "";
 	private static Map<String,String> hostNameMap = new HashMap<String,String>();
 	
+	@SuppressWarnings("unused")
 	@Override
 	public synchronized void map(LongWritable offset, Text value, Context context) {
 			inputSplit = (InputSplit)context.getInputSplit(); 
@@ -195,6 +196,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			logStr = value.toString();
 			//1.判斷log來源為kdcl或bu
 			if(logpath.contains("/akb/storedata/alllog/")) {
+				//測試用
+				if(true) {
+					return;
+				}
 				try {
 					//kdcl log	raw data格式為一般或是Campaign
 					if(logStr.indexOf(kdclSymbol) > -1 ){
@@ -258,14 +263,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("pfbx_position_id", values[26]);
 						dmpDataJson.put("ad_view", values[45]);
 						dmpDataJson.put("vpv", values[46]);
-						dmpDataJson.put("pa_id", "");
 						dmpDataJson.put("screen_x", "");
 						dmpDataJson.put("screen_y", "");
 						dmpDataJson.put("pa_event", "");
 						dmpDataJson.put("event_id", "");
-						dmpDataJson.put("op1", "");
-						dmpDataJson.put("op2", "");
-						dmpDataJson.put("email", "");
 						dmpDataJson.put("trigger_type", values[13]);
 						if(values[13].toUpperCase().equals("CK")) {
 							dmpDataJson.put("ad_ck", 1);
@@ -327,28 +328,25 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						}else {
 							dmpDataJson.put("op1", "");
 						}
-						
 						dmpDataJson.put("op2", "");
 						dmpDataJson.put("email", "");
-						dmpDataJson.put("bu_layer1", "");
-						dmpDataJson.put("bu_layer2", "");
-						dmpDataJson.put("bu_layer3", "");
-						dmpDataJson.put("bu_layer4", "");
+						dmpDataJson.put("mark_layer1", "");
+						dmpDataJson.put("mark_layer2", "");
+						dmpDataJson.put("mark_layer3", "");
+						dmpDataJson.put("mark_layer4", "");
 						dmpDataJson.put("behavior", "");
 						dmpDataJson.put("classify", "");
 					}else {
-						
 						return;
 					}
 				}catch(Exception e) {
 					log.error(">>>>kdcl set json fail:"+logStr);
 				}
-			}else if(logpath.contains("/akb/storedata/bulog/") || logpath.contains("/pa/storedata/alllog/") ) {
+			}else if(logpath.contains("/pa/storedata/alllog/") ) {
 				try {
-					if(logpath.contains("/akb/storedata/bulog/")) {
-						logSource = "bulog";
-					}else if(logpath.contains("/pa/storedata/alllog/")) {
-						logSource = "pacl";
+					//測試用
+					if(true) {
+						return;
 					}
 					String[] values = logStr.split(paclSymbol,-1);
 					dmpDataJson.put("fileName", fileName);
@@ -363,7 +361,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("url", values[6]);
 					dmpDataJson.put("referer", values[5]);
 					dmpDataJson.put("domain", values[7]);
-					dmpDataJson.put("log_source", logSource);
+					dmpDataJson.put("log_source", "pacl");
 					dmpDataJson.put("pfd_customer_info_id", "");
 					dmpDataJson.put("pfp_customer_info_id", "");
 					dmpDataJson.put("style_id", "");
@@ -379,9 +377,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("screen_y", "");
 					dmpDataJson.put("pa_event", "");
 					dmpDataJson.put("event_id", "");
-					dmpDataJson.put("op1", "");
-					dmpDataJson.put("op2", "");
-					dmpDataJson.put("email", "");
 					dmpDataJson.put("trigger_type", "pv");
 					dmpDataJson.put("ad_ck", 0);
 					dmpDataJson.put("ad_pv", 1);
@@ -450,10 +445,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					}
 					dmpDataJson.put("op2", "");
 					dmpDataJson.put("email", "");
-					dmpDataJson.put("bu_layer1", "");
-					dmpDataJson.put("bu_layer2", "");
-					dmpDataJson.put("bu_layer3", "");
-					dmpDataJson.put("bu_layer4", "");
+					dmpDataJson.put("mark_layer1", "");
+					dmpDataJson.put("mark_layer2", "");
+					dmpDataJson.put("mark_layer3", "");
+					dmpDataJson.put("mark_layer4", "");
 					dmpDataJson.put("behavior", "");
 					dmpDataJson.put("classify", "");
 				}catch(Exception e) {
@@ -466,7 +461,114 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					log.error(">>>>pa set json logStr:"+logStr);
 					return;
 				}
+			}else if(logpath.contains("/akb/storedata/bulog/")) {
+				try {
+					String[] values = logStr.split(paclSymbol,-1);
+					dmpDataJson.put("fileName", fileName);
+					dmpDataJson.put("log_date", values[0]);
+					dmpDataJson.put("memid","");
+					dmpDataJson.put("uuid", values[2]);
+					if(values[2].contains("xxx-")) {
+						dmpDataJson.put("uuid_flag", "y");
+					}else {
+						dmpDataJson.put("uuid_flag", "n");
+					}
+					dmpDataJson.put("url", values[6]);
+					dmpDataJson.put("referer", values[5]);
+					dmpDataJson.put("domain", values[7]);
+					dmpDataJson.put("log_source", "pacl");
+					dmpDataJson.put("pfd_customer_info_id", "");
+					dmpDataJson.put("pfp_customer_info_id", "");
+					dmpDataJson.put("style_id", "");
+					dmpDataJson.put("action_id", "");
+					dmpDataJson.put("group_id", "");
+					dmpDataJson.put("ad_id", "");
+					dmpDataJson.put("pfbx_customer_info_id", "");
+					dmpDataJson.put("pfbx_position_id", "");
+					dmpDataJson.put("ad_view", 0);
+					dmpDataJson.put("vpv", 0);
+					dmpDataJson.put("pa_id", "");
+					dmpDataJson.put("screen_x", "");
+					dmpDataJson.put("screen_y", "");
+					dmpDataJson.put("pa_event", "mark");
+					dmpDataJson.put("event_id", "");
+					dmpDataJson.put("trigger_type", "pv");
+					dmpDataJson.put("ad_ck", 0);
+					dmpDataJson.put("ad_pv", 1);
+					dmpDataJson.put("ad_class", "");
+					//地區資訊 [area_info_classify] null:ip不正確,N:ip比對不到
+					dmpDataJson.put("ip", values[1]);
+					dmpDataJson.put("area_country", "");
+					dmpDataJson.put("area_city", "");
+					dmpDataJson.put("area_info_source", "ip");
+					dmpDataJson.put("area_info_classify", "");
+					//時間資訊
+					dmpDataJson.put("time_info_source", logSource);
+					dmpDataJson.put("time_info_classify", "");
+					//裝置資訊 [device_info_classify] null:user_agent為空
+					dmpDataJson.put("user_agent", values[8].replaceAll("\"", ""));
+					dmpDataJson.put("device_info", "");
+					dmpDataJson.put("device_phone_info", "");
+					dmpDataJson.put("device_os_info", "");
+					dmpDataJson.put("device_browser_info", "");
+					dmpDataJson.put("device_info_source", "");
+					dmpDataJson.put("device_info_classify", "");
+					
+					//分類資訊
+					dmpDataJson.put("category", "");
+					dmpDataJson.put("class_adclick_classify", "");
+					dmpDataJson.put("category_source", "");
+					//年齡性別資訊
+					dmpDataJson.put("sex", "");
+					dmpDataJson.put("sex_source", "");
+					dmpDataJson.put("age", "");
+					dmpDataJson.put("age_source", "");
+					dmpDataJson.put("personal_info_api_classify", "");
+					
+					dmpDataJson.put("pa_id", values[4]);
+					dmpDataJson.put("screen_x", values[9]);
+					dmpDataJson.put("screen_y", values[10]);
+					dmpDataJson.put("pa_event", values[11]);
+					dmpDataJson.put("prod_id", "");
+					dmpDataJson.put("prod_price", "");
+					dmpDataJson.put("prod_dis", "");
+					dmpDataJson.put("event_id", "24h");
+					
+					
+					if(values[5].contains("24h.pchome.com.tw")) {
+						String pageCategory = "";
+						if(values[5].equals("https://24h.pchome.com.tw/") || values[5].contains("htm") || values[5].contains("index") || values[5].contains("?fq=") || values[5].contains("store/?q=")) {
+							return;
+						}else if(values[5].contains("?")) {
+							pageCategory = values[5].substring(0, values[5].indexOf("?"));
+							pageCategory = pageCategory.split("/")[pageCategory.split("/").length - 1];
+						}else {
+							pageCategory = values[5].split("/")[values[5].split("/").length - 1];
+						}
+						dmpDataJson.put("op1", pageCategory);
+					}else {
+						dmpDataJson.put("op1", "");
+					}
+					dmpDataJson.put("op2", "");
+					dmpDataJson.put("email", "");
+					dmpDataJson.put("mark_layer1", "");
+					dmpDataJson.put("mark_layer2", "");
+					dmpDataJson.put("mark_layer3", "");
+					dmpDataJson.put("mark_layer4", "");
+					dmpDataJson.put("behavior", "");
+					dmpDataJson.put("classify", "");
+				}catch(Exception e) {
+					log.error(">>>>bulog set json fail:"+e.getMessage());
+					log.error(">>>>bulog set json fail log size:"+logStr.split(paclSymbol,-1).length);
+					String[] logarray = logStr.split(paclSymbol,-1);
+					for (int i = 0; i < logarray.length; i++) {
+						log.error(">>>>bulog set json fail:["+i+"]:"+logarray[i]);
+					}
+					log.error(">>>>bulog set json logStr:"+logStr);
+					return;
+				}
 			}
+			
 			//開始DMP資訊
 			try {
 				//1.地區處理元件(ip 轉國家、城市)
@@ -528,25 +630,25 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			String level1 = categoryLevel.split("<PCHOME>")[0];
 			String level2 = categoryLevel.split("<PCHOME>")[1];
 			String level3 = categoryLevel.split("<PCHOME>")[2];
-			dmpDataJson.put("bu_layer1", level1);
-			dmpDataJson.put("bu_layer2", level2);
-			dmpDataJson.put("bu_layer3", level3);
+			dmpDataJson.put("mark_layer1", level1);
+			dmpDataJson.put("mark_layer2", level2);
+			dmpDataJson.put("mark_layer3", level3);
 		}else {
 			for (String string : categoryLevelMappingList) {
 				String level2 = string.split("<PCHOME>")[1];
 				String level3 = string.split("<PCHOME>")[2];
 				if(level == 2 && level2.equals(op1)) {
 					String level1 = string.split("<PCHOME>")[0];
-					dmpDataJson.put("bu_layer1", level1);
-					dmpDataJson.put("bu_layer2", level2);
-					dmpDataJson.put("bu_layer3", level3);
+					dmpDataJson.put("mark_layer1", level1);
+					dmpDataJson.put("mark_layer2", level2);
+					dmpDataJson.put("mark_layer3", level3);
 					categoryLevelMappingMap.put(op1, string);
 					break;
 				}else if(level == 3 && level3.equals(op1)) {
 					String level1 = string.split("<PCHOME>")[0];
-					dmpDataJson.put("bu_layer1", level1);
-					dmpDataJson.put("bu_layer2", level2);
-					dmpDataJson.put("bu_layer3", level3);
+					dmpDataJson.put("mark_layer1", level1);
+					dmpDataJson.put("mark_layer2", level2);
+					dmpDataJson.put("mark_layer3", level3);
 					categoryLevelMappingMap.put(op1, string);
 					break;
 				}

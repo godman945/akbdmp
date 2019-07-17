@@ -92,6 +92,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	public static List<String> categoryLevelMappingList = new ArrayList<String>();
 	public static Map<String, String> categoryLevelMappingMap = new HashMap<String, String>();
 	
+	private static int testCount = 0;
 	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
@@ -187,7 +188,17 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					log.error(">>>>>>>fail process processPersonalInfo:"+e.getMessage());
 					continue;
 				}
-//				log.info(dmpJSon);
+				
+				calendar.setTime(sdf.parse(dmpJSon.getAsString("log_date")));
+				int week_index = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+				if(week_index<0){
+					week_index = 0;
+				}
+				String pfbxCustomerInfoId = dmpJSon.getAsString("pfbx_customer_info_id");
+				String webClass = StringUtils.isBlank(pfbxWebsiteCategory.get(pfbxCustomerInfoId)) ? "" : pfbxWebsiteCategory.get(pfbxCustomerInfoId);
+				
+				
+				//log.info(dmpJSon);
 				wiriteToDruid.append("\""+dmpJSon.getAsString("uuid").toString()+"\"".trim());
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_date")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("memid")).append("\"");
@@ -238,21 +249,14 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_info_source")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_info_classify")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("trigger_type")).append("\"");
-				calendar.setTime(sdf.parse(dmpJSon.getAsString("log_date")));
-				int week_index = calendar.get(Calendar.DAY_OF_WEEK) - 1;
-				if(week_index<0){
-					week_index = 0;
-				} 
 				wiriteToDruid.append(",").append("\"").append(weeks[week_index]).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_ck")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_pv")).append("\"");
-				String pfbxCustomerInfoId = dmpJSon.getAsString("pfbx_customer_info_id");
-				String webClass = StringUtils.isBlank(pfbxWebsiteCategory.get(pfbxCustomerInfoId)) ? "" : pfbxWebsiteCategory.get(pfbxCustomerInfoId);
 				wiriteToDruid.append(",").append("\"").append(webClass).append("\"");
-				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("bu_layer1")).append("\"");
-				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("bu_layer2")).append("\"");
-				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("bu_layer3")).append("\"");
-				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("bu_layer4")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("mark_layer1")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("mark_layer2")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("mark_layer3")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("mark_layer4")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_id")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_price")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_dis")).append("\"");
@@ -261,6 +265,13 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				//產出csv
 				keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
 				context.write(new Text(wiriteToDruid.toString()), null);
+				
+				
+				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_layer3")) && testCount < 1) {
+					log.info(">>>>>>>>>>>>>>> alex:"+dmpJSon);
+					testCount += 1;
+				}
+				
 			}
 			dmpJSon.clear();
 			wiriteToDruid.setLength(0);
