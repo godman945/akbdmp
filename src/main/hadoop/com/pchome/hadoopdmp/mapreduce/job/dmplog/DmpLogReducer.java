@@ -268,7 +268,15 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				
 				
 				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_layer3")) && testCount < 1) {
-					log.info(">>>>>>>>>>>>>>> alex:"+dmpJSon);
+					log.info(">>>>>>>>>>>>>>> mark_layer3:"+dmpJSon);
+					testCount += 1;
+				}
+				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_layer2")) && testCount < 1) {
+					log.info(">>>>>>>>>>>>>>> mark_layer2:"+dmpJSon);
+					testCount += 1;
+				}
+				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_layer1")) && testCount < 1) {
+					log.info(">>>>>>>>>>>>>>> mark_layer1:"+dmpJSon);
 					testCount += 1;
 				}
 				
