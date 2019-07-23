@@ -250,8 +250,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_info_classify")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("trigger_type")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(weeks[week_index]).append("\"");
-				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_ck")).append("\"");
-				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_pv")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("cks")).append("\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pvs")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(webClass).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("mark_layer1")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("mark_layer2")).append("\"");
