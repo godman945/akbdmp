@@ -330,6 +330,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						}
 						dmpDataJson.put("op2", "");
 						dmpDataJson.put("email", "");
+						dmpDataJson.put("mark_value", "");
 						dmpDataJson.put("mark_layer1", "");
 						dmpDataJson.put("mark_layer2", "");
 						dmpDataJson.put("mark_layer3", "");
@@ -445,6 +446,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					}
 					dmpDataJson.put("op2", "");
 					dmpDataJson.put("email", "");
+					dmpDataJson.put("mark_value", "");
 					dmpDataJson.put("mark_layer1", "");
 					dmpDataJson.put("mark_layer2", "");
 					dmpDataJson.put("mark_layer3", "");
@@ -544,12 +546,14 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						}else {
 							pageCategory = values[5].split("/")[values[5].split("/").length - 1];
 						}
-						dmpDataJson.put("op1", pageCategory);
+						dmpDataJson.put("mark_value", pageCategory);
 					}else {
-						dmpDataJson.put("op1", "");
+						dmpDataJson.put("mark_value", "");
 					}
+					dmpDataJson.put("op1", "");
 					dmpDataJson.put("op2", "");
 					dmpDataJson.put("email", "");
+					dmpDataJson.put("mark_value", "");
 					dmpDataJson.put("mark_layer1", "");
 					dmpDataJson.put("mark_layer2", "");
 					dmpDataJson.put("mark_layer3", "");
@@ -589,7 +593,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				}
 				//館別分類
 				try {
-					if(StringUtils.isNotBlank(dmpDataJson.getAsString("op1"))) {
+					if(StringUtils.isNotBlank(dmpDataJson.getAsString("mark_value"))) {
 						process24CategoryLevel(dmpDataJson);
 					}
 				}catch(Exception e) {
@@ -616,16 +620,16 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	
 	//處理24館別階層
 	private void process24CategoryLevel(net.minidev.json.JSONObject dmpDataJson) throws Exception{
-		String op1 = dmpDataJson.getAsString("op1");
+		String markValue = dmpDataJson.getAsString("mark_value");
 		int level = 0;
-		if(op1.length() == 4) {
+		if(markValue.length() == 4) {
 			level = 2;
 		}
-		if(op1.length() == 6) {
+		if(markValue.length() == 6) {
 			level = 3;
 		}
-		if(categoryLevelMappingMap.containsKey(op1)) {
-			String categoryLevel = categoryLevelMappingMap.get(op1);
+		if(categoryLevelMappingMap.containsKey(markValue)) {
+			String categoryLevel = categoryLevelMappingMap.get(markValue);
 			String level1 = categoryLevel.split("<PCHOME>")[0];
 			String level2 = categoryLevel.split("<PCHOME>")[1];
 			String level3 = categoryLevel.split("<PCHOME>")[2];
@@ -636,19 +640,19 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			for (String string : categoryLevelMappingList) {
 				String level2 = string.split("<PCHOME>")[1];
 				String level3 = string.split("<PCHOME>")[2];
-				if(level == 2 && level2.equals(op1)) {
+				if(level == 2 && level2.equals(markValue)) {
 					String level1 = string.split("<PCHOME>")[0];
 					dmpDataJson.put("mark_layer1", level1);
 					dmpDataJson.put("mark_layer2", level2);
 					dmpDataJson.put("mark_layer3", level3);
-					categoryLevelMappingMap.put(op1, string);
+					categoryLevelMappingMap.put(markValue, string);
 					break;
-				}else if(level == 3 && level3.equals(op1)) {
+				}else if(level == 3 && level3.equals(markValue)) {
 					String level1 = string.split("<PCHOME>")[0];
 					dmpDataJson.put("mark_layer1", level1);
 					dmpDataJson.put("mark_layer2", level2);
 					dmpDataJson.put("mark_layer3", level3);
-					categoryLevelMappingMap.put(op1, string);
+					categoryLevelMappingMap.put(markValue, string);
 					break;
 				}
 			}
