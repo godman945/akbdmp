@@ -269,11 +269,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("event_id", "");
 						dmpDataJson.put("trigger_type", values[13]);
 						if(values[13].toUpperCase().equals("CK")) {
-							dmpDataJson.put("ad_ck", 1);
-							dmpDataJson.put("ad_pv", 0);
+							dmpDataJson.put("cks", 1);
+							dmpDataJson.put("pvs", 0);
 						}else if(values[13].toUpperCase().equals("PV")) {
-							dmpDataJson.put("ad_ck", 0);
-							dmpDataJson.put("ad_pv", 1);
+							dmpDataJson.put("cks", 0);
+							dmpDataJson.put("pvs", 1);
 						}
 						dmpDataJson.put("ad_class", values[15]);
 						
@@ -378,8 +378,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("pa_event", "");
 					dmpDataJson.put("event_id", "");
 					dmpDataJson.put("trigger_type", "pv");
-					dmpDataJson.put("ad_ck", 0);
-					dmpDataJson.put("ad_pv", 1);
+					dmpDataJson.put("cks", 0);
+					dmpDataJson.put("pvs", 1);
 					dmpDataJson.put("ad_class", "");
 					//地區資訊 [area_info_classify] null:ip不正確,N:ip比對不到
 					dmpDataJson.put("ip", values[1]);
@@ -476,7 +476,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("url", values[6]);
 					dmpDataJson.put("referer", values[5]);
 					dmpDataJson.put("domain", values[7]);
-					dmpDataJson.put("log_source", "pacl");
+					dmpDataJson.put("log_source", "bu_log");
 					dmpDataJson.put("pfd_customer_info_id", "");
 					dmpDataJson.put("pfp_customer_info_id", "");
 					dmpDataJson.put("style_id", "");
@@ -493,8 +493,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("pa_event", "mark");
 					dmpDataJson.put("event_id", "");
 					dmpDataJson.put("trigger_type", "pv");
-					dmpDataJson.put("ad_ck", 0);
-					dmpDataJson.put("ad_pv", 1);
+					dmpDataJson.put("cks", 0);
+					dmpDataJson.put("pvs", 1);
 					dmpDataJson.put("ad_class", "");
 					//地區資訊 [area_info_classify] null:ip不正確,N:ip比對不到
 					dmpDataJson.put("ip", values[1]);
