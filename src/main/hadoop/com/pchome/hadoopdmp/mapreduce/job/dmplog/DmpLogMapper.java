@@ -585,16 +585,20 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				deviceComponent.parseUserAgentToDevice(dmpDataJson);
 				//5.分類處理元件(分析click、24H、Ruten、campaign分類)
 				if ((dmpDataJson.getAsString("trigger_type").equals("ck") || dmpDataJson.getAsString("log_source").equals("campaign")) ) {// kdcl ad_click的adclass  或   campaign log的adclass 	//&& StringUtils.isNotBlank(dmpLogBeanResult.getAdClass())
+					log.info(">>>>>>>>>>>>>>>>>1");
 					DmpLogMapper.aCategoryLogDataClick.processCategory(dmpDataJson, null);
 				}else if (dmpDataJson.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpDataJson.getAsString("referer")) && dmpDataJson.getAsString("referer").contains("ruten")) {	// 露天
+					log.info(">>>>>>>>>>>>>>>>>2");
 					DmpLogMapper.aCategoryLogDataRetun.processCategory(dmpDataJson, dBCollection_class_url);
 				}else if (dmpDataJson.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpDataJson.getAsString("referer")) && dmpDataJson.getAsString("referer").contains("24h")) {		// 24h
+					log.info(">>>>>>>>>>>>>>>>>3");
 					DmpLogMapper.aCategoryLogData24H.processCategory(dmpDataJson, dBCollection_class_url);
 				}else if (dmpDataJson.getAsString("trigger_type").equals("pv") ){
 					dmpDataJson.put("category", "");
 					dmpDataJson.put("category_source", "");
 				}
 				//館別分類
+				log.info(">>>>>>>>>>>>>>>>>4:"+dmpDataJson.getAsString("mark_value"));
 				try {
 					if(StringUtils.isNotBlank(dmpDataJson.getAsString("mark_value"))) {
 						process24CategoryLevel(dmpDataJson);
