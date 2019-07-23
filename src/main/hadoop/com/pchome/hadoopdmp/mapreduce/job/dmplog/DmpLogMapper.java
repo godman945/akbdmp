@@ -550,6 +550,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					}else {
 						dmpDataJson.put("mark_value", "");
 					}
+					
+					log.info(">>>>>>>>>>>>>>>> mark_value:"+dmpDataJson.getAsString("mark_value"));
+					
 					dmpDataJson.put("op1", "");
 					dmpDataJson.put("op2", "");
 					dmpDataJson.put("email", "");
@@ -609,8 +612,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			
 //			寫入reduce
 			try {
-				keyOut.set(dmpDataJson.getAsString("uuid"));
-				context.write(keyOut, new Text(dmpDataJson.toString()));
+//				keyOut.set(dmpDataJson.getAsString("uuid"));
+//				context.write(keyOut, new Text(dmpDataJson.toString()));
 			} catch (Exception e) {
 				log.error(">>>>write to reduce fail:"+e.getMessage());
 			}
