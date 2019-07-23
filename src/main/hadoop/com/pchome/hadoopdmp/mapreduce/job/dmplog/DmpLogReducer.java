@@ -81,6 +81,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	public Map<String, Integer> redisClassifyMap = null;
 	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private static String[] weeks = {"SUN","MON","TUE","WED","THU","FRI","SAT"};
+	private static String[] markLevelList = {"mark_layer1","mark_layer2","mark_layer3"};
 	private static Calendar calendar = Calendar.getInstance();
 	private static StringBuffer wiriteToDruid = new StringBuffer();
 	private static net.minidev.json.JSONObject dmpJSon =  new net.minidev.json.JSONObject();
@@ -90,6 +91,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();
 	public static Map<String, String> pfbxWebsiteCategory = new HashMap<String, String>();
 	public static List<String> categoryLevelMappingList = new ArrayList<String>();
+	
+	private static Map<String, String> existLevelCode = new HashMap<String, String>();
 	
 	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
@@ -265,20 +268,26 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("classify")).append("\"");
 				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("behavior")).append("\"");
 				//產出csv
+				for (String markLayer : markLevelList) {
+					if(StringUtils.isNotBlank(dmpJSon.getAsString(markLayer))) {
+						keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
+						context.write(new Text(wiriteToDruid.toString()), null);
+					}
+				}
 //				keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
 //				context.write(new Text(wiriteToDruid.toString()), null);
-				
-				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_layer3"))) {
-					log.info(">>>>>>>>>>>>>>> mark_layer3:"+dmpJSon);
-				}
-				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_layer2"))) {
-					log.info(">>>>>>>>>>>>>>> mark_layer2:"+dmpJSon);
-				}
-				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_layer1"))) {
-					log.info(">>>>>>>>>>>>>>> mark_layer1:"+dmpJSon);
-				}
+//				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_layer3"))) {
+//					log.info(">>>>>>>>>>>>>>> mark_layer3:"+dmpJSon);
+//				}
+//				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_layer2"))) {
+//					log.info(">>>>>>>>>>>>>>> mark_layer2:"+dmpJSon);
+//				}
+//				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_layer1"))) {
+//					log.info(">>>>>>>>>>>>>>> mark_layer1:"+dmpJSon);
+//				}
 				
 			}
+			log.info("----------------------");
 			dmpJSon.clear();
 			wiriteToDruid.setLength(0);
 		} catch (Throwable e) {

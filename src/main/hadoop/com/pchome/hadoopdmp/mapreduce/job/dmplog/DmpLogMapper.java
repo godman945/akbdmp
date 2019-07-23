@@ -551,7 +551,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("mark_value", "");
 					}
 					
-					
 					dmpDataJson.put("op1", "");
 					dmpDataJson.put("op2", "");
 					dmpDataJson.put("email", "");
@@ -610,8 +609,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			
 //			寫入reduce
 			try {
-//				keyOut.set(dmpDataJson.getAsString("uuid"));
-//				context.write(keyOut, new Text(dmpDataJson.toString()));
+				keyOut.set(dmpDataJson.getAsString("uuid"));
+				context.write(keyOut, new Text(dmpDataJson.toString()));
 			} catch (Exception e) {
 				log.error(">>>>write to reduce fail:"+e.getMessage());
 			}
@@ -622,7 +621,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	//處理24館別階層
 	private void process24CategoryLevel(net.minidev.json.JSONObject dmpDataJson) throws Exception{
 		String markValue = dmpDataJson.getAsString("mark_value");
-		log.info(">>>>>>>>>>>>>>QQ:"+markValue);
 		int level = 0;
 		if(markValue.length() == 4) {
 			level = 2;
@@ -659,11 +657,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				}
 			}
 		}
-		
-		
-		log.info(">>>>>>>>>>>>>>:mark_layer1"+dmpDataJson.getAsString("mark_layer1"));
-		log.info(">>>>>>>>>>>>>>:mark_layer2"+dmpDataJson.getAsString("mark_layer2"));
-		log.info(">>>>>>>>>>>>>>:mark_layer3"+dmpDataJson.getAsString("mark_layer3"));
 	}
 	
 	
