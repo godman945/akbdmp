@@ -621,6 +621,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	//處理24館別階層
 	private void process24CategoryLevel(net.minidev.json.JSONObject dmpDataJson) throws Exception{
 		String markValue = dmpDataJson.getAsString("mark_value");
+		log.info(">>>>>>>>>>>>>>QQ:"+markValue);
 		int level = 0;
 		if(markValue.length() == 4) {
 			level = 2;

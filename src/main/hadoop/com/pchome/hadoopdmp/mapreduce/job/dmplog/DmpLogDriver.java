@@ -144,26 +144,26 @@ public class DmpLogDriver {
 					listPath.add(new Path(fileStatus.getPath().toString()));
 				}
 			}
-			//載入kdcl log file
-	        Path kdclPath = new Path("/home/webuser/akb/storedata/alllog/"+dmpDate+"/"+dmpHour);
-	        FileStatus[] kdclStatus = fs.listStatus(kdclPath); 
-			for (FileStatus fileStatus : kdclStatus) {
-				String pathStr = fileStatus.getPath().toString();
-				String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
-				if(extensionName.equals("LZO")) {
-					listPath.add(new Path(fileStatus.getPath().toString()));
-				}
-			}
-			//載入pacl log file
-			Path paclPath = new Path("/home/webuser/pa/storedata/alllog/"+dmpDate+"/"+dmpHour);
-	        FileStatus[] paclStatus = fs.listStatus(paclPath); 
-			for (FileStatus fileStatus : paclStatus) {
-				String pathStr = fileStatus.getPath().toString();
-				String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
-				if(extensionName.equals("LZO")) {
-					listPath.add(new Path(fileStatus.getPath().toString()));
-				}
-			}
+//			//載入kdcl log file
+//	        Path kdclPath = new Path("/home/webuser/akb/storedata/alllog/"+dmpDate+"/"+dmpHour);
+//	        FileStatus[] kdclStatus = fs.listStatus(kdclPath); 
+//			for (FileStatus fileStatus : kdclStatus) {
+//				String pathStr = fileStatus.getPath().toString();
+//				String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
+//				if(extensionName.equals("LZO")) {
+//					listPath.add(new Path(fileStatus.getPath().toString()));
+//				}
+//			}
+//			//載入pacl log file
+//			Path paclPath = new Path("/home/webuser/pa/storedata/alllog/"+dmpDate+"/"+dmpHour);
+//	        FileStatus[] paclStatus = fs.listStatus(paclPath); 
+//			for (FileStatus fileStatus : paclStatus) {
+//				String pathStr = fileStatus.getPath().toString();
+//				String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
+//				if(extensionName.equals("LZO")) {
+//					listPath.add(new Path(fileStatus.getPath().toString()));
+//				}
+//			}
 			
 			
 //			listPath.add(new Path("hdfs://hpd11.mypchome.com.tw:9000/home/webuser/akb/storedata/alllog/2019-05-29/16/kdcl1-16.lzo"));
