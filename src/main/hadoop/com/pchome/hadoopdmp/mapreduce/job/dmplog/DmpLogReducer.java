@@ -92,7 +92,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	public static List<String> categoryLevelMappingList = new ArrayList<String>();
 	public static Map<String, String> categoryLevelMappingMap = new HashMap<String, String>();
 	
-	private static int testCount = 0;
 	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
@@ -266,17 +265,14 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
 				context.write(new Text(wiriteToDruid.toString()), null);
 				
-				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_layer3")) && testCount < 1) {
+				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_layer3"))) {
 					log.info(">>>>>>>>>>>>>>> mark_layer3:"+dmpJSon);
-					testCount += 1;
 				}
-				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_layer2")) && testCount < 1) {
+				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_layer2"))) {
 					log.info(">>>>>>>>>>>>>>> mark_layer2:"+dmpJSon);
-					testCount += 1;
 				}
-				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_layer1")) && testCount < 1) {
+				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_layer1"))) {
 					log.info(">>>>>>>>>>>>>>> mark_layer1:"+dmpJSon);
-					testCount += 1;
 				}
 				
 			}
