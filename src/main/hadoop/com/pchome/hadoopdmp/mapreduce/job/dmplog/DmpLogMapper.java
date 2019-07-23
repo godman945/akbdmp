@@ -550,7 +550,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					}else {
 						dmpDataJson.put("mark_value", "");
 					}
-					
+					log.info(">>>>>>>>>>>>>>>>>>"+values[5]);
 					log.info(">>>>>>>>>>>>>>>> mark_value:"+dmpDataJson.getAsString("mark_value"));
 					
 					dmpDataJson.put("op1", "");
