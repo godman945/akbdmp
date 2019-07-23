@@ -90,7 +90,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();
 	public static Map<String, String> pfbxWebsiteCategory = new HashMap<String, String>();
 	public static List<String> categoryLevelMappingList = new ArrayList<String>();
-	public static Map<String, String> categoryLevelMappingMap = new HashMap<String, String>();
 	
 	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
@@ -161,6 +160,10 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				pfbxWebsiteCategory.put(resultSet.getString("customer_info_id"), resultSet.getString("category_code"));
 			}
 			mysqlUtil.closeConnection();
+			
+			log.info(">>>>>>>>>>>>>>>>>>>>categoryLevelMappingMap:"+DmpLogMapper.categoryLevelMappingMap);
+			
+			
 		} catch (Throwable e) {
 			log.error("reduce setup error>>>>>> " + e);
 		}
