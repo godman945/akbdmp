@@ -342,6 +342,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			
 			if(i == 0) {
 				wiriteToDruid.append("\""+dmpJSon.getAsString("fileName")+"\"");
+				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_date")).append("\"");
 				keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
 				context.write(new Text(wiriteToDruid.toString()), null);
 			}
