@@ -91,7 +91,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	public static Map<String, String> pfbxWebsiteCategory = new HashMap<String, String>();
 	public static List<String> categoryLevelMappingList = new ArrayList<String>();
 	private static Map<String, String> existLevelCode = new HashMap<String, String>();
-	private static DmpDruidBean dmpDruidBean = null;
 	
 	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
@@ -336,7 +335,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				
 			}
 			log.info("----------------------");
-			dmpDruidBean = null;
 			dmpJSon.clear();
 			wiriteToDruid.setLength(0);
 		} catch (Throwable e) {

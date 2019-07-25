@@ -84,7 +84,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public static ACategoryLogData aCategoryLogDataClick = null;
 	public static ACategoryLogData aCategoryLogDataRetun = null;
 	public static ACategoryLogData aCategoryLogData24H = null;
-	public static String logSource = "";
 	
 	@Override
 	public void setup(Context context) {
@@ -389,7 +388,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("area_info_source", "ip");
 					dmpDataJson.put("area_info_classify", "");
 					//時間資訊
-					dmpDataJson.put("time_info_source", logSource);
+					dmpDataJson.put("time_info_source", "");
 					dmpDataJson.put("time_info_classify", "");
 					//裝置資訊 [device_info_classify] null:user_agent為空
 					dmpDataJson.put("user_agent", values[8].replaceAll("\"", ""));
@@ -505,7 +504,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("area_info_source", "ip");
 					dmpDataJson.put("area_info_classify", "");
 					//時間資訊
-					dmpDataJson.put("time_info_source", logSource);
+					dmpDataJson.put("time_info_source", "");
 					dmpDataJson.put("time_info_classify", "");
 					//裝置資訊 [device_info_classify] null:user_agent為空
 					dmpDataJson.put("user_agent", values[8].replaceAll("\"", ""));
