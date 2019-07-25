@@ -326,8 +326,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 						wiriteToDruid.setLength(0);
 					}
 				}
-				keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
-				context.write(new Text(wiriteToDruid.toString()), null);
+//				keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
+//				context.write(new Text(wiriteToDruid.toString()), null);
 				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_layer3"))) {
 					log.info(">>>>>>>>>>>>>>> mark_layer3:"+dmpJSon);
 				}
