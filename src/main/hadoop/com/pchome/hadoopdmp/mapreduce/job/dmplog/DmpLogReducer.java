@@ -316,7 +316,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString(markLayer)).append("\"");
 						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op1")).append("\"");
 						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op2")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_price_default")).append("\"");
+						wiriteToDruid.append(",").append("\"").append("ad_price_default").append("\"");
 						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_view")).append("\"");
 						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("vpv")).append("\"");
 						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("cks")).append("\"");
