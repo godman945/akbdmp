@@ -276,7 +276,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 						wiriteToDruid.append("\""+dmpJSon.getAsString("fileName")+"\"");
 						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_date")).append("\"");
 						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("time_info_source")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("memid")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.get("memid")).append("\"");
 						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid")).append("\"");
 						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid_flag")).append("\"");
 						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ip")).append("\"");
