@@ -337,7 +337,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_layer1"))) {
 //					log.info(">>>>>>>>>>>>>>> mark_layer1:"+dmpJSon);
 //				}
-				
 			}
 			
 			if(i == 0) {
