@@ -319,6 +319,10 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("vpv")).append("\"");
 						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("cks")).append("\"");
 						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pvs")).append("\"");
+						
+						keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
+						context.write(new Text(wiriteToDruid.toString()), null);
+						
 					}
 				}
 //				keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
