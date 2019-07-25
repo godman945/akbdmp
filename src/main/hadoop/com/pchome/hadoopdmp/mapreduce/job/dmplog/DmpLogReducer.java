@@ -170,6 +170,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			log.error("reduce setup error>>>>>> " + e);
 		}
 	}
+	
+	private static int i = 0;
 
 	@Override
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
@@ -268,62 +270,62 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("classify")).append("\"");
 //				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("behavior")).append("\"");
 				//產出csv
-				for (String markLayer : markLevelList) {
-					if(StringUtils.isNotBlank(dmpJSon.getAsString(markLayer))) {
-						//log.info(dmpJSon);
-						wiriteToDruid.append("\""+dmpJSon.getAsString("fileName")+"\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_date")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("time_info_source")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("memid")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid_flag")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ip")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("url")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("referer")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("domain")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_source")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("trigger_type")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfp_customer_info_id")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfd_customer_info_id")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_customer_info_id")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("style_id")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("action_id")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("group_id")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_id")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_position_id")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_country")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_city")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_info")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_phone_info")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_os_info")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_browser_info")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex_source")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age_source")).append("\"");
-						wiriteToDruid.append(",").append("\"").append("audicen_id_default").append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_id")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_x")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_y")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_event")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("event_id")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_id")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_price")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_dis")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("mark_value")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString(markLayer)).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op1")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op2")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_price_default")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_view")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("vpv")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("cks")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pvs")).append("\"");
-						keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
-						context.write(new Text(wiriteToDruid.toString()), null);
-						wiriteToDruid.setLength(0);
-					}
-				}
+//				for (String markLayer : markLevelList) {
+//					if(StringUtils.isNotBlank(dmpJSon.getAsString(markLayer))) {
+//						//log.info(dmpJSon);
+//						wiriteToDruid.append("\""+dmpJSon.getAsString("fileName")+"\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_date")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("time_info_source")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("memid")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid_flag")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ip")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("url")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("referer")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("domain")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_source")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("trigger_type")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfp_customer_info_id")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfd_customer_info_id")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_customer_info_id")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("style_id")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("action_id")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("group_id")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_id")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_position_id")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_country")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_city")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_info")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_phone_info")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_os_info")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_browser_info")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex_source")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age_source")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append("audicen_id_default").append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_id")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_x")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_y")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_event")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("event_id")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_id")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_price")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_dis")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("mark_value")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString(markLayer)).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op1")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op2")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_price_default")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_view")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("vpv")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("cks")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pvs")).append("\"");
+//						keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
+//						context.write(new Text(wiriteToDruid.toString()), null);
+//						wiriteToDruid.setLength(0);
+//					}
+//				}
 //				keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
 //				context.write(new Text(wiriteToDruid.toString()), null);
 //				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_layer3"))) {
@@ -337,6 +339,13 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //				}
 				
 			}
+			
+			if(i == 0) {
+				wiriteToDruid.append("\""+dmpJSon.getAsString("fileName")+"\"");
+				keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
+				context.write(new Text(wiriteToDruid.toString()), null);
+			}
+			i = i+1;
 			log.info("----------------------");
 			dmpJSon.clear();
 			wiriteToDruid.setLength(0);
