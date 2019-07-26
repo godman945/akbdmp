@@ -638,10 +638,16 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			
 			JSONObject layerJson = categoryLevelMappingMap.get(markValue);
 			Iterator<String> keys = layerJson.keys();
+			log.info(">>>>>>>>>>>>>>>>>>>>>layerJson:"+layerJson);
 			while(keys.hasNext()) {
 			    String key = keys.next();
 			    String value = layerJson.getString(key);
 			    dmpDataJson.put(key, value);
+			    
+			    
+			    log.info(">>>>>>>>>>>>>>>>>>>>>key:"+key);
+			    log.info(">>>>>>>>>>>>>>>>>>>>>value:"+value);
+			    
 			}
 //			String categoryLevel = categoryLevelMappingMap.get(markValue);
 //			log.info(">>>>>>>>>>>>>>>>>>>>>categoryLevel:"+categoryLevel);
