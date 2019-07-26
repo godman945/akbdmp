@@ -271,8 +271,10 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("classify")).append("\"");
 //				wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("behavior")).append("\"");
 				//產出csv
+				log.info(">>>>>>>>>>>>>>>>dmpJSon:"+dmpJSon);
+				
 				boolean flag = false;
-				for (int i= 0; i<= markLevelList.length; i++) {
+				for (int i= 0; i <= markLevelList.length; i++) {
 					if(StringUtils.isNotBlank(dmpJSon.getAsString(markLevelList[i]))) {
 						flag = true;
 						//log.info(dmpJSon);
