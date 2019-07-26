@@ -634,19 +634,13 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		if(markValue.length() == 6) {
 			level = 3;
 		}
-		
-		log.info(">>>>>>>>>>>>>>>>>>>>>markValue:"+markValue);
 		if(categoryLevelMappingMap.containsKey(markValue)) {
-			log.info(">>>>>>>>>>>>>>>>>>>>>222222222222:");
 			JSONObject layerJson = categoryLevelMappingMap.get(markValue);
 			Iterator<String> keys = layerJson.keys();
-			log.info(">>>>>>>>>>>>>>>>>>>>>layerJson:"+layerJson);
 			while(keys.hasNext()) {
 			    String key = keys.next();
 			    String value = layerJson.getString(key);
 			    dmpDataJson.put(key, value);
-			    log.info(">>>>>>>>>>>>>>>>>>>>>key:"+key);
-			    log.info(">>>>>>>>>>>>>>>>>>>>>value:"+value);
 			}
 //			String categoryLevel = categoryLevelMappingMap.get(markValue);
 //			log.info(">>>>>>>>>>>>>>>>>>>>>categoryLevel:"+categoryLevel);
@@ -661,44 +655,43 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			dmpDataJson.put("mark_layer3", 3);
 //			dmpDataJson.put("mark_value3", level3);
 		}else {
-			log.info(">>>>>>>>>>>>>>>>>>>>>11111111111:");
 			for (String string : categoryLevelMappingList) {
 				String level1 = string.split("<PCHOME>")[0];
 				String level2 = string.split("<PCHOME>")[1];
 				String level3 = string.split("<PCHOME>")[2];
 				if(level1.equals(markValue)) {
-					dmpDataJson.put("mark_layer1", 1);
+					dmpDataJson.put("mark_layer1", "1");
 					dmpDataJson.put("mark_value1", level1);
 					JSONObject layerJson = new JSONObject();
-					layerJson.put("mark_layer1", 1);
+					layerJson.put("mark_layer1", "1");
 					layerJson.put("mark_value1", level1);
 					categoryLevelMappingMap.put(markValue, layerJson);
 					break;
 				}else if(level2.equals(markValue)) {
-					dmpDataJson.put("mark_layer1", 1);
+					dmpDataJson.put("mark_layer1", "1");
 					dmpDataJson.put("mark_value1", level1);
-					dmpDataJson.put("mark_layer2", 2);
+					dmpDataJson.put("mark_layer2", "2");
 					dmpDataJson.put("mark_value2", level2);
 					JSONObject layerJson = new JSONObject();
-					layerJson.put("mark_layer1", 1);
+					layerJson.put("mark_layer1", "1");
 					layerJson.put("mark_value1", level1);
-					layerJson.put("mark_layer2", 2);
+					layerJson.put("mark_layer2", "2");
 					layerJson.put("mark_value2", level2);
 					categoryLevelMappingMap.put(markValue, layerJson);
 					break;
 				}else if(level3.equals(markValue)) {
-					dmpDataJson.put("mark_layer1", 1);
+					dmpDataJson.put("mark_layer1", "1");
 					dmpDataJson.put("mark_value1", level1);
-					dmpDataJson.put("mark_layer2", 2);
+					dmpDataJson.put("mark_layer2", "2");
 					dmpDataJson.put("mark_value2", level2);
-					dmpDataJson.put("mark_layer3", 3);
+					dmpDataJson.put("mark_layer3", "3");
 					dmpDataJson.put("mark_value3", level3);
 					JSONObject layerJson = new JSONObject();
-					layerJson.put("mark_layer1", 1);
+					layerJson.put("mark_layer1", "1");
 					layerJson.put("mark_value1", level1);
-					layerJson.put("mark_layer2", 2);
+					layerJson.put("mark_layer2", "2");
 					layerJson.put("mark_value2", level2);
-					layerJson.put("mark_layer3", 3);
+					layerJson.put("mark_layer3", "3");
 					layerJson.put("mark_value3", level3);
 					categoryLevelMappingMap.put(markValue, layerJson);
 					break;
@@ -724,7 +717,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //				}
 			}
 		}
-		log.info(">>>>>>>>>>>>>>>>>>>>24h finish");
 	}
 	
 	
