@@ -637,6 +637,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		
 		log.info(">>>>>>>>>>>>>>>>>>>>>markValue:"+markValue);
 		if(categoryLevelMappingMap.containsKey(markValue)) {
+			log.info(">>>>>>>>>>>>>>>>>>>>>222222222222:");
 			JSONObject layerJson = categoryLevelMappingMap.get(markValue);
 			Iterator<String> keys = layerJson.keys();
 			log.info(">>>>>>>>>>>>>>>>>>>>>layerJson:"+layerJson);
@@ -660,6 +661,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			dmpDataJson.put("mark_layer3", 3);
 //			dmpDataJson.put("mark_value3", level3);
 		}else {
+			log.info(">>>>>>>>>>>>>>>>>>>>>11111111111:");
 			for (String string : categoryLevelMappingList) {
 				String level1 = string.split("<PCHOME>")[0];
 				String level2 = string.split("<PCHOME>")[1];
