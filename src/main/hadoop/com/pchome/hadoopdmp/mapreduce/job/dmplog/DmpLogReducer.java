@@ -407,7 +407,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //				context.write(new Text(wiriteToDruid.toString()), null);
 //			}
 //			i = i+1;
-			log.info("----------------------");
 			dmpJSon.clear();
 			wiriteToDruid.setLength(0);
 		} catch (Throwable e) {
