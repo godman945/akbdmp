@@ -641,16 +641,16 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				String level3 = string.split("<PCHOME>")[2];
 				if(level == 2 && level2.equals(markValue)) {
 					String level1 = string.split("<PCHOME>")[0];
-					dmpDataJson.put("mark_layer1", level1);
-					dmpDataJson.put("mark_layer2", level2);
-					dmpDataJson.put("mark_layer3", level3);
+					dmpDataJson.put("mark_layer1", 1);
+					dmpDataJson.put("mark_layer2", 2);
+					dmpDataJson.put("mark_layer3", 3);
 					categoryLevelMappingMap.put(markValue, string);
 					break;
 				}else if(level == 3 && level3.equals(markValue)) {
 					String level1 = string.split("<PCHOME>")[0];
-					dmpDataJson.put("mark_layer1", level1);
-					dmpDataJson.put("mark_layer2", level2);
-					dmpDataJson.put("mark_layer3", level3);
+					dmpDataJson.put("mark_layer1", 1);
+					dmpDataJson.put("mark_layer2", 2);
+					dmpDataJson.put("mark_layer3", 3);
 					categoryLevelMappingMap.put(markValue, string);
 					break;
 				}
