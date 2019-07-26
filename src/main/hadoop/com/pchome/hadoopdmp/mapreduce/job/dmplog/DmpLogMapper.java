@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -80,7 +81,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static DBCollection dBCollection_class_url;
 	private static InputSplit inputSplit;
 	public static List<String> categoryLevelMappingList = new ArrayList<String>();
-	public static Map<String, String> categoryLevelMappingMap = new HashMap<String, String>();
+	public static Map<String, JSONObject> categoryLevelMappingMap = new HashMap<String, JSONObject>();
 	public static ACategoryLogData aCategoryLogDataClick = null;
 	public static ACategoryLogData aCategoryLogDataRetun = null;
 	public static ACategoryLogData aCategoryLogData24H = null;
@@ -557,6 +558,12 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("mark_layer2", "");
 					dmpDataJson.put("mark_layer3", "");
 					dmpDataJson.put("mark_layer4", "");
+					dmpDataJson.put("mark_value1", "");
+					dmpDataJson.put("mark_value2", "");
+					dmpDataJson.put("mark_value3", "");
+					dmpDataJson.put("mark_value4", "");
+					
+					
 					dmpDataJson.put("behavior", "");
 					dmpDataJson.put("classify", "");
 				}catch(Exception e) {
@@ -628,32 +635,87 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			level = 3;
 		}
 		if(categoryLevelMappingMap.containsKey(markValue)) {
-			String categoryLevel = categoryLevelMappingMap.get(markValue);
-			String level1 = categoryLevel.split("<PCHOME>")[0];
-			String level2 = categoryLevel.split("<PCHOME>")[1];
-			String level3 = categoryLevel.split("<PCHOME>")[2];
-			dmpDataJson.put("mark_layer1", 1);
-			dmpDataJson.put("mark_layer2", 2);
-			dmpDataJson.put("mark_layer3", 3);
+			
+			JSONObject layerJson = categoryLevelMappingMap.get(markValue);
+			Iterator<String> keys = layerJson.keys();
+			while(keys.hasNext()) {
+			    String key = keys.next();
+			    String value = layerJson.getString(key);
+			    dmpDataJson.put(key, value);
+			}
+//			String categoryLevel = categoryLevelMappingMap.get(markValue);
+//			log.info(">>>>>>>>>>>>>>>>>>>>>categoryLevel:"+categoryLevel);
+//			log.info(">>>>>>>>>>>>>>>>>>>>>markValue:"+markValue);
+//			String level1 = categoryLevel.split("<PCHOME>")[0];
+//			String level2 = categoryLevel.split("<PCHOME>")[1];
+//			String level3 = categoryLevel.split("<PCHOME>")[2];
+//			dmpDataJson.put("mark_layer1", 1);
+//			dmpDataJson.put("mark_value1", level1);
+//			dmpDataJson.put("mark_layer2", 2);
+//			dmpDataJson.put("mark_value2", level2);
+//			dmpDataJson.put("mark_layer3", 3);
+//			dmpDataJson.put("mark_value3", level3);
 		}else {
 			for (String string : categoryLevelMappingList) {
+				String level1 = string.split("<PCHOME>")[0];
 				String level2 = string.split("<PCHOME>")[1];
 				String level3 = string.split("<PCHOME>")[2];
-				if(level == 2 && level2.equals(markValue)) {
-					String level1 = string.split("<PCHOME>")[0];
+				if(level1.equals(markValue)) {
 					dmpDataJson.put("mark_layer1", 1);
-					dmpDataJson.put("mark_layer2", 2);
-					dmpDataJson.put("mark_layer3", 3);
-					categoryLevelMappingMap.put(markValue, string);
+					dmpDataJson.put("mark_value1", level1);
+					JSONObject layerJson = new JSONObject();
+					layerJson.put("mark_layer1", 1);
+					layerJson.put("mark_value1", level1);
+					categoryLevelMappingMap.put(markValue, layerJson);
 					break;
-				}else if(level == 3 && level3.equals(markValue)) {
-					String level1 = string.split("<PCHOME>")[0];
+				}else if(level2.equals(markValue)) {
 					dmpDataJson.put("mark_layer1", 1);
+					dmpDataJson.put("mark_value1", level1);
 					dmpDataJson.put("mark_layer2", 2);
+					dmpDataJson.put("mark_value2", level2);
+					JSONObject layerJson = new JSONObject();
+					layerJson.put("mark_layer1", 1);
+					layerJson.put("mark_value1", level1);
+					layerJson.put("mark_layer2", 2);
+					layerJson.put("mark_value2", level2);
+					categoryLevelMappingMap.put(markValue, layerJson);
+					break;
+				}else if(level3.equals(markValue)) {
+					dmpDataJson.put("mark_layer1", 1);
+					dmpDataJson.put("mark_value1", level1);
+					dmpDataJson.put("mark_layer2", 2);
+					dmpDataJson.put("mark_value2", level2);
 					dmpDataJson.put("mark_layer3", 3);
-					categoryLevelMappingMap.put(markValue, string);
+					dmpDataJson.put("mark_value3", level3);
+					JSONObject layerJson = new JSONObject();
+					layerJson.put("mark_layer1", 1);
+					layerJson.put("mark_value1", level1);
+					layerJson.put("mark_layer2", 2);
+					layerJson.put("mark_value2", level2);
+					layerJson.put("mark_layer3", 3);
+					layerJson.put("mark_value3", level3);
+					categoryLevelMappingMap.put(markValue, layerJson);
 					break;
 				}
+				
+//				if(level == 2 && level2.equals(markValue)) {
+//
+//					
+////					String level1 = string.split("<PCHOME>")[0];
+////					dmpDataJson.put("mark_layer1", 1);
+////					dmpDataJson.put("mark_layer2", 2);
+////					dmpDataJson.put("mark_layer3", 3);
+////					categoryLevelMappingMap.put(markValue, string);
+////					break;
+//				}else if(level == 3 && level3.equals(markValue)) {
+//
+////					String level1 = string.split("<PCHOME>")[0];
+////					dmpDataJson.put("mark_layer1", 1);
+////					dmpDataJson.put("mark_layer2", 2);
+////					dmpDataJson.put("mark_layer3", 3);
+////					categoryLevelMappingMap.put(markValue, string);
+////					break;
+//				}
 			}
 		}
 	}
