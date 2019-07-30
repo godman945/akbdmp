@@ -9,6 +9,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -85,7 +86,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public static ACategoryLogData aCategoryLogDataClick = null;
 	public static ACategoryLogData aCategoryLogDataRetun = null;
 	public static ACategoryLogData aCategoryLogData24H = null;
-	
+	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	@Override
 	public void setup(Context context) {
 		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
@@ -467,7 +468,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				try {
 					String[] values = logStr.split(paclSymbol,-1);
 					dmpDataJson.put("fileName", fileName);
-					dmpDataJson.put("log_date", values[0]);
+//					dmpDataJson.put("log_date", values[0]);
+					dmpDataJson.put("log_date", values[0].substring(0, values[0].indexOf(":"))+":00"+":00");
 					dmpDataJson.put("memid","");
 					dmpDataJson.put("uuid", values[2]);
 					if(values[2].contains("xxx-")) {
@@ -551,6 +553,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("mark_value", "");
 					}
 					
+					
 					dmpDataJson.put("op1", "");
 					dmpDataJson.put("op2", "");
 					dmpDataJson.put("email", "");
@@ -562,8 +565,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("mark_value2", "");
 					dmpDataJson.put("mark_value3", "");
 					dmpDataJson.put("mark_value4", "");
-					
-					
 					dmpDataJson.put("behavior", "");
 					dmpDataJson.put("classify", "");
 				}catch(Exception e) {
