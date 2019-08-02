@@ -87,6 +87,15 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public static ACategoryLogData aCategoryLogDataRetun = null;
 	public static ACategoryLogData aCategoryLogData24H = null;
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	
+	
+	
+	
+	private static int totalCount= 0;
+	private static String[] markLevelList = {"mark_layer1","mark_layer2","mark_layer3"};
+	private static String[] markValueList = {"mark_value1","mark_value2","mark_value3"};
+	
+	
 	@Override
 	public void setup(Context context) {
 		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
@@ -616,8 +625,14 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			
 //			寫入reduce
 			try {
-				keyOut.set(dmpDataJson.getAsString("uuid"));
-				context.write(keyOut, new Text(dmpDataJson.toString()));
+//				keyOut.set(dmpDataJson.getAsString("uuid"));
+//				context.write(keyOut, new Text(dmpDataJson.toString()));
+				
+				for (int i= 0; i < markLevelList.length; i++) {
+					if(StringUtils.isNotBlank(dmpDataJson.getAsString(markLevelList[i]))) {
+						context.write(new Text(dmpDataJson.getAsString(markLevelList[i])), new Text(dmpDataJson.toString()));
+					}
+				}
 			} catch (Exception e) {
 				log.error(">>>>write to reduce fail:"+e.getMessage());
 			}

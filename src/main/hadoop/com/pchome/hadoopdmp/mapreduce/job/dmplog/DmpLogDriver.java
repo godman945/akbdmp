@@ -145,9 +145,9 @@ public class DmpLogDriver {
 //				}
 //			}
 	        
-	        
+	        //暫時計算用
 	        String hour = "";
-			for (int i = 0; i < 24; i++) {
+			for (int i = 0; i < 1; i++) {
 				hour = "";
 				if(i == 0) {
 					hour = "00";
@@ -166,7 +166,7 @@ public class DmpLogDriver {
 						}
 					}
 			}
-	        
+			 //暫時計算用
 	        
 	        
 	       
