@@ -73,7 +73,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	public RedisTemplate<String, Object> redisTemplate = null;
 
-	public int count;
+	public static int count_test = 0;
 
 	public JSONParser jsonParser = null;
 
@@ -175,10 +175,12 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		}
 	}
 	
-	private static int i = 0;
+	private static int count = 0;
 	private static Set<String> uuidSet = new HashSet<String>();
 	
 	private static Map<String,Integer> uuidMap = new HashMap<String,Integer>();
+	
+	
 	
 	@Override
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
@@ -341,20 +343,29 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			
 			
 //			log.info(">>>>>>>>>>>mapperKey:"+mapperKey.toString());
-			uuidSet.clear();
-			for (Text text : mapperValue) {
-				wiriteToDruid.setLength(0);
-				dmpJSon.clear();
-				dmpJSon = (net.minidev.json.JSONObject) jsonParser.parse(text.toString());
-				if(StringUtils.isBlank(dmpJSon.getAsString("uuid"))) {
-					log.error(">>>>>>>>>>>>>>>>>no uuid");
-					break;
+			
+			if(count_test < 100) {
+				log.info(">>>>>>>>>>>>>mapperKey:"+mapperKey);
+				
+				
+				uuidSet.clear();
+				for (Text text : mapperValue) {
+					wiriteToDruid.setLength(0);
+					dmpJSon.clear();
+					dmpJSon = (net.minidev.json.JSONObject) jsonParser.parse(text.toString());
+					log.info(dmpJSon);
+					if(StringUtils.isBlank(dmpJSon.getAsString("uuid"))) {
+						log.error(">>>>>>>>>>>>>>>>>no uuid");
+						break;
+					}
+					uuidSet.add(dmpJSon.getAsString("uuid"));
 				}
-				uuidSet.add(dmpJSon.getAsString("uuid"));
+				uuidMap.put(mapperKey.toString(), uuidSet.size());
+				count_test = count_test + 1;
+				log.error(">>>>>>>>>>>>>>>>>END");
 			}
 			
 			
-			uuidMap.put(mapperKey.toString(), uuidSet.size());
 			
 			
 			
