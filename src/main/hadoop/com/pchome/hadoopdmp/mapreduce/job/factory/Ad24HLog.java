@@ -38,7 +38,7 @@ public class Ad24HLog extends ACategoryLogData {
 	
 	
 	public Object processCategory(net.minidev.json.JSONObject dmpJSon, DBCollection dbCollectionUrl) throws Exception {
-	//	log.info(">>>>>>>>>>>>>>>>>>>>>1");
+		log.info(">>>>>>>>>>>>>>>>>>>>>1");
 		category = "";
 		categorySource = "";
 		class24hUrlClassify = "" ;
@@ -84,15 +84,17 @@ public class Ad24HLog extends ACategoryLogData {
 				dbObject = queryClassUrl(this.referer);
 				log.info(">>>>>>>>>>>>>>>>>>>>>TEST2:"+dbObject);
 				if(dbObject == null) {
-					log.info(">>>>>>>>>>>>>>>>>>>>>5-4");
+					log.info(">>>>>>>>>>>>>>>>>>>>>5-1");
 					category = "";
 					categorySource = "";
 					class24hUrlClassify = "N";
 					// url 不存在 ,寫入 mongo url代號 status=0
 					insertClassUrl(this.referer, "", "0", 1);
+					log.info(">>>>>>>>>>>>>>>>>>>>>5*****");
 					dbObject = queryClassUrl(this.referer);
 					urlDBObjectMapping.put(this.referer, dbObject);
 				}else {
+					log.info(">>>>>>>>>>>>>>>>>>>>>5-2");
 					if (dbObject.get("status").equals("0")) {
 						category = "";
 						categorySource = "";
@@ -113,6 +115,8 @@ public class Ad24HLog extends ACategoryLogData {
 				}
 			}
 		}
+		
+		
 		dmpJSon.put("classify", class24hUrlClassify);
 		dmpJSon.put("behavior", "24h");
 		dmpJSon.put("category", category);
