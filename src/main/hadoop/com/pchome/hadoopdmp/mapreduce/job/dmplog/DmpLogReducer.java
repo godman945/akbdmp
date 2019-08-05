@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
@@ -372,6 +373,13 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	public void cleanup(Context context) {
 		try {
 			log.info(">>>>>>>>>>>>>uuidMap:"+uuidMap);
+			long  total = 0;
+			for (Entry<String, Integer> entry : uuidMap.entrySet()) {
+				total = total + entry.getValue();
+			}
+			log.info(">>>>>>>>>>>>>total:"+total);
+			
+			
 		} catch (Exception e) {
 			log.error("reduce cleanup error>>>>>> " +e);
 		}
