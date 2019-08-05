@@ -38,30 +38,26 @@ public class Ad24HLog extends ACategoryLogData {
 	
 	
 	public Object processCategory(net.minidev.json.JSONObject dmpJSon, DBCollection dbCollectionUrl) throws Exception {
-//		log.info(">>>>>>>>>>>>>>>>>>>>>1");
+	//	log.info(">>>>>>>>>>>>>>>>>>>>>1");
 		category = "";
 		categorySource = "";
 		class24hUrlClassify = "" ;
 		this.dBCollection = dbCollectionUrl;
-		this.referer = dmpJSon.getAsString("referer").trim();
 		if (StringUtils.isBlank(referer)) {
-//			dmpJSon.put("class_24h_url_classify", "N");
 			dmpJSon.put("classify", "N");
 			dmpJSon.put("behavior", "24h");
 			return dmpJSon;
 		}
-//		log.info(">>>>>>>>>>>>>>>>>>>>>2");
+	//	log.info(">>>>>>>>>>>>>>>>>>>>>2");
 		//用url比對24h對照表找出分類代號
-//		list = DmpLogMapper.category24hBeanList;
 		if(urlCodeMapping.containsKey(referer)) {
-//			log.info(">>>>>>>>>>>>>>>>>>>>>3");
+	//		log.info(">>>>>>>>>>>>>>>>>>>>>3");
 			category = urlCodeMapping.get(referer);
 			if(StringUtils.isNotBlank(category)) {
 				categorySource = "24h";
 				class24hUrlClassify = "Y";
 			}
 		}else {
-//			log.info(">>>>>>>>>>>>>>>>>>>>>4");
 			for (CategoryCodeBean categoryBean : DmpLogMapper.category24hBeanList) {
 				if(this.referer.indexOf(categoryBean.getEnglishCode()) != -1){
 					category = categoryBean.getNumberCode();
@@ -82,46 +78,39 @@ public class Ad24HLog extends ACategoryLogData {
 			
 			//查詢url
 			if(urlDBObjectMapping.containsKey(this.referer)) {
-				
 				log.info(">>>>>>>>>>>>>>>>>>>>>TEST1");
-				
 				dbObject = urlDBObjectMapping.get(this.referer);
 			}else {
 				dbObject = queryClassUrl(this.referer);
 				log.info(">>>>>>>>>>>>>>>>>>>>>TEST2:"+dbObject);
-				if(dbObject.get("query_time") == null) {
-					dbObject.put("query_time", new Integer(0));
-				}
-				urlDBObjectMapping.put(this.referer, dbObject);
-			}
-			log.info(">>>>>>>>>>>>>>>>>>>>>5-1");
-			if (dbObject != null) { //mongo db有資料
-				log.info(">>>>>>>>>>>>>>>>>>>>>5-2");
-				if (dbObject.get("status").equals("0")) {
+				if(dbObject == null) {
+					log.info(">>>>>>>>>>>>>>>>>>>>>5-4");
 					category = "";
 					categorySource = "";
 					class24hUrlClassify = "N";
-					// url 存在 status = 0 , mongo update_date 更新(一天一次) query_time+1 如大於 2000 不再加
-					updateClassUrlUpdateDate(this.referer, dbObject);
-					updateClassUrlQueryTime(this.referer, dbObject);
-					dbObject.put("query_time", (Integer.parseInt(dbObject.get("query_time").toString()) + 1));
+					// url 不存在 ,寫入 mongo url代號 status=0
+					insertClassUrl(this.referer, "", "0", 1);
+					dbObject = queryClassUrl(this.referer);
 					urlDBObjectMapping.put(this.referer, dbObject);
-				} else if ((dbObject.get("status").equals("1"))	&& (StringUtils.isNotBlank(dbObject.get("ad_class").toString()))) {
-					log.info(">>>>>>>>>>>>>>>>>>>>>5-3");
-					category = dbObject.get("ad_class").toString();
-					categorySource = "24h";
-					class24hUrlClassify = "Y";
-					// url 存在 status = 1 取分類代號回傳 mongo update_date 更新(一天一次) class24hUrlClassify =
-					// "Y"
-					updateClassUrlUpdateDate(this.referer, dbObject);
+				}else {
+					if (dbObject.get("status").equals("0")) {
+						category = "";
+						categorySource = "";
+						class24hUrlClassify = "N";
+						// url 存在 status = 0 , mongo update_date 更新(一天一次) query_time+1 如大於 2000 不再加
+						updateClassUrlUpdateDate(this.referer, dbObject);
+						updateClassUrlQueryTime(this.referer, dbObject);
+						dbObject.put("query_time", (Integer.parseInt(dbObject.get("query_time").toString()) + 1));
+						urlDBObjectMapping.put(this.referer, dbObject);
+					} else if ((dbObject.get("status").equals("1"))	&& (StringUtils.isNotBlank(dbObject.get("ad_class").toString()))) {
+						log.info(">>>>>>>>>>>>>>>>>>>>>5-3");
+						category = dbObject.get("ad_class").toString();
+						categorySource = "24h";
+						class24hUrlClassify = "Y";
+						// url 存在 status = 1 取分類代號回傳 mongo update_date 更新(一天一次) class24hUrlClassify = "Y"
+						updateClassUrlUpdateDate(this.referer, dbObject);
+					}
 				}
-			}else { //mongo db無資料
-				log.info(">>>>>>>>>>>>>>>>>>>>>5-4");
-				category = "";
-				categorySource = "";
-				class24hUrlClassify = "N";
-				// url 不存在 ,寫入 mongo url代號 status=0
-				insertClassUrl(this.referer, "", "0", 1);
 			}
 		}
 		dmpJSon.put("classify", class24hUrlClassify);
@@ -129,6 +118,111 @@ public class Ad24HLog extends ACategoryLogData {
 		dmpJSon.put("category", category);
 		log.info(">>>>>>>>>>>>>>>>>>>>>END---5");
 		return dmpJSon;
+		
+//		
+//		
+////		log.info(">>>>>>>>>>>>>>>>>>>>>1");
+//		category = "";
+//		categorySource = "";
+//		class24hUrlClassify = "" ;
+//		this.dBCollection = dbCollectionUrl;
+//		this.referer = dmpJSon.getAsString("referer").trim();
+//		if (StringUtils.isBlank(referer)) {
+////			dmpJSon.put("class_24h_url_classify", "N");
+//			dmpJSon.put("classify", "N");
+//			dmpJSon.put("behavior", "24h");
+//			return dmpJSon;
+//		}
+////		log.info(">>>>>>>>>>>>>>>>>>>>>2");
+//		//用url比對24h對照表找出分類代號
+////		list = DmpLogMapper.category24hBeanList;
+//		if(urlCodeMapping.containsKey(referer)) {
+////			log.info(">>>>>>>>>>>>>>>>>>>>>3");
+//			category = urlCodeMapping.get(referer);
+//			if(StringUtils.isNotBlank(category)) {
+//				categorySource = "24h";
+//				class24hUrlClassify = "Y";
+//			}
+//		}else {
+////			log.info(">>>>>>>>>>>>>>>>>>>>>4");
+//			for (CategoryCodeBean categoryBean : DmpLogMapper.category24hBeanList) {
+//				if(this.referer.indexOf(categoryBean.getEnglishCode()) != -1){
+//					category = categoryBean.getNumberCode();
+//					categorySource = "24h";
+//					class24hUrlClassify = "Y";
+//					urlCodeMapping.put(this.referer, category);
+//					break;
+//				}
+//			}
+//			urlCodeMapping.put(this.referer, "");
+//		}
+//		
+//		//	url比對不到24H分類
+//		if (StringUtils.isBlank(category)){
+//			log.info(">>>>>>>>>>>>>>>>>>>>>5");
+//			
+//			log.info(">>>>>>>>>>>>>>>>>>>>>this.referer:"+this.referer);
+//			
+//			//查詢url
+//			if(urlDBObjectMapping.containsKey(this.referer)) {
+//				log.info(">>>>>>>>>>>>>>>>>>>>>TEST1");
+//				dbObject = urlDBObjectMapping.get(this.referer);
+//			}else {
+//				dbObject = queryClassUrl(this.referer);
+//				log.info(">>>>>>>>>>>>>>>>>>>>>TEST2:"+dbObject);
+////				
+////				
+////				
+////				
+////				if(dbObject == null) {
+////					category = "";
+////					categorySource = "";
+////					class24hUrlClassify = "N";
+////					// url 不存在 ,寫入 mongo url代號 status=0
+////					insertClassUrl(this.referer, "", "0", 1);
+////				}else {
+////					log.info(">>>>>>>>>>>>>>>>>>>>>5-4");
+////					if(dbObject.get("query_time") == null) {
+////						dbObject.put("query_time", new Integer(0));
+////					}
+////					urlDBObjectMapping.put(this.referer, dbObject);
+////				}
+//			}
+//			log.info(">>>>>>>>>>>>>>>>>>>>>5-1");
+//			if (dbObject != null) { //mongo db有資料
+//				log.info(">>>>>>>>>>>>>>>>>>>>>5-2");
+//				if (dbObject.get("status").equals("0")) {
+//					category = "";
+//					categorySource = "";
+//					class24hUrlClassify = "N";
+//					// url 存在 status = 0 , mongo update_date 更新(一天一次) query_time+1 如大於 2000 不再加
+//					updateClassUrlUpdateDate(this.referer, dbObject);
+//					updateClassUrlQueryTime(this.referer, dbObject);
+//					dbObject.put("query_time", (Integer.parseInt(dbObject.get("query_time").toString()) + 1));
+//					urlDBObjectMapping.put(this.referer, dbObject);
+//				} else if ((dbObject.get("status").equals("1"))	&& (StringUtils.isNotBlank(dbObject.get("ad_class").toString()))) {
+//					log.info(">>>>>>>>>>>>>>>>>>>>>5-3");
+//					category = dbObject.get("ad_class").toString();
+//					categorySource = "24h";
+//					class24hUrlClassify = "Y";
+//					// url 存在 status = 1 取分類代號回傳 mongo update_date 更新(一天一次) class24hUrlClassify =
+//					// "Y"
+//					updateClassUrlUpdateDate(this.referer, dbObject);
+//				}
+//			}else { //mongo db無資料
+//				log.info(">>>>>>>>>>>>>>>>>>>>>5-4");
+//				category = "";
+//				categorySource = "";
+//				class24hUrlClassify = "N";
+//				// url 不存在 ,寫入 mongo url代號 status=0
+//				insertClassUrl(this.referer, "", "0", 1);
+//			}
+//		}
+//		dmpJSon.put("classify", class24hUrlClassify);
+//		dmpJSon.put("behavior", "24h");
+//		dmpJSon.put("category", category);
+//		log.info(">>>>>>>>>>>>>>>>>>>>>END---5");
+//		return dmpJSon;
 	}
 	
 	public DBObject queryClassUrl(String url) throws Exception {
