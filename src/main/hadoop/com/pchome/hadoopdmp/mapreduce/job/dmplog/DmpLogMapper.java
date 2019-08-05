@@ -638,6 +638,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					}
 				}else if (dmpDataJson.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpDataJson.getAsString("referer")) && dmpDataJson.getAsString("referer").contains("24h")) {		// 24h
 					try {
+						log.info("-------");
 						DmpLogMapper.aCategoryLogData24H.processCategory(dmpDataJson, dBCollection_class_url);
 					}catch(Exception e) {
 						log.error(">>>>process source pv_24h fail:"+e.getMessage());
