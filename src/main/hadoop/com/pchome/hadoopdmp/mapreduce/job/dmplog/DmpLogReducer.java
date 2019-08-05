@@ -348,7 +348,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					wiriteToDruid.setLength(0);
 					dmpJSon.clear();
 					dmpJSon = (net.minidev.json.JSONObject) jsonParser.parse(text.toString());
-					log.info(dmpJSon);
+//					log.info(dmpJSon);
 					if(StringUtils.isBlank(dmpJSon.getAsString("uuid"))) {
 						break;
 					}
