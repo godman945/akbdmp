@@ -35,6 +35,8 @@ public class Ad24HLog extends ACategoryLogData {
 	private static Map<String,DBObject> urlDBObjectMapping = new HashedMap<String,DBObject>();
 	private static Date today = new Date();
 	private static int totalcount = 0;
+	
+	
 	public Object processCategory(net.minidev.json.JSONObject dmpJSon, DBCollection dbCollectionUrl) throws Exception {
 		log.info(">>>>>>>>>>>>>>>>>>>>>1");
 		category = "";
@@ -75,10 +77,17 @@ public class Ad24HLog extends ACategoryLogData {
 		//	url比對不到24H分類
 		if (StringUtils.isBlank(category)){
 			log.info(">>>>>>>>>>>>>>>>>>>>>5");
+			
+			log.info(">>>>>>>>>>>>>>>>>>>>>this.referer:"+this.referer);
+			
 			//查詢url
 			if(urlDBObjectMapping.containsKey(this.referer)) {
+				
+				log.info(">>>>>>>>>>>>>>>>>>>>>TEST1");
+				
 				dbObject = urlDBObjectMapping.get(this.referer);
 			}else {
+				log.info(">>>>>>>>>>>>>>>>>>>>>TEST2");
 				dbObject = queryClassUrl(this.referer);
 				if(dbObject.get("query_time") == null) {
 					dbObject.put("query_time", new Integer(0));

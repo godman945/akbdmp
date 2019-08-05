@@ -642,6 +642,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					}catch(Exception e) {
 						log.error(">>>>process source pv_24h fail:"+e.getMessage());
 						log.error(">>>>>>logStr:" +logStr);
+						log.error(">>>>>>dmpDataJson:" +dmpDataJson);
 						log.error(">>>>>>fileName:" +fileName);
 						return;
 					}
