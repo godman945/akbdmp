@@ -38,7 +38,7 @@ public class Ad24HLog extends ACategoryLogData {
 	
 	
 	public Object processCategory(net.minidev.json.JSONObject dmpJSon, DBCollection dbCollectionUrl) throws Exception {
-		log.info(">>>>>>>>>>>>>>>>>>>>>1");
+//		log.info(">>>>>>>>>>>>>>>>>>>>>1");
 		category = "";
 		categorySource = "";
 		class24hUrlClassify = "" ;
@@ -50,7 +50,7 @@ public class Ad24HLog extends ACategoryLogData {
 			dmpJSon.put("behavior", "24h");
 			return dmpJSon;
 		}
-		log.info(">>>>>>>>>>>>>>>>>>>>>2");
+//		log.info(">>>>>>>>>>>>>>>>>>>>>2");
 		//用url比對24h對照表找出分類代號
 //		list = DmpLogMapper.category24hBeanList;
 		if(urlCodeMapping.containsKey(referer)) {
@@ -61,7 +61,7 @@ public class Ad24HLog extends ACategoryLogData {
 				class24hUrlClassify = "Y";
 			}
 		}else {
-			log.info(">>>>>>>>>>>>>>>>>>>>>4");
+//			log.info(">>>>>>>>>>>>>>>>>>>>>4");
 			for (CategoryCodeBean categoryBean : DmpLogMapper.category24hBeanList) {
 				if(this.referer.indexOf(categoryBean.getEnglishCode()) != -1){
 					category = categoryBean.getNumberCode();
@@ -87,8 +87,8 @@ public class Ad24HLog extends ACategoryLogData {
 				
 				dbObject = urlDBObjectMapping.get(this.referer);
 			}else {
-				log.info(">>>>>>>>>>>>>>>>>>>>>TEST2");
 				dbObject = queryClassUrl(this.referer);
+				log.info(">>>>>>>>>>>>>>>>>>>>>TEST2:"+dbObject);
 				if(dbObject.get("query_time") == null) {
 					dbObject.put("query_time", new Integer(0));
 				}
