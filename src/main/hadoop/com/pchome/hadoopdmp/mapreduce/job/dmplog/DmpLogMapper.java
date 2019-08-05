@@ -476,6 +476,12 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			}else if(logpath.contains("/akb/storedata/bulog/")) {
 				try {
 					String[] values = logStr.split(paclSymbol,-1);
+					
+					if(StringUtils.isBlank(values[2])) {
+						return;
+					}
+					
+					
 					dmpDataJson.put("fileName", fileName);
 //					dmpDataJson.put("log_date", values[0]);
 					dmpDataJson.put("log_date", values[0].substring(0, values[0].indexOf(":"))+":00"+":00");
