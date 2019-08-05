@@ -51,7 +51,7 @@ public class Ad24HLog extends ACategoryLogData {
 	//	log.info(">>>>>>>>>>>>>>>>>>>>>2");
 		//用url比對24h對照表找出分類代號
 		if(urlCodeMapping.containsKey(referer)) {
-	//		log.info(">>>>>>>>>>>>>>>>>>>>>3");
+			log.info(">>>>>>>>>>>>>>>>>>>>>3");
 			category = urlCodeMapping.get(referer);
 			if(StringUtils.isNotBlank(category)) {
 				categorySource = "24h";
