@@ -73,19 +73,17 @@ public class Ad24HLog extends ACategoryLogData {
 		
 		//	url比對不到24H分類
 		if (StringUtils.isBlank(category)){
-			log.info(">>>>>>>>>>>>>>>>>>>>>5");
-			
-			log.info(">>>>>>>>>>>>>>>>>>>>>this.referer:"+this.referer);
-			
+//			log.info(">>>>>>>>>>>>>>>>>>>>>5");
+//			log.info(">>>>>>>>>>>>>>>>>>>>>this.referer:"+this.referer);
 			//查詢url
 			if(urlDBObjectMapping.containsKey(this.referer)) {
-				log.info(">>>>>>>>>>>>>>>>>>>>>TEST1");
+//				log.info(">>>>>>>>>>>>>>>>>>>>>TEST1");
 				dbObject = urlDBObjectMapping.get(this.referer);
 			}else {
 				dbObject = queryClassUrl(this.referer);
-				log.info(">>>>>>>>>>>>>>>>>>>>>TEST2:"+dbObject);
+//				log.info(">>>>>>>>>>>>>>>>>>>>>TEST2:"+dbObject);
 				if(dbObject == null) {
-					log.info(">>>>>>>>>>>>>>>>>>>>>5-1");
+//					log.info(">>>>>>>>>>>>>>>>>>>>>5-1");
 					category = "";
 					categorySource = "";
 					class24hUrlClassify = "N";
@@ -95,7 +93,7 @@ public class Ad24HLog extends ACategoryLogData {
 					dbObject = queryClassUrl(this.referer);
 					urlDBObjectMapping.put(this.referer, dbObject);
 				}else {
-					log.info(">>>>>>>>>>>>>>>>>>>>>5-2");
+//					log.info(">>>>>>>>>>>>>>>>>>>>>5-2");
 					if (dbObject.get("status").equals("0")) {
 						category = "";
 						categorySource = "";
@@ -106,7 +104,7 @@ public class Ad24HLog extends ACategoryLogData {
 						dbObject.put("query_time", (Integer.parseInt(dbObject.get("query_time").toString()) + 1));
 						urlDBObjectMapping.put(this.referer, dbObject);
 					} else if ((dbObject.get("status").equals("1"))	&& (StringUtils.isNotBlank(dbObject.get("ad_class").toString()))) {
-						log.info(">>>>>>>>>>>>>>>>>>>>>5-3");
+//						log.info(">>>>>>>>>>>>>>>>>>>>>5-3");
 						category = dbObject.get("ad_class").toString();
 						categorySource = "24h";
 						class24hUrlClassify = "Y";
@@ -121,7 +119,7 @@ public class Ad24HLog extends ACategoryLogData {
 		dmpJSon.put("classify", class24hUrlClassify);
 		dmpJSon.put("behavior", "24h");
 		dmpJSon.put("category", category);
-		log.info(">>>>>>>>>>>>>>>>>>>>>END---5");
+//		log.info(">>>>>>>>>>>>>>>>>>>>>END---5");
 		return dmpJSon;
 		
 //		
