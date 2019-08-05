@@ -487,7 +487,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("uuid_flag", "n");
 					}
 					dmpDataJson.put("url", values[6]);
-					dmpDataJson.put("referer", values[5]);
+					dmpDataJson.put("referer", values[5].substring(0, values[5].indexOf("?")));
 					dmpDataJson.put("domain", values[7]);
 					dmpDataJson.put("log_source", "bu_log");
 					dmpDataJson.put("pfd_customer_info_id", "");
