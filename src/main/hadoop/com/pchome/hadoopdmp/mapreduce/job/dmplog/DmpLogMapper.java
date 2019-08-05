@@ -675,8 +675,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				
 				for (int i= 0; i < markValueList.length; i++) {
 					if(StringUtils.isNotBlank(dmpDataJson.getAsString(markValueList[i]))) {
-						log.info(">>>>>>>>>>markValueList:"+dmpDataJson.getAsString(markValueList[i]));
-						
 						context.write(new Text(dmpDataJson.getAsString(markValueList[i])), new Text(dmpDataJson.toString()));
 					}
 				}

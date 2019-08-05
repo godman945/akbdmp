@@ -52,7 +52,7 @@ public class Ad24HLog extends ACategoryLogData {
 	//	log.info(">>>>>>>>>>>>>>>>>>>>>2");
 		//用url比對24h對照表找出分類代號
 		if(urlCodeMapping.containsKey(referer)) {
-			log.info(">>>>>>>>>>>>>>>>>>>>>3");
+//			log.info(">>>>>>>>>>>>>>>>>>>>>3");
 			category = urlCodeMapping.get(referer);
 			if(StringUtils.isNotBlank(category)) {
 				categorySource = "24h";
@@ -89,7 +89,7 @@ public class Ad24HLog extends ACategoryLogData {
 					class24hUrlClassify = "N";
 					// url 不存在 ,寫入 mongo url代號 status=0
 					insertClassUrl(this.referer, "", "0", 1);
-					log.info(">>>>>>>>>>>>>>>>>>>>>5*****");
+//					log.info(">>>>>>>>>>>>>>>>>>>>>5*****");
 					dbObject = queryClassUrl(this.referer);
 					urlDBObjectMapping.put(this.referer, dbObject);
 				}else {

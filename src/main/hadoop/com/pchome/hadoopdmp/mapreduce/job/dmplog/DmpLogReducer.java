@@ -343,11 +343,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			
 			
 //			log.info(">>>>>>>>>>>mapperKey:"+mapperKey.toString());
-			
-			if(count_test < 100) {
-				log.info(">>>>>>>>>>>>>mapperKey:"+mapperKey);
-				
-				
 				uuidSet.clear();
 				for (Text text : mapperValue) {
 					wiriteToDruid.setLength(0);
@@ -355,15 +350,11 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					dmpJSon = (net.minidev.json.JSONObject) jsonParser.parse(text.toString());
 					log.info(dmpJSon);
 					if(StringUtils.isBlank(dmpJSon.getAsString("uuid"))) {
-						log.error(">>>>>>>>>>>>>>>>>no uuid");
 						break;
 					}
 					uuidSet.add(dmpJSon.getAsString("uuid"));
 				}
 				uuidMap.put(mapperKey.toString(), uuidSet.size());
-				count_test = count_test + 1;
-				log.error(">>>>>>>>>>>>>>>>>END");
-			}
 			
 			
 			
