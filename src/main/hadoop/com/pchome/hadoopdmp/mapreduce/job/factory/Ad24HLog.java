@@ -127,6 +127,7 @@ public class Ad24HLog extends ACategoryLogData {
 		dmpJSon.put("classify", class24hUrlClassify);
 		dmpJSon.put("behavior", "24h");
 		dmpJSon.put("category", category);
+		log.info(">>>>>>>>>>>>>>>>>>>>>END---5");
 		return dmpJSon;
 	}
 	
