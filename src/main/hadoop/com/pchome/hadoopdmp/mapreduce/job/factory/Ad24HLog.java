@@ -38,10 +38,11 @@ public class Ad24HLog extends ACategoryLogData {
 	
 	
 	public Object processCategory(net.minidev.json.JSONObject dmpJSon, DBCollection dbCollectionUrl) throws Exception {
-		log.info(">>>>>>>>>>>>>>>>>>>>>1");
+//		log.info(">>>>>>>>>>>>>>>>>>>>>1:");
 		category = "";
 		categorySource = "";
 		class24hUrlClassify = "" ;
+		this.referer = dmpJSon.getAsString("referer").trim();
 		this.dBCollection = dbCollectionUrl;
 		if (StringUtils.isBlank(referer)) {
 			dmpJSon.put("classify", "N");
