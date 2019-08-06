@@ -563,10 +563,10 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				csvWriter.append("\n");
 
 				for (List<String> rowData : rows) {
-				    csvWriter.append(String.join(",", rowData));
-				    csvWriter.append("\n");
+//				    csvWriter.append(String.join(",", rowData));
+//				    csvWriter.append("\n");
+					csvWriter.append(rowData.get(0)).append(",").append(rowData.get(1)).append(",").append(rowData.get(2)).append("\n");
 				}
-
 				csvWriter.flush();
 			
 			
