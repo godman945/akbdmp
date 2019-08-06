@@ -394,7 +394,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			}
 //			log.info(">>>>>>>>>>>>>total:"+total);
 			
-			 Map<String,Map<String,String>> csvMap = null;
+			Map<String,Map<String,String>> csvMap = new LinkedHashMap<String,Map<String,String>>();
 			try {
 				Configuration conf = context.getConfiguration();
 				FileSystem fs = FileSystem.get(conf);
@@ -404,7 +404,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	            BufferedReader reader = new BufferedReader(inr);
 	            String line = null;
 	            
-	            csvMap = new LinkedHashMap<String,Map<String,String>>();
 	    		while ((line = reader.readLine()) != null) {
 	    			String item[] = line.split(",");
 	    			String data0 = item[0].trim();
@@ -425,29 +424,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	    		}
 	    		reader.close();
 			}catch(Exception e) {
-				log.error("FAIL PROCESS MAP");
-				log.error(e.getMessage());
+				System.out.println("FAIL PROCESS MAP");
+				System.out.println(e.getMessage());
 			}
-			
-			
-			
-			
-//    		for (Entry<String, Map<String, String>> entry : csvMap.entrySet()) {
-//    			Map<String,String> detail = entry.getValue();
-//    			for (Entry<String, String> data : detail.entrySet()) {
-//					String key = data.getKey();
-//					String value = data.getValue();
-//					if(uuidMap.containsKey(value)) {
-//						detail.put(key+"_UNI", String.valueOf(uuidMap.get(value)));
-//						detail.put(key+"_PV", String.valueOf(uuidMap.get(value+"_PV")));
-//					}else {
-//						detail.put(key+"_UNI", "0");
-//						detail.put(key+"_PV", "0");
-//					}
-//				}
-//			}
-//    		
-//    		log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>csvMap:"+csvMap);
 			
 			try {
 				Set<Entry<String, Map<String, String>>> csvMapSet = csvMap.entrySet();
@@ -474,13 +453,14 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 								detail.put(key+"_UNI", "0");
 								detail.put(key+"_PV", "0");
 							}
+							System.out.println("***********");
 						}
 						i = i + 1;
 	        		}
 	    		}
 			}catch(Exception e) {
-				log.error("FAIL ADD　PROCESS MAP");
-				log.error(e.getMessage());
+				System.out.println("FAIL ADD　PROCESS MAP");
+				System.out.println(e.getMessage());
 			}
     		
 			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>csvMap:"+csvMap);
