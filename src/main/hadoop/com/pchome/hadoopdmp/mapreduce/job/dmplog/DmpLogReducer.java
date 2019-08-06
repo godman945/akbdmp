@@ -504,7 +504,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 						}else if(entry.getKey().equals("code_3_PV")) {
 							wiriteToDruid.append(",").append("\"").append("曝光數(第三層)").append("\"");
 						}
-					}else if(count < 10){
+					}else if(count > 0){
 						String entryValue = entry.getValue();
 						if(entry.getKey().equals("name_1")) {
 							wiriteToDruid.append("\""+"ALEX"+"\"");
