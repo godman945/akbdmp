@@ -472,7 +472,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				System.out.println(e.getMessage());
 			}
     		
-			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>csvMap:"+csvMap);
+//			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>csvMap:"+csvMap);
     		
 			int count = 0;
 			for (Entry<String, Map<String, String>> entryMap : csvMap.entrySet()) {
@@ -504,8 +504,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 						}else if(entry.getKey().equals("code_3_PV")) {
 							wiriteToDruid.append(",").append("\"").append("曝光數(第三層)").append("\"");
 						}
-						context.write(new Text(wiriteToDruid.toString()), null);
-						wiriteToDruid.setLength(0);
 					}else if(count == 1){
 						String entryValue = entry.getValue();
 						if(entry.getKey().equals("name_1")) {
@@ -533,10 +531,15 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 						}else if(entry.getKey().equals("code_3_PV")) {
 							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
 						}
-						context.write(new Text(wiriteToDruid.toString()), null);
-						wiriteToDruid.setLength(0);
+						
 					}
 				}
+				if(wiriteToDruid.length() > 0) {
+					context.write(new Text(wiriteToDruid.toString()), null);
+					wiriteToDruid.setLength(0);
+				}
+				
+				
 				count = count + 1;
 			}
     		
