@@ -489,7 +489,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 						}
 						
 						if(entry.getKey().equals("name_2")) {
-							wiriteToDruid.append("\""+"館別名稱(第二層)"+"\"");
+							wiriteToDruid.append(",").append("\""+"館別名稱(第二層)"+"\"");
 						}else if(entry.getKey().equals("code_2")) {
 							wiriteToDruid.append(",").append("\"").append("館別代碼(第二層)").append("\"");
 						}else if(entry.getKey().equals("code_2_UNI")) {
@@ -499,13 +499,43 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 						}
 						
 						if(entry.getKey().equals("name_3")) {
-							wiriteToDruid.append("\""+"館別名稱(第三層)"+"\"");
+							wiriteToDruid.append(",").append("\""+"館別名稱(第三層)"+"\"");
 						}else if(entry.getKey().equals("code_3")) {
 							wiriteToDruid.append(",").append("\"").append("館別代碼(第三層)").append("\"");
 						}else if(entry.getKey().equals("code_3_UNI")) {
 							wiriteToDruid.append(",").append("\"").append("不重複UUID(第三層)").append("\"");
 						}else if(entry.getKey().equals("code_3_PV")) {
 							wiriteToDruid.append(",").append("\"").append("曝光數(第三層)").append("\"");
+						}
+					}else {
+						if(entry.getKey().equals("name_1")) {
+							wiriteToDruid.append("\""+entry.getValue()+"\"");
+						}else if(entry.getKey().equals("code_1")) {
+							wiriteToDruid.append(",").append("\"").append(entry.getValue()).append("\"");
+						}else if(entry.getKey().equals("code_1_UNI")) {
+							wiriteToDruid.append(",").append("\"").append(entry.getValue()).append("\"");
+						}else if(entry.getKey().equals("code_1_PV")) {
+							wiriteToDruid.append(",").append("\"").append(entry.getValue()).append("\"");
+						}
+						
+						if(entry.getKey().equals("name_2")) {
+							wiriteToDruid.append(",").append("\""+entry.getValue()+"\"");
+						}else if(entry.getKey().equals("code_2")) {
+							wiriteToDruid.append(",").append("\"").append(entry.getValue()).append("\"");
+						}else if(entry.getKey().equals("code_2_UNI")) {
+							wiriteToDruid.append(",").append("\"").append(entry.getValue()).append("\"");
+						}else if(entry.getKey().equals("code_2_PV")) {
+							wiriteToDruid.append(",").append("\"").append(entry.getValue()).append("\"");
+						}
+						
+						if(entry.getKey().equals("name_3")) {
+							wiriteToDruid.append(",").append("\""+entry.getValue()+"\"");
+						}else if(entry.getKey().equals("code_3")) {
+							wiriteToDruid.append(",").append("\"").append(entry.getValue()).append("\"");
+						}else if(entry.getKey().equals("code_3_UNI")) {
+							wiriteToDruid.append(",").append("\"").append(entry.getValue()).append("\"");
+						}else if(entry.getKey().equals("code_3_PV")) {
+							wiriteToDruid.append(",").append("\"").append(entry.getValue()).append("\"");
 						}
 					}
 				}
@@ -516,86 +546,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				count = count + 1;
 			}
     		
-//			wiriteToDruid.append("\""+dmpJSon.getAsString("fileName")+"\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_date")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("time_info_source")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.get("memid")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid_flag")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ip")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("url")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("referer")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("domain")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_source")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("trigger_type")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfp_customer_info_id")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfd_customer_info_id")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_customer_info_id")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("style_id")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("action_id")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("group_id")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_id")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_position_id")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_country")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_city")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_info")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_phone_info")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_os_info")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_browser_info")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex_source")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age_source")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append("audicen_id_default").append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_id")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_x")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_y")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_event")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("event_id")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_id")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_price")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_dis")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString(markValueList[i])).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString(markLevelList[i])).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op1")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op2")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append("ad_price_default").append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_view")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("vpv")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("cks")).append("\"");
-//			wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pvs")).append("\"");
-//			keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
-//			context.write(new Text(wiriteToDruid.toString()), null);
-//			wiriteToDruid.setLength(0);
-    		
-			
-			
-//			Reader reader = new InputStreamReader(fsDataInputStream);
-//			String line = null;
-//			while ((line = reader.readLine()) != null) {
-//				String item[] = line.split(",");
-//				/** 讀取 **/
-//				String data0 = item[0].trim();
-//				String data1 = item[1].trim();
-//				String data2 = item[2].trim();
-//				String data3 = item[3].trim();
-//				String data4 = item[4].trim();
-//				String data5 = item[5].trim();
-//				System.out.print(data0 + "," + data1 + "," + data2 + "," + data3 + "," + data4 + "," + data5 +"\n" );
-//
-//			}
-//			reader.close();
-			
-			
-			
-			
-//			BufferedWriter bw = new BufferedWriter(inputStream);
-//			Reader reader = new InputStreamReader(inputStream);
-//			CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
-//			for (CSVRecord csvRecord : csvParser) {
-////				String data = csvRecord.get(1)+"<PCHOME>"+csvRecord.get(3)+"<PCHOME>"+csvRecord.get(5);
-////				categoryLevelMappingList.add(data);
-//			}
 			
 			
 			
