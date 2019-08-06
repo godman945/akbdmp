@@ -727,13 +727,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("mark_value1", level1);
 					dmpDataJson.put("mark_layer2", "2");
 					dmpDataJson.put("mark_value2", level2);
-					
-					
-					
-					log.info(">>>>>>>>>>>>>>>>>>>>>mark_value1:"+level1);
-					log.info(">>>>>>>>>>>>>>>>>>>>>mark_value2:"+level2);
-					
-					
 					JSONObject layerJson = new JSONObject();
 					layerJson.put("mark_layer1", "1");
 					layerJson.put("mark_value1", level1);

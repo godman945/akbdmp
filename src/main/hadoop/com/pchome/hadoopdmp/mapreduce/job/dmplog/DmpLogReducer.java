@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -385,12 +386,12 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	
 	public void cleanup(Context context) {
 		try {
-			log.info(">>>>>>>>>>>>>uuidMap:"+uuidMap);
+//			log.info(">>>>>>>>>>>>>uuidMap:"+uuidMap);
 			long  total = 0;
 			for (Entry<String, Integer> entry : uuidMap.entrySet()) {
 				total = total + entry.getValue();
 			}
-			log.info(">>>>>>>>>>>>>total:"+total);
+//			log.info(">>>>>>>>>>>>>total:"+total);
 			
 			
 			
@@ -401,6 +402,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			InputStreamReader inr = new InputStreamReader(fsDataInputStream);
             BufferedReader reader = new BufferedReader(inr);
             String line = null;
+            
+            Map<String,Map<String,String>> csvMap = new LinkedHashMap<String,Map<String,String>>();
     		while ((line = reader.readLine()) != null) {
     			String item[] = line.split(",");
     			String data0 = item[0].trim();
@@ -409,13 +412,48 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
     			String data3 = item[3].trim();
     			String data4 = item[4].trim();
     			String data5 = item[5].trim();
-    			System.out.print(data0 + "," + data1 + "," + data2 + "," + data3 + "," + data4 + "," + data5 +"\n" );
-
+//    			System.out.print(data0 + "," + data1 + "," + data2 + "," + data3 + "," + data4 + "," + data5 +"\n" );
+    			Map<String,String> detail = new LinkedHashMap<String,String>();
+    			detail.put("name_1", data0);
+    			detail.put("code_1", data1);
+    			detail.put("name_2", data2);
+    			detail.put("code_2", data3);
+    			detail.put("name_3", data4);
+    			detail.put("code_3", data5);
+    			csvMap.put(data5, detail);
+    			
     		}
     		reader.close();
 			
 			
 			
+    		
+    		for (Entry<String, Map<String, String>> entry : csvMap.entrySet()) {
+    			Map<String,String> detail = entry.getValue();
+    			for (Entry<String, String> data : detail.entrySet()) {
+					String key = data.getKey();
+					String value = data.getValue();
+					if(uuidMap.containsKey(value)) {
+						detail.put(key+"_UNI", String.valueOf(uuidMap.get(value)));
+						detail.put(key+"_PV", String.valueOf(uuidMap.get(value+"_PV")));
+					}else {
+						detail.put(key+"_UNI", "0");
+						detail.put(key+"_PV", "0");
+					}
+				}
+			}
+    		
+    		System.out.println(csvMap);
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
 			
 			
 //			Reader reader = new InputStreamReader(fsDataInputStream);
