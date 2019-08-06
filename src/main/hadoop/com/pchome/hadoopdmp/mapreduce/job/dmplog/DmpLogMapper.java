@@ -721,6 +721,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					layerJson.put("mark_layer1", "1");
 					layerJson.put("mark_value1", level1);
 					categoryLevelMappingMap.put(markValue, layerJson);
+					
+					log.info(">>>>>>>>>>>>>>>>>>>>>mark_value1:"+markValue);
+					
 					break;
 				}else if(level2.equals(markValue)) {
 					dmpDataJson.put("mark_layer1", "1");
