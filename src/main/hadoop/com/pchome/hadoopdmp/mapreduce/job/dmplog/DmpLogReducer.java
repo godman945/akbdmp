@@ -394,37 +394,41 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			}
 //			log.info(">>>>>>>>>>>>>total:"+total);
 			
+			 Map<String,Map<String,String>> csvMap = null;
+			try {
+				Configuration conf = context.getConfiguration();
+				FileSystem fs = FileSystem.get(conf);
+				org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.csv");
+				FSDataInputStream fsDataInputStream = fs.open(category24MappingFile);
+				InputStreamReader inr = new InputStreamReader(fsDataInputStream);
+	            BufferedReader reader = new BufferedReader(inr);
+	            String line = null;
+	            
+	            csvMap = new LinkedHashMap<String,Map<String,String>>();
+	    		while ((line = reader.readLine()) != null) {
+	    			String item[] = line.split(",");
+	    			String data0 = item[0].trim();
+	    			String data1 = item[1].trim();
+	    			String data2 = item[2].trim();
+	    			String data3 = item[3].trim();
+	    			String data4 = item[4].trim();
+	    			String data5 = item[5].trim();
+//	    			System.out.print(data0 + "," + data1 + "," + data2 + "," + data3 + "," + data4 + "," + data5 +"\n" );
+	    			Map<String,String> detail = new LinkedHashMap<String,String>();
+	    			detail.put("name_1", data0);
+	    			detail.put("code_1", data1);
+	    			detail.put("name_2", data2);
+	    			detail.put("code_2", data3);
+	    			detail.put("name_3", data4);
+	    			detail.put("code_3", data5);
+	    			csvMap.put(data5, detail);
+	    		}
+	    		reader.close();
+			}catch(Exception e) {
+				log.error("FAIL PROCESS MAP");
+				log.error(e.getMessage());
+			}
 			
-			
-			Configuration conf = context.getConfiguration();
-			FileSystem fs = FileSystem.get(conf);
-			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.csv");
-			FSDataInputStream fsDataInputStream = fs.open(category24MappingFile);
-			InputStreamReader inr = new InputStreamReader(fsDataInputStream);
-            BufferedReader reader = new BufferedReader(inr);
-            String line = null;
-            
-            Map<String,Map<String,String>> csvMap = new LinkedHashMap<String,Map<String,String>>();
-    		while ((line = reader.readLine()) != null) {
-    			String item[] = line.split(",");
-    			String data0 = item[0].trim();
-    			String data1 = item[1].trim();
-    			String data2 = item[2].trim();
-    			String data3 = item[3].trim();
-    			String data4 = item[4].trim();
-    			String data5 = item[5].trim();
-//    			System.out.print(data0 + "," + data1 + "," + data2 + "," + data3 + "," + data4 + "," + data5 +"\n" );
-    			Map<String,String> detail = new LinkedHashMap<String,String>();
-    			detail.put("name_1", data0);
-    			detail.put("code_1", data1);
-    			detail.put("name_2", data2);
-    			detail.put("code_2", data3);
-    			detail.put("name_3", data4);
-    			detail.put("code_3", data5);
-    			csvMap.put(data5, detail);
-    			
-    		}
-    		reader.close();
 			
 			
 			
@@ -444,29 +448,34 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //			}
 //    		
 //    		log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>csvMap:"+csvMap);
-    		Set<Entry<String, Map<String, String>>> csvMapSet = csvMap.entrySet();
-    		Iterator<Entry<String, Map<String, String>>> csvMapIterator = csvMapSet.iterator();
+			
+			try {
+				Set<Entry<String, Map<String, String>>> csvMapSet = csvMap.entrySet();
+	    		Iterator<Entry<String, Map<String, String>>> csvMapIterator = csvMapSet.iterator();
+	    		while(csvMapIterator.hasNext()){
+	    			Entry<String, Map<String, String>> entry = csvMapIterator.next();
+	    			Map<String,String> detail = entry.getValue();
+	    			Set<Entry<String, String>> detailMapSet = detail.entrySet();
+	        		Iterator<Entry<String, String>> detailIterator = detailMapSet.iterator();
+	        		while(detailIterator.hasNext()){
+	        			Entry<String, String> detailEntry = detailIterator.next();
+						String key = detailEntry.getKey();
+						String value = detailEntry.getValue();
+						if(uuidMap.containsKey(value)) {
+							detail.put(key+"_UNI", String.valueOf(uuidMap.get(value)));
+							detail.put(key+"_PV", String.valueOf(uuidMap.get(value+"_PV")));
+						}else {
+							detail.put(key+"_UNI", "0");
+							detail.put(key+"_PV", "0");
+						}
+	        			
+	        		}
+	    		}
+			}catch(Exception e) {
+				log.error("FAIL ADD　PROCESS MAP");
+				log.error(e.getMessage());
+			}
     		
-    		while(csvMapIterator.hasNext()){
-    			Entry<String, Map<String, String>> entry = csvMapIterator.next();
-    			
-    			Map<String,String> detail = entry.getValue();
-    			Set<Entry<String, String>> detailMapSet = detail.entrySet();
-        		Iterator<Entry<String, String>> detailIterator = detailMapSet.iterator();
-        		while(detailIterator.hasNext()){
-        			Entry<String, String> detailEntry = detailIterator.next();
-					String key = detailEntry.getKey();
-					String value = detailEntry.getValue();
-					if(uuidMap.containsKey(value)) {
-						detail.put(key+"_UNI", String.valueOf(uuidMap.get(value)));
-						detail.put(key+"_PV", String.valueOf(uuidMap.get(value+"_PV")));
-					}else {
-						detail.put(key+"_UNI", "0");
-						detail.put(key+"_PV", "0");
-					}
-        			
-        		}
-    		}
     		log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>csvMap:"+csvMap);
     		
     		
