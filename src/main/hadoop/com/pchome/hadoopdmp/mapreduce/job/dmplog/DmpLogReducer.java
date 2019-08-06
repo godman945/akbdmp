@@ -434,29 +434,28 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	    		while(csvMapIterator.hasNext()){
 	    			Entry<String, Map<String, String>> entry = csvMapIterator.next();
 	    			Map<String,String> detail = entry.getValue();
-	    			System.out.println(">>>>>>>>>>>>>detail:"+detail);
+//	    			System.out.println(">>>>>>>>>>>>>detail:"+detail);
 	    			
 	    			Set<Entry<String, String>> detailMapSet = detail.entrySet();
 	        		Iterator<Entry<String, String>> detailIterator = detailMapSet.iterator();
-	        		int i = 0;
+	        		
+	        		Map<String,String> detailNew = new LinkedHashMap<String,String>();
 	        		while(detailIterator.hasNext()){
 	        			Entry<String, String> detailEntry = detailIterator.next();
 						String key = detailEntry.getKey();
 						String value = detailEntry.getValue();
-						if(i > 0 ) {
-							System.out.println(">>>>>>>>>>>>>key:"+key);
-							System.out.println(">>>>>>>>>>>>>value:"+value);
-							if(uuidMap.containsKey(value)) {
-								detail.put(key+"_UNI", String.valueOf(uuidMap.get(value)));
-								detail.put(key+"_PV", String.valueOf(uuidMap.get(value+"_PV")));
-							}else {
-								detail.put(key+"_UNI", "0");
-								detail.put(key+"_PV", "0");
-							}
-							System.out.println("***********");
+						detailNew.put(key, value);
+						System.out.println(">>>>>>>>>>>>>key:"+key);
+						System.out.println(">>>>>>>>>>>>>value:"+value);
+						if(uuidMap.containsKey(value)) {
+							detailNew.put(key+"_UNI", String.valueOf(uuidMap.get(value)));
+							detailNew.put(key+"_PV", String.valueOf(uuidMap.get(value+"_PV")));
+						}else {
+							detailNew.put(key+"_UNI", "0");
+							detailNew.put(key+"_PV", "0");
 						}
-						i = i + 1;
 	        		}
+	        		csvMap.put(entry.getKey(), detailNew);
 	    		}
 			}catch(Exception e) {
 				System.out.println("FAIL ADD　PROCESS MAP");
