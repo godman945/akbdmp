@@ -445,8 +445,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 						String key = detailEntry.getKey();
 						String value = detailEntry.getValue();
 						detailNew.put(key, value);
-						System.out.println(">>>>>>>>>>>>>key:"+key);
-						System.out.println(">>>>>>>>>>>>>value:"+value);
+//						System.out.println(">>>>>>>>>>>>>key:"+key);
+//						System.out.println(">>>>>>>>>>>>>value:"+value);
 						if(uuidMap.containsKey(value)) {
 							detailNew.put(key+"_UNI", String.valueOf(uuidMap.get(value)));
 							detailNew.put(key+"_PV", String.valueOf(uuidMap.get(value+"_PV")));
