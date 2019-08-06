@@ -472,7 +472,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				System.out.println(e.getMessage());
 			}
     		
-//			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>csvMap:"+csvMap);
+			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>csvMap:"+csvMap.size());
     		
 			int count = 0;
 			for (Entry<String, Map<String, String>> entryMap : csvMap.entrySet()) {
@@ -507,7 +507,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					}else if(count < 10){
 						String entryValue = entry.getValue();
 						if(entry.getKey().equals("name_1")) {
-							wiriteToDruid.append("\""+entryValue+"\"");
+							wiriteToDruid.append("\""+"ALEX"+"\"");
 						}else if(entry.getKey().equals("code_1")) {
 							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
 						}else if(entry.getKey().equals("code_1_UNI")) {
@@ -515,7 +515,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 						}else if(entry.getKey().equals("code_1_PV")) {
 							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
 						}else if(entry.getKey().equals("name_2")) {
-							wiriteToDruid.append(",").append("\""+entryValue+"\"");
+							wiriteToDruid.append(",").append("\""+"ALEX"+"\"");
 						}else if(entry.getKey().equals("code_2")) {
 							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
 						}else if(entry.getKey().equals("code_2_UNI")) {
@@ -523,7 +523,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 						}else if(entry.getKey().equals("code_2_PV")) {
 							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
 						}else if(entry.getKey().equals("name_3")) {
-							wiriteToDruid.append(",").append("\""+entryValue+"\"");
+							wiriteToDruid.append(",").append("\""+"ALEX"+"\"");
 						}else if(entry.getKey().equals("code_3")) {
 							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
 						}else if(entry.getKey().equals("code_3_UNI")) {
