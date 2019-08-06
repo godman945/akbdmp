@@ -459,22 +459,23 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	    			
 	    			Set<Entry<String, String>> detailMapSet = detail.entrySet();
 	        		Iterator<Entry<String, String>> detailIterator = detailMapSet.iterator();
+	        		int i = 0;
 	        		while(detailIterator.hasNext()){
 	        			Entry<String, String> detailEntry = detailIterator.next();
 						String key = detailEntry.getKey();
 						String value = detailEntry.getValue();
-						
-						System.out.println(">>>>>>>>>>>>>key:"+key);
-						System.out.println(">>>>>>>>>>>>>value:"+value);
-						
-						if(uuidMap.containsKey(value)) {
-							detail.put(key+"_UNI", String.valueOf(uuidMap.get(value)));
-							detail.put(key+"_PV", String.valueOf(uuidMap.get(value+"_PV")));
-						}else {
-							detail.put(key+"_UNI", "0");
-							detail.put(key+"_PV", "0");
+						if(i > 0 ) {
+							System.out.println(">>>>>>>>>>>>>key:"+key);
+							System.out.println(">>>>>>>>>>>>>value:"+value);
+							if(uuidMap.containsKey(value)) {
+								detail.put(key+"_UNI", String.valueOf(uuidMap.get(value)));
+								detail.put(key+"_PV", String.valueOf(uuidMap.get(value+"_PV")));
+							}else {
+								detail.put(key+"_UNI", "0");
+								detail.put(key+"_PV", "0");
+							}
 						}
-	        			
+						i = i + 1;
 	        		}
 	    		}
 			}catch(Exception e) {
@@ -482,7 +483,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				log.error(e.getMessage());
 			}
     		
-    		log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>csvMap:"+csvMap);
+			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>csvMap:"+csvMap);
     		
     		
     		
