@@ -1,5 +1,7 @@
 package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,11 +18,16 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.filecache.DistributedCache;
+import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Reducer.Context;
@@ -345,6 +352,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			
 //			log.info(">>>>>>>>>>>mapperKey:"+mapperKey.toString());
 				uuidSet.clear();
+				int pv = 0;
 				for (Text text : mapperValue) {
 					wiriteToDruid.setLength(0);
 					dmpJSon.clear();
@@ -354,10 +362,11 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 						break;
 					}
 					uuidSet.add(dmpJSon.getAsString("uuid"));
+					pv = pv + 1;
 				}
 				uuidMap.put(mapperKey.toString(), uuidSet.size());
-			
-			
+				uuidMap.put(mapperKey.toString()+"_PV", pv);
+				
 			
 			
 			
@@ -378,6 +387,22 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				total = total + entry.getValue();
 			}
 			log.info(">>>>>>>>>>>>>total:"+total);
+			
+			
+			
+			Configuration conf = context.getConfiguration();
+			FileSystem fs = FileSystem.get(conf);
+			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.csv");
+			FSDataInputStream inputStream = fs.open(category24MappingFile);
+			Reader reader = new InputStreamReader(inputStream);
+			CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
+			for (CSVRecord csvRecord : csvParser) {
+//				String data = csvRecord.get(1)+"<PCHOME>"+csvRecord.get(3)+"<PCHOME>"+csvRecord.get(5);
+//				categoryLevelMappingList.add(data);
+			}
+			
+			
+			
 			
 			
 		} catch (Exception e) {
