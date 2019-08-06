@@ -505,30 +505,31 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 							wiriteToDruid.append(",").append("\"").append("曝光數(第三層)").append("\"");
 						}
 					}else {
+						String entryValue = entry.getValue().replaceAll(",", "\\,");
 						if(entry.getKey().equals("name_1")) {
-							wiriteToDruid.append("\""+entry.getValue()+"\"");
+							wiriteToDruid.append("\""+entryValue+"\"");
 						}else if(entry.getKey().equals("code_1")) {
-							wiriteToDruid.append(",").append("\"").append(entry.getValue()).append("\"");
+							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
 						}else if(entry.getKey().equals("code_1_UNI")) {
-							wiriteToDruid.append(",").append("\"").append(entry.getValue()).append("\"");
+							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
 						}else if(entry.getKey().equals("code_1_PV")) {
-							wiriteToDruid.append(",").append("\"").append(entry.getValue()).append("\"");
+							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
 						}else if(entry.getKey().equals("name_2")) {
-							wiriteToDruid.append(",").append("\""+entry.getValue()+"\"");
+							wiriteToDruid.append(",").append("\""+entryValue+"\"");
 						}else if(entry.getKey().equals("code_2")) {
-							wiriteToDruid.append(",").append("\"").append(entry.getValue()).append("\"");
+							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
 						}else if(entry.getKey().equals("code_2_UNI")) {
-							wiriteToDruid.append(",").append("\"").append(entry.getValue()).append("\"");
+							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
 						}else if(entry.getKey().equals("code_2_PV")) {
-							wiriteToDruid.append(",").append("\"").append(entry.getValue()).append("\"");
+							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
 						}else if(entry.getKey().equals("name_3")) {
-							wiriteToDruid.append(",").append("\""+entry.getValue()+"\"");
+							wiriteToDruid.append(",").append("\""+entryValue+"\"");
 						}else if(entry.getKey().equals("code_3")) {
-							wiriteToDruid.append(",").append("\"").append(entry.getValue()).append("\"");
+							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
 						}else if(entry.getKey().equals("code_3_UNI")) {
-							wiriteToDruid.append(",").append("\"").append(entry.getValue()).append("\"");
+							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
 						}else if(entry.getKey().equals("code_3_PV")) {
-							wiriteToDruid.append(",").append("\"").append(entry.getValue()).append("\"");
+							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
 						}
 					}
 				}
