@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -427,12 +428,35 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			
 			
 			
+//    		for (Entry<String, Map<String, String>> entry : csvMap.entrySet()) {
+//    			Map<String,String> detail = entry.getValue();
+//    			for (Entry<String, String> data : detail.entrySet()) {
+//					String key = data.getKey();
+//					String value = data.getValue();
+//					if(uuidMap.containsKey(value)) {
+//						detail.put(key+"_UNI", String.valueOf(uuidMap.get(value)));
+//						detail.put(key+"_PV", String.valueOf(uuidMap.get(value+"_PV")));
+//					}else {
+//						detail.put(key+"_UNI", "0");
+//						detail.put(key+"_PV", "0");
+//					}
+//				}
+//			}
+//    		
+//    		log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>csvMap:"+csvMap);
+    		Set<Entry<String, Map<String, String>>> csvMapSet = csvMap.entrySet();
+    		Iterator<Entry<String, Map<String, String>>> csvMapIterator = csvMapSet.iterator();
     		
-    		for (Entry<String, Map<String, String>> entry : csvMap.entrySet()) {
+    		while(csvMapIterator.hasNext()){
+    			Entry<String, Map<String, String>> entry = csvMapIterator.next();
+    			
     			Map<String,String> detail = entry.getValue();
-    			for (Entry<String, String> data : detail.entrySet()) {
-					String key = data.getKey();
-					String value = data.getValue();
+    			Set<Entry<String, String>> detailMapSet = detail.entrySet();
+        		Iterator<Entry<String, String>> detailIterator = detailMapSet.iterator();
+        		while(detailIterator.hasNext()){
+        			Entry<String, String> detailEntry = detailIterator.next();
+					String key = detailEntry.getKey();
+					String value = detailEntry.getValue();
 					if(uuidMap.containsKey(value)) {
 						detail.put(key+"_UNI", String.valueOf(uuidMap.get(value)));
 						detail.put(key+"_PV", String.valueOf(uuidMap.get(value+"_PV")));
@@ -440,15 +464,10 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 						detail.put(key+"_UNI", "0");
 						detail.put(key+"_PV", "0");
 					}
-				}
-			}
-    		
+        			
+        		}
+    		}
     		log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>csvMap:"+csvMap);
-    		
-    		
-    		
-    		
-    		
     		
     		
     		
