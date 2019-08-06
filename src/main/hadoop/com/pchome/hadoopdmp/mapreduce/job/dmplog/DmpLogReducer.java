@@ -487,9 +487,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 							wiriteToDruid.append(",").append("\"").append("不重複UUID(第一層)").append("\"");
 						}else if(entry.getKey().equals("code_1_PV")) {
 							wiriteToDruid.append(",").append("\"").append("曝光數(第一層)").append("\"");
-						}
-						
-						if(entry.getKey().equals("name_2")) {
+						}else if(entry.getKey().equals("name_2")) {
 							wiriteToDruid.append(",").append("\""+"館別名稱(第二層)"+"\"");
 						}else if(entry.getKey().equals("code_2")) {
 							wiriteToDruid.append(",").append("\"").append("館別代碼(第二層)").append("\"");
@@ -497,9 +495,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 							wiriteToDruid.append(",").append("\"").append("不重複UUID(第二層)").append("\"");
 						}else if(entry.getKey().equals("code_2_PV")) {
 							wiriteToDruid.append(",").append("\"").append("曝光數(第二層)").append("\"");
-						}
-						
-						if(entry.getKey().equals("name_3")) {
+						}else if(entry.getKey().equals("name_3")) {
 							wiriteToDruid.append(",").append("\""+"館別名稱(第三層)"+"\"");
 						}else if(entry.getKey().equals("code_3")) {
 							wiriteToDruid.append(",").append("\"").append("館別代碼(第三層)").append("\"");
@@ -517,9 +513,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 							wiriteToDruid.append(",").append("\"").append(entry.getValue()).append("\"");
 						}else if(entry.getKey().equals("code_1_PV")) {
 							wiriteToDruid.append(",").append("\"").append(entry.getValue()).append("\"");
-						}
-						
-						if(entry.getKey().equals("name_2")) {
+						}else if(entry.getKey().equals("name_2")) {
 							wiriteToDruid.append(",").append("\""+entry.getValue()+"\"");
 						}else if(entry.getKey().equals("code_2")) {
 							wiriteToDruid.append(",").append("\"").append(entry.getValue()).append("\"");
@@ -527,9 +521,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 							wiriteToDruid.append(",").append("\"").append(entry.getValue()).append("\"");
 						}else if(entry.getKey().equals("code_2_PV")) {
 							wiriteToDruid.append(",").append("\"").append(entry.getValue()).append("\"");
-						}
-						
-						if(entry.getKey().equals("name_3")) {
+						}else if(entry.getKey().equals("name_3")) {
 							wiriteToDruid.append(",").append("\""+entry.getValue()+"\"");
 						}else if(entry.getKey().equals("code_3")) {
 							wiriteToDruid.append(",").append("\"").append(entry.getValue()).append("\"");
@@ -548,26 +540,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			}
     		
 			
-			List<List<String>> rows = Arrays.asList(
-					Arrays.asList("Jean", "author", "Java"),
-				    Arrays.asList("David", "editor", "Python"),
-				    Arrays.asList("Scott", "editor", "Node.js"),
-				    Arrays.asList("時間★", "測試", "王天天")
-				);
-				FileWriter csvWriter = new FileWriter("/home/webuser/_alex/test_write.csv");
-				csvWriter.append("Name");
-				csvWriter.append(",");
-				csvWriter.append("Role");
-				csvWriter.append(",");
-				csvWriter.append("Topic");
-				csvWriter.append("\n");
-
-				for (List<String> rowData : rows) {
-//				    csvWriter.append(String.join(",", rowData));
-//				    csvWriter.append("\n");
-					csvWriter.append(rowData.get(0)).append(",").append(rowData.get(1)).append(",").append(rowData.get(2)).append("\n");
-				}
-				csvWriter.flush();
 			
 			
 			
