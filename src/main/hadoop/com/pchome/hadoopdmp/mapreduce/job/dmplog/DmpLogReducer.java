@@ -455,12 +455,18 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	    		while(csvMapIterator.hasNext()){
 	    			Entry<String, Map<String, String>> entry = csvMapIterator.next();
 	    			Map<String,String> detail = entry.getValue();
+	    			System.out.println(">>>>>>>>>>>>>detail:"+detail);
+	    			
 	    			Set<Entry<String, String>> detailMapSet = detail.entrySet();
 	        		Iterator<Entry<String, String>> detailIterator = detailMapSet.iterator();
 	        		while(detailIterator.hasNext()){
 	        			Entry<String, String> detailEntry = detailIterator.next();
 						String key = detailEntry.getKey();
 						String value = detailEntry.getValue();
+						
+						System.out.println(">>>>>>>>>>>>>key:"+key);
+						System.out.println(">>>>>>>>>>>>>value:"+value);
+						
 						if(uuidMap.containsKey(value)) {
 							detail.put(key+"_UNI", String.valueOf(uuidMap.get(value)));
 							detail.put(key+"_PV", String.valueOf(uuidMap.get(value+"_PV")));
