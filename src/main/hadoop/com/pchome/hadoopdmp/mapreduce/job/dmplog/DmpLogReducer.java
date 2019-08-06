@@ -443,7 +443,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				}
 			}
     		
-    		System.out.println(csvMap);
+    		log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>csvMap:"+csvMap);
     		
     		
     		
