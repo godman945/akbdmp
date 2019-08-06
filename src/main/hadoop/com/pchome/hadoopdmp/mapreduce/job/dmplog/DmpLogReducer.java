@@ -414,6 +414,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	            BufferedReader reader = new BufferedReader(inr);
 	            String line = null;
 	            
+	            int total2 = 0;
 	    		while ((line = reader.readLine()) != null) {
 	    			String item[] = line.split(",");
 	    			String data0 = item[0].trim();
@@ -430,6 +431,10 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	    			detail.put("code_2", data3);
 	    			detail.put("name_3", data4);
 	    			detail.put("code_3", data5);
+	    			
+	    			
+	    			total2 = total2 + 1;
+	    			System.out.println(total2+">>>>>>>>>"+data5);
 	    			csvMap.put(data5, detail);
 	    		}
 	    		reader.close();
