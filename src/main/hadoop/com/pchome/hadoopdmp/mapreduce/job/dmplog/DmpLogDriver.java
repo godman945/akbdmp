@@ -1,10 +1,12 @@
 package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
@@ -147,7 +149,7 @@ public class DmpLogDriver {
 	        
 	        //暫時計算用
 	        String hour = "";
-			for (int i = 0; i < 1; i++) {
+			for (int i = 0; i < 24; i++) {
 				hour = "";
 				if(i == 0) {
 					hour = "00";
@@ -166,6 +168,15 @@ public class DmpLogDriver {
 						}
 					}
 			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
 			 //暫時計算用
 	        
 	        
