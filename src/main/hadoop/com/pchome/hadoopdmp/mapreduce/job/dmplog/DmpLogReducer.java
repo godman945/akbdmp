@@ -1,6 +1,10 @@
 package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -393,13 +397,53 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			Configuration conf = context.getConfiguration();
 			FileSystem fs = FileSystem.get(conf);
 			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.csv");
-			FSDataInputStream inputStream = fs.open(category24MappingFile);
-			Reader reader = new InputStreamReader(inputStream);
-			CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
-			for (CSVRecord csvRecord : csvParser) {
-//				String data = csvRecord.get(1)+"<PCHOME>"+csvRecord.get(3)+"<PCHOME>"+csvRecord.get(5);
-//				categoryLevelMappingList.add(data);
-			}
+			FSDataInputStream fsDataInputStream = fs.open(category24MappingFile);
+			InputStreamReader inr = new InputStreamReader(fsDataInputStream);
+            BufferedReader reader = new BufferedReader(inr);
+            String line = null;
+    		while ((line = reader.readLine()) != null) {
+    			String item[] = line.split(",");
+    			String data0 = item[0].trim();
+    			String data1 = item[1].trim();
+    			String data2 = item[2].trim();
+    			String data3 = item[3].trim();
+    			String data4 = item[4].trim();
+    			String data5 = item[5].trim();
+    			System.out.print(data0 + "," + data1 + "," + data2 + "," + data3 + "," + data4 + "," + data5 +"\n" );
+
+    		}
+    		reader.close();
+			
+			
+			
+			
+			
+//			Reader reader = new InputStreamReader(fsDataInputStream);
+//			String line = null;
+//			while ((line = reader.readLine()) != null) {
+//				String item[] = line.split(",");
+//				/** 讀取 **/
+//				String data0 = item[0].trim();
+//				String data1 = item[1].trim();
+//				String data2 = item[2].trim();
+//				String data3 = item[3].trim();
+//				String data4 = item[4].trim();
+//				String data5 = item[5].trim();
+//				System.out.print(data0 + "," + data1 + "," + data2 + "," + data3 + "," + data4 + "," + data5 +"\n" );
+//
+//			}
+//			reader.close();
+			
+			
+			
+			
+//			BufferedWriter bw = new BufferedWriter(inputStream);
+//			Reader reader = new InputStreamReader(inputStream);
+//			CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
+//			for (CSVRecord csvRecord : csvParser) {
+////				String data = csvRecord.get(1)+"<PCHOME>"+csvRecord.get(3)+"<PCHOME>"+csvRecord.get(5);
+////				categoryLevelMappingList.add(data);
+//			}
 			
 			
 			
