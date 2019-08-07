@@ -597,7 +597,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			//開始DMP資訊
 			//1.地區處理元件(ip 轉國家、城市)
 			try {
-//				geoIpComponent.ipTransformGEO(dmpDataJson);
+				geoIpComponent.ipTransformGEO(dmpDataJson);
 			}catch(Exception e) {
 				log.error(">>>>process source area fail:"+e.getMessage());
 				log.error(">>>>>>logStr:" +logStr);
@@ -606,7 +606,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			}
 			//2.時間處理元件(日期時間字串轉成小時)	
 			try {
-//				dateTimeComponent.datetimeTransformHour(dmpDataJson); 
+				dateTimeComponent.datetimeTransformHour(dmpDataJson); 
 			}catch(Exception e) {
 				log.error(">>>>process source time fail:"+e.getMessage());
 				log.error(">>>>>>logStr:" +logStr);
@@ -615,7 +615,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			}
 			//3.裝置處理元件(UserAgent轉成裝置資訊)
 			try {
-//				deviceComponent.parseUserAgentToDevice(dmpDataJson);
+				deviceComponent.parseUserAgentToDevice(dmpDataJson);
 			}catch(Exception e) {
 				log.error(">>>>process source device fail:"+e.getMessage());
 				log.error(">>>>>>logStr:" +logStr);
