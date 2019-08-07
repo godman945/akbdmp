@@ -432,24 +432,15 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	    			detail.put("name_3", data4);
 	    			detail.put("code_3", data5);
 	    			total2 = total2 + 1;
-	    			
-	    			
-	    			
 	    			System.out.println(total2+">>>>>>>>>"+data5);
-	    			
 	    			if(csvMap.containsKey(data5)) {
 	    				System.out.println("NO************************************!:" + data5);
 	    			}else {
 	    				csvMap.put(data5, detail);	
 	    			}
-	    			
-	    			
-	    			
-	    			
-	    			
-	    			
 	    		}
 	    		reader.close();
+	    		System.out.println(">>>>>>>>>csvMap1:"+csvMap.size());
 			}catch(Exception e) {
 				System.out.println("FAIL PROCESS MAP");
 				System.out.println(e.getMessage());
@@ -489,7 +480,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				System.out.println(e.getMessage());
 			}
     		
-			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>csvMap:"+csvMap.size());
+			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>csvMap2:"+csvMap.size());
     		
 			int count = 0;
 			for (Entry<String, Map<String, String>> entryMap : csvMap.entrySet()) {
