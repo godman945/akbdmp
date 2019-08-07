@@ -200,147 +200,148 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	@Override
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
 		try {
-////			log.info(">>>>>>>>>>>dmpJSon:"+dmpJSon);
-////			log.info(">>>>>>>>>>>mapperKey:"+mapperKey.toString());
-//			for (Text text : mapperValue) {
-//				wiriteToDruid.setLength(0);
-//				dmpJSon.clear();
-//				dmpJSon = (net.minidev.json.JSONObject) jsonParser.parse(text.toString());
-//				if(StringUtils.isBlank(dmpJSon.getAsString("uuid"))) {
-//					log.error(">>>>>>>>>>>>>>>>>no uuid");
-//					break;
-//				}
-//				
-//				//6.個資
-//				try {
-//					personalInfoComponent.processPersonalInfo(dmpJSon, dBCollection_user_detail);
-//				}catch(Exception e) {
-//					log.error(">>>>>>>fail process processPersonalInfo:"+e.getMessage());
-//					continue;
-//				}
-//				
-//				calendar.setTime(sdf.parse(dmpJSon.getAsString("log_date")));
-//				int week_index = calendar.get(Calendar.DAY_OF_WEEK) - 1;
-//				if(week_index<0){
-//					week_index = 0;
-//				}
-//				String pfbxCustomerInfoId = dmpJSon.getAsString("pfbx_customer_info_id");
-//				String webClass = StringUtils.isBlank(pfbxWebsiteCategory.get(pfbxCustomerInfoId)) ? "" : pfbxWebsiteCategory.get(pfbxCustomerInfoId);
-//				//產出csv
-//				boolean flag = false;
-//				for (int i= 0; i < markLevelList.length; i++) {
-//					if(StringUtils.isNotBlank(dmpJSon.getAsString(markLevelList[i]))) {
-//						flag = true;
-//						//log.info(dmpJSon);
-//						wiriteToDruid.append("\""+dmpJSon.getAsString("fileName")+"\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_date")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("time_info_source")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.get("memid")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid_flag")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ip")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("url")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("referer")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("domain")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_source")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("trigger_type")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfp_customer_info_id")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfd_customer_info_id")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_customer_info_id")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("style_id")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("action_id")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("group_id")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_id")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_position_id")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_country")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_city")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_info")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_phone_info")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_os_info")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_browser_info")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex_source")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age_source")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append("audicen_id_default").append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_id")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_x")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_y")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_event")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("event_id")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_id")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_price")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_dis")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString(markValueList[i])).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString(markLevelList[i])).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op1")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op2")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append("ad_price_default").append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_view")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("vpv")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("cks")).append("\"");
-//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pvs")).append("\"");
-//						keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
-//						context.write(new Text(wiriteToDruid.toString()), null);
-//						wiriteToDruid.setLength(0);
-//					}
-//				}
-//				
-//				if(!flag) {
-//					wiriteToDruid.append("\""+dmpJSon.getAsString("fileName")+"\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_date")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("time_info_source")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.get("memid")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid_flag")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ip")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("url")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("referer")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("domain")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_source")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("trigger_type")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfp_customer_info_id")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfd_customer_info_id")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_customer_info_id")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("style_id")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("action_id")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("group_id")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_id")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_position_id")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_country")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_city")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_info")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_phone_info")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_os_info")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_browser_info")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex_source")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age_source")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append("audicen_id_default").append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_id")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_x")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_y")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_event")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("event_id")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_id")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_price")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_dis")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append("").append("\"");
-//					wiriteToDruid.append(",").append("\"").append("").append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op1")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op2")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append("ad_price_default").append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_view")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("vpv")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("cks")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pvs")).append("\"");
-//					keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
-//					context.write(new Text(wiriteToDruid.toString()), null);
-//					wiriteToDruid.setLength(0);
-//				}
-////				keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
-////				context.write(new Text(wiriteToDruid.toString()), null);
+//			log.info(">>>>>>>>>>>dmpJSon:"+dmpJSon);
+//			log.info(">>>>>>>>>>>mapperKey:"+mapperKey.toString());
+			for (Text text : mapperValue) {
+				wiriteToDruid.setLength(0);
+				dmpJSon.clear();
+				dmpJSon = (net.minidev.json.JSONObject) jsonParser.parse(text.toString());
+				if(StringUtils.isBlank(dmpJSon.getAsString("uuid"))) {
+					log.error(">>>>>>>>>>>>>>>>>no uuid");
+					break;
+				}
+				
+				//6.個資
+				try {
+					personalInfoComponent.processPersonalInfo(dmpJSon, dBCollection_user_detail);
+				}catch(Exception e) {
+					log.error(">>>>>>>fail process processPersonalInfo:"+e.getMessage());
+					continue;
+				}
+				
+				calendar.setTime(sdf.parse(dmpJSon.getAsString("log_date")));
+				int week_index = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+				if(week_index<0){
+					week_index = 0;
+				}
+				String pfbxCustomerInfoId = dmpJSon.getAsString("pfbx_customer_info_id");
+				String webClass = StringUtils.isBlank(pfbxWebsiteCategory.get(pfbxCustomerInfoId)) ? "" : pfbxWebsiteCategory.get(pfbxCustomerInfoId);
+				//產出csv
+				boolean flag = false;
+				for (int i= 0; i < markLevelList.length; i++) {
+					if(StringUtils.isNotBlank(dmpJSon.getAsString(markLevelList[i]))) {
+						flag = true;
+						//log.info(dmpJSon);
+						wiriteToDruid.append("\""+dmpJSon.getAsString("fileName")+"\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_date")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("time_info_source")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.get("memid")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid_flag")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ip")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("url")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("referer")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("domain")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_source")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("trigger_type")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfp_customer_info_id")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfd_customer_info_id")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_customer_info_id")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("style_id")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("action_id")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("group_id")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_id")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_position_id")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_country")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_city")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_info")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_phone_info")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_os_info")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_browser_info")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex_source")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age_source")).append("\"");
+						wiriteToDruid.append(",").append("\"").append("audicen_id_default").append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_id")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_x")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_y")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_event")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("event_id")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_id")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_price")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_dis")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString(markValueList[i])).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString(markLevelList[i])).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op1")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op2")).append("\"");
+						wiriteToDruid.append(",").append("\"").append("ad_price_default").append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_view")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("vpv")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("cks")).append("\"");
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pvs")).append("\"");
+						keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
+						context.write(new Text(wiriteToDruid.toString()), null);
+						wiriteToDruid.setLength(0);
+					}
+				}
+				
+				if(!flag) {
+					System.out.println("999999999999999999999");
+					wiriteToDruid.append("\""+dmpJSon.getAsString("fileName")+"\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_date")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("time_info_source")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.get("memid")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid_flag")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ip")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("url")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("referer")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("domain")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_source")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("trigger_type")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfp_customer_info_id")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfd_customer_info_id")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_customer_info_id")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("style_id")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("action_id")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("group_id")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_id")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_position_id")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_country")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_city")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_info")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_phone_info")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_os_info")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_browser_info")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex_source")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age_source")).append("\"");
+					wiriteToDruid.append(",").append("\"").append("audicen_id_default").append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_id")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_x")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_y")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_event")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("event_id")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_id")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_price")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_dis")).append("\"");
+					wiriteToDruid.append(",").append("\"").append("").append("\"");
+					wiriteToDruid.append(",").append("\"").append("").append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op1")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op2")).append("\"");
+					wiriteToDruid.append(",").append("\"").append("ad_price_default").append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_view")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("vpv")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("cks")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pvs")).append("\"");
+					keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
+					context.write(new Text(wiriteToDruid.toString()), null);
+					wiriteToDruid.setLength(0);
+				}
+//				keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
+//				context.write(new Text(wiriteToDruid.toString()), null);
 //				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_layer3"))) {
 //					log.info(">>>>>>>>>>>>>>> mark_layer3:"+dmpJSon);
 //				}
@@ -350,32 +351,29 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_layer1"))) {
 //					log.info(">>>>>>>>>>>>>>> mark_layer1:"+dmpJSon);
 //				}
-//			}
-//			
-//			dmpJSon.clear();
-//			wiriteToDruid.setLength(0);
+			}
+			
+			dmpJSon.clear();
+			wiriteToDruid.setLength(0);
 			
 			
 			
 //			log.info(">>>>>>>>>>>mapperKey:"+mapperKey.toString());
-				uuidSet.clear();
-				int pv = 0;
-				for (Text text : mapperValue) {
-					wiriteToDruid.setLength(0);
-					dmpJSon.clear();
-					dmpJSon = (net.minidev.json.JSONObject) jsonParser.parse(text.toString());
-//					log.info(dmpJSon);
-					if(StringUtils.isBlank(dmpJSon.getAsString("uuid"))) {
-						break;
-					}
-					uuidSet.add(dmpJSon.getAsString("uuid"));
-					pv = pv + 1;
-				}
-				uuidMap.put(mapperKey.toString(), uuidSet.size());
-				uuidMap.put(mapperKey.toString()+"_PV", pv);
-				
-			
-			
+//				uuidSet.clear();
+//				int pv = 0;
+//				for (Text text : mapperValue) {
+//					wiriteToDruid.setLength(0);
+//					dmpJSon.clear();
+//					dmpJSon = (net.minidev.json.JSONObject) jsonParser.parse(text.toString());
+////					log.info(dmpJSon);
+//					if(StringUtils.isBlank(dmpJSon.getAsString("uuid"))) {
+//						break;
+//					}
+//					uuidSet.add(dmpJSon.getAsString("uuid"));
+//					pv = pv + 1;
+//				}
+//				uuidMap.put(mapperKey.toString(), uuidSet.size());
+//				uuidMap.put(mapperKey.toString()+"_PV", pv);
 				
 				
 				
@@ -397,172 +395,170 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	
 	public void cleanup(Context context) {
 		try {
-//			log.info(">>>>>>>>>>>>>uuidMap:"+uuidMap);
-			long  total = 0;
-			for (Entry<String, Integer> entry : uuidMap.entrySet()) {
-				total = total + entry.getValue();
-			}
-//			log.info(">>>>>>>>>>>>>total:"+total);
-			
-			Map<String,Map<String,String>> csvMap = new LinkedHashMap<String,Map<String,String>>();
-			try {
-				Configuration conf = context.getConfiguration();
-				FileSystem fs = FileSystem.get(conf);
-				org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.csv");
-				FSDataInputStream fsDataInputStream = fs.open(category24MappingFile);
-				InputStreamReader inr = new InputStreamReader(fsDataInputStream);
-	            BufferedReader reader = new BufferedReader(inr);
-	            String line = null;
-	            
-	            int total2 = 0;
-	    		while ((line = reader.readLine()) != null) {
-	    			String item[] = line.split(",");
-	    			String data0 = item[0].trim();
-	    			String data1 = item[1].trim();
-	    			String data2 = item[2].trim();
-	    			String data3 = item[3].trim();
-	    			String data4 = item[4].trim();
-	    			String data5 = item[5].trim();
-//	    			System.out.print(data0 + "," + data1 + "," + data2 + "," + data3 + "," + data4 + "," + data5 +"\n" );
-	    			Map<String,String> detail = new LinkedHashMap<String,String>();
-	    			detail.put("name_1", data0);
-	    			detail.put("code_1", data1);
-	    			detail.put("name_2", data2);
-	    			detail.put("code_2", data3);
-	    			detail.put("name_3", data4);
-	    			detail.put("code_3", data5);
-	    			
-	    			
-	    			if(item.length > 6) {
-	    				data4 = item[item.length-2].trim();
-	    				data5 = item[item.length-1].trim();
-	    				detail.put("name_1", data0);
-	    				detail.put("code_1", data1);
-	    				detail.put("name_2", data2);
-	    				detail.put("code_2", data3);
-	    				detail.put("name_3", data4);
-	    				detail.put("code_3", data5);
-	    			}
-	    			total2 = total2 + 1;
-	    			System.out.println(total2+">>>>>>>>>"+data5);
-	    			if(csvMap.containsKey(data5)) {
-	    				System.out.println("NO************************************!:" + data5);
-	    			}else {
-	    				csvMap.put(data5, detail);	
-	    			}
-	    		}
-	    		reader.close();
-	    		System.out.println(">>>>>>>>>csvMap1:"+csvMap.size());
-			}catch(Exception e) {
-				System.out.println("FAIL PROCESS MAP");
-				System.out.println(e.getMessage());
-			}
-			
-			try {
-				Set<Entry<String, Map<String, String>>> csvMapSet = csvMap.entrySet();
-	    		Iterator<Entry<String, Map<String, String>>> csvMapIterator = csvMapSet.iterator();
-	    		while(csvMapIterator.hasNext()){
-	    			Entry<String, Map<String, String>> entry = csvMapIterator.next();
-	    			Map<String,String> detail = entry.getValue();
-//	    			System.out.println(">>>>>>>>>>>>>detail:"+detail);
-	    			
-	    			Set<Entry<String, String>> detailMapSet = detail.entrySet();
-	        		Iterator<Entry<String, String>> detailIterator = detailMapSet.iterator();
-	        		
-	        		Map<String,String> detailNew = new LinkedHashMap<String,String>();
-	        		while(detailIterator.hasNext()){
-	        			Entry<String, String> detailEntry = detailIterator.next();
-						String key = detailEntry.getKey();
-						String value = detailEntry.getValue();
-						detailNew.put(key, value);
-//						System.out.println(">>>>>>>>>>>>>key:"+key);
-//						System.out.println(">>>>>>>>>>>>>value:"+value);
-						if(uuidMap.containsKey(value)) {
-							detailNew.put(key+"_UNI", String.valueOf(uuidMap.get(value)));
-							detailNew.put(key+"_PV", String.valueOf(uuidMap.get(value+"_PV")));
-						}else {
-							detailNew.put(key+"_UNI", "0");
-							detailNew.put(key+"_PV", "0");
-						}
-	        		}
-	        		csvMap.put(entry.getKey(), detailNew);
-	    		}
-			}catch(Exception e) {
-				System.out.println("FAIL ADD　PROCESS MAP");
-				System.out.println(e.getMessage());
-			}
-    		
-			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>csvMap2:"+csvMap.size());
-    		
-			int count = 0;
-			for (Entry<String, Map<String, String>> entryMap : csvMap.entrySet()) {
-				wiriteToDruid.setLength(0);
-				for (Entry<String, String> entry : entryMap.getValue().entrySet()) {
-					if(count == 0) {
-						if(entry.getKey().equals("name_1")) {
-							wiriteToDruid.append("\""+"館別名稱(第一層)"+"\"");
-						}else if(entry.getKey().equals("code_1")) {
-							wiriteToDruid.append(",").append("\"").append("館別代碼(第一層)").append("\"");
-						}else if(entry.getKey().equals("code_1_UNI")) {
-							wiriteToDruid.append(",").append("\"").append("不重複UUID(第一層)").append("\"");
-						}else if(entry.getKey().equals("code_1_PV")) {
-							wiriteToDruid.append(",").append("\"").append("曝光數(第一層)").append("\"");
-						}else if(entry.getKey().equals("name_2")) {
-							wiriteToDruid.append(",").append("\""+"館別名稱(第二層)"+"\"");
-						}else if(entry.getKey().equals("code_2")) {
-							wiriteToDruid.append(",").append("\"").append("館別代碼(第二層)").append("\"");
-						}else if(entry.getKey().equals("code_2_UNI")) {
-							wiriteToDruid.append(",").append("\"").append("不重複UUID(第二層)").append("\"");
-						}else if(entry.getKey().equals("code_2_PV")) {
-							wiriteToDruid.append(",").append("\"").append("曝光數(第二層)").append("\"");
-						}else if(entry.getKey().equals("name_3")) {
-							wiriteToDruid.append(",").append("\""+"館別名稱(第三層)"+"\"");
-						}else if(entry.getKey().equals("code_3")) {
-							wiriteToDruid.append(",").append("\"").append("館別代碼(第三層)").append("\"");
-						}else if(entry.getKey().equals("code_3_UNI")) {
-							wiriteToDruid.append(",").append("\"").append("不重複UUID(第三層)").append("\"");
-						}else if(entry.getKey().equals("code_3_PV")) {
-							wiriteToDruid.append(",").append("\"").append("曝光數(第三層)").append("\"");
-						}
-					}else if(count > 0){
-						String entryValue = entry.getValue();
-						if(entry.getKey().equals("name_1")) {
-							wiriteToDruid.append("\""+"ALEX"+"\"");
-						}else if(entry.getKey().equals("code_1")) {
-							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
-						}else if(entry.getKey().equals("code_1_UNI")) {
-							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
-						}else if(entry.getKey().equals("code_1_PV")) {
-							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
-						}else if(entry.getKey().equals("name_2")) {
-							wiriteToDruid.append(",").append("\""+"ALEX"+"\"");
-						}else if(entry.getKey().equals("code_2")) {
-							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
-						}else if(entry.getKey().equals("code_2_UNI")) {
-							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
-						}else if(entry.getKey().equals("code_2_PV")) {
-							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
-						}else if(entry.getKey().equals("name_3")) {
-							wiriteToDruid.append(",").append("\""+"ALEX"+"\"");
-						}else if(entry.getKey().equals("code_3")) {
-							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
-						}else if(entry.getKey().equals("code_3_UNI")) {
-							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
-						}else if(entry.getKey().equals("code_3_PV")) {
-							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
-						}
-						
-					}
-				}
-				if(wiriteToDruid.length() > 0) {
-					context.write(new Text(wiriteToDruid.toString()), null);
-					wiriteToDruid.setLength(0);
-				}
-				
-				
-				count = count + 1;
-			}
-    		
+////			log.info(">>>>>>>>>>>>>uuidMap:"+uuidMap);
+//			long  total = 0;
+//			for (Entry<String, Integer> entry : uuidMap.entrySet()) {
+//				total = total + entry.getValue();
+//			}
+////			log.info(">>>>>>>>>>>>>total:"+total);
+//			
+//			Map<String,Map<String,String>> csvMap = new LinkedHashMap<String,Map<String,String>>();
+//			try {
+//				Configuration conf = context.getConfiguration();
+//				FileSystem fs = FileSystem.get(conf);
+//				org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.csv");
+//				FSDataInputStream fsDataInputStream = fs.open(category24MappingFile);
+//				InputStreamReader inr = new InputStreamReader(fsDataInputStream);
+//	            BufferedReader reader = new BufferedReader(inr);
+//	            String line = null;
+//	            
+//	            int total2 = 0;
+//	    		while ((line = reader.readLine()) != null) {
+//	    			String item[] = line.split(",");
+//	    			String data0 = item[0].trim();
+//	    			String data1 = item[1].trim();
+//	    			String data2 = item[2].trim();
+//	    			String data3 = item[3].trim();
+//	    			String data4 = item[4].trim();
+//	    			String data5 = item[5].trim();
+////	    			System.out.print(data0 + "," + data1 + "," + data2 + "," + data3 + "," + data4 + "," + data5 +"\n" );
+//	    			Map<String,String> detail = new LinkedHashMap<String,String>();
+//	    			detail.put("name_1", data0);
+//	    			detail.put("code_1", data1);
+//	    			detail.put("name_2", data2);
+//	    			detail.put("code_2", data3);
+//	    			detail.put("name_3", data4);
+//	    			detail.put("code_3", data5);
+//	    			
+//	    			
+//	    			if(item.length > 6) {
+//	    				data4 = item[item.length-2].trim();
+//	    				data5 = item[item.length-1].trim();
+//	    				detail.put("name_1", data0);
+//	    				detail.put("code_1", data1);
+//	    				detail.put("name_2", data2);
+//	    				detail.put("code_2", data3);
+//	    				detail.put("name_3", data4);
+//	    				detail.put("code_3", data5);
+//	    			}
+//	    			total2 = total2 + 1;
+//	    			System.out.println(total2+">>>>>>>>>"+data5);
+//	    			if(csvMap.containsKey(data5)) {
+//	    				System.out.println("NO************************************!:" + data5);
+//	    			}else {
+//	    				csvMap.put(data5, detail);	
+//	    			}
+//	    		}
+//	    		reader.close();
+//	    		System.out.println(">>>>>>>>>csvMap1:"+csvMap.size());
+//			}catch(Exception e) {
+//				System.out.println("FAIL PROCESS MAP");
+//				System.out.println(e.getMessage());
+//			}
+//			
+//			try {
+//				Set<Entry<String, Map<String, String>>> csvMapSet = csvMap.entrySet();
+//	    		Iterator<Entry<String, Map<String, String>>> csvMapIterator = csvMapSet.iterator();
+//	    		while(csvMapIterator.hasNext()){
+//	    			Entry<String, Map<String, String>> entry = csvMapIterator.next();
+//	    			Map<String,String> detail = entry.getValue();
+////	    			System.out.println(">>>>>>>>>>>>>detail:"+detail);
+//	    			
+//	    			Set<Entry<String, String>> detailMapSet = detail.entrySet();
+//	        		Iterator<Entry<String, String>> detailIterator = detailMapSet.iterator();
+//	        		
+//	        		Map<String,String> detailNew = new LinkedHashMap<String,String>();
+//	        		while(detailIterator.hasNext()){
+//	        			Entry<String, String> detailEntry = detailIterator.next();
+//						String key = detailEntry.getKey();
+//						String value = detailEntry.getValue();
+//						detailNew.put(key, value);
+////						System.out.println(">>>>>>>>>>>>>key:"+key);
+////						System.out.println(">>>>>>>>>>>>>value:"+value);
+//						if(uuidMap.containsKey(value)) {
+//							detailNew.put(key+"_UNI", String.valueOf(uuidMap.get(value)));
+//							detailNew.put(key+"_PV", String.valueOf(uuidMap.get(value+"_PV")));
+//						}else {
+//							detailNew.put(key+"_UNI", "0");
+//							detailNew.put(key+"_PV", "0");
+//						}
+//	        		}
+//	        		csvMap.put(entry.getKey(), detailNew);
+//	    		}
+//			}catch(Exception e) {
+//				System.out.println("FAIL ADD　PROCESS MAP");
+//				System.out.println(e.getMessage());
+//			}
+//    		
+//			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>csvMap2:"+csvMap.size());
+//    		
+//			int count = 0;
+//			for (Entry<String, Map<String, String>> entryMap : csvMap.entrySet()) {
+//				wiriteToDruid.setLength(0);
+//				for (Entry<String, String> entry : entryMap.getValue().entrySet()) {
+//					if(count == 0) {
+//						if(entry.getKey().equals("name_1")) {
+//							wiriteToDruid.append("\""+"館別名稱(第一層)"+"\"");
+//						}else if(entry.getKey().equals("code_1")) {
+//							wiriteToDruid.append(",").append("\"").append("館別代碼(第一層)").append("\"");
+//						}else if(entry.getKey().equals("code_1_UNI")) {
+//							wiriteToDruid.append(",").append("\"").append("不重複UUID(第一層)").append("\"");
+//						}else if(entry.getKey().equals("code_1_PV")) {
+//							wiriteToDruid.append(",").append("\"").append("曝光數(第一層)").append("\"");
+//						}else if(entry.getKey().equals("name_2")) {
+//							wiriteToDruid.append(",").append("\""+"館別名稱(第二層)"+"\"");
+//						}else if(entry.getKey().equals("code_2")) {
+//							wiriteToDruid.append(",").append("\"").append("館別代碼(第二層)").append("\"");
+//						}else if(entry.getKey().equals("code_2_UNI")) {
+//							wiriteToDruid.append(",").append("\"").append("不重複UUID(第二層)").append("\"");
+//						}else if(entry.getKey().equals("code_2_PV")) {
+//							wiriteToDruid.append(",").append("\"").append("曝光數(第二層)").append("\"");
+//						}else if(entry.getKey().equals("name_3")) {
+//							wiriteToDruid.append(",").append("\""+"館別名稱(第三層)"+"\"");
+//						}else if(entry.getKey().equals("code_3")) {
+//							wiriteToDruid.append(",").append("\"").append("館別代碼(第三層)").append("\"");
+//						}else if(entry.getKey().equals("code_3_UNI")) {
+//							wiriteToDruid.append(",").append("\"").append("不重複UUID(第三層)").append("\"");
+//						}else if(entry.getKey().equals("code_3_PV")) {
+//							wiriteToDruid.append(",").append("\"").append("曝光數(第三層)").append("\"");
+//						}
+//					}else if(count > 0){
+//						String entryValue = entry.getValue();
+//						if(entry.getKey().equals("name_1")) {
+//							wiriteToDruid.append("\""+"ALEX"+"\"");
+//						}else if(entry.getKey().equals("code_1")) {
+//							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
+//						}else if(entry.getKey().equals("code_1_UNI")) {
+//							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
+//						}else if(entry.getKey().equals("code_1_PV")) {
+//							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
+//						}else if(entry.getKey().equals("name_2")) {
+//							wiriteToDruid.append(",").append("\""+"ALEX"+"\"");
+//						}else if(entry.getKey().equals("code_2")) {
+//							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
+//						}else if(entry.getKey().equals("code_2_UNI")) {
+//							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
+//						}else if(entry.getKey().equals("code_2_PV")) {
+//							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
+//						}else if(entry.getKey().equals("name_3")) {
+//							wiriteToDruid.append(",").append("\""+"ALEX"+"\"");
+//						}else if(entry.getKey().equals("code_3")) {
+//							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
+//						}else if(entry.getKey().equals("code_3_UNI")) {
+//							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
+//						}else if(entry.getKey().equals("code_3_PV")) {
+//							wiriteToDruid.append(",").append("\"").append(entryValue).append("\"");
+//						}
+//						
+//					}
+//				}
+//				if(wiriteToDruid.length() > 0) {
+//					context.write(new Text(wiriteToDruid.toString()), null);
+//					wiriteToDruid.setLength(0);
+//				}
+//				count = count + 1;
+//			}
+//    		
 			
 			
 			
