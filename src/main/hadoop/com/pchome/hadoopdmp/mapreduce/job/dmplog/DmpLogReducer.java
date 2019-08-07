@@ -111,6 +111,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	public static List<String> categoryLevelMappingList = new ArrayList<String>();
 	private static Map<String, String> existLevelCode = new HashMap<String, String>();
 	
+	
+	
+	
 	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
@@ -192,6 +195,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	
 	private static int count = 0;
 	private static Set<String> uuidSet = new HashSet<String>();
+	private static long uuidPv = 0;
 	
 	private static Map<String,Integer> uuidMap = new HashMap<String,Integer>();
 	
@@ -200,168 +204,170 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	@Override
 	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
 		try {
-//			log.info(">>>>>>>>>>>dmpJSon:"+dmpJSon);
-//			log.info(">>>>>>>>>>>mapperKey:"+mapperKey.toString());
-			for (Text text : mapperValue) {
-				wiriteToDruid.setLength(0);
-				dmpJSon.clear();
-				dmpJSon = (net.minidev.json.JSONObject) jsonParser.parse(text.toString());
-				if(StringUtils.isBlank(dmpJSon.getAsString("uuid"))) {
-					log.error(">>>>>>>>>>>>>>>>>no uuid");
-					break;
-				}
-				
-				//6.個資
-				try {
-					personalInfoComponent.processPersonalInfo(dmpJSon, dBCollection_user_detail);
-				}catch(Exception e) {
-					log.error(">>>>>>>fail process processPersonalInfo:"+e.getMessage());
-					continue;
-				}
-				
-				calendar.setTime(sdf.parse(dmpJSon.getAsString("log_date")));
-				int week_index = calendar.get(Calendar.DAY_OF_WEEK) - 1;
-				if(week_index<0){
-					week_index = 0;
-				}
-				String pfbxCustomerInfoId = dmpJSon.getAsString("pfbx_customer_info_id");
-				String webClass = StringUtils.isBlank(pfbxWebsiteCategory.get(pfbxCustomerInfoId)) ? "" : pfbxWebsiteCategory.get(pfbxCustomerInfoId);
-				//產出csv
-				boolean flag = false;
-				for (int i= 0; i < markLevelList.length; i++) {
-					if(StringUtils.isNotBlank(dmpJSon.getAsString(markLevelList[i]))) {
-						flag = true;
-						//log.info(dmpJSon);
-						wiriteToDruid.append("\""+dmpJSon.getAsString("fileName")+"\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_date")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("time_info_source")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.get("memid")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid_flag")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ip")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("url")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("referer")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("domain")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_source")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("trigger_type")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfp_customer_info_id")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfd_customer_info_id")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_customer_info_id")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("style_id")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("action_id")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("group_id")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_id")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_position_id")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_country")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_city")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_info")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_phone_info")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_os_info")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_browser_info")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex_source")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age_source")).append("\"");
-						wiriteToDruid.append(",").append("\"").append("audicen_id_default").append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_id")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_x")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_y")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_event")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("event_id")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_id")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_price")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_dis")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString(markValueList[i])).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString(markLevelList[i])).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op1")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op2")).append("\"");
-						wiriteToDruid.append(",").append("\"").append("ad_price_default").append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_view")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("vpv")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("cks")).append("\"");
-						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pvs")).append("\"");
-						keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
-						context.write(new Text(wiriteToDruid.toString()), null);
-						wiriteToDruid.setLength(0);
-					}
-				}
-				
-				if(!flag) {
-					System.out.println("999999999999999999999");
-					wiriteToDruid.append("\""+dmpJSon.getAsString("fileName")+"\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_date")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("time_info_source")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.get("memid")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid_flag")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ip")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("url")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("referer")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("domain")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_source")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("trigger_type")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfp_customer_info_id")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfd_customer_info_id")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_customer_info_id")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("style_id")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("action_id")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("group_id")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_id")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_position_id")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_country")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_city")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_info")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_phone_info")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_os_info")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_browser_info")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex_source")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age_source")).append("\"");
-					wiriteToDruid.append(",").append("\"").append("audicen_id_default").append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_id")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_x")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_y")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_event")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("event_id")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_id")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_price")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_dis")).append("\"");
-					wiriteToDruid.append(",").append("\"").append("").append("\"");
-					wiriteToDruid.append(",").append("\"").append("").append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op1")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op2")).append("\"");
-					wiriteToDruid.append(",").append("\"").append("ad_price_default").append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_view")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("vpv")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("cks")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pvs")).append("\"");
-					keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
-					context.write(new Text(wiriteToDruid.toString()), null);
-					wiriteToDruid.setLength(0);
-				}
-//				keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
-//				context.write(new Text(wiriteToDruid.toString()), null);
-//				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_layer3"))) {
-//					log.info(">>>>>>>>>>>>>>> mark_layer3:"+dmpJSon);
+////			log.info(">>>>>>>>>>>dmpJSon:"+dmpJSon);
+////			log.info(">>>>>>>>>>>mapperKey:"+mapperKey.toString());
+//			for (Text text : mapperValue) {
+//				wiriteToDruid.setLength(0);
+//				dmpJSon.clear();
+//				dmpJSon = (net.minidev.json.JSONObject) jsonParser.parse(text.toString());
+//				if(StringUtils.isBlank(dmpJSon.getAsString("uuid"))) {
+//					log.error(">>>>>>>>>>>>>>>>>no uuid");
+//					break;
 //				}
-//				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_layer2"))) {
-//					log.info(">>>>>>>>>>>>>>> mark_layer2:"+dmpJSon);
+//				
+//				//6.個資
+//				try {
+//					personalInfoComponent.processPersonalInfo(dmpJSon, dBCollection_user_detail);
+//				}catch(Exception e) {
+//					log.error(">>>>>>>fail process processPersonalInfo:"+e.getMessage());
+//					continue;
 //				}
-//				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_layer1"))) {
-//					log.info(">>>>>>>>>>>>>>> mark_layer1:"+dmpJSon);
+//				
+//				calendar.setTime(sdf.parse(dmpJSon.getAsString("log_date")));
+//				int week_index = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+//				if(week_index<0){
+//					week_index = 0;
 //				}
-			}
-			
-			dmpJSon.clear();
-			wiriteToDruid.setLength(0);
+//				String pfbxCustomerInfoId = dmpJSon.getAsString("pfbx_customer_info_id");
+//				String webClass = StringUtils.isBlank(pfbxWebsiteCategory.get(pfbxCustomerInfoId)) ? "" : pfbxWebsiteCategory.get(pfbxCustomerInfoId);
+//				//產出csv
+//				boolean flag = false;
+//				for (int i= 0; i < markLevelList.length; i++) {
+//					if(StringUtils.isNotBlank(dmpJSon.getAsString(markLevelList[i]))) {
+//						flag = true;
+//						//log.info(dmpJSon);
+//						wiriteToDruid.append("\""+dmpJSon.getAsString("fileName")+"\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_date")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("time_info_source")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.get("memid")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid_flag")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ip")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("url")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("referer")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("domain")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_source")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("trigger_type")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfp_customer_info_id")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfd_customer_info_id")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_customer_info_id")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("style_id")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("action_id")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("group_id")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_id")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_position_id")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_country")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_city")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_info")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_phone_info")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_os_info")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_browser_info")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex_source")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age_source")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append("audicen_id_default").append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_id")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_x")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_y")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_event")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("event_id")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_id")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_price")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_dis")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString(markValueList[i])).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString(markLevelList[i])).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op1")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op2")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append("ad_price_default").append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_view")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("vpv")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("cks")).append("\"");
+//						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pvs")).append("\"");
+//						keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
+//						context.write(new Text(wiriteToDruid.toString()), null);
+//						wiriteToDruid.setLength(0);
+//					}
+//				}
+//				
+//				if(!flag) {
+//					System.out.println("999999999999999999999");
+//					wiriteToDruid.append("\""+dmpJSon.getAsString("fileName")+"\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_date")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("time_info_source")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.get("memid")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid_flag")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ip")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("url")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("referer")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("domain")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_source")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("trigger_type")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfp_customer_info_id")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfd_customer_info_id")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_customer_info_id")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("style_id")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("action_id")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("group_id")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_id")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_position_id")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_country")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_city")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_info")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_phone_info")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_os_info")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_browser_info")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex_source")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age_source")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append("audicen_id_default").append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_id")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_x")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_y")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_event")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("event_id")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_id")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_price")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_dis")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append("").append("\"");
+//					wiriteToDruid.append(",").append("\"").append("").append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op1")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op2")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append("ad_price_default").append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_view")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("vpv")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("cks")).append("\"");
+//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pvs")).append("\"");
+//					keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
+//					context.write(new Text(wiriteToDruid.toString()), null);
+//					wiriteToDruid.setLength(0);
+//				}
+////				keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
+////				context.write(new Text(wiriteToDruid.toString()), null);
+////				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_layer3"))) {
+////					log.info(">>>>>>>>>>>>>>> mark_layer3:"+dmpJSon);
+////				}
+////				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_layer2"))) {
+////					log.info(">>>>>>>>>>>>>>> mark_layer2:"+dmpJSon);
+////				}
+////				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_layer1"))) {
+////					log.info(">>>>>>>>>>>>>>> mark_layer1:"+dmpJSon);
+////				}
+//			}
+//			
+//			dmpJSon.clear();
+//			wiriteToDruid.setLength(0);
 			
 			
 			
 //			log.info(">>>>>>>>>>>mapperKey:"+mapperKey.toString());
 //				uuidSet.clear();
 //				int pv = 0;
-//				for (Text text : mapperValue) {
+				for (Text text : mapperValue) {
+					uuidPv = uuidPv + 1;
+					uuidSet.add(mapperKey.toString());
 //					wiriteToDruid.setLength(0);
 //					dmpJSon.clear();
 //					dmpJSon = (net.minidev.json.JSONObject) jsonParser.parse(text.toString());
@@ -369,9 +375,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 //					if(StringUtils.isBlank(dmpJSon.getAsString("uuid"))) {
 //						break;
 //					}
-//					uuidSet.add(dmpJSon.getAsString("uuid"));
+					
 //					pv = pv + 1;
-//				}
+				}
 //				uuidMap.put(mapperKey.toString(), uuidSet.size());
 //				uuidMap.put(mapperKey.toString()+"_PV", pv);
 				
@@ -395,6 +401,11 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	
 	public void cleanup(Context context) {
 		try {
+			
+			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>uuidPv:"+uuidPv);
+			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>uuidSet:"+uuidSet.size());
+			
+			
 ////			log.info(">>>>>>>>>>>>>uuidMap:"+uuidMap);
 //			long  total = 0;
 //			for (Entry<String, Integer> entry : uuidMap.entrySet()) {
