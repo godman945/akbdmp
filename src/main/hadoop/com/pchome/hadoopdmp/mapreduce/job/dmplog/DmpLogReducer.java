@@ -431,6 +431,18 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	    			detail.put("code_2", data3);
 	    			detail.put("name_3", data4);
 	    			detail.put("code_3", data5);
+	    			
+	    			
+	    			if(item.length > 6) {
+	    				data4 = item[item.length-2].trim();
+	    				data5 = item[item.length-1].trim();
+	    				detail.put("name_1", data0);
+	    				detail.put("code_1", data1);
+	    				detail.put("name_2", data2);
+	    				detail.put("code_2", data3);
+	    				detail.put("name_3", data4);
+	    				detail.put("code_3", data5);
+	    			}
 	    			total2 = total2 + 1;
 	    			System.out.println(total2+">>>>>>>>>"+data5);
 	    			if(csvMap.containsKey(data5)) {
