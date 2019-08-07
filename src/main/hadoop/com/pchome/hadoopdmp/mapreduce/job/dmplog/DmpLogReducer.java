@@ -433,9 +433,18 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	    			detail.put("code_3", data5);
 	    			
 	    			
+	    			
+	    			System.out.println(total2+":ADD>>>>>>>>>"+data3+"_"+data5);
+	    			
 	    			total2 = total2 + 1;
 	    			System.out.println(total2+">>>>>>>>>"+data5);
 	    			csvMap.put(data5, detail);
+	    			
+	    			
+	    			
+	    			
+	    			
+	    			
 	    		}
 	    		reader.close();
 			}catch(Exception e) {
