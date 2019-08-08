@@ -676,13 +676,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			
 //			寫入reduce
 			try {
-				
-				
 				for (int i= 0; i < markValueList.length; i++) {
 					if(StringUtils.isNotBlank(dmpDataJson.getAsString(markValueList[i]))) {
 //						context.write(new Text(dmpDataJson.getAsString(markValueList[i])), new Text(dmpDataJson.toString()));
-						keyOut.set(dmpDataJson.getAsString("uuid"));
-						context.write(keyOut, new Text(dmpDataJson.toString()));
+//						keyOut.set(dmpDataJson.getAsString("uuid"));
+//						context.write(keyOut, new Text(dmpDataJson.toString()));
 					}
 				}
 			} catch (Exception e) {
