@@ -224,7 +224,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			dmpDataJson.put("vpv", "");
 			dmpDataJson.put("screen_x", "");
 			dmpDataJson.put("screen_y", "");
-			dmpDataJson.put("pa_event", "");
 			dmpDataJson.put("event_id", "");
 			dmpDataJson.put("trigger_type", "");
 			dmpDataJson.put("ck", 0);
@@ -426,7 +425,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					}
 					dmpDataJson.put("fileName", fileName);
 					dmpDataJson.put("log_date", values[0]);
-//					dmpDataJson.put("log_date", values[0].substring(0, values[0].indexOf(":"))+":00"+":00");
 					dmpDataJson.put("uuid", values[2]);
 					if(values[2].contains("xxx-")) {
 						dmpDataJson.put("uuid_flag", "y");
@@ -558,13 +556,14 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			
 //			寫入reduce
 			try {
-				for (int i= 0; i < markValueList.length; i++) {
-					if(StringUtils.isNotBlank(dmpDataJson.getAsString(markValueList[i]))) {
-						context.write(new Text(dmpDataJson.getAsString(markValueList[i])), new Text(dmpDataJson.toString()));
-//						keyOut.set(dmpDataJson.getAsString("uuid"));
-//						context.write(keyOut, new Text(dmpDataJson.toString()));
-					}
-				}
+				context.write(new Text(dmpDataJson.getAsString("uuid")), new Text(dmpDataJson.toString()));	
+//				for (int i= 0; i < markValueList.length; i++) {
+//					if(StringUtils.isNotBlank(dmpDataJson.getAsString(markValueList[i]))) {
+//						context.write(new Text(dmpDataJson.getAsString(markValueList[i])), new Text(dmpDataJson.toString()));
+////						keyOut.set(dmpDataJson.getAsString("uuid"));
+////						context.write(keyOut, new Text(dmpDataJson.toString()));
+//					}
+//				}
 			} catch (Exception e) {
 				log.error(">>>>write to reduce fail:"+e.getMessage());
 			}

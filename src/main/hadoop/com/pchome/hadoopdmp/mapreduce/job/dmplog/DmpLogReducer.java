@@ -186,11 +186,11 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	
 	
 	@Override
-	public void reduce(Text mapperKey, Iterable<Text> mapperValue, Context context) {
+	public void reduce(Text uuidKey, Iterable<Text> dmpJsonStr, Context context) {
 		try {
-//			log.info(">>>>>>>>>>>dmpJSon:"+dmpJSon);
-//			log.info(">>>>>>>>>>>mapperKey:"+mapperKey.toString());
-			for (Text text : mapperValue) {
+//			log.info(">>>>>>>>>>>dmpJSon:"+dmpJsonStr);
+//			log.info(">>>>>>>>>>>mapperKey:"+uuidKey.toString());
+			for (Text text : dmpJsonStr) {
 				wiriteToDruid.setLength(0);
 				dmpJSon.clear();
 				dmpJSon = (net.minidev.json.JSONObject) jsonParser.parse(text.toString());
@@ -339,42 +339,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					wiriteToDruid.setLength(0);
 				}
 			}
-			
-			
-			
-			
-			
-////			log.info(">>>>>>>>>>>mapperKey:"+mapperKey.toString());
-////				uuidSet.clear();
-////				int pv = 0;
-//				for (Text text : mapperValue) {
-//					uuidPv = uuidPv + 1;
-//					uuidSet.add(mapperKey.toString());
-////					wiriteToDruid.setLength(0);
-////					dmpJSon.clear();
-////					dmpJSon = (net.minidev.json.JSONObject) jsonParser.parse(text.toString());
-//////					log.info(dmpJSon);
-////					if(StringUtils.isBlank(dmpJSon.getAsString("uuid"))) {
-////						break;
-////					}
-//					
-////					pv = pv + 1;
-//				}
-////				uuidMap.put(mapperKey.toString(), uuidSet.size());
-////				uuidMap.put(mapperKey.toString()+"_PV", pv);
-				
-				
-				
-				
-				
-				
-				
-				
-				
-			
-			
-			
-			
 		} catch (Throwable e) {
 			 log.error(">>>>>> reduce error :"+e.getMessage());
 		}
