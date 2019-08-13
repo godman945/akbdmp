@@ -232,15 +232,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				String webClass = StringUtils.isBlank(pfbxWebsiteCategory.get(pfbxCustomerInfoId)) ? "" : pfbxWebsiteCategory.get(pfbxCustomerInfoId);
 				
 				
-				
-				if(dmpJSon.getAsString("uuid").equals("13ca77f3-b5f4-4843-9fb7-56c82accaef9")) {
+				if(dmpJSon.getAsString("uuid").equals("13ca77f3-b5f4-4843-9fb7-56c82accaef9") && dmpJSon.getAsString("log_source").equals("bu_log")) {
 					log.info("13ca77f3-b5f4-4843-9fb7-56c82accaef9:"+dmpJSon);
 				}
-				
-				
-				
-				
-				
 				//產出csv
 				for (int i= 0; i < markLevelList.length; i++) {
 					if(StringUtils.isNotBlank(dmpJSon.getAsString(markLevelList[i]))) {

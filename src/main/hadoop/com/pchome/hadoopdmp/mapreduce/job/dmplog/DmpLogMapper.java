@@ -98,12 +98,12 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	
 	@Override
 	public void setup(Context context) {
-		log.info(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
+		System.out.println(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
 		try {
 			record_date = context.getConfiguration().get("job.date");
 			record_hour = context.getConfiguration().get("job.hour");
-			log.info("record_date:"+record_date);
-			log.info("record_hour:"+record_hour);
+			System.out.println("record_date:" + record_date);
+			System.out.println("record_hour:"+record_hour);
 			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			this.aCategoryLogDataClick = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
@@ -155,8 +155,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				categoryBean.setEnglishCode(tmpStrAry[3].replaceAll("\"", ""));
 				category24hBeanList.add(categoryBean);
 			}
-//			log.info("**********category24hBeanList:"+category24hBeanList.size());
-			
 			// load Ruten分類表(DMP_Ruten_category.csv)
 			Path categoryRutenPath = Paths.get(path[4].toString());
 			List<String> linesRuten = Files.readAllLines(categoryRutenPath, charset);
@@ -167,13 +165,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				categoryRutenBean.setChineseDesc(tmpStrAry[1].replaceAll("\"", ""));
 				categoryRutenBeanList.add(categoryRutenBean);
 			}
-//			log.info("**********categoryRutenBeanList:"+categoryRutenBeanList.size());
-			
 			//IP轉城市
 			File database = new File(path[5].toString());
 			reader = new DatabaseReader.Builder(database).build();  
 			//24館別階層對應表
-//			log.info("**********24 csv");
 			FileSystem fs = FileSystem.get(conf);
 			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/home/webuser/dmp/jobfile/24h_menu-1.csv");
 			FSDataInputStream inputStream = fs.open(category24MappingFile);
@@ -183,33 +178,96 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				String data = csvRecord.get(1)+"<PCHOME>"+csvRecord.get(3)+"<PCHOME>"+csvRecord.get(5);
 				categoryLevelMappingList.add(data);
 			}
-//			log.info("**********categoryLevelMappingList:"+categoryLevelMappingList.size());
 		} catch (Exception e) {
-			log.error("Mapper setup error>>>>>> " +e);
+			System.out.println("Mapper setup error>>>>>> " + e.getMessage());
 		}
 	}
-	
-	
-	private static String logStr = "";
-	private static net.minidev.json.JSONObject dmpDataJson = new net.minidev.json.JSONObject();
 	private static String logpath = "";
 	private static Map<String,String> hostNameMap = new HashMap<String,String>();
 	
+	
+	private static net.minidev.json.JSONObject dmpDataJson = new net.minidev.json.JSONObject();
+	private static String logStr = "";
+	private static String[] values  = null;
 	@SuppressWarnings("unused")
 	@Override
 	public synchronized void map(LongWritable offset, Text value, Context context) {
+			//清空mapper中json資料
+			dmpDataJson.clear();
 			inputSplit = (InputSplit)context.getInputSplit(); 
 			logpath = ((FileSplit)inputSplit).getPath().toString();
-//			log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
 			String fileName = ((FileSplit)inputSplit).getPath().getName();
-//			log.info(">>>>>>>>>>>>>>>>>>fileName:"+fileName);
+			values = null;
+			logStr = "";
 			logStr = value.toString();
-			//1.判斷log來源為kdcl或bu
+//			log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
+//			log.info(">>>>>>>>>>>>>>>>>>fileName:"+fileName);
+			dmpDataJson.put("fileName", "");
+			dmpDataJson.put("log_date", "");
+			dmpDataJson.put("hour", "");
+			dmpDataJson.put("memid", "");
+			dmpDataJson.put("uuid", "");
+			dmpDataJson.put("uuid_flag", "");
+			dmpDataJson.put("url", "");
+			dmpDataJson.put("referer", "");
+			dmpDataJson.put("domain", "");
+			dmpDataJson.put("log_source", "");
+			dmpDataJson.put("pfd_customer_info_id", "");
+			dmpDataJson.put("pfp_customer_info_id", "");
+			dmpDataJson.put("style_id", "");
+			dmpDataJson.put("action_id", "");
+			dmpDataJson.put("group_id", "");
+			dmpDataJson.put("ad_id", "");
+			dmpDataJson.put("pfbx_customer_info_id", "");
+			dmpDataJson.put("pfbx_position_id", "");
+			dmpDataJson.put("ad_view", "");
+			dmpDataJson.put("vpv", "");
+			dmpDataJson.put("screen_x", "");
+			dmpDataJson.put("screen_y", "");
+			dmpDataJson.put("pa_event", "");
+			dmpDataJson.put("event_id", "");
+			dmpDataJson.put("trigger_type", "");
+			dmpDataJson.put("cks", 0);
+			dmpDataJson.put("pvs", 0);
+			dmpDataJson.put("ad_class", "");
+			dmpDataJson.put("ip", "");
+			dmpDataJson.put("area_country", "");
+			dmpDataJson.put("area_city", "");
+			dmpDataJson.put("area_info_source", "");
+			dmpDataJson.put("area_info_classify", "");
+			dmpDataJson.put("user_agent", "");
+			dmpDataJson.put("device_info", "");
+			dmpDataJson.put("device_phone_info", "");
+			dmpDataJson.put("device_os_info", "");
+			dmpDataJson.put("device_browser_info", "");
+			dmpDataJson.put("device_info_source", "");
+			dmpDataJson.put("device_info_classify", "");
+			dmpDataJson.put("category", "");
+			dmpDataJson.put("class_adclick_classify", "");
+			dmpDataJson.put("category_source", "");
+			dmpDataJson.put("sex", "");
+			dmpDataJson.put("sex_source", "");
+			dmpDataJson.put("age", "");
+			dmpDataJson.put("age_source", "");
+			dmpDataJson.put("personal_info_api_classify", "");
+			dmpDataJson.put("pa_id", "");
+			dmpDataJson.put("screen_x", "");
+			dmpDataJson.put("screen_y", "");
+			dmpDataJson.put("pa_event", "");
+			dmpDataJson.put("event_id", "");
+			dmpDataJson.put("prod_id", "");
+			dmpDataJson.put("prod_price", "");
+			dmpDataJson.put("prod_dis", "");
+			dmpDataJson.put("op1", "");
+			dmpDataJson.put("op2", "");
+			dmpDataJson.put("email", "");
+			dmpDataJson.put("mark_value", "");
+			dmpDataJson.put("mark_layer1", "");
+			dmpDataJson.put("mark_layer2", "");
+			dmpDataJson.put("mark_layer3", "");
+			dmpDataJson.put("mark_layer4", "");
+			
 			if(logpath.contains("/akb/storedata/alllog/")) {
-				//測試用
-				if(true) {
-					return;
-				}
 				try {
 					//kdcl log	raw data格式為一般或是Campaign
 					if(logStr.indexOf(kdclSymbol) > -1 ){
@@ -221,7 +279,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						// values[5]  UserAgent
 						// values[13] ck,pv
 						// values[15] ad_class
-						String[] values = logStr.split(kdclSymbol,-1);
+						this.values = this.logStr.split(kdclSymbol,-1);
 						if (values.length < kdclLogLength) {
 							return;
 						}
@@ -233,7 +291,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						}
 						dmpDataJson.put("fileName", fileName);
 						dmpDataJson.put("log_date", values[0]);
-						dmpDataJson.put("hour", record_hour);
 						dmpDataJson.put("memid", values[1]);
 						dmpDataJson.put("uuid", values[2]);
 						if(values[2].contains("xxx-")) {
@@ -241,27 +298,21 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						}else {
 							dmpDataJson.put("uuid_flag", "n");
 						}
-						dmpDataJson.put("url", "");
 						dmpDataJson.put("referer", values[4]);
-						dmpDataJson.put("domain", "");
 						try {
-							if(!hostNameMap.containsKey(values[4].toString())) {
+							if(hostNameMap.containsKey(values[4].toString())) {
+								dmpDataJson.put("domain", hostNameMap.get(values[4].toString()));
+							}else {
 								URI uri = new URI(values[4]);
 								String domain = uri.getHost();
 								dmpDataJson.put("domain", domain.startsWith("www.") ? domain.substring(4) : domain);
 								hostNameMap.put(values[4].toString(), domain.startsWith("www.") ? domain.substring(4) : domain);
-							}else {
-								dmpDataJson.put("domain", hostNameMap.get(values[4].toString()));
 							}
 						}catch(Exception e) {
-							log.error("*****"+values[4]);
-							log.error("*****"+values[2]);
-							log.error("*****"+fileName);
-							log.error("*****"+record_hour);
-							log.error("*****"+record_date);
-							log.error(e.getMessage());
+							System.out.println("kdcl log process domain fail:"+e.getMessage());
+							System.out.println("kdcl log process domain fail json:"+dmpDataJson);
+							return;
 						}
-						
 						dmpDataJson.put("log_source", "kdcl");
 						dmpDataJson.put("pfd_customer_info_id", values[24]);
 						dmpDataJson.put("pfp_customer_info_id", values[6]);
@@ -273,10 +324,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("pfbx_position_id", values[26]);
 						dmpDataJson.put("ad_view", values[45]);
 						dmpDataJson.put("vpv", values[46]);
-						dmpDataJson.put("screen_x", "");
-						dmpDataJson.put("screen_y", "");
-						dmpDataJson.put("pa_event", "");
-						dmpDataJson.put("event_id", "");
 						dmpDataJson.put("trigger_type", values[13]);
 						if(values[13].toUpperCase().equals("CK")) {
 							dmpDataJson.put("cks", 1);
@@ -286,44 +333,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 							dmpDataJson.put("pvs", 1);
 						}
 						dmpDataJson.put("ad_class", values[15]);
-						
-						//地區資訊 [area_info_classify] null:ip不正確,N:ip比對不到
 						dmpDataJson.put("ip", values[3]);
-						dmpDataJson.put("area_country", "");
-						dmpDataJson.put("area_city", "");
 						dmpDataJson.put("area_info_source", "ip");
-						dmpDataJson.put("area_info_classify", "");
-						//時間資訊
-						dmpDataJson.put("time_info_source", "kdcl");
-						dmpDataJson.put("time_info_classify", "");
 						//裝置資訊 [device_info_classify] null:user_agent為空
 						dmpDataJson.put("user_agent", values[5].replaceAll("\"", ""));
-						dmpDataJson.put("device_info", "");
-						dmpDataJson.put("device_phone_info", "");
-						dmpDataJson.put("device_os_info", "");
-						dmpDataJson.put("device_browser_info", "");
-						dmpDataJson.put("device_info_source", "");
-						dmpDataJson.put("device_info_classify", "");
-						//分類資訊
-						dmpDataJson.put("category", "");
-						dmpDataJson.put("class_adclick_classify", "");
-						dmpDataJson.put("category_source", "");
-						//年齡性別資訊
-						dmpDataJson.put("sex", "");
-						dmpDataJson.put("sex_source", "");
-						dmpDataJson.put("age", "");
-						dmpDataJson.put("age_source", "");
-						dmpDataJson.put("personal_info_api_classify", "");
-						//pacl才有欄位
-						dmpDataJson.put("pa_id", "");
-						dmpDataJson.put("screen_x", "");
-						dmpDataJson.put("screen_y", "");
-						dmpDataJson.put("pa_event", "");
-						dmpDataJson.put("event_id", "");
-						dmpDataJson.put("prod_id", "");
-						dmpDataJson.put("prod_price", "");
-						dmpDataJson.put("prod_dis", "");
-						
 						if(values[4].contains("24h.pchome.com.tw")) {
 							String pageCategory = "";
 							if(values[4].equals("https://24h.pchome.com.tw/") || values[4].contains("htm") || values[4].contains("index") || values[4].contains("?fq=") || values[4].contains("store/?q=")) {
@@ -335,31 +348,16 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 								pageCategory = values[4].split("/")[values[4].split("/").length - 1];
 							}
 							dmpDataJson.put("op1", pageCategory);
-						}else {
-							dmpDataJson.put("op1", "");
 						}
-						dmpDataJson.put("op2", "");
-						dmpDataJson.put("email", "");
-						dmpDataJson.put("mark_value", "");
-						dmpDataJson.put("mark_layer1", "");
-						dmpDataJson.put("mark_layer2", "");
-						dmpDataJson.put("mark_layer3", "");
-						dmpDataJson.put("mark_layer4", "");
-						dmpDataJson.put("behavior", "");
-						dmpDataJson.put("classify", "");
 					}else {
 						return;
 					}
 				}catch(Exception e) {
-					log.error(">>>>kdcl set json fail:"+logStr);
+					System.out.println(">>>> kdcl set json fail:"+dmpDataJson);
 				}
 			}else if(logpath.contains("/pa/storedata/alllog/") ) {
 				try {
-					//測試用
-					if(true) {
-						return;
-					}
-					String[] values = logStr.split(paclSymbol,-1);
+					this.values = this.logStr.split(paclSymbol,-1);
 					dmpDataJson.put("fileName", fileName);
 					dmpDataJson.put("log_date", values[0]);
 					dmpDataJson.put("memid","");
@@ -373,62 +371,20 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("referer", values[5]);
 					dmpDataJson.put("domain", values[7]);
 					dmpDataJson.put("log_source", "pacl");
-					dmpDataJson.put("pfd_customer_info_id", "");
-					dmpDataJson.put("pfp_customer_info_id", "");
-					dmpDataJson.put("style_id", "");
-					dmpDataJson.put("action_id", "");
-					dmpDataJson.put("group_id", "");
-					dmpDataJson.put("ad_id", "");
-					dmpDataJson.put("pfbx_customer_info_id", "");
-					dmpDataJson.put("pfbx_position_id", "");
 					dmpDataJson.put("ad_view", 0);
 					dmpDataJson.put("vpv", 0);
-					dmpDataJson.put("pa_id", "");
-					dmpDataJson.put("screen_x", "");
-					dmpDataJson.put("screen_y", "");
-					dmpDataJson.put("pa_event", "");
-					dmpDataJson.put("event_id", "");
 					dmpDataJson.put("trigger_type", "pv");
 					dmpDataJson.put("cks", 0);
 					dmpDataJson.put("pvs", 1);
-					dmpDataJson.put("ad_class", "");
 					//地區資訊 [area_info_classify] null:ip不正確,N:ip比對不到
 					dmpDataJson.put("ip", values[1]);
-					dmpDataJson.put("area_country", "");
-					dmpDataJson.put("area_city", "");
 					dmpDataJson.put("area_info_source", "ip");
-					dmpDataJson.put("area_info_classify", "");
-					//時間資訊
-					dmpDataJson.put("time_info_source", "");
-					dmpDataJson.put("time_info_classify", "");
 					//裝置資訊 [device_info_classify] null:user_agent為空
 					dmpDataJson.put("user_agent", values[8].replaceAll("\"", ""));
-					dmpDataJson.put("device_info", "");
-					dmpDataJson.put("device_phone_info", "");
-					dmpDataJson.put("device_os_info", "");
-					dmpDataJson.put("device_browser_info", "");
-					dmpDataJson.put("device_info_source", "");
-					dmpDataJson.put("device_info_classify", "");
-					
-					//分類資訊
-					dmpDataJson.put("category", "");
-					dmpDataJson.put("class_adclick_classify", "");
-					dmpDataJson.put("category_source", "");
-					//年齡性別資訊
-					dmpDataJson.put("sex", "");
-					dmpDataJson.put("sex_source", "");
-					dmpDataJson.put("age", "");
-					dmpDataJson.put("age_source", "");
-					dmpDataJson.put("personal_info_api_classify", "");
-					
 					dmpDataJson.put("pa_id", values[4]);
 					dmpDataJson.put("screen_x", values[9]);
 					dmpDataJson.put("screen_y", values[10]);
 					dmpDataJson.put("pa_event", values[11]);
-					dmpDataJson.put("prod_id", "");
-					dmpDataJson.put("prod_price", "");
-					dmpDataJson.put("prod_dis", "");
-					
 					if(values[11].toUpperCase().equals("TRACKING")) {
 						dmpDataJson.put("event_id", values[12]);
 						dmpDataJson.put("prod_id", values[13]);
@@ -451,41 +407,26 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 							pageCategory = values[5].split("/")[values[5].split("/").length - 1];
 						}
 						dmpDataJson.put("op1", pageCategory);
-					}else {
-						dmpDataJson.put("op1", "");
 					}
-					dmpDataJson.put("op2", "");
-					dmpDataJson.put("email", "");
-					dmpDataJson.put("mark_value", "");
-					dmpDataJson.put("mark_layer1", "");
-					dmpDataJson.put("mark_layer2", "");
-					dmpDataJson.put("mark_layer3", "");
-					dmpDataJson.put("mark_layer4", "");
-					dmpDataJson.put("behavior", "");
-					dmpDataJson.put("classify", "");
 				}catch(Exception e) {
-					log.error(">>>>pa set json fail:"+e.getMessage());
-					log.error(">>>>pa set json fail log size:"+logStr.split(paclSymbol,-1).length);
+					System.out.println(">>>>pa set json fail:"+e.getMessage());
+					System.out.println(">>>>pa set json fail log size:"+logStr.split(paclSymbol,-1).length);
 					String[] logarray = logStr.split(paclSymbol,-1);
 					for (int i = 0; i < logarray.length; i++) {
-						log.error(">>>>pa set json fail:["+i+"]:"+logarray[i]);
+						System.out.println(">>>>pa set json fail:["+i+"]:"+logarray[i]);
 					}
-					log.error(">>>>pa set json logStr:"+logStr);
+					System.out.println(">>>>pa set json fail logStr:"+logStr);
 					return;
 				}
 			}else if(logpath.contains("/akb/storedata/bulog/")) {
 				try {
 					String[] values = logStr.split(paclSymbol,-1);
-					
 					if(StringUtils.isBlank(values[2])) {
 						return;
 					}
-					
-					
 					dmpDataJson.put("fileName", fileName);
-//					dmpDataJson.put("log_date", values[0]);
-					dmpDataJson.put("log_date", values[0].substring(0, values[0].indexOf(":"))+":00"+":00");
-					dmpDataJson.put("memid","");
+					dmpDataJson.put("log_date", values[0]);
+//					dmpDataJson.put("log_date", values[0].substring(0, values[0].indexOf(":"))+":00"+":00");
 					dmpDataJson.put("uuid", values[2]);
 					if(values[2].contains("xxx-")) {
 						dmpDataJson.put("uuid_flag", "y");
@@ -496,63 +437,22 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("referer", values[5]);
 					dmpDataJson.put("domain", values[7]);
 					dmpDataJson.put("log_source", "bu_log");
-					dmpDataJson.put("pfd_customer_info_id", "");
-					dmpDataJson.put("pfp_customer_info_id", "");
-					dmpDataJson.put("style_id", "");
-					dmpDataJson.put("action_id", "");
-					dmpDataJson.put("group_id", "");
-					dmpDataJson.put("ad_id", "");
-					dmpDataJson.put("pfbx_customer_info_id", "");
-					dmpDataJson.put("pfbx_position_id", "");
 					dmpDataJson.put("ad_view", 0);
 					dmpDataJson.put("vpv", 0);
-					dmpDataJson.put("pa_id", "");
-					dmpDataJson.put("screen_x", "");
-					dmpDataJson.put("screen_y", "");
 					dmpDataJson.put("pa_event", "mark");
-					dmpDataJson.put("event_id", "");
 					dmpDataJson.put("trigger_type", "pv");
 					dmpDataJson.put("cks", 0);
 					dmpDataJson.put("pvs", 1);
-					dmpDataJson.put("ad_class", "");
 					//地區資訊 [area_info_classify] null:ip不正確,N:ip比對不到
 					dmpDataJson.put("ip", values[1]);
-					dmpDataJson.put("area_country", "");
-					dmpDataJson.put("area_city", "");
 					dmpDataJson.put("area_info_source", "ip");
-					dmpDataJson.put("area_info_classify", "");
 					//時間資訊
-					dmpDataJson.put("time_info_source", "");
-					dmpDataJson.put("time_info_classify", "");
 					//裝置資訊 [device_info_classify] null:user_agent為空
 					dmpDataJson.put("user_agent", values[8].replaceAll("\"", ""));
-					dmpDataJson.put("device_info", "");
-					dmpDataJson.put("device_phone_info", "");
-					dmpDataJson.put("device_os_info", "");
-					dmpDataJson.put("device_browser_info", "");
-					dmpDataJson.put("device_info_source", "");
-					dmpDataJson.put("device_info_classify", "");
-					
-					//分類資訊
-					dmpDataJson.put("category", "");
-					dmpDataJson.put("class_adclick_classify", "");
-					dmpDataJson.put("category_source", "");
-					//年齡性別資訊
-					dmpDataJson.put("sex", "");
-					dmpDataJson.put("sex_source", "");
-					dmpDataJson.put("age", "");
-					dmpDataJson.put("age_source", "");
-					dmpDataJson.put("personal_info_api_classify", "");
-					
 					dmpDataJson.put("pa_id", values[4]);
 					dmpDataJson.put("screen_x", values[9]);
 					dmpDataJson.put("screen_y", values[10]);
-					dmpDataJson.put("prod_id", "");
-					dmpDataJson.put("prod_price", "");
-					dmpDataJson.put("prod_dis", "");
 					dmpDataJson.put("event_id", "24h");
-					
-					
 					if(values[5].contains("24h.pchome.com.tw")) {
 						String pageCategory = "";
 						if(values[5].equals("https://24h.pchome.com.tw/") || values[5].contains("htm") || values[5].contains("index") || values[5].contains("?fq=") || values[5].contains("store/?q=")) {
@@ -564,24 +464,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 							pageCategory = values[5].split("/")[values[5].split("/").length - 1];
 						}
 						dmpDataJson.put("mark_value", pageCategory);
-					}else {
-						dmpDataJson.put("mark_value", "");
 					}
-					
-					
-					dmpDataJson.put("op1", "");
-					dmpDataJson.put("op2", "");
-					dmpDataJson.put("email", "");
-					dmpDataJson.put("mark_layer1", "");
-					dmpDataJson.put("mark_layer2", "");
-					dmpDataJson.put("mark_layer3", "");
-					dmpDataJson.put("mark_layer4", "");
-					dmpDataJson.put("mark_value1", "");
-					dmpDataJson.put("mark_value2", "");
-					dmpDataJson.put("mark_value3", "");
-					dmpDataJson.put("mark_value4", "");
-					dmpDataJson.put("behavior", "");
-					dmpDataJson.put("classify", "");
 				}catch(Exception e) {
 					log.error(">>>>bulog set json fail:"+e.getMessage());
 					log.error(">>>>bulog set json fail log size:"+logStr.split(paclSymbol,-1).length);
@@ -604,15 +487,15 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				log.error(">>>>>>fileName:" +fileName);
 				return;
 			}
-			//2.時間處理元件(日期時間字串轉成小時)	
-			try {
-				dateTimeComponent.datetimeTransformHour(dmpDataJson); 
-			}catch(Exception e) {
-				log.error(">>>>process source time fail:"+e.getMessage());
-				log.error(">>>>>>logStr:" +logStr);
-				log.error(">>>>>>fileName:" +fileName);
-				return;
-			}
+//			//2.時間處理元件(日期時間字串轉成小時)	
+//			try {
+//				dateTimeComponent.datetimeTransformHour(dmpDataJson); 
+//			}catch(Exception e) {
+//				log.error(">>>>process source time fail:"+e.getMessage());
+//				log.error(">>>>>>logStr:" +logStr);
+//				log.error(">>>>>>fileName:" +fileName);
+//				return;
+//			}
 			//3.裝置處理元件(UserAgent轉成裝置資訊)
 			try {
 				deviceComponent.parseUserAgentToDevice(dmpDataJson);
