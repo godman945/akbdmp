@@ -453,18 +453,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("screen_x", values[9]);
 					dmpDataJson.put("screen_y", values[10]);
 					dmpDataJson.put("event_id", "24h");
-					if(values[5].contains("24h.pchome.com.tw")) {
-						String pageCategory = "";
-						if(values[5].equals("https://24h.pchome.com.tw/") || values[5].contains("htm") || values[5].contains("index") || values[5].contains("?fq=") || values[5].contains("store/?q=")) {
-							return;
-						}else if(values[5].contains("?")) {
-							pageCategory = values[5].substring(0, values[5].indexOf("?"));
-							pageCategory = pageCategory.split("/")[pageCategory.split("/").length - 1];
-						}else {
-							pageCategory = values[5].split("/")[values[5].split("/").length - 1];
-						}
-						dmpDataJson.put("mark_value", pageCategory);
-					}
 				}catch(Exception e) {
 					log.error(">>>>bulog set json fail:"+e.getMessage());
 					log.error(">>>>bulog set json fail log size:"+logStr.split(paclSymbol,-1).length);
@@ -476,6 +464,20 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					return;
 				}
 			}
+			
+			if(dmpDataJson.getAsString("referer").contains("24h.pchome.com.tw")) {
+				String pageCategory = "";
+				if(dmpDataJson.getAsString("referer").equals("https://24h.pchome.com.tw/") || dmpDataJson.getAsString("referer").contains("htm") || dmpDataJson.getAsString("referer").contains("index") || dmpDataJson.getAsString("referer").contains("?fq=") || dmpDataJson.getAsString("referer").contains("store/?q=")) {
+					return;
+				}else if(dmpDataJson.getAsString("referer").contains("?")) {
+					pageCategory = dmpDataJson.getAsString("referer").substring(0, dmpDataJson.getAsString("referer").indexOf("?"));
+					pageCategory = pageCategory.split("/")[pageCategory.split("/").length - 1];
+				}else {
+					pageCategory = dmpDataJson.getAsString("referer").split("/")[dmpDataJson.getAsString("referer").split("/").length - 1];
+				}
+				dmpDataJson.put("mark_value", pageCategory);
+			}
+			
 			
 			//開始DMP資訊
 			//1.地區處理元件(ip 轉國家、城市)
