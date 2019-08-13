@@ -312,7 +312,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 							System.out.println("kdcl log process domain fail json:"+dmpDataJson);
 							return;
 						}
-						dmpDataJson.put("log_source", "kdcl");
+						dmpDataJson.put("log_source", "kdcl_log");
 						dmpDataJson.put("pfd_customer_info_id", values[24]);
 						dmpDataJson.put("pfp_customer_info_id", values[6]);
 						dmpDataJson.put("style_id", values[7]);
@@ -369,7 +369,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("url", values[6]);
 					dmpDataJson.put("referer", values[5]);
 					dmpDataJson.put("domain", values[7]);
-					dmpDataJson.put("log_source", "pacl");
+					dmpDataJson.put("log_source", "pacl_log");
 					dmpDataJson.put("ad_view", 0);
 					dmpDataJson.put("vpv", 0);
 					dmpDataJson.put("trigger_type", "pv");
