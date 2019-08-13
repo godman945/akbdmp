@@ -225,7 +225,7 @@ public class DmpLogDriver {
 			job.setOutputKeyClass(Text.class);
 			job.setOutputValueClass(Text.class);
 			job.getConfiguration().set("mapreduce.output.basename", "druid_"+dmpDate+"_"+dmpHour);
-			job.setNumReduceTasks(1);//1個reduce 
+			job.setNumReduceTasks(5);//1個reduce 
 			job.setMapSpeculativeExecution(false);
 			if(env.equals("prd")) {
 				deleteExistedDir(fs, new Path("/home/webuser/alex/druid/"+dmpDate+"/"+dmpHour), true);
