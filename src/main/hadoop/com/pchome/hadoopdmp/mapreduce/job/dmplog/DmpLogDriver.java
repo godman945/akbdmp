@@ -194,6 +194,10 @@ public class DmpLogDriver {
 		        FileStatus[] kdclStatus = fs.listStatus(kdclPath); 
 				for (FileStatus fileStatus : kdclStatus) {
 					String pathStr = fileStatus.getPath().toString();
+					
+					log.info("kdcl path"+pathStr);
+					
+					
 					String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
 					if(extensionName.equals("LZO")) {
 						listPath.add(new Path(fileStatus.getPath().toString()));
