@@ -227,8 +227,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			dmpDataJson.put("pa_event", "");
 			dmpDataJson.put("event_id", "");
 			dmpDataJson.put("trigger_type", "");
-			dmpDataJson.put("cks", 0);
-			dmpDataJson.put("pvs", 0);
+			dmpDataJson.put("ck", 0);
+			dmpDataJson.put("pv", 0);
 			dmpDataJson.put("ad_class", "");
 			dmpDataJson.put("ip", "");
 			dmpDataJson.put("area_country", "");
@@ -326,11 +326,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("vpv", values[46]);
 						dmpDataJson.put("trigger_type", values[13]);
 						if(values[13].toUpperCase().equals("CK")) {
-							dmpDataJson.put("cks", 1);
-							dmpDataJson.put("pvs", 0);
+							dmpDataJson.put("ck", 1);
+							dmpDataJson.put("pv", 0);
 						}else if(values[13].toUpperCase().equals("PV")) {
-							dmpDataJson.put("cks", 0);
-							dmpDataJson.put("pvs", 1);
+							dmpDataJson.put("ck", 0);
+							dmpDataJson.put("pv", 1);
 						}
 						dmpDataJson.put("ad_class", values[15]);
 						dmpDataJson.put("ip", values[3]);
@@ -374,8 +374,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("ad_view", 0);
 					dmpDataJson.put("vpv", 0);
 					dmpDataJson.put("trigger_type", "pv");
-					dmpDataJson.put("cks", 0);
-					dmpDataJson.put("pvs", 1);
+					dmpDataJson.put("ck", 0);
+					dmpDataJson.put("pv", 1);
 					//地區資訊 [area_info_classify] null:ip不正確,N:ip比對不到
 					dmpDataJson.put("ip", values[1]);
 					dmpDataJson.put("area_info_source", "ip");
@@ -441,8 +441,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("vpv", 0);
 					dmpDataJson.put("pa_event", "mark");
 					dmpDataJson.put("trigger_type", "pv");
-					dmpDataJson.put("cks", 0);
-					dmpDataJson.put("pvs", 1);
+					dmpDataJson.put("ck", 0);
+					dmpDataJson.put("pv", 1);
 					//地區資訊 [area_info_classify] null:ip不正確,N:ip比對不到
 					dmpDataJson.put("ip", values[1]);
 					dmpDataJson.put("area_info_source", "ip");
@@ -537,9 +537,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						System.out.println(">>>>>>fileName:" +fileName);
 						return;
 					}
-				}else if (dmpDataJson.getAsString("trigger_type").equals("pv") ){
-					dmpDataJson.put("category", "");
-					dmpDataJson.put("category_source", "");
 				}
 			}catch(Exception e) {
 				System.out.println(">>>>process source class type fail:"+e.getMessage());
@@ -668,7 +665,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		dmpLogBeanResult.setAreaInfoClassify( StringUtils.isBlank(dmpLogBeanResult.getAreaInfoClassify()) ? "null" : dmpLogBeanResult.getAreaInfoClassify());
 		dmpLogBeanResult.setDeviceInfoClassify( StringUtils.isBlank(dmpLogBeanResult.getDeviceInfoClassify()) ? "null" : dmpLogBeanResult.getDeviceInfoClassify());
 		dmpLogBeanResult.setTimeInfoClassify( StringUtils.isBlank(dmpLogBeanResult.getTimeInfoClassify()) ? "null" : dmpLogBeanResult.getTimeInfoClassify());
-		
 		return dmpLogBeanResult;
 	}
 	
