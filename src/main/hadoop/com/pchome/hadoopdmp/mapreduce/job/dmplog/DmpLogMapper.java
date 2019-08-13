@@ -454,13 +454,13 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("screen_y", values[10]);
 					dmpDataJson.put("event_id", "24h");
 				}catch(Exception e) {
-					log.error(">>>>bulog set json fail:"+e.getMessage());
-					log.error(">>>>bulog set json fail log size:"+logStr.split(paclSymbol,-1).length);
+					System.out.println(">>>>bulog set json fail:"+e.getMessage());
+					System.out.println(">>>>bulog set json fail log size:"+logStr.split(paclSymbol,-1).length);
 					String[] logarray = logStr.split(paclSymbol,-1);
 					for (int i = 0; i < logarray.length; i++) {
-						log.error(">>>>bulog set json fail:["+i+"]:"+logarray[i]);
+						System.out.println(">>>>bulog set json fail:["+i+"]:"+logarray[i]);
 					}
-					log.error(">>>>bulog set json logStr:"+logStr);
+					System.out.println(">>>>bulog set json logStr:"+logStr);
 					return;
 				}
 			}
@@ -484,9 +484,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			try {
 				geoIpComponent.ipTransformGEO(dmpDataJson);
 			}catch(Exception e) {
-				log.error(">>>>process source area fail:"+e.getMessage());
-				log.error(">>>>>>logStr:" +logStr);
-				log.error(">>>>>>fileName:" +fileName);
+				System.out.println(">>>>process source area fail:"+e.getMessage());
+				System.out.println(">>>>>>logStr:" +logStr);
+				System.out.println(">>>>>>fileName:" +fileName);
 				return;
 			}
 //			//2.時間處理元件(日期時間字串轉成小時)	
@@ -502,9 +502,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			try {
 				deviceComponent.parseUserAgentToDevice(dmpDataJson);
 			}catch(Exception e) {
-				log.error(">>>>process source device fail:"+e.getMessage());
-				log.error(">>>>>>logStr:" +logStr);
-				log.error(">>>>>>fileName:" +fileName);
+				System.out.println(">>>>process source device fail:"+e.getMessage());
+				System.out.println(">>>>>>logStr:" +logStr);
+				System.out.println(">>>>>>fileName:" +fileName);
 				return;
 			}
 			//4.分類處理元件(分析click、24H、Ruten、campaign分類)
@@ -513,28 +513,28 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					try {
 						DmpLogMapper.aCategoryLogDataClick.processCategory(dmpDataJson, null);
 					}catch(Exception e) {
-						log.error(">>>>process source ck_campaign fail:"+e.getMessage());
-						log.error(">>>>>>logStr:" +logStr);
-						log.error(">>>>>>fileName:" +fileName);
+						System.out.println(">>>>process source ck_campaign fail:"+e.getMessage());
+						System.out.println(">>>>>>logStr:" +logStr);
+						System.out.println(">>>>>>fileName:" +fileName);
 						return;
 					}
 				}else if (dmpDataJson.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpDataJson.getAsString("referer")) && dmpDataJson.getAsString("referer").contains("ruten")) {	// 露天
 					try {
 						DmpLogMapper.aCategoryLogDataRetun.processCategory(dmpDataJson, dBCollection_class_url);
 					}catch(Exception e) {
-						log.error(">>>>process source pv_ruten fail:"+e.getMessage());
-						log.error(">>>>>>logStr:" +logStr);
-						log.error(">>>>>>fileName:" +fileName);
+						System.out.println(">>>>process source pv_ruten fail:"+e.getMessage());
+						System.out.println(">>>>>>logStr:" +logStr);
+						System.out.println(">>>>>>fileName:" +fileName);
 						return;
 					}
 				}else if (dmpDataJson.getAsString("trigger_type").equals("pv") && StringUtils.isNotBlank(dmpDataJson.getAsString("referer")) && dmpDataJson.getAsString("referer").contains("24h")) {		// 24h
 					try {
 						DmpLogMapper.aCategoryLogData24H.processCategory(dmpDataJson, dBCollection_class_url);
 					}catch(Exception e) {
-						log.error(">>>>process source pv_24h fail:"+e.getMessage());
-						log.error(">>>>>>logStr:" +logStr);
-						log.error(">>>>>>dmpDataJson:" +dmpDataJson);
-						log.error(">>>>>>fileName:" +fileName);
+						System.out.println(">>>>process source pv_24h fail:"+e.getMessage());
+						System.out.println(">>>>>>logStr:" +logStr);
+						System.out.println(">>>>>>dmpDataJson:" +dmpDataJson);
+						System.out.println(">>>>>>fileName:" +fileName);
 						return;
 					}
 				}else if (dmpDataJson.getAsString("trigger_type").equals("pv") ){
@@ -542,10 +542,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("category_source", "");
 				}
 			}catch(Exception e) {
-				log.error(">>>>process source class type fail:"+e.getMessage());
-				log.error(">>>>>>logStr:" +logStr);
-				log.error(">>>>>>dmpDataJson:" +dmpDataJson);
-				log.error(">>>>>>fileName:" +fileName);
+				System.out.println(">>>>process source class type fail:"+e.getMessage());
+				System.out.println(">>>>>>logStr:" +logStr);
+				System.out.println(">>>>>>dmpDataJson:" +dmpDataJson);
+				System.out.println(">>>>>>fileName:" +fileName);
 				return;
 			}
 				
@@ -555,7 +555,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					process24CategoryLevel(dmpDataJson);
 				}
 			}catch(Exception e) {
-				log.error(">>>>>>>fail process 24 category level:"+e.getMessage());
+				System.out.println(">>>>>>>fail process 24 category level:"+e.getMessage());
 				return;
 			}
 			
