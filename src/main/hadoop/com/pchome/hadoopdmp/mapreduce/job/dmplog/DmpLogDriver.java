@@ -109,7 +109,7 @@ public class DmpLogDriver {
 	  					hour = String.valueOf(i);
 	  				}
 	  				//載入bu log file
-	  				Path buPath = new Path("druid1.mypchome.com.tw:9000/druid_source/bu_log/"+dmpDate+"/"+hour);
+	  				Path buPath = new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/bu_log/"+dmpDate+"/"+hour);
 	  				FileStatus[] buStatus = fs.listStatus(buPath); 
 	  				for (FileStatus fileStatus : buStatus) {
 	  					String pathStr = fileStatus.getPath().toString();
