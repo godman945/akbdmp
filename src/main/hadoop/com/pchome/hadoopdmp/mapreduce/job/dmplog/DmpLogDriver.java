@@ -54,6 +54,13 @@ public class DmpLogDriver {
 	
 	public void drive(String env,String dmpDate,String dmpHour) throws Exception {
 		try {
+			
+			
+			log.info("99999999999999>>>>>>>>>>>>>>>:");
+			
+			
+			
+			
 			Calendar dmpDateCalendar = Calendar.getInstance();
 			dmpDateCalendar.setTime(sdf.parse(dmpDate));
 			
