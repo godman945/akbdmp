@@ -54,16 +54,8 @@ public class DmpLogDriver {
 	
 	public void drive(String env,String dmpDate,String dmpHour) throws Exception {
 		try {
-			
-			
-			log.info("99999999999999>>>>>>>>>>>>>>>:");
-			
-			
-			
-			
 			Calendar dmpDateCalendar = Calendar.getInstance();
 			dmpDateCalendar.setTime(sdf.parse(dmpDate));
-			
 			
 			JobConf jobConf = new JobConf();
 			jobConf.setNumMapTasks(5);
@@ -117,7 +109,7 @@ public class DmpLogDriver {
 	  					hour = String.valueOf(i);
 	  				}
 	  				//載入bu log file
-	  				Path buPath = new Path("/druid_source/bu_log/"+dmpDate+"/"+hour);
+	  				Path buPath = new Path("druid1.mypchome.com.tw:9000/druid_source/bu_log/"+dmpDate+"/"+hour);
 	  				FileStatus[] buStatus = fs.listStatus(buPath); 
 	  				for (FileStatus fileStatus : buStatus) {
 	  					String pathStr = fileStatus.getPath().toString();
