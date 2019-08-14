@@ -110,7 +110,7 @@ public class DmpLogDriver {
 	  					hour = String.valueOf(i);
 	  				}
 	  				//載入bu log file
-	  				Path buPath = new Path("/home/webuser/akb/storedata/bulog/"+dmpDate+"/"+hour);
+	  				Path buPath = new Path("/druid_source/bu_log/"+dmpDate+"/"+hour);
 	  				FileStatus[] buStatus = fs.listStatus(buPath); 
 	  				for (FileStatus fileStatus : buStatus) {
 	  					String pathStr = fileStatus.getPath().toString();
@@ -120,7 +120,7 @@ public class DmpLogDriver {
 	  					}
 	  				}
 	  				//載入kdcl log file
-	  				Path kdclPath = new Path("/home/webuser/akb/storedata/alllog/"+dmpDate+"/"+hour);
+	  				Path kdclPath = new Path("/druid_source/kdcl_log/"+dmpDate+"/"+hour);
 			        FileStatus[] kdclStatus = fs.listStatus(kdclPath); 
 					for (FileStatus fileStatus : kdclStatus) {
 						String pathStr = fileStatus.getPath().toString();
@@ -130,7 +130,7 @@ public class DmpLogDriver {
 						}
 					}
 					//載入pacl log file
-					Path paclPath = new Path("/home/webuser/pa/storedata/alllog/"+dmpDate+"/"+hour);
+					Path paclPath = new Path("/druid_source/pacl_log/"+dmpDate+"/"+hour);
 			        FileStatus[] paclStatus = fs.listStatus(paclPath); 
 					for (FileStatus fileStatus : paclStatus) {
 						String pathStr = fileStatus.getPath().toString();
