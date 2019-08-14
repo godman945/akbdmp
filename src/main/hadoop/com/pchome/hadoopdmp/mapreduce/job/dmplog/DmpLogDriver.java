@@ -110,7 +110,7 @@ public class DmpLogDriver {
 	  					hour = String.valueOf(i);
 	  				}
 	  				//載入bu log file
-	  				Path buPath = new Path("/druid_source/bu_log/"+dmpDate+"/"+hour);
+	  				Path buPath = new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/bu_log/"+dmpDate+"/"+hour);
 	  				FileStatus[] buStatus = fs.listStatus(buPath); 
 	  				for (FileStatus fileStatus : buStatus) {
 	  					String pathStr = fileStatus.getPath().toString();
@@ -120,7 +120,7 @@ public class DmpLogDriver {
 	  					}
 	  				}
 	  				//載入kdcl log file
-	  				Path kdclPath = new Path("/druid_source/kdcl_log/"+dmpDate+"/"+hour);
+	  				Path kdclPath = new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/kdcl_log/"+dmpDate+"/"+hour);
 			        FileStatus[] kdclStatus = fs.listStatus(kdclPath); 
 					for (FileStatus fileStatus : kdclStatus) {
 						String pathStr = fileStatus.getPath().toString();
@@ -130,7 +130,7 @@ public class DmpLogDriver {
 						}
 					}
 					//載入pacl log file
-					Path paclPath = new Path("/druid_source/pacl_log/"+dmpDate+"/"+hour);
+					Path paclPath = new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/pacl_log/"+dmpDate+"/"+hour);
 			        FileStatus[] paclStatus = fs.listStatus(paclPath); 
 					for (FileStatus fileStatus : paclStatus) {
 						String pathStr = fileStatus.getPath().toString();
@@ -142,7 +142,7 @@ public class DmpLogDriver {
 	  			}
 	        }else {//計算小時
 	        	//載入bu log file
-		        Path buPath = new Path("/druid_source/bu_log/"+dmpDate+"/"+dmpHour);
+		        Path buPath = new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/bu_log/"+dmpDate+"/"+dmpHour);
 		        FileStatus[] buStatus = fs.listStatus(buPath); 
 				for (FileStatus fileStatus : buStatus) {
 					String pathStr = fileStatus.getPath().toString();
@@ -152,7 +152,7 @@ public class DmpLogDriver {
 					}
 				}
 				//載入kdcl log file
-		        Path kdclPath = new Path("/druid_source/kdcl_log/"+dmpDate+"/"+dmpHour);
+		        Path kdclPath = new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/kdcl_log/"+dmpDate+"/"+dmpHour);
 		        FileStatus[] kdclStatus = fs.listStatus(kdclPath); 
 				for (FileStatus fileStatus : kdclStatus) {
 					String pathStr = fileStatus.getPath().toString();
@@ -162,7 +162,7 @@ public class DmpLogDriver {
 					}
 				}
 				//載入pacl log file
-				Path paclPath = new Path("/druid_source/pacl_log/"+dmpDate+"/"+dmpHour);
+				Path paclPath = new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/pacl_log/"+dmpDate+"/"+dmpHour);
 		        FileStatus[] paclStatus = fs.listStatus(paclPath); 
 				for (FileStatus fileStatus : paclStatus) {
 					String pathStr = fileStatus.getPath().toString();
