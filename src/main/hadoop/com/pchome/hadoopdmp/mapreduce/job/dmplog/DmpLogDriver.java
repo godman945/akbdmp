@@ -1,23 +1,16 @@
 package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.filecache.DistributedCache;
-import org.apache.hadoop.fs.FSDataInputStream;
-import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -27,12 +20,6 @@ import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
@@ -92,10 +79,20 @@ public class DmpLogDriver {
 	        conf.set("job.date",dmpDate);
 	        conf.set("job.hour",dmpHour);
 	        
+	        
+	        
+	        
+	        
+	       
+	        
 	        //輸入檔案
 	        List<Path> listPath = new ArrayList<Path>();  
 	        FileSystem fs = FileSystem.get(conf);
 	        
+	        Path test = new Path("/home/webuser/dmp/crawlBreadCrumb/data/24h_ad_category.csv");
+	        log.info(">>>>>>>>>>>>>>>>>>>>>>test:"+fs.exists(test));
+	        Path buPath2 = new Path("/druid_source/bu_log/2019-08-04/00/kdcl1-00.lzo");
+	        log.info(">>>>>>>>>>>>>>>>>>>>>>buPath2:"+fs.exists(buPath2));
 	        
 	        String hour = "";
 	        if(dmpHour.equals("day")) {//計算整天
@@ -109,7 +106,7 @@ public class DmpLogDriver {
 	  					hour = String.valueOf(i);
 	  				}
 	  				//載入bu log file
-	  				Path buPath = new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/bu_log/"+dmpDate+"/"+hour);
+	  				Path buPath = new Path("/druid_source/bu_log/"+dmpDate+"/"+hour);
 	  				FileStatus[] buStatus = fs.listStatus(buPath); 
 	  				for (FileStatus fileStatus : buStatus) {
 	  					String pathStr = fileStatus.getPath().toString();
