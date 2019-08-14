@@ -117,23 +117,18 @@ public class DmpLogDriver {
 	  					hour = String.valueOf(i);
 	  				}
 	  				//載入bu log file
-	  				Path buPath = new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/bu_log/"+dmpDate+"/"+hour);
-	  				log.info("ALEX>>>>>>>>>>>>>>>:"+buPath);
-	  				
-	  				
+	  				Path buPath = new Path("/druid_source/bu_log/"+dmpDate+"/"+hour);
 	  				FileStatus[] buStatus = fs.listStatus(buPath); 
 	  				for (FileStatus fileStatus : buStatus) {
 	  					String pathStr = fileStatus.getPath().toString();
 	  					String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
-	  					log.info("pathStr>>>>>>>>>>>>>>>:"+pathStr);
-	  					log.info("extensionName>>>>>>>>>>>>>>>:"+extensionName);
 	  					
 	  					if(extensionName.equals("LZO")) {
 	  						listPath.add(new Path(fileStatus.getPath().toString()));
 	  					}
 	  				}
 	  				//載入kdcl log file
-	  				Path kdclPath = new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/kdcl_log/"+dmpDate+"/"+hour);
+	  				Path kdclPath = new Path("/druid_source/kdcl_log/"+dmpDate+"/"+hour);
 			        FileStatus[] kdclStatus = fs.listStatus(kdclPath); 
 					for (FileStatus fileStatus : kdclStatus) {
 						String pathStr = fileStatus.getPath().toString();
@@ -143,7 +138,7 @@ public class DmpLogDriver {
 						}
 					}
 					//載入pacl log file
-					Path paclPath = new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/pacl_log/"+dmpDate+"/"+hour);
+					Path paclPath = new Path("/druid_source/pacl_log/"+dmpDate+"/"+hour);
 			        FileStatus[] paclStatus = fs.listStatus(paclPath); 
 					for (FileStatus fileStatus : paclStatus) {
 						String pathStr = fileStatus.getPath().toString();
@@ -155,7 +150,7 @@ public class DmpLogDriver {
 	  			}
 	        }else {//計算小時
 	        	//載入bu log file
-		        Path buPath = new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/bu_log/"+dmpDate+"/"+dmpHour);
+		        Path buPath = new Path("/druid_source/bu_log/"+dmpDate+"/"+dmpHour);
 		        FileStatus[] buStatus = fs.listStatus(buPath); 
 				for (FileStatus fileStatus : buStatus) {
 					String pathStr = fileStatus.getPath().toString();
@@ -165,7 +160,7 @@ public class DmpLogDriver {
 					}
 				}
 				//載入kdcl log file
-		        Path kdclPath = new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/kdcl_log/"+dmpDate+"/"+dmpHour);
+		        Path kdclPath = new Path("/druid_source/kdcl_log/"+dmpDate+"/"+dmpHour);
 		        FileStatus[] kdclStatus = fs.listStatus(kdclPath); 
 				for (FileStatus fileStatus : kdclStatus) {
 					String pathStr = fileStatus.getPath().toString();
@@ -175,7 +170,7 @@ public class DmpLogDriver {
 					}
 				}
 				//載入pacl log file
-				Path paclPath = new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/pacl_log/"+dmpDate+"/"+dmpHour);
+				Path paclPath = new Path("/druid_source/pacl_log/"+dmpDate+"/"+dmpHour);
 		        FileStatus[] paclStatus = fs.listStatus(paclPath); 
 				for (FileStatus fileStatus : paclStatus) {
 					String pathStr = fileStatus.getPath().toString();
@@ -203,13 +198,13 @@ public class DmpLogDriver {
 			job.setNumReduceTasks(5);//1個reduce 
 			job.setMapSpeculativeExecution(false);
 			if(env.equals("prd")) {
-				deleteExistedDir(fs, new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/dmp_output/"+dmpDate+"/"+dmpHour), true);
+				deleteExistedDir(fs, new Path("/druid_source/dmp_output/"+dmpDate+"/"+dmpHour), true);
 				FileOutputFormat.setOutputPath(job, new Path("/druid_source/dmp_output/"+dmpDate+"/"+dmpHour));
 			}else {
-				deleteExistedDir(fs, new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/dmp_output/"+dmpDate+"/"+dmpHour), true);
+				deleteExistedDir(fs, new Path("/druid_source/dmp_output/"+dmpDate+"/"+dmpHour), true);
 				FileOutputFormat.setOutputPath(job, new Path("/druid_source/dmp_output/"+dmpDate+"/"+dmpHour));
 			}
-			log.info("JOB OUTPUT PATH:"+"hdfs://druid1.mypchome.com.tw:9000/druid_source/dmp_output/"+dmpDate+"/"+dmpHour);
+			log.info("JOB OUTPUT PATH:"+"/druid_source/dmp_output/"+dmpDate+"/"+dmpHour);
 			FileInputFormat.setInputPaths(job, paths);
 			FileOutputFormat.setCompressOutput(job, true);  //job使用压缩  
 	        FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);  
@@ -217,38 +212,38 @@ public class DmpLogDriver {
 			
 	      //load jar path
 			String[] jarPaths = {
-					"hdfs://druid1.mypchome.com.tw:9000/hadoop_jar/lib/commons-lang-2.6.jar",
-					"hdfs://druid1.mypchome.com.tw:9000/hadoop_jar/lib/commons-logging-1.1.1.jar",
-					"hdfs://druid1.mypchome.com.tw:9000/hadoop_jar/lib/log4j-1.2.15.jar",
-					"hdfs://druid1.mypchome.com.tw:9000/hadoop_jar/lib/mongo-java-driver-2.11.3.jar",
-					"hdfs://druid1.mypchome.com.tw:9000/hadoop_jar/lib/softdepot-1.0.9.jar",
-					"hdfs://druid1.mypchome.com.tw:9000/hadoop_jar/lib/solr-solrj-4.5.0.jar",
-					"hdfs://druid1.mypchome.com.tw:9000/hadoop_jar/lib/noggit-0.5.jar",
-					"hdfs://druid1.mypchome.com.tw:9000/hadoop_jar/lib/httpcore-4.2.2.jar",
-					"hdfs://druid1.mypchome.com.tw:9000/hadoop_jar/lib/httpclient-4.2.3.jar",
-					"hdfs://druid1.mypchome.com.tw:9000/hadoop_jar/lib/httpmime-4.2.3.jar",
-					"hdfs://druid1.mypchome.com.tw:9000/hadoop_jar/lib/mysql-connector-java-5.1.12-bin.jar",
+					"/hadoop_jar/lib/commons-lang-2.6.jar",
+					"/hadoop_jar/lib/commons-logging-1.1.1.jar",
+					"/hadoop_jar/lib/log4j-1.2.15.jar",
+					"/hadoop_jar/lib/mongo-java-driver-2.11.3.jar",
+					"/hadoop_jar/lib/softdepot-1.0.9.jar",
+					"/hadoop_jar/lib/solr-solrj-4.5.0.jar",
+					"/hadoop_jar/lib/noggit-0.5.jar",
+					"/hadoop_jar/lib/httpcore-4.2.2.jar",
+					"/hadoop_jar/lib/httpclient-4.2.3.jar",
+					"/hadoop_jar/lib/httpmime-4.2.3.jar",
+					"/hadoop_jar/lib/mysql-connector-java-5.1.12-bin.jar",
 	
 					// add kafka jar
-					"hdfs://druid1.mypchome.com.tw:9000/hadoop_jar/lib/kafka-clients-0.9.0.0.jar",
-					"hdfs://druid1.mypchome.com.tw:9000/hadoop_jar/lib/kafka_2.11-0.9.0.0.jar",
-					"hdfs://druid1.mypchome.com.tw:9000/hadoop_jar/lib/slf4j-api-1.7.19.jar",
-					"hdfs://druid1.mypchome.com.tw:9000/hadoop_jar/lib/slf4j-log4j12-1.7.6.jar",
-					"hdfs://druid1.mypchome.com.tw:9000/hadoop_jar/lib/json-smart-2.3.jar",
-					"hdfs://druid1.mypchome.com.tw:9000/hadoop_jar/lib/asm-1.0.2.jar" 
+					"/hadoop_jar/lib/kafka-clients-0.9.0.0.jar",
+					"/hadoop_jar/lib/kafka_2.11-0.9.0.0.jar",
+					"/hadoop_jar/lib/slf4j-api-1.7.19.jar",
+					"/hadoop_jar/lib/slf4j-log4j12-1.7.6.jar",
+					"/hadoop_jar/lib/json-smart-2.3.jar",
+					"/hadoop_jar/lib/asm-1.0.2.jar" 
 			}; 
 			for (String jarPath : jarPaths) {
 				DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fs);
 			}
 	
 			String[] filePaths = {
-					"druid1.mypchome.com.tw:9001/home/webuser/dmp/crawlBreadCrumb/data/pfp_ad_category_new.csv",
-					"druid1.mypchome.com.tw:9001/home/webuser/dmp/readingdata/ClsfyGndAgeCrspTable.txt",
-					"druid1.mypchome.com.tw:9001/home/webuser/dmp/alex/log4j.xml",
-					"druid1.mypchome.com.tw:9001/home/webuser/dmp/jobfile/DMP_24h_category.csv",
-					"druid1.mypchome.com.tw:9001/home/webuser/dmp/jobfile/DMP_Ruten_category.csv",
-					"druid1.mypchome.com.tw:9001/home/webuser/dmp/jobfile/GeoLite2-City.mmdb",
-					"druid1.mypchome.com.tw:9001/home/webuser/dmp/jobfile/ThirdAdClassTable.txt"
+					"/hadoop_file/crawlBreadCrumb/data/pfp_ad_category_new.csv",
+					"/hadoop_file/readingdata/ClsfyGndAgeCrspTable.txt",
+					"/hadoop_file/alex/log4j.xml",
+					"/hadoop_file/jobfile/DMP_24h_category.csv",
+					"/hadoop_file/jobfile/DMP_Ruten_category.csv",
+					"/hadoop_file/jobfile/GeoLite2-City.mmdb",
+					"/hadoop_file/jobfile/ThirdAdClassTable.txt"
 			};
 			for (String filePath : filePaths) {
 				DistributedCache.addCacheFile(new URI(filePath), job.getConfiguration());
@@ -262,7 +257,6 @@ public class DmpLogDriver {
 			
 			
 		 } catch (Exception e) {
-			 log.info("><><><><><><><<M<><");
 			 log.error("drive error>>>>>> "+ e);
 	     }
 	}
