@@ -262,6 +262,7 @@ public class DmpLogDriver {
 			
 			
 		 } catch (Exception e) {
+			 log.info("><><><><><><><<M<><");
 			 log.error("drive error>>>>>> "+ e);
 	     }
 	}
