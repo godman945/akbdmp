@@ -226,13 +226,13 @@ public class DmpLogDriver {
 			}
 	
 			String[] filePaths = {
-					"/hadoop_file/crawlBreadCrumb/data/pfp_ad_category_new.csv",
-					"/hadoop_file/readingdata/ClsfyGndAgeCrspTable.txt",
-					"/hadoop_file/alex/log4j.xml",
-					"/hadoop_file/jobfile/DMP_24h_category.csv",
-					"/hadoop_file/jobfile/DMP_Ruten_category.csv",
-					"/hadoop_file/jobfile/GeoLite2-City.mmdb",
-					"/hadoop_file/jobfile/ThirdAdClassTable.txt"
+					"/hadoop_file/pfp_ad_category_new.csv",
+					"/hadoop_file/ClsfyGndAgeCrspTable.txt",
+					"/hadoop_file/log4j.xml",
+					"/hadoop_file/DMP_24h_category.csv",
+					"/hadoop_file/DMP_Ruten_category.csv",
+					"/hadoop_file/GeoLite2-City.mmdb",
+					"/hadoop_file/ThirdAdClassTable.txt"
 			};
 			for (String filePath : filePaths) {
 				DistributedCache.addCacheFile(new URI(filePath), job.getConfiguration());
@@ -283,6 +283,7 @@ public class DmpLogDriver {
 			}else {
 				System.setProperty("spring.profiles.active", "stg");
 			}
+			
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			DmpLogDriver dmpLogDriver = (DmpLogDriver) ctx.getBean(DmpLogDriver.class);
 			dmpLogDriver.drive(args[0],args[1],args[2]);
