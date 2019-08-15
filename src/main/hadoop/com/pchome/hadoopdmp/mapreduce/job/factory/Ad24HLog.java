@@ -120,10 +120,19 @@ public class Ad24HLog extends ACategoryLogData {
 						// url 存在 status = 0 , mongo update_date 更新(一天一次) query_time+1 如大於 2000 不再加
 						
 						
+						if("xxx-fc62208d-bb3c-4943-a9c7-dbda0721dd4d".equals(dmpJSon.getAsString("uuid"))) {
+							System.out.println("query_time not exist");
+							if(dbObject.get("query_time") == null) {
+								dbObject.put("query_time", 1);
+							}
+						}
 						updateClassUrlUpdateDate(this.referer, dbObject);
 						if("xxx-fc62208d-bb3c-4943-a9c7-dbda0721dd4d".equals(dmpJSon.getAsString("uuid"))) {
 							System.out.println(">>>>>>>>>>>>>>>>>>>>>updateClassUrlUpdateDate");
 						}
+						
+						
+						
 						
 						updateClassUrlQueryTime(this.referer, dbObject);
 						
