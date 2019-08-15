@@ -38,10 +38,6 @@ public class Ad24HLog extends ACategoryLogData {
 	
 	
 	public Object processCategory(net.minidev.json.JSONObject dmpJSon, DBCollection dbCollectionUrl) throws Exception {
-		if("xxx-fc62208d-bb3c-4943-a9c7-dbda0721dd4d".equals(dmpJSon.getAsString("uuid"))) {
-			System.out.println(">>>>>>>>>>>>>>>>>>>>>1");
-		}
-		
 		category = "";
 		categorySource = "";
 		class24hUrlClassify = "" ;
@@ -52,14 +48,8 @@ public class Ad24HLog extends ACategoryLogData {
 			dmpJSon.put("behavior", "24h");
 			return dmpJSon;
 		}
-		if("xxx-fc62208d-bb3c-4943-a9c7-dbda0721dd4d".equals(dmpJSon.getAsString("uuid"))) {
-			System.out.println(">>>>>>>>>>>>>>>>>>>>>2");
-		}
 		//用url比對24h對照表找出分類代號
 		if(urlCodeMapping.containsKey(referer)) {
-			if("xxx-fc62208d-bb3c-4943-a9c7-dbda0721dd4d".equals(dmpJSon.getAsString("uuid"))) {
-				System.out.println(">>>>>>>>>>>>>>>>>>>>>3");
-			}
 			category = urlCodeMapping.get(referer);
 			if(StringUtils.isNotBlank(category)) {
 				categorySource = "24h";
@@ -80,72 +70,33 @@ public class Ad24HLog extends ACategoryLogData {
 		
 		//	url比對不到24H分類
 		if (StringUtils.isBlank(category)){
-			if("xxx-fc62208d-bb3c-4943-a9c7-dbda0721dd4d".equals(dmpJSon.getAsString("uuid"))) {
-				System.out.println(">>>>>>>>>>>>>>>>>>>>>5");
-				System.out.println(">>>>>>>>>>>>>>>>>>>>>this.referer:"+this.referer);
-			}
 			//查詢url
 			if(urlDBObjectMapping.containsKey(this.referer)) {
-				if("xxx-fc62208d-bb3c-4943-a9c7-dbda0721dd4d".equals(dmpJSon.getAsString("uuid"))) {
-					System.out.println(">>>>>>>>>>>>>>>>>>>>>TEST1");
-				}
 				dbObject = urlDBObjectMapping.get(this.referer);
 			}else {
 				dbObject = queryClassUrl(this.referer);
-				if("xxx-fc62208d-bb3c-4943-a9c7-dbda0721dd4d".equals(dmpJSon.getAsString("uuid"))) {
-					System.out.println(">>>>>>>>>>>>>>>>>>>>>TEST2:"+dbObject);
-				}
 				if(dbObject == null) {
-					if("xxx-fc62208d-bb3c-4943-a9c7-dbda0721dd4d".equals(dmpJSon.getAsString("uuid"))) {
-						System.out.println(">>>>>>>>>>>>>>>>>>>>>5-1");
-					}
 					category = "";
 					categorySource = "";
 					class24hUrlClassify = "N";
 					// url 不存在 ,寫入 mongo url代號 status=0
 					insertClassUrl(this.referer, "", "0", 1);
-					if("xxx-fc62208d-bb3c-4943-a9c7-dbda0721dd4d".equals(dmpJSon.getAsString("uuid"))) {
-						System.out.println(">>>>>>>>>>>>>>>>>>>>>5*****");
-					}
 					dbObject = queryClassUrl(this.referer);
 					urlDBObjectMapping.put(this.referer, dbObject);
 				}else {
-					if("xxx-fc62208d-bb3c-4943-a9c7-dbda0721dd4d".equals(dmpJSon.getAsString("uuid"))) {
-						System.out.println(">>>>>>>>>>>>>>>>>>>>>5-2");
-					}
 					if (dbObject.get("status").equals("0")) {
 						category = "";
 						categorySource = "";
 						class24hUrlClassify = "N";
 						// url 存在 status = 0 , mongo update_date 更新(一天一次) query_time+1 如大於 2000 不再加
-						
-						
-						if("xxx-fc62208d-bb3c-4943-a9c7-dbda0721dd4d".equals(dmpJSon.getAsString("uuid"))) {
-							System.out.println("query_time not exist");
-							if(dbObject.get("query_time") == null) {
-								dbObject.put("query_time", 1);
-							}
+						if(dbObject.get("query_time") == null) {
+							dbObject.put("query_time", 1);
 						}
 						updateClassUrlUpdateDate(this.referer, dbObject);
-						if("xxx-fc62208d-bb3c-4943-a9c7-dbda0721dd4d".equals(dmpJSon.getAsString("uuid"))) {
-							System.out.println(">>>>>>>>>>>>>>>>>>>>>updateClassUrlUpdateDate");
-						}
-						
-						
-						
-						
 						updateClassUrlQueryTime(this.referer, dbObject);
-						
-						if("xxx-fc62208d-bb3c-4943-a9c7-dbda0721dd4d".equals(dmpJSon.getAsString("uuid"))) {
-							System.out.println(">>>>>>>>>>>>>>>>>>>>>updateClassUrlQueryTime");
-						}
-						
 						dbObject.put("query_time", (Integer.parseInt(dbObject.get("query_time").toString()) + 1));
 						urlDBObjectMapping.put(this.referer, dbObject);
 					} else if ((dbObject.get("status").equals("1"))	&& (StringUtils.isNotBlank(dbObject.get("ad_class").toString()))) {
-						if("xxx-fc62208d-bb3c-4943-a9c7-dbda0721dd4d".equals(dmpJSon.getAsString("uuid"))) {
-							System.out.println(">>>>>>>>>>>>>>>>>>>>>5-3");
-						}
 						category = dbObject.get("ad_class").toString();
 						categorySource = "24h";
 						class24hUrlClassify = "Y";
@@ -160,9 +111,6 @@ public class Ad24HLog extends ACategoryLogData {
 		dmpJSon.put("classify", class24hUrlClassify);
 		dmpJSon.put("behavior", "24h");
 		dmpJSon.put("category", category);
-		if("xxx-fc62208d-bb3c-4943-a9c7-dbda0721dd4d".equals(dmpJSon.getAsString("uuid"))) {
-			System.out.println(">>>>>>>>>>>>>>>>>>>>>END---5");
-		}
 		return dmpJSon;
 		
 	}
