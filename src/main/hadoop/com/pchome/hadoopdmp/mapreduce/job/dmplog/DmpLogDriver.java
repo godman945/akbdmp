@@ -186,19 +186,12 @@ public class DmpLogDriver {
 			job.setMapOutputKeyClass(Text.class);
 			job.setMapOutputValueClass(Text.class);
 			job.setReducerClass(DmpLogReducer.class);
-			job.setInputFormatClass(LzoTextInputFormat.class);
+//			job.setInputFormatClass(LzoTextInputFormat.class);
 			job.setOutputKeyClass(Text.class);
 			job.setOutputValueClass(Text.class);
 			job.getConfiguration().set("mapreduce.output.basename", "druid_"+dmpDate+"_"+dmpHour);
 			job.setNumReduceTasks(1); 
 			job.setMapSpeculativeExecution(false);
-			
-			
-			
-		
-			
-			
-			
 			
 			
 			if(env.equals("prd")) {
@@ -302,6 +295,9 @@ public class DmpLogDriver {
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			DmpLogDriver dmpLogDriver = (DmpLogDriver) ctx.getBean(DmpLogDriver.class);
 			dmpLogDriver.drive(args[0],args[1],args[2]);
+			
+			
+			
 		}catch(Exception e) {
 			log.error(e.getMessage());
 		}
