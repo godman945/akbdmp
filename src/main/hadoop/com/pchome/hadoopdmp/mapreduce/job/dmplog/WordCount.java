@@ -27,7 +27,7 @@ public class WordCount {
 		job.setReducerClass(IntSumReducer.class);
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(IntWritable.class);
-		FileInputFormat.addInputPath(job, new Path("/durid_source/word_count"));
+		FileInputFormat.addInputPath(job, new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/word_count/a.txt"));
 		FileOutputFormat.setOutputPath(job, new Path("/durid_source"));
 		System.exit(job.waitForCompletion(true) ? 0 : 1);
 	}
