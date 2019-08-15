@@ -266,7 +266,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			dmpDataJson.put("mark_layer3", "");
 			dmpDataJson.put("mark_layer4", "");
 			
-			if(logpath.contains("/akb/storedata/alllog/")) {
+			if(logpath.contains("kdcl_log")) {
 				try {
 					//kdcl log	raw data格式為一般或是Campaign
 					if(logStr.indexOf(kdclSymbol) > -1 ){
@@ -354,7 +354,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				}catch(Exception e) {
 					System.out.println(">>>> kdcl set json fail:"+dmpDataJson);
 				}
-			}else if(logpath.contains("/pa/storedata/alllog/") ) {
+			}else if(logpath.contains("pacl_log") ) {
 				try {
 					this.values = this.logStr.split(paclSymbol,-1);
 					dmpDataJson.put("fileName", fileName);
@@ -417,7 +417,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					System.out.println(">>>>pa set json fail logStr:"+logStr);
 					return;
 				}
-			}else if(logpath.contains("/akb/storedata/bulog/")) {
+			}else if(logpath.contains("bu_log")) {
 				try {
 					String[] values = logStr.split(paclSymbol,-1);
 					if(StringUtils.isBlank(values[2])) {
@@ -544,30 +544,25 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				return;
 			}
 				
+			
 			//館別分類
-			try {
-				if(StringUtils.isNotBlank(dmpDataJson.getAsString("mark_value"))) {
-					process24CategoryLevel(dmpDataJson);
+			if(logpath.contains("bu_log")) {
+				try {
+					if(StringUtils.isNotBlank(dmpDataJson.getAsString("mark_value"))) {
+						process24CategoryLevel(dmpDataJson);
+					}
+				}catch(Exception e) {
+					System.out.println(">>>>>>>fail process 24 category level:"+e.getMessage());
+					return;
 				}
-			}catch(Exception e) {
-				System.out.println(">>>>>>>fail process 24 category level:"+e.getMessage());
-				return;
 			}
 			
 //			寫入reduce
 			try {
 				context.write(new Text(dmpDataJson.getAsString("uuid")), new Text(dmpDataJson.toString()));	
-//				for (int i= 0; i < markValueList.length; i++) {
-//					if(StringUtils.isNotBlank(dmpDataJson.getAsString(markValueList[i]))) {
-//						context.write(new Text(dmpDataJson.getAsString(markValueList[i])), new Text(dmpDataJson.toString()));
-////						keyOut.set(dmpDataJson.getAsString("uuid"));
-////						context.write(keyOut, new Text(dmpDataJson.toString()));
-//					}
-//				}
 			} catch (Exception e) {
 				log.error(">>>>write to reduce fail:"+e.getMessage());
 			}
-			
 	}
 	
 	
