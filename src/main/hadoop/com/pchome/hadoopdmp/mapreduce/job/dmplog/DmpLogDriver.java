@@ -63,6 +63,8 @@ public class DmpLogDriver {
 			// hdfs
 			Configuration conf = new Configuration();
 //			conf.set("mapreduce.map.output.compress.codec", "com.hadoop.compression.lzo.LzoCodec");
+			conf.set("io.compression.codecs", "org.apache.hadoop.io.compress.DefaultCodec,org.apache.hadoop.io.compress.GzipCodec,com.hadoop.compression.lzo.LzopCodec");
+			conf.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
 			conf.set("mapreduce.map.speculative", "false");
 			conf.set("mapreduce.reduce.speculative", "false");
 			conf.set("mapreduce.task.timeout", "0");
