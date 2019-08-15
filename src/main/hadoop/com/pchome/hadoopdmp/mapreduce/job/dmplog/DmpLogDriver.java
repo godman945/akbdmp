@@ -45,7 +45,7 @@ public class DmpLogDriver {
 			dmpDateCalendar.setTime(sdf.parse(dmpDate));
 			
 			JobConf jobConf = new JobConf();
-			jobConf.setNumMapTasks(5);
+			jobConf.setNumMapTasks(1);
 			jobConf.set("mapred.max.split.size","9045728000"); //3045728 49 //3045728000 7
 			jobConf.set("mapred.min.split.size","3045728000"); //1015544 49 //1015544000 7
 			//ask推测执行
@@ -178,7 +178,7 @@ public class DmpLogDriver {
 			job.setOutputKeyClass(Text.class);
 			job.setOutputValueClass(Text.class);
 			job.getConfiguration().set("mapreduce.output.basename", "druid_"+dmpDate+"_"+dmpHour);
-			job.setNumReduceTasks(5);//1個reduce 
+			job.setNumReduceTasks(1); 
 			job.setMapSpeculativeExecution(false);
 			if(env.equals("prd")) {
 				deleteExistedDir(fs, new Path("/druid_source/dmp_output/"+dmpDate+"/"+dmpHour), true);
