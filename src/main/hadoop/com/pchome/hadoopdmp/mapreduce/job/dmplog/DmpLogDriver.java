@@ -62,9 +62,16 @@ public class DmpLogDriver {
 			
 			// hdfs
 			Configuration conf = new Configuration();
+			
 //			conf.set("mapreduce.map.output.compress.codec", "com.hadoop.compression.lzo.LzoCodec");
-			conf.set("io.compression.codecs", "org.apache.hadoop.io.compress.DefaultCodec,org.apache.hadoop.io.compress.GzipCodec,com.hadoop.compression.lzo.LzopCodec");
-			conf.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
+//			conf.set("io.compression.codecs", "org.apache.hadoop.io.compress.DefaultCodec,org.apache.hadoop.io.compress.GzipCodec,com.hadoop.compression.lzo.LzopCodec");
+//			conf.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
+			
+			
+			conf.set("mapreduce.map.output.compress", "true");
+			conf.set("mapreduce.map.output.compress.codec", "com.hadoop.compression.lzo.LzoCodec");
+
+			
 			conf.set("mapreduce.map.speculative", "false");
 			conf.set("mapreduce.reduce.speculative", "false");
 			conf.set("mapreduce.task.timeout", "0");
@@ -72,7 +79,7 @@ public class DmpLogDriver {
 			conf.set("mapred.reduce.tasks.speculative.execution","true");
 			conf.set("mapred.child.java.opts", "-Xmx4096M");
 //			conf.set("mapreduce.jobtracker.address", "hpd11.mypchome.com.tw:9001");
-			conf.set("mapred.job.tracker", "druid1.mypchome.com.tw:9001");
+//			conf.set("mapred.job.tracker", "druid1.mypchome.com.tw:9001");
 			conf.set("mapreduce.map.memory.mb", "4096");
 	        conf.set("mapreduce.map.java.opts", "-Xmx4096m");
 	        conf.set("mapreduce.reduce.memory.mb", "4096");
@@ -209,7 +216,8 @@ public class DmpLogDriver {
 					"/hadoop_jar/lib/httpclient-4.2.3.jar",
 					"/hadoop_jar/lib/httpmime-4.2.3.jar",
 					"/hadoop_jar/lib/mysql-connector-java-5.1.12-bin.jar",
-	
+					"/hadoop_jar/lib/hadoop-lzo-0.4.20.jar",
+					
 					// add kafka jar
 					"/hadoop_jar/lib/kafka-clients-0.9.0.0.jar",
 					"/hadoop_jar/lib/kafka_2.11-0.9.0.0.jar",
