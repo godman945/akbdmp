@@ -52,9 +52,9 @@ public class DmpLogDriver {
 			jobConf.set("mapred.map.tasks.speculative.execution","true");
 			jobConf.set("mapred.reduce.tasks.speculative.execution","true");
 			//JVM
-			jobConf.set("mapred.child.java.opts", "-Xmx8192M");
-			jobConf.set("mapreduce.map.memory.mb", "8192");
-			jobConf.set("mapreduce.reduce.memory.mb", "8192");
+			jobConf.set("mapred.child.java.opts", "-Xmx4096M");
+			jobConf.set("mapreduce.map.memory.mb", "4096");
+			jobConf.set("mapreduce.reduce.memory.mb", "4096");
 			jobConf.set("mapreduce.job.running.map.limit", "100");
 			jobConf.set("spring.profiles.active", env);
 			jobConf.set("job.date",dmpDate);
@@ -71,10 +71,10 @@ public class DmpLogDriver {
 			conf.set("mapred.child.java.opts", "-Xmx8192M");
 //			conf.set("mapreduce.jobtracker.address", "hpd11.mypchome.com.tw:9001");
 			conf.set("mapreduce.jobtracker.address", "druid1.mypchome.com.tw:9001");
-			conf.set("mapreduce.map.memory.mb", "8192");
-	        conf.set("mapreduce.map.java.opts", "-Xmx8192m");
-	        conf.set("mapreduce.reduce.memory.mb", "8192");
-	        conf.set("mapreduce.reduce.java.opts", "-Xmx8192m");
+			conf.set("mapreduce.map.memory.mb", "4096");
+	        conf.set("mapreduce.map.java.opts", "-Xmx4096m");
+	        conf.set("mapreduce.reduce.memory.mb", "4096");
+	        conf.set("mapreduce.reduce.java.opts", "-Xmx4096m");
 	        conf.set("spring.profiles.active", env);
 	        conf.set("job.date",dmpDate);
 	        conf.set("job.hour",dmpHour);
