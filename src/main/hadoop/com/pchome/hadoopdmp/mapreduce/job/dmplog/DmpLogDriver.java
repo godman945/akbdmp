@@ -15,6 +15,8 @@ import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.compress.CompressionCodec;
+import org.apache.hadoop.io.compress.CompressionCodecFactory;
 import org.apache.hadoop.io.compress.GzipCodec;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.Job;
@@ -24,6 +26,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
+import com.hadoop.mapreduce.LzoLineRecordReader;
 import com.hadoop.mapreduce.LzoTextInputFormat;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 
@@ -86,12 +89,12 @@ public class DmpLogDriver {
 	        conf.set("job.date",dmpDate);
 	        conf.set("job.hour",dmpHour);
 	        
-	        
-	        
-	        
-	        
 	       
-	        
+	    	CompressionCodecFactory compressionCodecs = new CompressionCodecFactory(conf);
+	    	System.out.println("11111111111111");
+			CompressionCodec codec = compressionCodecs.getCodec(new Path("/druid_source/kdcl_log/2019-08-04/00/20190804_00_4c.log.lzo"));
+			System.out.println(codec == null);
+			System.out.println("22222222222222222");
 	        //輸入檔案
 	        List<Path> listPath = new ArrayList<Path>();  
 	        FileSystem fs = FileSystem.get(conf);
@@ -189,6 +192,15 @@ public class DmpLogDriver {
 			job.getConfiguration().set("mapreduce.output.basename", "druid_"+dmpDate+"_"+dmpHour);
 			job.setNumReduceTasks(1); 
 			job.setMapSpeculativeExecution(false);
+			
+			
+			
+		
+			
+			
+			
+			
+			
 			if(env.equals("prd")) {
 				deleteExistedDir(fs, new Path("/druid_source/dmp_output/"+dmpDate+"/"+dmpHour), true);
 				FileOutputFormat.setOutputPath(job, new Path("/druid_source/dmp_output/"+dmpDate+"/"+dmpHour));
