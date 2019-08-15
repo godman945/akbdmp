@@ -111,7 +111,7 @@ public class DmpLogDriver {
 //	  					}
 //	  				}
 	  				//載入kdcl log file
-	  				Path kdclPath = new Path("/druid_source/kdcl_log/"+dmpDate+"/"+hour);
+	  				Path kdclPath = new Path("/home/webuser/analyzer/storedata/alllog/"+dmpDate);
 			        FileStatus[] kdclStatus = fs.listStatus(kdclPath); 
 					for (FileStatus fileStatus : kdclStatus) {
 						String pathStr = fileStatus.getPath().toString();
