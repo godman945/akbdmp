@@ -150,6 +150,7 @@ public class DmpLogDriver {
 					String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
 					if(extensionName.equals("LZO")) {
 						listPath.add(new Path(fileStatus.getPath().toString()));
+						log.info("判斷存在:"+fs.exists(new Path(fileStatus.getPath().toString()))+">>>"+new Path(fileStatus.getPath().toString()));
 					}
 				}
 //				//載入pacl log file
