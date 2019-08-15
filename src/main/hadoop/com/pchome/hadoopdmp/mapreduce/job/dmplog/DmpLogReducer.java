@@ -72,7 +72,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	public RedisTemplate<String, Object> redisTemplate = null;
 
-	public static int count_test = 0;
+	
 
 	public JSONParser jsonParser = null;
 
@@ -93,11 +93,10 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();
 	public static Map<String, String> pfbxWebsiteCategory = new HashMap<String, String>();
 	public static List<String> categoryLevelMappingList = new ArrayList<String>();
-	private static Map<String, String> existLevelCode = new HashMap<String, String>();
 	
 	
 	
-	
+	public static int count_test = 0;
 	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
@@ -273,6 +272,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
 					context.write(new Text(wiriteToDruid.toString()), null);
 					wiriteToDruid.setLength(0);
+					count_test = count_test + 1;
 				}else {
 					for (int i= 0; i < markLevelList.length; i++) {
 						if(StringUtils.isNotBlank(dmpJSon.getAsString(markLevelList[i]))) {
@@ -333,6 +333,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 							keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
 							context.write(new Text(wiriteToDruid.toString()), null);
 							wiriteToDruid.setLength(0);
+							count_test = count_test + 1;
 						}
 					}
 					dmpJSon.clear();
@@ -347,7 +348,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	
 	public void cleanup(Context context) {
 		try {
-			
+			System.out.println("total>>>>>>>>>>>>>>>>>>>>>>>>"+count_test);
 //			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>uuidPv:"+uuidPv);
 //			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>uuidSet:"+uuidSet.size());
 			
