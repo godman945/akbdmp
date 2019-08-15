@@ -89,12 +89,6 @@ public class DmpLogDriver {
 	        conf.set("job.date",dmpDate);
 	        conf.set("job.hour",dmpHour);
 	        
-	       
-	    	CompressionCodecFactory compressionCodecs = new CompressionCodecFactory(conf);
-	    	System.out.println("11111111111111");
-			CompressionCodec codec = compressionCodecs.getCodec(new Path("/druid_source/kdcl_log/2019-08-04/00/20190804_00_4c.log.lzo"));
-			System.out.println(codec == null);
-			System.out.println("22222222222222222");
 	        //輸入檔案
 	        List<Path> listPath = new ArrayList<Path>();  
 	        FileSystem fs = FileSystem.get(conf);
@@ -121,7 +115,7 @@ public class DmpLogDriver {
 	  					}
 	  				}
 	  				//載入kdcl log file
-	  				Path kdclPath = new Path("/home/webuser/analyzer/storedata/alllog/"+dmpDate);
+	  				Path kdclPath = new Path("/druid_source/kdcl_log/"+dmpDate);
 			        FileStatus[] kdclStatus = fs.listStatus(kdclPath); 
 					for (FileStatus fileStatus : kdclStatus) {
 						String pathStr = fileStatus.getPath().toString();
