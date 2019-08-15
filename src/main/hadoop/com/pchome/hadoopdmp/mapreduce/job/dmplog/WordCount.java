@@ -17,8 +17,8 @@ public class WordCount {
 		
 		FileSystem fs = FileSystem.get(conf);
 		System.out.println("1111111111");
-		fs.exists(new Path("/durid_source/word_count/a.txt"));
-		fs.exists(new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/word_count/a.txt"));
+		System.out.println(fs.exists(new Path("/durid_source/word_count/a.txt")));
+		System.out.println(fs.exists(new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/word_count/a.txt")));
 		
 		Job job = new Job(conf, "word count");
 		job.setJarByClass(WordCount.class);
