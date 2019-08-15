@@ -70,7 +70,7 @@ public class DmpLogDriver {
 			conf.set("mapred.reduce.tasks.speculative.execution","true");
 			conf.set("mapred.child.java.opts", "-Xmx4096M");
 //			conf.set("mapreduce.jobtracker.address", "hpd11.mypchome.com.tw:9001");
-			conf.set("mapreduce.jobtracker.address", "druid1.mypchome.com.tw:9001");
+			conf.set("mapreduce.jobtracker.address", "druid1.mypchome.com.tw:50070");
 			conf.set("mapreduce.map.memory.mb", "4096");
 	        conf.set("mapreduce.map.java.opts", "-Xmx4096m");
 	        conf.set("mapreduce.reduce.memory.mb", "4096");
