@@ -45,7 +45,7 @@ public class DmpLogDriver {
 			dmpDateCalendar.setTime(sdf.parse(dmpDate));
 			
 			JobConf jobConf = new JobConf();
-			jobConf.setNumMapTasks(1);
+			jobConf.setNumMapTasks(10);
 			jobConf.set("mapred.max.split.size","9045728000"); //3045728 49 //3045728000 7
 			jobConf.set("mapred.min.split.size","3045728000"); //1015544 49 //1015544000 7
 			//ask推测执行
@@ -150,7 +150,6 @@ public class DmpLogDriver {
 					String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
 					if(extensionName.equals("LZO")) {
 						listPath.add(new Path(fileStatus.getPath().toString()));
-						break;
 					}
 				}
 //				//載入pacl log file
