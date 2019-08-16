@@ -19,11 +19,16 @@ public class TokenizerMapper extends Mapper<LongWritable, Text, Text, Text> {
     private static Logger log = Logger.getLogger(TokenizerMapper.class);
     private static String kdclSymbol = String.valueOf(new char[] { 9, 31 });
     private static String[] values  = null;
+    private static net.minidev.json.JSONObject json = new net.minidev.json.JSONObject();
     
     private static int count = 0;
     public synchronized void map(LongWritable offset, Text value, Context context)  {
     	try {
     		System.out.println(value.toString());
+    		
+    		json.put("alex", "5555");
+    		
+    		System.out.println(json.get("alex"));
     		this.values = value.toString().split(kdclSymbol,-1);
     		if(count == 0) {
     			for (String string : values) {
