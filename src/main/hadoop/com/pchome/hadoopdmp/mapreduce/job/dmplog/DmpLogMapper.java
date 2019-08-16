@@ -156,7 +156,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public static ACategoryLogData aCategoryLogData24H = null;
 	private DB mongoOrgOperations;
 	private static DBCollection dBCollection_class_url;
-	private static net.minidev.json.JSONObject json = new net.minidev.json.JSONObject();
+	private static net.minidev.json.JSONObject json =  new net.minidev.json.JSONObject();
+	
+	
+	
+	private static net.minidev.json.JSONObject dmpDataJson999 =  new net.minidev.json.JSONObject();
 //	private static net.minidev.json.JSONObject dmpDataJson = new net.minidev.json.JSONObject();
 	public static Map<String, JSONObject> categoryLevelMappingMap = new HashMap<String, JSONObject>();
 	
@@ -254,6 +258,14 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		System.out.println("---------***---------");
 		json.put("alex", "5555");
 		System.out.println(json.get("alex"));
+		
+		
+		dmpDataJson999.put("alex", "8888");
+		System.out.println(dmpDataJson999.get("alex"));
+		
+		
+		
+		
 //		dmpDataJson.clear();
 ////		inputSplit = (InputSplit)context.getInputSplit(); 
 ////		logpath = ((FileSplit)inputSplit).getPath().toString();
