@@ -2,6 +2,8 @@ package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
 
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 //import java.io.File;
 //import java.io.InputStreamReader;
 //import java.io.Reader;
@@ -54,8 +56,12 @@ package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 import org.springframework.stereotype.Component;
 
 import com.maxmind.geoip2.DatabaseReader;
+import com.pchome.hadoopdmp.enumerate.CategoryLogEnum;
+import com.pchome.hadoopdmp.mapreduce.job.factory.ACategoryLogData;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryCodeBean;
+import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryLogFactory;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryRutenCodeBean;
+import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 
 import org.apache.hadoop.mapreduce.InputSplit;
 import net.minidev.json.JSONObject;
@@ -127,6 +133,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public static List<CategoryCodeBean> category24hBeanList = new ArrayList<CategoryCodeBean>();				 //24H分類表
 	public static List<CategoryRutenCodeBean> categoryRutenBeanList = new ArrayList<CategoryRutenCodeBean>();
 	public static Map<String, JSONObject> categoryLevelMappingMap = new HashMap<String, JSONObject>();
+	public static ACategoryLogData aCategoryLogDataClick = null;
+	public static ACategoryLogData aCategoryLogDataRetun = null;
+	public static ACategoryLogData aCategoryLogData24H = null;
 	
 	public void setup(Context context) {
 		System.out.println(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
@@ -135,11 +144,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			record_hour = context.getConfiguration().get("job.hour");
 			System.out.println("record_date:" + record_date);
 			System.out.println("record_hour:"+record_hour);
-//			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
-//			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-//			this.aCategoryLogDataClick = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
-//			this.aCategoryLogDataRetun = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
-//			this.aCategoryLogData24H = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
+			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
+			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+			this.aCategoryLogDataClick = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
+			this.aCategoryLogDataRetun = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
+			this.aCategoryLogData24H = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
 //			
 //			this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
 //			dBCollection_class_url =  this.mongoOrgOperations.getCollection("class_url");
