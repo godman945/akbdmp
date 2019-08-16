@@ -164,7 +164,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			record_hour = context.getConfiguration().get("job.hour");
 			System.out.println("record_date:" + record_date);
 			System.out.println("record_hour:"+record_hour);
-			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
+//			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
 //			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 //			this.aCategoryLogDataClick = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
 //			this.aCategoryLogDataRetun = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
@@ -253,6 +253,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	@Override
 	public synchronized void map(LongWritable offset, Text value, Context context) {
 //		清空mapper中json資料
+		System.out.println("---------***---------");
 		dmpDataJson.clear();
 		inputSplit = (InputSplit)context.getInputSplit(); 
 		logpath = ((FileSplit)inputSplit).getPath().toString();
