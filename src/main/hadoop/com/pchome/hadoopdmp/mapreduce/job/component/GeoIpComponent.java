@@ -15,12 +15,12 @@ public class GeoIpComponent {
 	private static String ip = ""; 
 	private static IpAdd ipAdd = new IpAdd();
 	private static CityResponse response = null;
-	public net.minidev.json.JSONObject ipTransformGEO(net.minidev.json.JSONObject dmpJSon) throws Exception {
+	public net.minidev.json.JSONObject ipTransformGEO(net.minidev.json.JSONObject dmpJSon_997) throws Exception {
 		// 判斷是否為正確ip格式
-		ip = dmpJSon.getAsString("ip");
+		ip = dmpJSon_997.getAsString("ip");
 		if (!ipAdd.isIP(ip)) {
-			dmpJSon.put("area_info_classify", "null");
-			return dmpJSon;
+			dmpJSon_997.put("area_info_classify", "null");
+			return dmpJSon_997;
 		}
 		// ip轉換國家、城市
 		InetAddress ipAddress = DmpLogMapper.ipAddress.getByName(ip);
@@ -31,13 +31,13 @@ public class GeoIpComponent {
 			throw e;
 		}
 		if (response == null) {
-			dmpJSon.put("area_info_classify", "N");
-			return dmpJSon;
+			dmpJSon_997.put("area_info_classify", "N");
+			return dmpJSon_997;
 		}
 		String countryStr = response.getCountry().getName();
 		String cityStr = response.getCity().getNames().get("en");
-		dmpJSon.put("area_country", countryStr);
-		dmpJSon.put("area_city", cityStr);
-		return dmpJSon;
+		dmpJSon_997.put("area_country", countryStr);
+		dmpJSon_997.put("area_city", cityStr);
+		return dmpJSon_997;
 	}
 }
