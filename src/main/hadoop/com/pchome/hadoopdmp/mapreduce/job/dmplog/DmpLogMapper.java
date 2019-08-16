@@ -75,15 +75,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.hadoop.conf.Configuration;
+
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+
+//import org.apache.hadoop.conf.Configuration;
+//import java.nio.charset.Charset;
+//import java.nio.file.Files;
+//import java.nio.file.Path;
+//import java.nio.file.Paths;
 //import org.apache.hadoop.fs.FSDataInputStream;
 //import org.apache.hadoop.fs.FileSystem;
 //import java.io.File;
@@ -163,43 +165,43 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			System.out.println("record_date:" + record_date);
 			System.out.println("record_hour:"+record_hour);
 			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
-			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-			this.aCategoryLogDataClick = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
-			this.aCategoryLogDataRetun = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
-			this.aCategoryLogData24H = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
+//			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//			this.aCategoryLogDataClick = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
+//			this.aCategoryLogDataRetun = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
+//			this.aCategoryLogData24H = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
+////			
+//			this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
+//			dBCollection_class_url =  this.mongoOrgOperations.getCollection("class_url");
+//			//load 推估分類個資表(ClsfyGndAgeCrspTable.txt)
+//			Configuration conf = context.getConfiguration();
+//			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
+//			Path clsfyTable = Paths.get(path[1].toString());
+//			Charset charset = Charset.forName("UTF-8");
+//			List<String> lines = Files.readAllLines(clsfyTable, charset);
+//			for (String line : lines) {
+//				String[] tmpStrAry = line.split(";"); // 0001000000000000;M,35
+//				String[] tmpStrAry2 = tmpStrAry[1].split(",");
+//				clsfyCraspMap.put(tmpStrAry[0],new combinedValue(tmpStrAry[1].split(",")[0], tmpStrAry2.length > 1 ? tmpStrAry2[1] : ""));
+//			}
+//			// load 分類表(pfp_ad_category_new.csv)
+//			Path cate_path = Paths.get(path[0].toString());
+//			charset = Charset.forName("UTF-8");
+//			int maxCateLvl = 4;
+//			categoryList = new ArrayList<Map<String, String>>();
+//			for (int i = 0; i < maxCateLvl; i++) {
+//				categoryList.add(new HashMap<String, String>());
+//			}
+//			lines.clear();
+//			lines = Files.readAllLines(cate_path, charset);
 //			
-			this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
-			dBCollection_class_url =  this.mongoOrgOperations.getCollection("class_url");
-			//load 推估分類個資表(ClsfyGndAgeCrspTable.txt)
-			Configuration conf = context.getConfiguration();
-			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
-			Path clsfyTable = Paths.get(path[1].toString());
-			Charset charset = Charset.forName("UTF-8");
-			List<String> lines = Files.readAllLines(clsfyTable, charset);
-			for (String line : lines) {
-				String[] tmpStrAry = line.split(";"); // 0001000000000000;M,35
-				String[] tmpStrAry2 = tmpStrAry[1].split(",");
-				clsfyCraspMap.put(tmpStrAry[0],new combinedValue(tmpStrAry[1].split(",")[0], tmpStrAry2.length > 1 ? tmpStrAry2[1] : ""));
-			}
-			// load 分類表(pfp_ad_category_new.csv)
-			Path cate_path = Paths.get(path[0].toString());
-			charset = Charset.forName("UTF-8");
-			int maxCateLvl = 4;
-			categoryList = new ArrayList<Map<String, String>>();
-			for (int i = 0; i < maxCateLvl; i++) {
-				categoryList.add(new HashMap<String, String>());
-			}
-			lines.clear();
-			lines = Files.readAllLines(cate_path, charset);
-			
-			// 將 table: pfp_ad_category_new 內容放入list中(共有 maxCateLvl 層)
-			for (String line : lines) {
-				String[] tmpStr = line.split(";");
-				int lvl = Integer.parseInt(tmpStr[5].replaceAll("\"", "").trim());
-				if (lvl <= maxCateLvl) {
-					categoryList.get(lvl - 1).put(tmpStr[3].replaceAll("\"", "").trim(),tmpStr[4].replaceAll("\"", "").replaceAll("@", "").trim());
-				}
-			}
+//			// 將 table: pfp_ad_category_new 內容放入list中(共有 maxCateLvl 層)
+//			for (String line : lines) {
+//				String[] tmpStr = line.split(";");
+//				int lvl = Integer.parseInt(tmpStr[5].replaceAll("\"", "").trim());
+//				if (lvl <= maxCateLvl) {
+//					categoryList.get(lvl - 1).put(tmpStr[3].replaceAll("\"", "").trim(),tmpStr[4].replaceAll("\"", "").replaceAll("@", "").trim());
+//				}
+//			}
 			
 //			// load 24h分類表(DMP_24h_category.csv)
 //			Path category24HPath = Paths.get(path[3].toString());
