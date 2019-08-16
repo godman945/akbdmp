@@ -1,6 +1,7 @@
 package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -44,6 +45,34 @@ public class WordCount {
 //		job.setOutputValueClass(IntWritable.class);
 		FileInputFormat.addInputPath(job, new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/kdcl_log/2019-08-04/00/20190804_00_4c.log.lzo"));
 		FileOutputFormat.setOutputPath(job, new Path("/durid_source"));
+		
+		String[] jarPaths = {
+				"/hadoop_jar/lib/commons-lang-2.6.jar",
+				"/hadoop_jar/lib/commons-logging-1.1.1.jar",
+				"/hadoop_jar/lib/log4j-1.2.15.jar",
+				"/hadoop_jar/lib/mongo-java-driver-2.11.3.jar",
+				"/hadoop_jar/lib/softdepot-1.0.9.jar",
+				"/hadoop_jar/lib/solr-solrj-4.5.0.jar",
+				"/hadoop_jar/lib/noggit-0.5.jar",
+				"/hadoop_jar/lib/httpcore-4.2.2.jar",
+				"/hadoop_jar/lib/httpclient-4.2.3.jar",
+				"/hadoop_jar/lib/httpmime-4.2.3.jar",
+				"/hadoop_jar/lib/mysql-connector-java-5.1.12-bin.jar",
+				"/hadoop_jar/lib/hadoop-lzo-0.4.20.jar",
+				
+				// add kafka jar
+				"/hadoop_jar/lib/kafka-clients-0.9.0.0.jar",
+				"/hadoop_jar/lib/kafka_2.11-0.9.0.0.jar",
+				"/hadoop_jar/lib/slf4j-api-1.7.19.jar",
+				"/hadoop_jar/lib/slf4j-log4j12-1.7.6.jar",
+				"/hadoop_jar/lib/json-smart-2.3.jar",
+				"/hadoop_jar/lib/asm-1.0.2.jar" 
+		}; 
+		for (String jarPath : jarPaths) {
+			DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fs);
+		}
+		
+		
 		System.exit(job.waitForCompletion(true) ? 0 : 1);
 	}
 }
