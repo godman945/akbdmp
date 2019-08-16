@@ -156,8 +156,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public static ACategoryLogData aCategoryLogData24H = null;
 	private DB mongoOrgOperations;
 	private static DBCollection dBCollection_class_url;
-	
-	private static net.minidev.json.JSONObject dmpDataJson = new net.minidev.json.JSONObject();
+	private static net.minidev.json.JSONObject json = new net.minidev.json.JSONObject();
+//	private static net.minidev.json.JSONObject dmpDataJson = new net.minidev.json.JSONObject();
 	public static Map<String, JSONObject> categoryLevelMappingMap = new HashMap<String, JSONObject>();
 	
 	
@@ -252,15 +252,17 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public synchronized void map(LongWritable offset, Text value, Context context) {
 //		清空mapper中json資料
 		System.out.println("---------***---------");
-		dmpDataJson.clear();
-//		inputSplit = (InputSplit)context.getInputSplit(); 
-//		logpath = ((FileSplit)inputSplit).getPath().toString();
-//		String fileName = ((FileSplit)inputSplit).getPath().getName();
-//		logStr = "";
-//		logStr = value.toString();
-//		
-		dmpDataJson.put("fileName", "alex");
-		System.out.println(dmpDataJson.getAsString("fileName"));
+		json.put("alex", "5555");
+		System.out.println(json.get("alex"));
+//		dmpDataJson.clear();
+////		inputSplit = (InputSplit)context.getInputSplit(); 
+////		logpath = ((FileSplit)inputSplit).getPath().toString();
+////		String fileName = ((FileSplit)inputSplit).getPath().getName();
+////		logStr = "";
+////		logStr = value.toString();
+////		
+//		dmpDataJson.put("fileName", "alex");
+//		System.out.println(dmpDataJson.getAsString("fileName"));
 		
 		
 //			dmpDataJson.clear();
