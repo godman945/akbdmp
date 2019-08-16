@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.InetAddress;
-import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -104,88 +103,89 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			record_hour = context.getConfiguration().get("job.hour");
 			System.out.println("record_date:" + record_date);
 			System.out.println("record_hour:"+record_hour);
-			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
-			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-			this.aCategoryLogDataClick = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
-			this.aCategoryLogDataRetun = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
-			this.aCategoryLogData24H = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
-			
-			this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
-			dBCollection_class_url =  this.mongoOrgOperations.getCollection("class_url");
-			//load 推估分類個資表(ClsfyGndAgeCrspTable.txt)
-			Configuration conf = context.getConfiguration();
-			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
-			Path clsfyTable = Paths.get(path[1].toString());
-			Charset charset = Charset.forName("UTF-8");
-			List<String> lines = Files.readAllLines(clsfyTable, charset);
-			for (String line : lines) {
-				String[] tmpStrAry = line.split(";"); // 0001000000000000;M,35
-				String[] tmpStrAry2 = tmpStrAry[1].split(",");
-				clsfyCraspMap.put(tmpStrAry[0],new combinedValue(tmpStrAry[1].split(",")[0], tmpStrAry2.length > 1 ? tmpStrAry2[1] : ""));
-			}
-			// load 分類表(pfp_ad_category_new.csv)
-			Path cate_path = Paths.get(path[0].toString());
-			charset = Charset.forName("UTF-8");
-			int maxCateLvl = 4;
-			categoryList = new ArrayList<Map<String, String>>();
-			for (int i = 0; i < maxCateLvl; i++) {
-				categoryList.add(new HashMap<String, String>());
-			}
-			lines.clear();
-			lines = Files.readAllLines(cate_path, charset);
-			
-			// 將 table: pfp_ad_category_new 內容放入list中(共有 maxCateLvl 層)
-			for (String line : lines) {
-				String[] tmpStr = line.split(";");
-				int lvl = Integer.parseInt(tmpStr[5].replaceAll("\"", "").trim());
-				if (lvl <= maxCateLvl) {
-					categoryList.get(lvl - 1).put(tmpStr[3].replaceAll("\"", "").trim(),tmpStr[4].replaceAll("\"", "").replaceAll("@", "").trim());
-				}
-			}
-			
-			// load 24h分類表(DMP_24h_category.csv)
-			Path category24HPath = Paths.get(path[3].toString());
-			List<String> lines24H = Files.readAllLines(category24HPath, charset);
-			for (String line : lines24H) {
-				CategoryCodeBean categoryBean = new CategoryCodeBean();
-				String[] tmpStrAry = line.split(","); // 0001000000000000;M,35
-				categoryBean.setNumberCode(tmpStrAry[0].replaceAll("\"", ""));
-				categoryBean.setChineseDesc(tmpStrAry[1].replaceAll("\"", ""));
-				categoryBean.setBreadCrumb(tmpStrAry[2].replaceAll("\"", ""));
-				categoryBean.setEnglishCode(tmpStrAry[3].replaceAll("\"", ""));
-				category24hBeanList.add(categoryBean);
-			}
-			// load Ruten分類表(DMP_Ruten_category.csv)
-			Path categoryRutenPath = Paths.get(path[4].toString());
-			List<String> linesRuten = Files.readAllLines(categoryRutenPath, charset);
-			for (String line : linesRuten) {
-				CategoryRutenCodeBean categoryRutenBean = new CategoryRutenCodeBean();
-				String[] tmpStrAry = line.split(","); //"0001000000000000","電腦、電腦周邊"
-				categoryRutenBean.setNumberCode(tmpStrAry[0].replaceAll("\"", ""));
-				categoryRutenBean.setChineseDesc(tmpStrAry[1].replaceAll("\"", ""));
-				categoryRutenBeanList.add(categoryRutenBean);
-			}
-			//IP轉城市
-			File database = new File(path[5].toString());
-			reader = new DatabaseReader.Builder(database).build();  
-			//24館別階層對應表
-			FileSystem fs = FileSystem.get(conf);
-			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/24h_menu-1.csv");
-			FSDataInputStream inputStream = fs.open(category24MappingFile);
-			Reader reader = new InputStreamReader(inputStream);
-			CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
-			for (CSVRecord csvRecord : csvParser) {
-				String data = csvRecord.get(1)+"<PCHOME>"+csvRecord.get(3)+"<PCHOME>"+csvRecord.get(5);
-				categoryLevelMappingList.add(data);
-			}
+//			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
+//			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//			this.aCategoryLogDataClick = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
+//			this.aCategoryLogDataRetun = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
+//			this.aCategoryLogData24H = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
+//			
+//			this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
+//			dBCollection_class_url =  this.mongoOrgOperations.getCollection("class_url");
+//			//load 推估分類個資表(ClsfyGndAgeCrspTable.txt)
+//			Configuration conf = context.getConfiguration();
+//			org.apache.hadoop.fs.Path[] path = DistributedCache.getLocalCacheFiles(conf);
+//			Path clsfyTable = Paths.get(path[1].toString());
+//			Charset charset = Charset.forName("UTF-8");
+//			List<String> lines = Files.readAllLines(clsfyTable, charset);
+//			for (String line : lines) {
+//				String[] tmpStrAry = line.split(";"); // 0001000000000000;M,35
+//				String[] tmpStrAry2 = tmpStrAry[1].split(",");
+//				clsfyCraspMap.put(tmpStrAry[0],new combinedValue(tmpStrAry[1].split(",")[0], tmpStrAry2.length > 1 ? tmpStrAry2[1] : ""));
+//			}
+//			// load 分類表(pfp_ad_category_new.csv)
+//			Path cate_path = Paths.get(path[0].toString());
+//			charset = Charset.forName("UTF-8");
+//			int maxCateLvl = 4;
+//			categoryList = new ArrayList<Map<String, String>>();
+//			for (int i = 0; i < maxCateLvl; i++) {
+//				categoryList.add(new HashMap<String, String>());
+//			}
+//			lines.clear();
+//			lines = Files.readAllLines(cate_path, charset);
+//			
+//			// 將 table: pfp_ad_category_new 內容放入list中(共有 maxCateLvl 層)
+//			for (String line : lines) {
+//				String[] tmpStr = line.split(";");
+//				int lvl = Integer.parseInt(tmpStr[5].replaceAll("\"", "").trim());
+//				if (lvl <= maxCateLvl) {
+//					categoryList.get(lvl - 1).put(tmpStr[3].replaceAll("\"", "").trim(),tmpStr[4].replaceAll("\"", "").replaceAll("@", "").trim());
+//				}
+//			}
+//			
+//			// load 24h分類表(DMP_24h_category.csv)
+//			Path category24HPath = Paths.get(path[3].toString());
+//			List<String> lines24H = Files.readAllLines(category24HPath, charset);
+//			for (String line : lines24H) {
+//				CategoryCodeBean categoryBean = new CategoryCodeBean();
+//				String[] tmpStrAry = line.split(","); // 0001000000000000;M,35
+//				categoryBean.setNumberCode(tmpStrAry[0].replaceAll("\"", ""));
+//				categoryBean.setChineseDesc(tmpStrAry[1].replaceAll("\"", ""));
+//				categoryBean.setBreadCrumb(tmpStrAry[2].replaceAll("\"", ""));
+//				categoryBean.setEnglishCode(tmpStrAry[3].replaceAll("\"", ""));
+//				category24hBeanList.add(categoryBean);
+//			}
+//			// load Ruten分類表(DMP_Ruten_category.csv)
+//			Path categoryRutenPath = Paths.get(path[4].toString());
+//			List<String> linesRuten = Files.readAllLines(categoryRutenPath, charset);
+//			for (String line : linesRuten) {
+//				CategoryRutenCodeBean categoryRutenBean = new CategoryRutenCodeBean();
+//				String[] tmpStrAry = line.split(","); //"0001000000000000","電腦、電腦周邊"
+//				categoryRutenBean.setNumberCode(tmpStrAry[0].replaceAll("\"", ""));
+//				categoryRutenBean.setChineseDesc(tmpStrAry[1].replaceAll("\"", ""));
+//				categoryRutenBeanList.add(categoryRutenBean);
+//			}
+//			//IP轉城市
+//			File database = new File(path[5].toString());
+//			reader = new DatabaseReader.Builder(database).build();  
+//			//24館別階層對應表
+//			FileSystem fs = FileSystem.get(conf);
+//			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/24h_menu-1.csv");
+//			FSDataInputStream inputStream = fs.open(category24MappingFile);
+//			Reader reader = new InputStreamReader(inputStream);
+//			CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
+//			for (CSVRecord csvRecord : csvParser) {
+//				String data = csvRecord.get(1)+"<PCHOME>"+csvRecord.get(3)+"<PCHOME>"+csvRecord.get(5);
+//				categoryLevelMappingList.add(data);
+//			}
 		} catch (Exception e) {
 			System.out.println("Mapper setup error>>>>>> " + e.getMessage());
 		}
 	}
+	
+	
+	
 	private static String logpath = "";
 	private static Map<String,String> hostNameMap = new HashMap<String,String>();
-	
-	
 	private static JSONObject dmpDataJson = new JSONObject();
 	private static String logStr = "";
 	private static String[] values  = null;
