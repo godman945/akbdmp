@@ -521,16 +521,16 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			}
 //			
 //			
-//			//開始DMP資訊
-//			//1.地區處理元件(ip 轉國家、城市)
-//			try {
-//				geoIpComponent.ipTransformGEO(dmpDataJson_998);
-//			}catch(Exception e) {
-//				System.out.println(">>>>process source area fail:"+e.getMessage());
-//				System.out.println(">>>>>>logStr:" +logStr);
-//				System.out.println(">>>>>>fileName:" +fileName);
-//				return;
-//			}
+			//開始DMP資訊
+			//1.地區處理元件(ip 轉國家、城市)
+			try {
+				geoIpComponent.ipTransformGEO(dmpDataJson_998);
+			}catch(Exception e) {
+				System.out.println(">>>>process source area fail:"+e.getMessage());
+				System.out.println(">>>>>>logStr:" +logStr);
+				System.out.println(">>>>>>fileName:" +fileName);
+				return;
+			}
 ////			//2.時間處理元件(日期時間字串轉成小時)	
 ////			try {
 ////				dateTimeComponent.datetimeTransformHour(dmpDataJson); 
@@ -540,15 +540,15 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 ////				log.error(">>>>>>fileName:" +fileName);
 ////				return;
 ////			}
-//			//3.裝置處理元件(UserAgent轉成裝置資訊)
-//			try {
-//				deviceComponent.parseUserAgentToDevice(dmpDataJson_998);
-//			}catch(Exception e) {
-//				System.out.println(">>>>process source device fail:"+e.getMessage());
-//				System.out.println(">>>>>>logStr:" +logStr);
-//				System.out.println(">>>>>>fileName:" +fileName);
-//				return;
-//			}
+			//3.裝置處理元件(UserAgent轉成裝置資訊)
+			try {
+				deviceComponent.parseUserAgentToDevice(dmpDataJson_998);
+			}catch(Exception e) {
+				System.out.println(">>>>process source device fail:"+e.getMessage());
+				System.out.println(">>>>>>logStr:" +logStr);
+				System.out.println(">>>>>>fileName:" +fileName);
+				return;
+			}
 //			//4.分類處理元件(分析click、24H、Ruten、campaign分類)
 //			try {
 //				if ((dmpDataJson_998.getAsString("trigger_type").equals("ck") || dmpDataJson_998.getAsString("log_source").equals("campaign")) ) {// kdcl ad_click的adclass  或   campaign log的adclass 	//&& StringUtils.isNotBlank(dmpLogBeanResult.getAdClass())
