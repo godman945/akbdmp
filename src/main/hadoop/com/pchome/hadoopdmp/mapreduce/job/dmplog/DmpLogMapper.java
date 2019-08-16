@@ -1,101 +1,115 @@
 package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
-import java.io.File;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.InetAddress;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.filecache.DistributedCache;
-import org.apache.hadoop.fs.FSDataInputStream;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.InputSplit;
-import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.hadoop.mapreduce.lib.input.FileSplit;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+//import java.io.File;
+//import java.io.InputStreamReader;
+//import java.io.Reader;
+//import java.net.InetAddress;
+//import java.nio.charset.Charset;
+//import java.nio.file.Files;
+//import java.nio.file.Path;
+//import java.nio.file.Paths;
+//import java.text.SimpleDateFormat;
+//import java.util.ArrayList;
+//import java.util.HashMap;
+//import java.util.List;
+//import java.util.Map;
+//
+//import org.apache.commons.csv.CSVFormat;
+//import org.apache.commons.csv.CSVParser;
+//import org.apache.commons.csv.CSVRecord;
+//import org.apache.commons.lang.StringUtils;
+//import org.apache.commons.logging.Log;
+//import org.apache.commons.logging.LogFactory;
+//import org.apache.hadoop.conf.Configuration;
+//import org.apache.hadoop.filecache.DistributedCache;
+//import org.apache.hadoop.fs.FSDataInputStream;
+//import org.apache.hadoop.fs.FileSystem;
+//import org.apache.hadoop.io.LongWritable;
+//import org.apache.hadoop.io.Text;
+//import org.apache.hadoop.mapreduce.InputSplit;
+//import org.apache.hadoop.mapreduce.Mapper;
+//import org.apache.hadoop.mapreduce.lib.input.FileSplit;
+//import org.springframework.context.ApplicationContext;
+//import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+//import org.springframework.stereotype.Component;
+//
+//import com.maxmind.geoip2.DatabaseReader;
+//import com.mongodb.DB;
+//import com.mongodb.DBCollection;
+//import com.pchome.hadoopdmp.enumerate.CategoryLogEnum;
+//import com.pchome.hadoopdmp.mapreduce.job.component.DateTimeComponent;
+//import com.pchome.hadoopdmp.mapreduce.job.component.DeviceComponent;
+//import com.pchome.hadoopdmp.mapreduce.job.component.GeoIpComponent;
+//import com.pchome.hadoopdmp.mapreduce.job.component.PersonalInfoComponent;
+//import com.pchome.hadoopdmp.mapreduce.job.factory.ACategoryLogData;
+//import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryCodeBean;
+//import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryLogFactory;
+//import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryRutenCodeBean;
+//import com.pchome.hadoopdmp.mapreduce.job.factory.DmpLogBean;
+//import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
+//import com.pchome.hadoopdmp.spring.config.bean.mongodborg.MongodbOrgHadoopConfig;
+//
 import org.springframework.stereotype.Component;
-
-import com.maxmind.geoip2.DatabaseReader;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.pchome.hadoopdmp.enumerate.CategoryLogEnum;
-import com.pchome.hadoopdmp.mapreduce.job.component.DateTimeComponent;
-import com.pchome.hadoopdmp.mapreduce.job.component.DeviceComponent;
-import com.pchome.hadoopdmp.mapreduce.job.component.GeoIpComponent;
-import com.pchome.hadoopdmp.mapreduce.job.component.PersonalInfoComponent;
-import com.pchome.hadoopdmp.mapreduce.job.factory.ACategoryLogData;
-import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryCodeBean;
-import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryLogFactory;
-import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryRutenCodeBean;
-import com.pchome.hadoopdmp.mapreduce.job.factory.DmpLogBean;
-import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
-import com.pchome.hadoopdmp.spring.config.bean.mongodborg.MongodbOrgHadoopConfig;
-
+import org.apache.hadoop.mapreduce.InputSplit;
 import net.minidev.json.JSONObject;
-
-
+import org.apache.log4j.Logger;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Mapper.Context;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 @Component
 public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
-	Log log = LogFactory.getLog("DmpLogMapper");
 	
-	private static int recordCount = 0;
-	private static int kdclLogLength = 30;
-	private static int campaignLogLength = 9;
-	private static String kdclSymbol = String.valueOf(new char[] { 9, 31 });
-	private static String paclSymbol = String.valueOf(new char[] { 9, 31 });
+//	private static int recordCount = 0;
+//	private static int kdclLogLength = 30;
+//	private static int campaignLogLength = 9;
+//	private static String kdclSymbol = String.valueOf(new char[] { 9, 31 });
+//	private static String paclSymbol = String.valueOf(new char[] { 9, 31 });
 
-	private Text keyOut = new Text();
-	private Text valueOut = new Text();
-
+//	private Text keyOut = new Text();
+//	private Text valueOut = new Text();
+//
+//	public static String record_date;
+//	public static String record_hour;
+//	public static ArrayList<Map<String, String>> categoryList = new ArrayList<Map<String, String>>();		     //分類表	
+//	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();				 //分類個資表
+//	public static List<CategoryCodeBean> category24hBeanList = new ArrayList<CategoryCodeBean>();				 //24H分類表
+//	public static List<CategoryRutenCodeBean> categoryRutenBeanList = new ArrayList<CategoryRutenCodeBean>();	 //Ruten分類表
+//	public static PersonalInfoComponent personalInfoComponent = new PersonalInfoComponent();
+//	public static GeoIpComponent geoIpComponent = new GeoIpComponent();
+//	public static DateTimeComponent dateTimeComponent = new DateTimeComponent();
+//	public static DeviceComponent deviceComponent = new DeviceComponent();
+//	private DB mongoOrgOperations;
+//	public static DatabaseReader reader = null;
+//	public static InetAddress ipAddress = null;
+//	private static DBCollection dBCollection_class_url;
+//	private static InputSplit inputSplit;
+//	public static List<String> categoryLevelMappingList = new ArrayList<String>();
+//	public static Map<String, JSONObject> categoryLevelMappingMap = new HashMap<String, JSONObject>();
+//	public static ACategoryLogData aCategoryLogDataClick = null;
+//	public static ACategoryLogData aCategoryLogDataRetun = null;
+//	public static ACategoryLogData aCategoryLogData24H = null;
+//	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	
+	
+	
+	
+//	private static int totalCount= 0;
+//	private static String[] markLevelList = {"mark_layer1","mark_layer2","mark_layer3"};
+//	private static String[] markValueList = {"mark_value1","mark_value2","mark_value3"};
+	
+	private static Logger log = Logger.getLogger(DmpLogMapper.class);
 	public static String record_date;
 	public static String record_hour;
-	public static ArrayList<Map<String, String>> categoryList = new ArrayList<Map<String, String>>();		     //分類表	
-	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();				 //分類個資表
-	public static List<CategoryCodeBean> category24hBeanList = new ArrayList<CategoryCodeBean>();				 //24H分類表
-	public static List<CategoryRutenCodeBean> categoryRutenBeanList = new ArrayList<CategoryRutenCodeBean>();	 //Ruten分類表
-	public static PersonalInfoComponent personalInfoComponent = new PersonalInfoComponent();
-	public static GeoIpComponent geoIpComponent = new GeoIpComponent();
-	public static DateTimeComponent dateTimeComponent = new DateTimeComponent();
-	public static DeviceComponent deviceComponent = new DeviceComponent();
-	private DB mongoOrgOperations;
-	public static DatabaseReader reader = null;
-	public static InetAddress ipAddress = null;
-	private static DBCollection dBCollection_class_url;
+	private static String logpath = "";
+	private static String logStr = "";
+	private static String[] values  = null;
 	private static InputSplit inputSplit;
-	public static List<String> categoryLevelMappingList = new ArrayList<String>();
-	public static Map<String, JSONObject> categoryLevelMappingMap = new HashMap<String, JSONObject>();
-	public static ACategoryLogData aCategoryLogDataClick = null;
-	public static ACategoryLogData aCategoryLogDataRetun = null;
-	public static ACategoryLogData aCategoryLogData24H = null;
-	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private static JSONObject dmpDataJson = new JSONObject();
 	
-	
-	
-	
-	private static int totalCount= 0;
-	private static String[] markLevelList = {"mark_layer1","mark_layer2","mark_layer3"};
-	private static String[] markValueList = {"mark_value1","mark_value2","mark_value3"};
-	
-	
-	@Override
 	public void setup(Context context) {
 		System.out.println(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
 		try {
@@ -184,11 +198,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	
 	
 	
-	private static String logpath = "";
-	private static Map<String,String> hostNameMap = new HashMap<String,String>();
-	private static JSONObject dmpDataJson = new JSONObject();
-	private static String logStr = "";
-	private static String[] values  = null;
+//	private static String logpath = "";
+//	private static Map<String,String> hostNameMap = new HashMap<String,String>();
+//	private static JSONObject dmpDataJson = new JSONObject();
+//	private static String logStr = "";
+//	private static String[] values  = null;
 	@Override
 	public synchronized void map(LongWritable offset, Text value, Context context) {
 		//清空mapper中json資料
@@ -576,101 +590,101 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	}
 	
 	
-	//處理24館別階層
-	private void process24CategoryLevel(net.minidev.json.JSONObject dmpDataJson) throws Exception{
-		String markValue = dmpDataJson.getAsString("mark_value");
-		int level = 0;
-		if(markValue.length() == 4) {
-			level = 2;
-		}
-		if(markValue.length() == 6) {
-			level = 3;
-		}
-		if(categoryLevelMappingMap.containsKey(markValue)) {
-			JSONObject layerJson = categoryLevelMappingMap.get(markValue);
-//			Iterator<String> keys = layerJson.keys();
-//			while(keys.hasNext()) {
-//			    String key = keys.next();
-//			    String value = layerJson.getString(key);
-//			    dmpDataJson.put(key, value);
+//	//處理24館別階層
+//	private void process24CategoryLevel(net.minidev.json.JSONObject dmpDataJson) throws Exception{
+//		String markValue = dmpDataJson.getAsString("mark_value");
+//		int level = 0;
+//		if(markValue.length() == 4) {
+//			level = 2;
+//		}
+//		if(markValue.length() == 6) {
+//			level = 3;
+//		}
+//		if(categoryLevelMappingMap.containsKey(markValue)) {
+//			JSONObject layerJson = categoryLevelMappingMap.get(markValue);
+////			Iterator<String> keys = layerJson.keys();
+////			while(keys.hasNext()) {
+////			    String key = keys.next();
+////			    String value = layerJson.getString(key);
+////			    dmpDataJson.put(key, value);
+////			}
+//		}else {
+//			for (String string : categoryLevelMappingList) {
+//				String level1 = string.split("<PCHOME>")[0];
+//				String level2 = string.split("<PCHOME>")[1];
+//				String level3 = string.split("<PCHOME>")[2];
+//				if(level1.equals(markValue)) {
+//					dmpDataJson.put("mark_layer1", "1");
+//					dmpDataJson.put("mark_value1", level1);
+//					JSONObject layerJson = new JSONObject();
+//					layerJson.put("mark_layer1", "1");
+//					layerJson.put("mark_value1", level1);
+//					categoryLevelMappingMap.put(markValue, layerJson);
+//					break;
+//				}else if(level2.equals(markValue)) {
+//					dmpDataJson.put("mark_layer1", "1");
+//					dmpDataJson.put("mark_value1", level1);
+//					dmpDataJson.put("mark_layer2", "2");
+//					dmpDataJson.put("mark_value2", level2);
+//					JSONObject layerJson = new JSONObject();
+//					layerJson.put("mark_layer1", "1");
+//					layerJson.put("mark_value1", level1);
+//					layerJson.put("mark_layer2", "2");
+//					layerJson.put("mark_value2", level2);
+//					categoryLevelMappingMap.put(markValue, layerJson);
+//					break;
+//				}else if(level3.equals(markValue)) {
+//					dmpDataJson.put("mark_layer1", "1");
+//					dmpDataJson.put("mark_value1", level1);
+//					dmpDataJson.put("mark_layer2", "2");
+//					dmpDataJson.put("mark_value2", level2);
+//					dmpDataJson.put("mark_layer3", "3");
+//					dmpDataJson.put("mark_value3", level3);
+//					JSONObject layerJson = new JSONObject();
+//					layerJson.put("mark_layer1", "1");
+//					layerJson.put("mark_value1", level1);
+//					layerJson.put("mark_layer2", "2");
+//					layerJson.put("mark_value2", level2);
+//					layerJson.put("mark_layer3", "3");
+//					layerJson.put("mark_value3", level3);
+//					categoryLevelMappingMap.put(markValue, layerJson);
+//					break;
+//				}
 //			}
-		}else {
-			for (String string : categoryLevelMappingList) {
-				String level1 = string.split("<PCHOME>")[0];
-				String level2 = string.split("<PCHOME>")[1];
-				String level3 = string.split("<PCHOME>")[2];
-				if(level1.equals(markValue)) {
-					dmpDataJson.put("mark_layer1", "1");
-					dmpDataJson.put("mark_value1", level1);
-					JSONObject layerJson = new JSONObject();
-					layerJson.put("mark_layer1", "1");
-					layerJson.put("mark_value1", level1);
-					categoryLevelMappingMap.put(markValue, layerJson);
-					break;
-				}else if(level2.equals(markValue)) {
-					dmpDataJson.put("mark_layer1", "1");
-					dmpDataJson.put("mark_value1", level1);
-					dmpDataJson.put("mark_layer2", "2");
-					dmpDataJson.put("mark_value2", level2);
-					JSONObject layerJson = new JSONObject();
-					layerJson.put("mark_layer1", "1");
-					layerJson.put("mark_value1", level1);
-					layerJson.put("mark_layer2", "2");
-					layerJson.put("mark_value2", level2);
-					categoryLevelMappingMap.put(markValue, layerJson);
-					break;
-				}else if(level3.equals(markValue)) {
-					dmpDataJson.put("mark_layer1", "1");
-					dmpDataJson.put("mark_value1", level1);
-					dmpDataJson.put("mark_layer2", "2");
-					dmpDataJson.put("mark_value2", level2);
-					dmpDataJson.put("mark_layer3", "3");
-					dmpDataJson.put("mark_value3", level3);
-					JSONObject layerJson = new JSONObject();
-					layerJson.put("mark_layer1", "1");
-					layerJson.put("mark_value1", level1);
-					layerJson.put("mark_layer2", "2");
-					layerJson.put("mark_value2", level2);
-					layerJson.put("mark_layer3", "3");
-					layerJson.put("mark_value3", level3);
-					categoryLevelMappingMap.put(markValue, layerJson);
-					break;
-				}
-			}
-		}
-	}
-	
-	
-	public DmpLogBean dmpBeanIntegrate(DmpLogBean dmpLogBeanResult) throws Exception {
-		dmpLogBeanResult.setMemid( StringUtils.isBlank(dmpLogBeanResult.getMemid()) ? "null" : dmpLogBeanResult.getMemid());
-		dmpLogBeanResult.setUuid( StringUtils.isBlank(dmpLogBeanResult.getUuid()) ? "null" : dmpLogBeanResult.getUuid());
-		dmpLogBeanResult.setCategory( StringUtils.isBlank(dmpLogBeanResult.getCategory()) ? "null" : dmpLogBeanResult.getCategory());
-		dmpLogBeanResult.setCategorySource( StringUtils.isBlank(dmpLogBeanResult.getCategorySource()) ? "null" : dmpLogBeanResult.getCategorySource());
-		dmpLogBeanResult.setSex( StringUtils.isBlank(dmpLogBeanResult.getSex()) ? "null" : dmpLogBeanResult.getSex());
-		dmpLogBeanResult.setSexSource( StringUtils.isBlank(dmpLogBeanResult.getSexSource()) ? "null" : dmpLogBeanResult.getSexSource());
-		dmpLogBeanResult.setAge( StringUtils.isBlank(dmpLogBeanResult.getAge()) ? "null" : dmpLogBeanResult.getAge());
-		dmpLogBeanResult.setAgeSource( StringUtils.isBlank(dmpLogBeanResult.getAgeSource()) ? "null" : dmpLogBeanResult.getAgeSource());
-		dmpLogBeanResult.setCountry( StringUtils.isBlank(dmpLogBeanResult.getCountry()) ? "null" : dmpLogBeanResult.getCountry());
-		dmpLogBeanResult.setAreaInfoSource( StringUtils.isBlank(dmpLogBeanResult.getAreaInfoSource()) ? "null" : dmpLogBeanResult.getAreaInfoSource());
-		dmpLogBeanResult.setCity( StringUtils.isBlank(dmpLogBeanResult.getCity()) ? "null" : dmpLogBeanResult.getCity());
-		dmpLogBeanResult.setAreaInfoSource( StringUtils.isBlank(dmpLogBeanResult.getAreaInfoSource()) ? "null" : dmpLogBeanResult.getAreaInfoSource());
-		dmpLogBeanResult.setDeviceInfo( StringUtils.isBlank(dmpLogBeanResult.getDeviceInfo()) ? "null" : dmpLogBeanResult.getDeviceInfo());
-		dmpLogBeanResult.setDeviceInfoSource( StringUtils.isBlank(dmpLogBeanResult.getDeviceInfoSource()) ? "null" : dmpLogBeanResult.getDeviceInfoSource());
-		dmpLogBeanResult.setDevicePhoneInfo( StringUtils.isBlank(dmpLogBeanResult.getDevicePhoneInfo()) ? "null" : dmpLogBeanResult.getDevicePhoneInfo());
-		dmpLogBeanResult.setDeviceOsInfo( StringUtils.isBlank(dmpLogBeanResult.getDeviceOsInfo()) ? "null" : dmpLogBeanResult.getDeviceOsInfo());
-		dmpLogBeanResult.setDeviceBrowserInfo( StringUtils.isBlank(dmpLogBeanResult.getDeviceBrowserInfo()) ? "null" : dmpLogBeanResult.getDeviceBrowserInfo());
-		dmpLogBeanResult.setHour( StringUtils.isBlank(dmpLogBeanResult.getHour()) ? "null" : dmpLogBeanResult.getHour());
-		dmpLogBeanResult.setTimeInfoSource( StringUtils.isBlank(dmpLogBeanResult.getTimeInfoSource()) ? "null" : dmpLogBeanResult.getTimeInfoSource());
-		dmpLogBeanResult.setPersonalInfoApiClassify( StringUtils.isBlank(dmpLogBeanResult.getPersonalInfoApiClassify()) ? "null" : dmpLogBeanResult.getPersonalInfoApiClassify());
-		dmpLogBeanResult.setPersonalInfoClassify( StringUtils.isBlank(dmpLogBeanResult.getPersonalInfoClassify()) ? "null" : dmpLogBeanResult.getPersonalInfoClassify());
-		dmpLogBeanResult.setClassAdClickClassify( StringUtils.isBlank(dmpLogBeanResult.getClassAdClickClassify()) ? "null" : dmpLogBeanResult.getClassAdClickClassify());
-		dmpLogBeanResult.setClass24hUrlClassify( StringUtils.isBlank(dmpLogBeanResult.getClass24hUrlClassify()) ? "null" : dmpLogBeanResult.getClass24hUrlClassify());
-		dmpLogBeanResult.setClassRutenUrlClassify( StringUtils.isBlank(dmpLogBeanResult.getClassRutenUrlClassify()) ? "null" : dmpLogBeanResult.getClassRutenUrlClassify());
-		dmpLogBeanResult.setAreaInfoClassify( StringUtils.isBlank(dmpLogBeanResult.getAreaInfoClassify()) ? "null" : dmpLogBeanResult.getAreaInfoClassify());
-		dmpLogBeanResult.setDeviceInfoClassify( StringUtils.isBlank(dmpLogBeanResult.getDeviceInfoClassify()) ? "null" : dmpLogBeanResult.getDeviceInfoClassify());
-		dmpLogBeanResult.setTimeInfoClassify( StringUtils.isBlank(dmpLogBeanResult.getTimeInfoClassify()) ? "null" : dmpLogBeanResult.getTimeInfoClassify());
-		return dmpLogBeanResult;
-	}
+//		}
+//	}
+//	
+//	
+//	public DmpLogBean dmpBeanIntegrate(DmpLogBean dmpLogBeanResult) throws Exception {
+//		dmpLogBeanResult.setMemid( StringUtils.isBlank(dmpLogBeanResult.getMemid()) ? "null" : dmpLogBeanResult.getMemid());
+//		dmpLogBeanResult.setUuid( StringUtils.isBlank(dmpLogBeanResult.getUuid()) ? "null" : dmpLogBeanResult.getUuid());
+//		dmpLogBeanResult.setCategory( StringUtils.isBlank(dmpLogBeanResult.getCategory()) ? "null" : dmpLogBeanResult.getCategory());
+//		dmpLogBeanResult.setCategorySource( StringUtils.isBlank(dmpLogBeanResult.getCategorySource()) ? "null" : dmpLogBeanResult.getCategorySource());
+//		dmpLogBeanResult.setSex( StringUtils.isBlank(dmpLogBeanResult.getSex()) ? "null" : dmpLogBeanResult.getSex());
+//		dmpLogBeanResult.setSexSource( StringUtils.isBlank(dmpLogBeanResult.getSexSource()) ? "null" : dmpLogBeanResult.getSexSource());
+//		dmpLogBeanResult.setAge( StringUtils.isBlank(dmpLogBeanResult.getAge()) ? "null" : dmpLogBeanResult.getAge());
+//		dmpLogBeanResult.setAgeSource( StringUtils.isBlank(dmpLogBeanResult.getAgeSource()) ? "null" : dmpLogBeanResult.getAgeSource());
+//		dmpLogBeanResult.setCountry( StringUtils.isBlank(dmpLogBeanResult.getCountry()) ? "null" : dmpLogBeanResult.getCountry());
+//		dmpLogBeanResult.setAreaInfoSource( StringUtils.isBlank(dmpLogBeanResult.getAreaInfoSource()) ? "null" : dmpLogBeanResult.getAreaInfoSource());
+//		dmpLogBeanResult.setCity( StringUtils.isBlank(dmpLogBeanResult.getCity()) ? "null" : dmpLogBeanResult.getCity());
+//		dmpLogBeanResult.setAreaInfoSource( StringUtils.isBlank(dmpLogBeanResult.getAreaInfoSource()) ? "null" : dmpLogBeanResult.getAreaInfoSource());
+//		dmpLogBeanResult.setDeviceInfo( StringUtils.isBlank(dmpLogBeanResult.getDeviceInfo()) ? "null" : dmpLogBeanResult.getDeviceInfo());
+//		dmpLogBeanResult.setDeviceInfoSource( StringUtils.isBlank(dmpLogBeanResult.getDeviceInfoSource()) ? "null" : dmpLogBeanResult.getDeviceInfoSource());
+//		dmpLogBeanResult.setDevicePhoneInfo( StringUtils.isBlank(dmpLogBeanResult.getDevicePhoneInfo()) ? "null" : dmpLogBeanResult.getDevicePhoneInfo());
+//		dmpLogBeanResult.setDeviceOsInfo( StringUtils.isBlank(dmpLogBeanResult.getDeviceOsInfo()) ? "null" : dmpLogBeanResult.getDeviceOsInfo());
+//		dmpLogBeanResult.setDeviceBrowserInfo( StringUtils.isBlank(dmpLogBeanResult.getDeviceBrowserInfo()) ? "null" : dmpLogBeanResult.getDeviceBrowserInfo());
+//		dmpLogBeanResult.setHour( StringUtils.isBlank(dmpLogBeanResult.getHour()) ? "null" : dmpLogBeanResult.getHour());
+//		dmpLogBeanResult.setTimeInfoSource( StringUtils.isBlank(dmpLogBeanResult.getTimeInfoSource()) ? "null" : dmpLogBeanResult.getTimeInfoSource());
+//		dmpLogBeanResult.setPersonalInfoApiClassify( StringUtils.isBlank(dmpLogBeanResult.getPersonalInfoApiClassify()) ? "null" : dmpLogBeanResult.getPersonalInfoApiClassify());
+//		dmpLogBeanResult.setPersonalInfoClassify( StringUtils.isBlank(dmpLogBeanResult.getPersonalInfoClassify()) ? "null" : dmpLogBeanResult.getPersonalInfoClassify());
+//		dmpLogBeanResult.setClassAdClickClassify( StringUtils.isBlank(dmpLogBeanResult.getClassAdClickClassify()) ? "null" : dmpLogBeanResult.getClassAdClickClassify());
+//		dmpLogBeanResult.setClass24hUrlClassify( StringUtils.isBlank(dmpLogBeanResult.getClass24hUrlClassify()) ? "null" : dmpLogBeanResult.getClass24hUrlClassify());
+//		dmpLogBeanResult.setClassRutenUrlClassify( StringUtils.isBlank(dmpLogBeanResult.getClassRutenUrlClassify()) ? "null" : dmpLogBeanResult.getClassRutenUrlClassify());
+//		dmpLogBeanResult.setAreaInfoClassify( StringUtils.isBlank(dmpLogBeanResult.getAreaInfoClassify()) ? "null" : dmpLogBeanResult.getAreaInfoClassify());
+//		dmpLogBeanResult.setDeviceInfoClassify( StringUtils.isBlank(dmpLogBeanResult.getDeviceInfoClassify()) ? "null" : dmpLogBeanResult.getDeviceInfoClassify());
+//		dmpLogBeanResult.setTimeInfoClassify( StringUtils.isBlank(dmpLogBeanResult.getTimeInfoClassify()) ? "null" : dmpLogBeanResult.getTimeInfoClassify());
+//		return dmpLogBeanResult;
+//	}
 	
 	
 //	public String dmpBeanToKafkaJson(DmpLogBean dmpLogBeanResult) throws Exception {
