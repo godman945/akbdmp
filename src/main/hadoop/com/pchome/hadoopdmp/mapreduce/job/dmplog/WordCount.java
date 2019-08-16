@@ -29,12 +29,12 @@ public class WordCount {
 		job.setMapperClass(TokenizerMapper.class);
 		job.setReducerClass(IntSumReducer.class);
 		job.setCombinerClass(IntSumReducer.class);
-
+		job.setInputFormatClass(LzoTextInputFormat.class);
 		
-		 job.setMapOutputKeyClass(Text.class);
-		 job.setMapOutputValueClass(Text.class);
-		 job.setOutputKeyClass(Text.class);
-		 job.setOutputValueClass(IntWritable.class);
+		job.setMapOutputKeyClass(Text.class);
+		job.setMapOutputValueClass(Text.class);
+		job.setOutputKeyClass(Text.class);
+		job.setOutputValueClass(IntWritable.class);
 		
 		
 //		job.setInputFormatClass(TextInputFormat.class);
