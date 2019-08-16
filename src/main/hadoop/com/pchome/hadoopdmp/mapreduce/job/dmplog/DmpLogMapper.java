@@ -258,7 +258,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public synchronized void map(LongWritable offset, Text value, Context context) {
 //		清空mapper中json資料
 		System.out.println("---------***---------");
-//		dmpDataJson.clear();
+		dmpDataJson.clear();
 //		inputSplit = (InputSplit)context.getInputSplit(); 
 //		logpath = ((FileSplit)inputSplit).getPath().toString();
 //		String fileName = ((FileSplit)inputSplit).getPath().getName();
