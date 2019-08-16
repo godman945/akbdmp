@@ -14,12 +14,14 @@ import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.compress.GzipCodec;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.reduce.IntSumReducer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
@@ -43,23 +45,43 @@ public class DmpLogDriver {
 			Calendar dmpDateCalendar = Calendar.getInstance();
 			dmpDateCalendar.setTime(sdf.parse(dmpDate));
 			
-			JobConf jobConf = new JobConf();
-			jobConf.setNumMapTasks(10);
-			jobConf.set("mapred.max.split.size","9045728000"); //3045728 49 //3045728000 7
-			jobConf.set("mapred.min.split.size","3045728000"); //1015544 49 //1015544000 7
-			//ask推测执行
-			jobConf.set("mapred.map.tasks.speculative.execution","true");
-			jobConf.set("mapred.reduce.tasks.speculative.execution","true");
-			//JVM
-			jobConf.set("mapred.child.java.opts", "-Xmx4096M");
-			jobConf.set("mapreduce.map.memory.mb", "4096");
-			jobConf.set("mapreduce.reduce.memory.mb", "4096");
-			jobConf.set("mapreduce.job.running.map.limit", "100");
-			jobConf.set("spring.profiles.active", env);
-			jobConf.set("job.date",dmpDate);
-			jobConf.set("job.hour",dmpHour);
-			
-			// hdfs
+//			JobConf jobConf = new JobConf();
+//			jobConf.setNumMapTasks(10);
+//			jobConf.set("mapred.max.split.size","9045728000"); //3045728 49 //3045728000 7
+//			jobConf.set("mapred.min.split.size","3045728000"); //1015544 49 //1015544000 7
+//			//ask推测执行
+//			jobConf.set("mapred.map.tasks.speculative.execution","true");
+//			jobConf.set("mapred.reduce.tasks.speculative.execution","true");
+//			//JVM
+//			jobConf.set("mapred.child.java.opts", "-Xmx4096M");
+//			jobConf.set("mapreduce.map.memory.mb", "4096");
+//			jobConf.set("mapreduce.reduce.memory.mb", "4096");
+//			jobConf.set("mapreduce.job.running.map.limit", "100");
+//			jobConf.set("spring.profiles.active", env);
+//			jobConf.set("job.date",dmpDate);
+//			jobConf.set("job.hour",dmpHour);
+//			
+//			// hdfs
+//			Configuration conf = new Configuration();
+//			conf.set("mapreduce.map.output.compress.codec", "com.hadoop.mapreduce.LzoTextInputFormat");
+//			conf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
+//			conf.set("io.compression.codecs", "org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec,org.apache.hadoop.io.compress.BZip2Codec");
+//			conf.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
+//			conf.set("mapred.compress.map.output", "true");
+//			conf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
+//			conf.set("mapreduce.map.speculative", "false");
+//			conf.set("mapreduce.reduce.speculative", "false");
+//			conf.set("mapreduce.task.timeout", "0");
+//			conf.set("mapred.map.tasks.speculative.execution","true");
+//			conf.set("mapred.reduce.tasks.speculative.execution","true");
+//			conf.set("mapred.child.java.opts", "-Xmx4096M");
+//			conf.set("mapreduce.map.memory.mb", "4096");
+//	        conf.set("mapreduce.map.java.opts", "-Xmx4096m");
+//	        conf.set("mapreduce.reduce.memory.mb", "4096");
+//	        conf.set("mapreduce.reduce.java.opts", "-Xmx4096m");
+//	        conf.set("spring.profiles.active", env);
+//	        conf.set("job.date",dmpDate);
+//	        conf.set("job.hour",dmpHour);
 			Configuration conf = new Configuration();
 			conf.set("mapreduce.map.output.compress.codec", "com.hadoop.mapreduce.LzoTextInputFormat");
 			conf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
@@ -67,20 +89,8 @@ public class DmpLogDriver {
 			conf.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
 			conf.set("mapred.compress.map.output", "true");
 			conf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
-			conf.set("mapreduce.map.speculative", "false");
-			conf.set("mapreduce.reduce.speculative", "false");
-			conf.set("mapreduce.task.timeout", "0");
-			conf.set("mapred.map.tasks.speculative.execution","true");
-			conf.set("mapred.reduce.tasks.speculative.execution","true");
-			conf.set("mapred.child.java.opts", "-Xmx4096M");
-			conf.set("mapreduce.map.memory.mb", "4096");
-	        conf.set("mapreduce.map.java.opts", "-Xmx4096m");
-	        conf.set("mapreduce.reduce.memory.mb", "4096");
-	        conf.set("mapreduce.reduce.java.opts", "-Xmx4096m");
-	        conf.set("spring.profiles.active", env);
-	        conf.set("job.date",dmpDate);
-	        conf.set("job.hour",dmpHour);
-	        
+			
+			
 	        //輸入檔案
 	        List<Path> listPath = new ArrayList<Path>();  
 	        FileSystem fs = FileSystem.get(conf);
@@ -164,18 +174,31 @@ public class DmpLogDriver {
 			for (Path path : paths) {
 				log.info(">>>>>>>>>>JOB INPUT PATH:"+path.toString());
 			}
-			Job job = new Job(jobConf, "dmp_log_"+ env + "_druid_test");
+			
+			Job job = new Job(conf, "dmp_log_"+ env + "_druid_test");
 			job.setJarByClass(DmpLogDriver.class);
 			job.setMapperClass(DmpLogMapper.class);
-			job.setMapOutputKeyClass(Text.class);
-			job.setMapOutputValueClass(Text.class);
 			job.setReducerClass(DmpLogReducer.class);
 			job.setInputFormatClass(com.hadoop.mapreduce.LzoTextInputFormat.class);
+			job.setMapOutputKeyClass(Text.class);
+			job.setMapOutputValueClass(Text.class);
 			job.setOutputKeyClass(Text.class);
 			job.setOutputValueClass(Text.class);
 			job.getConfiguration().set("mapreduce.output.basename", "druid_"+dmpDate+"_"+dmpHour);
 			job.setNumReduceTasks(1); 
-			job.setMapSpeculativeExecution(false);
+			
+//			Job job = new Job(conf, "dmp_log_"+ env + "_druid_test");
+//			job.setJarByClass(DmpLogDriver.class);
+//			job.setMapperClass(DmpLogMapper.class);
+//			job.setMapOutputKeyClass(Text.class);
+//			job.setMapOutputValueClass(Text.class);
+//			job.setReducerClass(DmpLogReducer.class);
+//			job.setInputFormatClass(com.hadoop.mapreduce.LzoTextInputFormat.class);
+//			job.setOutputKeyClass(Text.class);
+//			job.setOutputValueClass(Text.class);
+//			job.getConfiguration().set("mapreduce.output.basename", "druid_"+dmpDate+"_"+dmpHour);
+//			job.setNumReduceTasks(1); 
+//			job.setMapSpeculativeExecution(false);
 			
 			
 			if(env.equals("prd")) {
