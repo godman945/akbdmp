@@ -145,18 +145,22 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static String logStr = "";
 	private static String[] values  = null;
 	private static InputSplit inputSplit;
-	private static JSONObject dmpDataJson = new JSONObject();
+	
 	public static ArrayList<Map<String, String>> categoryList = new ArrayList<Map<String, String>>();		     //分類表	
 	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();				 //分類個資表
 	public static List<CategoryCodeBean> category24hBeanList = new ArrayList<CategoryCodeBean>();				 //24H分類表
 	public static List<CategoryRutenCodeBean> categoryRutenBeanList = new ArrayList<CategoryRutenCodeBean>();
-	public static Map<String, JSONObject> categoryLevelMappingMap = new HashMap<String, JSONObject>();
 	public static List<String> categoryLevelMappingList = new ArrayList<String>();
 	public static ACategoryLogData aCategoryLogDataClick = null;
 	public static ACategoryLogData aCategoryLogDataRetun = null;
 	public static ACategoryLogData aCategoryLogData24H = null;
 	private DB mongoOrgOperations;
 	private static DBCollection dBCollection_class_url;
+	
+	private static JSONObject dmpDataJson = new JSONObject();
+	public static Map<String, JSONObject> categoryLevelMappingMap = new HashMap<String, JSONObject>();
+	
+	
 	public void setup(Context context) {
 		System.out.println(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
 		try {
@@ -253,7 +257,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	@Override
 	public synchronized void map(LongWritable offset, Text value, Context context) {
 //		清空mapper中json資料
-//		System.out.println("---------***---------");
+		System.out.println("---------***---------");
 //		dmpDataJson.clear();
 //		inputSplit = (InputSplit)context.getInputSplit(); 
 //		logpath = ((FileSplit)inputSplit).getPath().toString();
