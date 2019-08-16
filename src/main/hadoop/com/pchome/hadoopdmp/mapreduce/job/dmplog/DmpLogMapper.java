@@ -157,7 +157,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private DB mongoOrgOperations;
 	private static DBCollection dBCollection_class_url;
 	
-	private static JSONObject dmpDataJson = new JSONObject();
+	private static net.minidev.json.JSONObject dmpDataJson = new net.minidev.json.JSONObject();
 	public static Map<String, JSONObject> categoryLevelMappingMap = new HashMap<String, JSONObject>();
 	
 	
@@ -249,13 +249,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	}
 	
 	
-	
-//	private static String logpath = "";
-//	private static Map<String,String> hostNameMap = new HashMap<String,String>();
-//	private static JSONObject dmpDataJson = new JSONObject();
-//	private static String logStr = "";
-//	private static String[] values  = null;
-	@Override
 	public synchronized void map(LongWritable offset, Text value, Context context) {
 //		清空mapper中json資料
 		System.out.println("---------***---------");
