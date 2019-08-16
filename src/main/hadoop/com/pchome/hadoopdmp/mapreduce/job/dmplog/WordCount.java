@@ -71,7 +71,6 @@ public class WordCount {
 		job.setReducerClass(IntSumReducer.class);
 		job.setCombinerClass(IntSumReducer.class);
 //		job.setInputFormatClass(com.hadoop.mapreduce.LzoTextInputFormat.class);
-		
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(Text.class);
 		job.setOutputKeyClass(Text.class);

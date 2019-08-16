@@ -17,13 +17,28 @@ public class TokenizerMapper extends Mapper<LongWritable, Text, Text, Text> {
     private final static IntWritable one = new IntWritable(1); 
     private Text word = new Text(); 
     private static Logger log = Logger.getLogger(TokenizerMapper.class);
+    private static String kdclSymbol = String.valueOf(new char[] { 9, 31 });
+    private static String[] values  = null;
     
-    public synchronized void map(LongWritable offset, Text value, Context context) throws UnsupportedEncodingException {
-    	System.out.println(value.toString());
+    private static int count = 0;
+    public synchronized void map(LongWritable offset, Text value, Context context)  {
+    	try {
+    		this.values = value.toString().split(kdclSymbol,-1);
+    		if(count == 0) {
+    			System.out.println(value.toString());
+    			for (String string : values) {
+    				System.out.println(string);
+    			}
+    			count = count + 1;
+    		}
+//    		String value2 = new String(value.getBytes(), 0, value.getLength(), "utf-8");	
+//    		System.out.println(value2);
+    	}catch(Exception e) {
+    		e.printStackTrace();
+    	}
     	
-    	String value2 = new String(value.getBytes(), 0, value.getLength(), "utf-8");
 
-    	System.out.println(value2);
+    	
     	
 //    	log.info(value.toString());
     	
