@@ -170,7 +170,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			reader = new DatabaseReader.Builder(database).build();  
 			//24館別階層對應表
 			FileSystem fs = FileSystem.get(conf);
-			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("/hadoop_file/24h_menu-1.csv");
+			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/24h_menu-1.csv");
 			FSDataInputStream inputStream = fs.open(category24MappingFile);
 			Reader reader = new InputStreamReader(inputStream);
 			CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
@@ -189,7 +189,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static net.minidev.json.JSONObject dmpDataJson = new net.minidev.json.JSONObject();
 	private static String logStr = "";
 	private static String[] values  = null;
-	@SuppressWarnings("unused")
 	@Override
 	public synchronized void map(LongWritable offset, Text value, Context context) {
 			//清空mapper中json資料
@@ -288,6 +287,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						if (StringUtils.isBlank(values[4]) || !(values[4].contains("http"))) {
 							return;
 						}
+						
 						dmpDataJson.put("fileName", fileName);
 						dmpDataJson.put("log_date", values[0]);
 						dmpDataJson.put("memid", values[1]);
