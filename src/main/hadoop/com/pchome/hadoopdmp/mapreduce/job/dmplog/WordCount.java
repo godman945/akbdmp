@@ -23,7 +23,7 @@ import com.hadoop.mapreduce.LzoTextInputFormat;
 public class WordCount {
 	public static void main(String[] args) throws Exception {
 		Configuration conf = new Configuration();
-		conf.set("mapreduce.map.output.compress.codec", "com.hadoop.compression.lzo.LzoCodec");
+		conf.set("mapreduce.map.output.compress.codec", "com.hadoop.mapreduce.LzoTextInputFormat");
 		
 		FileSystem fs = FileSystem.get(conf);
 		fs.delete(new Path("hdfs://druid1.mypchome.com.tw:9000/durid_source"), true);
@@ -70,7 +70,7 @@ public class WordCount {
 		job.setMapperClass(TokenizerMapper.class);
 		job.setReducerClass(IntSumReducer.class);
 		job.setCombinerClass(IntSumReducer.class);
-		job.setInputFormatClass(com.hadoop.mapreduce.LzoTextInputFormat.class);
+//		job.setInputFormatClass(com.hadoop.mapreduce.LzoTextInputFormat.class);
 		
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(Text.class);
