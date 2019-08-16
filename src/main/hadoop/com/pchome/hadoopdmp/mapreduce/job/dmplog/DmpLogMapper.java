@@ -125,7 +125,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static JSONObject dmpDataJson = new JSONObject();
 	public static List<CategoryCodeBean> category24hBeanList = new ArrayList<CategoryCodeBean>();				 //24H分類表
 	public static List<CategoryRutenCodeBean> categoryRutenBeanList = new ArrayList<CategoryRutenCodeBean>();
-	public static Map<String, net.minidev.json.JSONObject> categoryLevelMappingMap = new HashMap<String, net.minidev.json.JSONObject>();
+	public static Map<String, JSONObject> categoryLevelMappingMap = new HashMap<String, JSONObject>();
 	
 	public void setup(Context context) {
 		System.out.println(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));

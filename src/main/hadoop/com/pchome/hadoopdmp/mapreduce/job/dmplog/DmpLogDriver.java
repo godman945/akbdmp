@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -22,6 +24,8 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.stereotype.Component;
 
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
+
+import net.minidev.json.JSONObject;
 @Component
 public class DmpLogDriver {
 
@@ -162,6 +166,33 @@ public class DmpLogDriver {
 			FileOutputFormat.setCompressOutput(job, true);  //job使用压缩  
 	        FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);  
 			
+	        
+	    	String[] jarPaths = {
+					"/hadoop_jar/lib/commons-lang-2.6.jar",
+					"/hadoop_jar/lib/commons-logging-1.1.1.jar",
+					"/hadoop_jar/lib/log4j-1.2.15.jar",
+					"/hadoop_jar/lib/mongo-java-driver-2.11.3.jar",
+					"/hadoop_jar/lib/softdepot-1.0.9.jar",
+					"/hadoop_jar/lib/solr-solrj-4.5.0.jar",
+					"/hadoop_jar/lib/noggit-0.5.jar",
+					"/hadoop_jar/lib/httpcore-4.2.2.jar",
+					"/hadoop_jar/lib/httpclient-4.2.3.jar",
+					"/hadoop_jar/lib/httpmime-4.2.3.jar",
+					"/hadoop_jar/lib/mysql-connector-java-5.1.12-bin.jar",
+					"/hadoop_jar/lib/hadoop-lzo-0.4.20.jar",
+					
+					// add kafka jar
+					"/hadoop_jar/lib/kafka-clients-0.9.0.0.jar",
+					"/hadoop_jar/lib/kafka_2.11-0.9.0.0.jar",
+					"/hadoop_jar/lib/slf4j-api-1.7.19.jar",
+					"/hadoop_jar/lib/slf4j-log4j12-1.7.6.jar",
+					"/hadoop_jar/lib/json-smart-2.3.jar",
+					"/hadoop_jar/lib/asm-1.0.2.jar" 
+			}; 
+			for (String jarPath : jarPaths) {
+				DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fs);
+			}
+	        
 			if (job.waitForCompletion(true)) {
 				log.info("Job1 is OK");
 			} else {
@@ -428,7 +459,20 @@ public class DmpLogDriver {
 			DmpLogDriver dmpLogDriver = (DmpLogDriver) ctx.getBean(DmpLogDriver.class);
 			dmpLogDriver.drive(args[0],args[1],args[2]);
 			
-			
+//			JSONObject layerJson = new JSONObject();
+//			layerJson.put("A", "1");
+//			layerJson.put("B", "2");
+//			layerJson.put("C", "3");
+//			System.out.println(layerJson);
+//			
+//			while(keys.hasNext()) {
+//			    String key = keys.next();
+//			    String value = layerJson.getAsString(key);
+//			    
+//			    System.out.println(key);
+//			    System.out.println(value);
+//			    
+//			}
 			
 		}catch(Exception e) {
 			log.error(e.getMessage());
