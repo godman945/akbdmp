@@ -16,7 +16,7 @@ import com.hadoop.mapreduce.LzoTextInputFormat;
 public class WordCount {
 	public static void main(String[] args) throws Exception {
 		Configuration conf = new Configuration();
-		
+		conf.set("mapreduce.map.output.compress.codec", "com.hadoop.compression.lzo.LzoCodec");
 		
 		FileSystem fs = FileSystem.get(conf);
 		fs.delete(new Path("hdfs://druid1.mypchome.com.tw:9000/durid_source"), true);
