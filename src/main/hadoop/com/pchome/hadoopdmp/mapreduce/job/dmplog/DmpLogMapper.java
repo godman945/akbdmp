@@ -52,9 +52,18 @@ package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 //import com.pchome.hadoopdmp.spring.config.bean.mongodborg.MongodbOrgHadoopConfig;
 //
 import org.springframework.stereotype.Component;
+
+import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryCodeBean;
+import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryRutenCodeBean;
+
 import org.apache.hadoop.mapreduce.InputSplit;
 import net.minidev.json.JSONObject;
 import org.apache.log4j.Logger;
+
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Mapper.Context;
@@ -104,11 +113,14 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static Logger log = Logger.getLogger(DmpLogMapper.class);
 	public static String record_date;
 	public static String record_hour;
+	public static InetAddress ipAddress = null;
 	private static String logpath = "";
 	private static String logStr = "";
 	private static String[] values  = null;
 	private static InputSplit inputSplit;
 	private static JSONObject dmpDataJson = new JSONObject();
+	public static List<CategoryCodeBean> category24hBeanList = new ArrayList<CategoryCodeBean>();				 //24H分類表
+	public static List<CategoryRutenCodeBean> categoryRutenBeanList = new ArrayList<CategoryRutenCodeBean>();
 	
 	public void setup(Context context) {
 		System.out.println(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
