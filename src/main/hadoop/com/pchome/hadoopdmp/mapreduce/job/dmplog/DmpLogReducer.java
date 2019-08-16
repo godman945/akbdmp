@@ -167,7 +167,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			}
 			mysqlUtil.closeConnection();
 			
-			log.info(">>>>>>>>>>>>>>>>>>>>categoryLevelMappingMap:"+DmpLogMapper.categoryLevelMappingMap);
+//			log.info(">>>>>>>>>>>>>>>>>>>>categoryLevelMappingMap:"+DmpLogMapper.categoryLevelMappingMap);
 			
 			
 			
