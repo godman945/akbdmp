@@ -164,6 +164,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public void setup(Context context) {
 		System.out.println(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
 		try {
+			System.out.println("*********>>>>>>>>>>>:"+System.currentTimeMillis());
 			record_date = context.getConfiguration().get("job.date");
 			record_hour = context.getConfiguration().get("job.hour");
 			System.out.println("record_date:" + record_date);
@@ -265,8 +266,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //		logStr = "";
 //		logStr = value.toString();
 //		
-//		dmpDataJson.put("fileName", fileName);
-//		System.out.println(dmpDataJson.getAsString("fileName"));
+		dmpDataJson.put("fileName", "alex");
+		System.out.println(dmpDataJson.getAsString("fileName"));
 		
 		
 //			dmpDataJson.clear();
