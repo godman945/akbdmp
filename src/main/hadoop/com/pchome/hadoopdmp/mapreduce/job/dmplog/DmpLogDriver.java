@@ -79,9 +79,7 @@ public class DmpLogDriver {
 //	        conf.set("mapreduce.map.java.opts", "-Xmx4096m");
 //	        conf.set("mapreduce.reduce.memory.mb", "4096");
 //	        conf.set("mapreduce.reduce.java.opts", "-Xmx4096m");
-//	        conf.set("spring.profiles.active", env);
-//	        conf.set("job.date",dmpDate);
-//	        conf.set("job.hour",dmpHour);
+
 			Configuration conf = new Configuration();
 			conf.set("mapreduce.map.output.compress.codec", "com.hadoop.mapreduce.LzoTextInputFormat");
 			conf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
@@ -89,7 +87,9 @@ public class DmpLogDriver {
 			conf.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
 			conf.set("mapred.compress.map.output", "true");
 			conf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
-			
+	        conf.set("spring.profiles.active", env);
+	        conf.set("job.date",dmpDate);
+	        conf.set("job.hour",dmpHour);
 			
 	        //輸入檔案
 	        List<Path> listPath = new ArrayList<Path>();  
