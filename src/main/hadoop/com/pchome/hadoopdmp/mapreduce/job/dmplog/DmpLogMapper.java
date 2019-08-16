@@ -212,22 +212,22 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	
 	public synchronized void map(LongWritable offset, Text value, Context context) {
 //		清空mapper中json資料
-		System.out.println("---------***---------");
-		json.put("alex", "5555");
-		System.out.println(json.get("alex"));
-		
-		dmpDataJson999.put("alex", "8888");
-		System.out.println(dmpDataJson999.get("alex"));
-		
-		
-		dmpDataJson_998.put("alex", "777");
-		System.out.println(dmpDataJson_998.get("alex"));
-		
-//		dmpDataJson.clear();
-		inputSplit = (InputSplit)context.getInputSplit(); 
-		logpath = ((FileSplit)inputSplit).getPath().toString();
-		String fileName = ((FileSplit)inputSplit).getPath().getName();
-		System.out.println(fileName);
+//		System.out.println("---------***---------");
+//		json.put("alex", "5555");
+//		System.out.println(json.get("alex"));
+//		
+//		dmpDataJson999.put("alex", "8888");
+//		System.out.println(dmpDataJson999.get("alex"));
+//		
+//		
+//		dmpDataJson_998.put("alex", "777");
+//		System.out.println(dmpDataJson_998.get("alex"));
+//		
+////		dmpDataJson.clear();
+//		inputSplit = (InputSplit)context.getInputSplit(); 
+//		logpath = ((FileSplit)inputSplit).getPath().toString();
+//		String fileName = ((FileSplit)inputSplit).getPath().getName();
+//		System.out.println(fileName);
 		
 		
 ////		String fileName = ((FileSplit)inputSplit).getPath().getName();
@@ -245,72 +245,72 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			values = null;
 			logStr = "";
 			logStr = value.toString();
-			System.out.println(logStr);
+			
 			dmpDataJson_998.put("fileName", "");
-//			dmpDataJson_998.put("log_date", "");
-//			dmpDataJson_998.put("hour", "");
-//			dmpDataJson_998.put("memid", "");
-//			dmpDataJson_998.put("uuid", "");
-//			dmpDataJson_998.put("uuid_flag", "");
-//			dmpDataJson_998.put("url", "");
-//			dmpDataJson_998.put("referer", "");
-//			dmpDataJson_998.put("domain", "");
-//			dmpDataJson_998.put("log_source", "");
-//			dmpDataJson_998.put("pfd_customer_info_id", "");
-//			dmpDataJson_998.put("pfp_customer_info_id", "");
-//			dmpDataJson_998.put("style_id", "");
-//			dmpDataJson_998.put("action_id", "");
-//			dmpDataJson_998.put("group_id", "");
-//			dmpDataJson_998.put("ad_id", "");
-//			dmpDataJson_998.put("pfbx_customer_info_id", "");
-//			dmpDataJson_998.put("pfbx_position_id", "");
-//			dmpDataJson_998.put("ad_view", "");
-//			dmpDataJson_998.put("vpv", "");
-//			dmpDataJson_998.put("screen_x", "");
-//			dmpDataJson_998.put("screen_y", "");
-//			dmpDataJson_998.put("event_id", "");
-//			dmpDataJson_998.put("trigger_type", "");
-//			dmpDataJson_998.put("ck", 0);
-//			dmpDataJson_998.put("pv", 0);
-//			dmpDataJson_998.put("ad_class", "");
-//			dmpDataJson_998.put("ip", "");
-//			dmpDataJson_998.put("area_country", "");
-//			dmpDataJson_998.put("area_city", "");
-//			dmpDataJson_998.put("area_info_source", "");
-//			dmpDataJson_998.put("area_info_classify", "");
-//			dmpDataJson_998.put("user_agent", "");
-//			dmpDataJson_998.put("device_info", "");
-//			dmpDataJson_998.put("device_phone_info", "");
-//			dmpDataJson_998.put("device_os_info", "");
-//			dmpDataJson_998.put("device_browser_info", "");
-//			dmpDataJson_998.put("device_info_source", "");
-//			dmpDataJson_998.put("device_info_classify", "");
-//			dmpDataJson_998.put("category", "");
-//			dmpDataJson_998.put("class_adclick_classify", "");
-//			dmpDataJson_998.put("category_source", "");
-//			dmpDataJson_998.put("sex", "");
-//			dmpDataJson_998.put("sex_source", "");
-//			dmpDataJson_998.put("age", "");
-//			dmpDataJson_998.put("age_source", "");
-//			dmpDataJson_998.put("personal_info_api_classify", "");
-//			dmpDataJson_998.put("pa_id", "");
-//			dmpDataJson_998.put("screen_x", "");
-//			dmpDataJson_998.put("screen_y", "");
-//			dmpDataJson_998.put("pa_event", "");
-//			dmpDataJson_998.put("event_id", "");
-//			dmpDataJson_998.put("prod_id", "");
-//			dmpDataJson_998.put("prod_price", "");
-//			dmpDataJson_998.put("prod_dis", "");
-//			dmpDataJson_998.put("op1", "");
-//			dmpDataJson_998.put("op2", "");
-//			dmpDataJson_998.put("email", "");
-//			dmpDataJson_998.put("mark_value", "");
-//			dmpDataJson_998.put("mark_layer1", "");
-//			dmpDataJson_998.put("mark_layer2", "");
-//			dmpDataJson_998.put("mark_layer3", "");
-//			dmpDataJson_998.put("mark_layer4", "");
+			dmpDataJson_998.put("log_date", "");
+			dmpDataJson_998.put("hour", "");
+			dmpDataJson_998.put("memid", "");
+			dmpDataJson_998.put("uuid", "");
+			dmpDataJson_998.put("uuid_flag", "");
+			dmpDataJson_998.put("url", "");
+			dmpDataJson_998.put("referer", "");
+			dmpDataJson_998.put("domain", "");
+			dmpDataJson_998.put("log_source", "");
+			dmpDataJson_998.put("pfd_customer_info_id", "");
+			dmpDataJson_998.put("pfp_customer_info_id", "");
+			dmpDataJson_998.put("style_id", "");
+			dmpDataJson_998.put("action_id", "");
+			dmpDataJson_998.put("group_id", "");
+			dmpDataJson_998.put("ad_id", "");
+			dmpDataJson_998.put("pfbx_customer_info_id", "");
+			dmpDataJson_998.put("pfbx_position_id", "");
+			dmpDataJson_998.put("ad_view", "");
+			dmpDataJson_998.put("vpv", "");
+			dmpDataJson_998.put("screen_x", "");
+			dmpDataJson_998.put("screen_y", "");
+			dmpDataJson_998.put("event_id", "");
+			dmpDataJson_998.put("trigger_type", "");
+			dmpDataJson_998.put("ck", 0);
+			dmpDataJson_998.put("pv", 0);
+			dmpDataJson_998.put("ad_class", "");
+			dmpDataJson_998.put("ip", "");
+			dmpDataJson_998.put("area_country", "");
+			dmpDataJson_998.put("area_city", "");
+			dmpDataJson_998.put("area_info_source", "");
+			dmpDataJson_998.put("area_info_classify", "");
+			dmpDataJson_998.put("user_agent", "");
+			dmpDataJson_998.put("device_info", "");
+			dmpDataJson_998.put("device_phone_info", "");
+			dmpDataJson_998.put("device_os_info", "");
+			dmpDataJson_998.put("device_browser_info", "");
+			dmpDataJson_998.put("device_info_source", "");
+			dmpDataJson_998.put("device_info_classify", "");
+			dmpDataJson_998.put("category", "");
+			dmpDataJson_998.put("class_adclick_classify", "");
+			dmpDataJson_998.put("category_source", "");
+			dmpDataJson_998.put("sex", "");
+			dmpDataJson_998.put("sex_source", "");
+			dmpDataJson_998.put("age", "");
+			dmpDataJson_998.put("age_source", "");
+			dmpDataJson_998.put("personal_info_api_classify", "");
+			dmpDataJson_998.put("pa_id", "");
+			dmpDataJson_998.put("screen_x", "");
+			dmpDataJson_998.put("screen_y", "");
+			dmpDataJson_998.put("pa_event", "");
+			dmpDataJson_998.put("event_id", "");
+			dmpDataJson_998.put("prod_id", "");
+			dmpDataJson_998.put("prod_price", "");
+			dmpDataJson_998.put("prod_dis", "");
+			dmpDataJson_998.put("op1", "");
+			dmpDataJson_998.put("op2", "");
+			dmpDataJson_998.put("email", "");
+			dmpDataJson_998.put("mark_value", "");
+			dmpDataJson_998.put("mark_layer1", "");
+			dmpDataJson_998.put("mark_layer2", "");
+			dmpDataJson_998.put("mark_layer3", "");
+			dmpDataJson_998.put("mark_layer4", "");
 //			
-//			if(logpath.contains("kdcl_log")) {
+			if(logpath.contains("kdcl_log")) {
 //				try {
 //					//kdcl log	raw data格式為一般或是Campaign
 //					if(logStr.indexOf(kdclSymbol) > -1 ){
@@ -399,7 +399,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //				}catch(Exception e) {
 //					System.out.println(">>>> kdcl set json fail:"+dmpDataJson_998);
 //				}
-//			}else if(logpath.contains("pacl_log") ) {
+			}else if(logpath.contains("pacl_log") ) {
 //				try {
 //					this.values = this.logStr.split(paclSymbol,-1);
 //					dmpDataJson_998.put("fileName", fileName);
@@ -462,7 +462,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //					System.out.println(">>>>pa set json fail logStr:"+logStr);
 //					return;
 //				}
-//			}else if(logpath.contains("bu_log")) {
+			}else if(logpath.contains("bu_log")) {
 //				try {
 //					String[] values = logStr.split(paclSymbol,-1);
 //					if(StringUtils.isBlank(values[2])) {
@@ -506,7 +506,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //					System.out.println(">>>>bulog set json logStr:"+logStr);
 //					return;
 //				}
-//			}
+			}
 //			if(dmpDataJson_998.getAsString("referer").contains("24h.pchome.com.tw")) {
 //				String pageCategory = "";
 //				if(dmpDataJson_998.getAsString("referer").equals("https://24h.pchome.com.tw/") || dmpDataJson_998.getAsString("referer").contains("htm") || dmpDataJson_998.getAsString("referer").contains("index") || dmpDataJson_998.getAsString("referer").contains("?fq=") || dmpDataJson_998.getAsString("referer").contains("store/?q=")) {
