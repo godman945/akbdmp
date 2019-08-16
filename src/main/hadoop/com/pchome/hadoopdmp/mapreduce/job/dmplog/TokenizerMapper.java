@@ -9,8 +9,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Mapper.Context; 
  
-public class TokenizerMapper extends 
-        Mapper<Object, Text, Text, IntWritable> { 
+public class TokenizerMapper extends Mapper<LongWritable, Text, Text, Text> {
  
     private final static IntWritable one = new IntWritable(1); 
     private Text word = new Text(); 
