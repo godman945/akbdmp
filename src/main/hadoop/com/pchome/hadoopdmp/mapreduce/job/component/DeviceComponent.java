@@ -1,16 +1,14 @@
 package com.pchome.hadoopdmp.mapreduce.job.component;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import eu.bitwalker.useragentutils.Browser;
 import eu.bitwalker.useragentutils.OperatingSystem;
 import eu.bitwalker.useragentutils.UserAgent;
 
 public class DeviceComponent {
-
-	Log log = LogFactory.getLog("DeviceComponent");
+	private static Logger log = Logger.getLogger(DeviceComponent.class);
 	private static UserAgent userAgent = null;
 	private static Browser browser  = null;
 	private static OperatingSystem operatingSystem = null;

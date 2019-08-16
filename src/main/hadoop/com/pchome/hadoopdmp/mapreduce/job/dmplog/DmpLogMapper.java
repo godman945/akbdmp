@@ -542,7 +542,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 ////			}
 			//3.裝置處理元件(UserAgent轉成裝置資訊)
 			try {
-//				deviceComponent.parseUserAgentToDevice(dmpDataJson_998);
+				deviceComponent.parseUserAgentToDevice(dmpDataJson_998);
 			}catch(Exception e) {
 				System.out.println(">>>>process source device fail:"+e.getMessage());
 				System.out.println(">>>>>>logStr:" +logStr);
