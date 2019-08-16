@@ -32,7 +32,7 @@ public class WordCount {
 
 		
 		 job.setMapOutputKeyClass(Text.class);
-		 job.setMapOutputValueClass(IntWritable.class);
+		 job.setMapOutputValueClass(Text.class);
 		 job.setOutputKeyClass(Text.class);
 		 job.setOutputValueClass(IntWritable.class);
 		
