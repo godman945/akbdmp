@@ -36,25 +36,25 @@ public class WordCount {
     	System.out.println("11111111111111");
 		CompressionCodec codec = compressionCodecs.getCodec(new Path("/druid_source/kdcl_log/2019-08-04/00/20190804_00_4c.log.lzo"));
 		
-		 InputStream in = null;
-		 OutputStream out = null;
-		 try {
-			 in = codec.createInputStream(fs.open(new Path("/druid_source/kdcl_log/2019-08-04/00/20190804_00_4c.log.lzo")));
-			 
-			 
-			 StringBuilder stringBuilder = new StringBuilder();
-				String line = null;
-				
-				try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, "utf-8"))) {	
-					while ((line = bufferedReader.readLine()) != null) {
-						stringBuilder.append(line);
-						System.out.println(stringBuilder);
-					}
-				}
-		 } finally {
-			 in.close();
-		 }
-		System.out.println(codec == null);
+//		 InputStream in = null;
+//		 OutputStream out = null;
+//		 try {
+//			 in = codec.createInputStream(fs.open(new Path("/druid_source/kdcl_log/2019-08-04/00/20190804_00_4c.log.lzo")));
+//			 
+//			 
+//			 StringBuilder stringBuilder = new StringBuilder();
+//				String line = null;
+//				
+//				try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, "utf-8"))) {	
+//					while ((line = bufferedReader.readLine()) != null) {
+//						stringBuilder.append(line);
+//						System.out.println(stringBuilder);
+//					}
+//				}
+//		 } finally {
+//			 in.close();
+//		 }
+//		System.out.println(codec == null);
 		
 		
 		
@@ -70,7 +70,7 @@ public class WordCount {
 		job.setMapperClass(TokenizerMapper.class);
 		job.setReducerClass(IntSumReducer.class);
 		job.setCombinerClass(IntSumReducer.class);
-		job.setInputFormatClass(LzoTextInputFormat.class);
+		job.setInputFormatClass(com.hadoop.mapreduce.LzoTextInputFormat.class);
 		
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(Text.class);
