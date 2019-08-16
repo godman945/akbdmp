@@ -25,8 +25,10 @@ public class WordCount {
 		Configuration conf = new Configuration();
 		conf.set("mapreduce.map.output.compress.codec", "com.hadoop.mapreduce.LzoTextInputFormat");
 		conf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
-		
-		
+		conf.set("io.compression.codecs", "org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec,org.apache.hadoop.io.compress.BZip2Codec");
+		conf.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
+		conf.set("mapred.compress.map.output", "true");
+		conf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
 		
 		FileSystem fs = FileSystem.get(conf);
 		fs.delete(new Path("hdfs://druid1.mypchome.com.tw:9000/durid_source"), true);
