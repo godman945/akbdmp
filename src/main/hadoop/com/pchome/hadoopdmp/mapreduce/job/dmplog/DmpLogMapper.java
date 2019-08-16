@@ -242,12 +242,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //			inputSplit = (InputSplit)context.getInputSplit(); 
 //			logpath = ((FileSplit)inputSplit).getPath().toString();
 //			String fileName = ((FileSplit)inputSplit).getPath().getName();
-//			values = null;
-//			logStr = "";
-//			logStr = value.toString();
-////			log.info(">>>>>>>>>>>>>>>>>>logpath:"+logpath);
-////			log.info(">>>>>>>>>>>>>>>>>>fileName:"+fileName);
-//			dmpDataJson_998.put("fileName", "");
+			values = null;
+			logStr = "";
+			logStr = value.toString();
+			System.out.println(logStr);
+			dmpDataJson_998.put("fileName", "");
 //			dmpDataJson_998.put("log_date", "");
 //			dmpDataJson_998.put("hour", "");
 //			dmpDataJson_998.put("memid", "");
