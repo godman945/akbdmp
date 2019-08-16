@@ -216,7 +216,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		json.put("alex", "5555");
 		System.out.println(json.get("alex"));
 		
-		
 		dmpDataJson999.put("alex", "8888");
 		System.out.println(dmpDataJson999.get("alex"));
 		
