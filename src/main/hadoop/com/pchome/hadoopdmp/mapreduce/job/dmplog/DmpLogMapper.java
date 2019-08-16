@@ -239,9 +239,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		
 		
 //			dmpDataJson_998.clear();
-//			inputSplit = (InputSplit)context.getInputSplit(); 
-//			logpath = ((FileSplit)inputSplit).getPath().toString();
-//			String fileName = ((FileSplit)inputSplit).getPath().getName();
+			inputSplit = (InputSplit)context.getInputSplit(); 
+			logpath = ((FileSplit)inputSplit).getPath().toString();
+			String fileName = ((FileSplit)inputSplit).getPath().getName();
 			values = null;
 			logStr = "";
 			logStr = value.toString();
@@ -309,96 +309,96 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			dmpDataJson_998.put("mark_layer2", "");
 			dmpDataJson_998.put("mark_layer3", "");
 			dmpDataJson_998.put("mark_layer4", "");
-//			
+			
 			if(logpath.contains("kdcl_log")) {
-//				try {
-//					//kdcl log	raw data格式為一般或是Campaign
-//					if(logStr.indexOf(kdclSymbol) > -1 ){
-//						// values[0]  date time (2018-01-04 04:57:12)
-//						// values[1]  memid
-//						// values[2]  uuid
-//						// values[3]  ip
-//						// values[4]  referer
-//						// values[5]  UserAgent
-//						// values[13] ck,pv
-//						// values[15] ad_class
-//						this.values = this.logStr.split(kdclSymbol,-1);
-//						if (values.length < kdclLogLength) {
-//							return;
-//						}
-//						if ((StringUtils.equals(values[1], "null")||StringUtils.isBlank(values[1]) ) && (StringUtils.equals(values[2], "null")||StringUtils.isBlank(values[2])) ){
-//							return;
-//						}
-//						if (StringUtils.isBlank(values[4]) || !(values[4].contains("http"))) {
-//							return;
-//						}
-//						
-//						dmpDataJson_998.put("fileName", fileName);
-//						dmpDataJson_998.put("log_date", values[0]);
-//						dmpDataJson_998.put("memid", values[1]);
-//						dmpDataJson_998.put("uuid", values[2]);
-//						if(values[2].contains("xxx-")) {
-//							dmpDataJson_998.put("uuid_flag", "y");
-//						}else {
-//							dmpDataJson_998.put("uuid_flag", "n");
-//						}
-//						dmpDataJson_998.put("referer", values[4]);
-//						try {
-//							if(hostNameMap.containsKey(values[4].toString())) {
-//								dmpDataJson_998.put("domain", hostNameMap.get(values[4].toString()));
-//							}else {
-//								URI uri = new URI(values[4]);
-//								String domain = uri.getHost();
-//								dmpDataJson_998.put("domain", domain.startsWith("www.") ? domain.substring(4) : domain);
-//								hostNameMap.put(values[4].toString(), domain.startsWith("www.") ? domain.substring(4) : domain);
-//							}
-//						}catch(Exception e) {
-//							System.out.println("kdcl log process domain fail:"+e.getMessage());
-//							System.out.println("kdcl log process domain fail json:"+dmpDataJson_998);
-//							return;
-//						}
-//						dmpDataJson_998.put("log_source", "kdcl_log");
-//						dmpDataJson_998.put("pfd_customer_info_id", values[24]);
-//						dmpDataJson_998.put("pfp_customer_info_id", values[6]);
-//						dmpDataJson_998.put("style_id", values[7]);
-//						dmpDataJson_998.put("action_id", values[21]);
-//						dmpDataJson_998.put("group_id", values[22]);
-//						dmpDataJson_998.put("ad_id", values[11]);
-//						dmpDataJson_998.put("pfbx_customer_info_id", values[25]);
-//						dmpDataJson_998.put("pfbx_position_id", values[26]);
-//						dmpDataJson_998.put("ad_view", values[45]);
-//						dmpDataJson_998.put("vpv", values[46]);
-//						dmpDataJson_998.put("trigger_type", values[13]);
-//						if(values[13].toUpperCase().equals("CK")) {
-//							dmpDataJson_998.put("ck", 1);
-//							dmpDataJson_998.put("pv", 0);
-//						}else if(values[13].toUpperCase().equals("PV")) {
-//							dmpDataJson_998.put("ck", 0);
-//							dmpDataJson_998.put("pv", 1);
-//						}
-//						dmpDataJson_998.put("ad_class", values[15]);
-//						dmpDataJson_998.put("ip", values[3]);
-//						dmpDataJson_998.put("area_info_source", "ip");
-//						//裝置資訊 [device_info_classify] null:user_agent為空
-//						dmpDataJson_998.put("user_agent", values[5].replaceAll("\"", ""));
-//						if(values[4].contains("24h.pchome.com.tw")) {
-//							String pageCategory = "";
-//							if(values[4].equals("https://24h.pchome.com.tw/") || values[4].contains("htm") || values[4].contains("index") || values[4].contains("?fq=") || values[4].contains("store/?q=")) {
-//								return;
-//							}else if(values[4].contains("?")) {
-//								pageCategory = values[4].split("/")[values[4].split("/").length - 1];
-//								pageCategory = pageCategory.substring(0, pageCategory.indexOf("?"));
-//							}else {
-//								pageCategory = values[4].split("/")[values[4].split("/").length - 1];
-//							}
-//							dmpDataJson_998.put("op1", pageCategory);
-//						}
-//					}else {
-//						return;
-//					}
-//				}catch(Exception e) {
-//					System.out.println(">>>> kdcl set json fail:"+dmpDataJson_998);
-//				}
+				try {
+					//kdcl log	raw data格式為一般或是Campaign
+					if(logStr.indexOf(kdclSymbol) > -1 ){
+						// values[0]  date time (2018-01-04 04:57:12)
+						// values[1]  memid
+						// values[2]  uuid
+						// values[3]  ip
+						// values[4]  referer
+						// values[5]  UserAgent
+						// values[13] ck,pv
+						// values[15] ad_class
+						this.values = this.logStr.split(kdclSymbol,-1);
+						if (values.length < kdclLogLength) {
+							return;
+						}
+						if ((StringUtils.equals(values[1], "null")||StringUtils.isBlank(values[1]) ) && (StringUtils.equals(values[2], "null")||StringUtils.isBlank(values[2])) ){
+							return;
+						}
+						if (StringUtils.isBlank(values[4]) || !(values[4].contains("http"))) {
+							return;
+						}
+						
+						dmpDataJson_998.put("fileName", fileName);
+						dmpDataJson_998.put("log_date", values[0]);
+						dmpDataJson_998.put("memid", values[1]);
+						dmpDataJson_998.put("uuid", values[2]);
+						if(values[2].contains("xxx-")) {
+							dmpDataJson_998.put("uuid_flag", "y");
+						}else {
+							dmpDataJson_998.put("uuid_flag", "n");
+						}
+						dmpDataJson_998.put("referer", values[4]);
+						try {
+							if(hostNameMap.containsKey(values[4].toString())) {
+								dmpDataJson_998.put("domain", hostNameMap.get(values[4].toString()));
+							}else {
+								URI uri = new URI(values[4]);
+								String domain = uri.getHost();
+								dmpDataJson_998.put("domain", domain.startsWith("www.") ? domain.substring(4) : domain);
+								hostNameMap.put(values[4].toString(), domain.startsWith("www.") ? domain.substring(4) : domain);
+							}
+						}catch(Exception e) {
+							System.out.println("kdcl log process domain fail:"+e.getMessage());
+							System.out.println("kdcl log process domain fail json:"+dmpDataJson_998);
+							return;
+						}
+						dmpDataJson_998.put("log_source", "kdcl_log");
+						dmpDataJson_998.put("pfd_customer_info_id", values[24]);
+						dmpDataJson_998.put("pfp_customer_info_id", values[6]);
+						dmpDataJson_998.put("style_id", values[7]);
+						dmpDataJson_998.put("action_id", values[21]);
+						dmpDataJson_998.put("group_id", values[22]);
+						dmpDataJson_998.put("ad_id", values[11]);
+						dmpDataJson_998.put("pfbx_customer_info_id", values[25]);
+						dmpDataJson_998.put("pfbx_position_id", values[26]);
+						dmpDataJson_998.put("ad_view", values[45]);
+						dmpDataJson_998.put("vpv", values[46]);
+						dmpDataJson_998.put("trigger_type", values[13]);
+						if(values[13].toUpperCase().equals("CK")) {
+							dmpDataJson_998.put("ck", 1);
+							dmpDataJson_998.put("pv", 0);
+						}else if(values[13].toUpperCase().equals("PV")) {
+							dmpDataJson_998.put("ck", 0);
+							dmpDataJson_998.put("pv", 1);
+						}
+						dmpDataJson_998.put("ad_class", values[15]);
+						dmpDataJson_998.put("ip", values[3]);
+						dmpDataJson_998.put("area_info_source", "ip");
+						//裝置資訊 [device_info_classify] null:user_agent為空
+						dmpDataJson_998.put("user_agent", values[5].replaceAll("\"", ""));
+						if(values[4].contains("24h.pchome.com.tw")) {
+							String pageCategory = "";
+							if(values[4].equals("https://24h.pchome.com.tw/") || values[4].contains("htm") || values[4].contains("index") || values[4].contains("?fq=") || values[4].contains("store/?q=")) {
+								return;
+							}else if(values[4].contains("?")) {
+								pageCategory = values[4].split("/")[values[4].split("/").length - 1];
+								pageCategory = pageCategory.substring(0, pageCategory.indexOf("?"));
+							}else {
+								pageCategory = values[4].split("/")[values[4].split("/").length - 1];
+							}
+							dmpDataJson_998.put("op1", pageCategory);
+						}
+					}else {
+						return;
+					}
+				}catch(Exception e) {
+					System.out.println(">>>> kdcl set json fail:"+dmpDataJson_998);
+				}
 			}else if(logpath.contains("pacl_log") ) {
 //				try {
 //					this.values = this.logStr.split(paclSymbol,-1);
