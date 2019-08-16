@@ -71,8 +71,12 @@ public class DmpLogDriver {
 			conf.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
 			conf.set("mapreduce.map.output.compress", "true");
 			conf.set("mapreduce.map.output.compress.codec", "com.hadoop.compression.lzo.LzoCodec");
-
-			
+			conf.set("mapreduce.map.output.compress.codec", "com.hadoop.mapreduce.LzoTextInputFormat");
+			conf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
+			conf.set("io.compression.codecs", "org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec,org.apache.hadoop.io.compress.BZip2Codec");
+			conf.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
+			conf.set("mapred.compress.map.output", "true");
+			conf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
 			conf.set("mapreduce.map.speculative", "false");
 			conf.set("mapreduce.reduce.speculative", "false");
 			conf.set("mapreduce.task.timeout", "0");
@@ -179,7 +183,7 @@ public class DmpLogDriver {
 			job.setMapOutputKeyClass(Text.class);
 			job.setMapOutputValueClass(Text.class);
 			job.setReducerClass(DmpLogReducer.class);
-//			job.setInputFormatClass(LzoTextInputFormat.class);
+			job.setInputFormatClass(com.hadoop.mapreduce.LzoTextInputFormat.class);
 			job.setOutputKeyClass(Text.class);
 			job.setOutputValueClass(Text.class);
 			job.getConfiguration().set("mapreduce.output.basename", "druid_"+dmpDate+"_"+dmpHour);
