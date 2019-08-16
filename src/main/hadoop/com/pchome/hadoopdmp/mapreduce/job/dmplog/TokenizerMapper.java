@@ -1,13 +1,8 @@
 package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.StringTokenizer;
-
-import org.apache.commons.logging.Log;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Text; 
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 import org.apache.log4j.Logger; 
@@ -22,6 +17,11 @@ public class TokenizerMapper extends Mapper<LongWritable, Text, Text, Text> {
     private static net.minidev.json.JSONObject json = new net.minidev.json.JSONObject();
     
     private static int count = 0;
+    
+    public void setup(Context context) {
+    	System.out.println(">>>>>> word count Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>");
+    }
+    
     public synchronized void map(LongWritable offset, Text value, Context context)  {
     	try {
     		System.out.println(value.toString());
