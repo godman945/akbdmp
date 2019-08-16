@@ -15,8 +15,6 @@ import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.compress.CompressionCodec;
-import org.apache.hadoop.io.compress.CompressionCodecFactory;
 import org.apache.hadoop.io.compress.GzipCodec;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.Job;
@@ -26,8 +24,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.hadoop.mapreduce.LzoLineRecordReader;
-import com.hadoop.mapreduce.LzoTextInputFormat;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 
 @Component
@@ -65,12 +61,6 @@ public class DmpLogDriver {
 			
 			// hdfs
 			Configuration conf = new Configuration();
-			
-//			conf.set("mapreduce.map.output.compress.codec", "com.hadoop.compression.lzo.LzoCodec");
-			conf.set("io.compression.codecs", "org.apache.hadoop.io.compress.DefaultCodec,org.apache.hadoop.io.compress.GzipCodec,com.hadoop.compression.lzo.LzopCodec");
-			conf.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
-			conf.set("mapreduce.map.output.compress", "true");
-			conf.set("mapreduce.map.output.compress.codec", "com.hadoop.compression.lzo.LzoCodec");
 			conf.set("mapreduce.map.output.compress.codec", "com.hadoop.mapreduce.LzoTextInputFormat");
 			conf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
 			conf.set("io.compression.codecs", "org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec,org.apache.hadoop.io.compress.BZip2Codec");
@@ -83,8 +73,6 @@ public class DmpLogDriver {
 			conf.set("mapred.map.tasks.speculative.execution","true");
 			conf.set("mapred.reduce.tasks.speculative.execution","true");
 			conf.set("mapred.child.java.opts", "-Xmx4096M");
-//			conf.set("mapreduce.jobtracker.address", "hpd11.mypchome.com.tw:9001");
-//			conf.set("mapred.job.tracker", "druid1.mypchome.com.tw:9001");
 			conf.set("mapreduce.map.memory.mb", "4096");
 	        conf.set("mapreduce.map.java.opts", "-Xmx4096m");
 	        conf.set("mapreduce.reduce.memory.mb", "4096");
@@ -247,7 +235,7 @@ public class DmpLogDriver {
 			} else {
 				log.info("Job1 is Failed");
 			}
-			
+			System.exit(job.waitForCompletion(true) ? 0 : 1);
 			
 		 } catch (Exception e) {
 			 log.error("drive error>>>>>> "+ e);
