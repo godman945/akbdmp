@@ -22,6 +22,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
+
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 @Component
 public class DmpLogDriver {
@@ -78,7 +79,7 @@ public class DmpLogDriver {
 	  					}
 	  				}
 	  				//載入kdcl log file
-	  				Path kdclPath = new Path("/druid_source/kdcl_log/"+dmpDate);
+	  				Path kdclPath = new Path("/druid_source/kdcl_log/"+dmpDate+"/"+hour);
 			        FileStatus[] kdclStatus = fs.listStatus(kdclPath); 
 					for (FileStatus fileStatus : kdclStatus) {
 						String pathStr = fileStatus.getPath().toString();
@@ -99,16 +100,16 @@ public class DmpLogDriver {
 					}
 	  			}
 	        }else {//計算小時
-//	        	//載入bu log file
-//		        Path buPath = new Path("/druid_source/bu_log/"+dmpDate+"/"+dmpHour);
-//		        FileStatus[] buStatus = fs.listStatus(buPath); 
-//				for (FileStatus fileStatus : buStatus) {
-//					String pathStr = fileStatus.getPath().toString();
-//					String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
-//					if(extensionName.equals("LZO")) {
-//						listPath.add(new Path(fileStatus.getPath().toString()));
-//					}
-//				}
+	        	//載入bu log file
+		        Path buPath = new Path("/druid_source/bu_log/"+dmpDate+"/"+dmpHour);
+		        FileStatus[] buStatus = fs.listStatus(buPath); 
+				for (FileStatus fileStatus : buStatus) {
+					String pathStr = fileStatus.getPath().toString();
+					String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
+					if(extensionName.equals("LZO")) {
+						listPath.add(new Path(fileStatus.getPath().toString()));
+					}
+				}
 				//載入kdcl log file
 		        Path kdclPath = new Path("/druid_source/kdcl_log/"+dmpDate+"/"+dmpHour);
 		        FileStatus[] kdclStatus = fs.listStatus(kdclPath); 
@@ -119,16 +120,16 @@ public class DmpLogDriver {
 						listPath.add(new Path(fileStatus.getPath().toString()));
 					}
 				}
-//				//載入pacl log file
-//				Path paclPath = new Path("/druid_source/pacl_log/"+dmpDate+"/"+dmpHour);
-//		        FileStatus[] paclStatus = fs.listStatus(paclPath); 
-//				for (FileStatus fileStatus : paclStatus) {
-//					String pathStr = fileStatus.getPath().toString();
-//					String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
-//					if(extensionName.equals("LZO")) {
-//						listPath.add(new Path(fileStatus.getPath().toString()));
-//					}
-//				}
+				//載入pacl log file
+				Path paclPath = new Path("/druid_source/pacl_log/"+dmpDate+"/"+dmpHour);
+		        FileStatus[] paclStatus = fs.listStatus(paclPath); 
+				for (FileStatus fileStatus : paclStatus) {
+					String pathStr = fileStatus.getPath().toString();
+					String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
+					if(extensionName.equals("LZO")) {
+						listPath.add(new Path(fileStatus.getPath().toString()));
+					}
+				}
 	        }
 			Path[] paths = new Path[listPath.size()];  
 			listPath.toArray(paths);
