@@ -192,26 +192,20 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				categoryRutenBean.setChineseDesc(tmpStrAry[1].replaceAll("\"", ""));
 				categoryRutenBeanList.add(categoryRutenBean);
 			}
-			System.out.println("**************@@@@@@@@@@@:"+path[5].toString());
-			System.out.println(new File(path[5].toString()).exists());
-			
 			//IP轉城市
 			File database = new File(path[5].toString());
 			reader = new DatabaseReader.Builder(database).build();  
-			System.out.println("**************@@@@@@@@@@@");
 			
-			
-			
-//			//24館別階層對應表
-//			FileSystem fs = FileSystem.get(conf);
-//			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/GeoLite2-City.mmdb");
-//			FSDataInputStream inputStream = fs.open(category24MappingFile);
-//			Reader reader = new InputStreamReader(inputStream);
-//			CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
-//			for (CSVRecord csvRecord : csvParser) {
-//				String data = csvRecord.get(1)+"<PCHOME>"+csvRecord.get(3)+"<PCHOME>"+csvRecord.get(5);
-//				categoryLevelMappingList.add(data);
-//			}
+			//24館別階層對應表
+			FileSystem fs = FileSystem.get(conf);
+			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/GeoLite2-City.mmdb");
+			FSDataInputStream inputStream = fs.open(category24MappingFile);
+			Reader reader = new InputStreamReader(inputStream);
+			CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
+			for (CSVRecord csvRecord : csvParser) {
+				String data = csvRecord.get(1)+"<PCHOME>"+csvRecord.get(3)+"<PCHOME>"+csvRecord.get(5);
+				categoryLevelMappingList.add(data);
+			}
 		} catch (Exception e) {
 			System.out.println("Mapper setup error>>>>>> " + e.getMessage());
 		}
@@ -532,7 +526,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			//開始DMP資訊
 			//1.地區處理元件(ip 轉國家、城市)
 			try {
-				geoIpComponent.ipTransformGEO(dmpDataJson_998);
+//				geoIpComponent.ipTransformGEO(dmpDataJson_998);
 			}catch(Exception e) {
 				System.out.println(">>>>process source area fail:"+e.getMessage());
 				System.out.println(">>>>>>logStr:" +logStr);
@@ -550,7 +544,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 ////			}
 			//3.裝置處理元件(UserAgent轉成裝置資訊)
 			try {
-//				deviceComponent.parseUserAgentToDevice(dmpDataJson_998);
+				deviceComponent.parseUserAgentToDevice(dmpDataJson_998);
 			}catch(Exception e) {
 				System.out.println(">>>>process source device fail:"+e.getMessage());
 				System.out.println(">>>>>>logStr:" +logStr);
