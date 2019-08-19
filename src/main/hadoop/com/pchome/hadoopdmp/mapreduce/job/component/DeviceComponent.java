@@ -21,7 +21,7 @@ public class DeviceComponent {
 		System.out.println(">>>>>>>>ZZZZZZZZZz000001");
 		n.put("alex", "XXXXX");
 		System.out.println(">>>>>>>>ZZZZZZZZZz000002");
-		System.out.println(n.getAsString("alex"));
+//		System.out.println(n.getAsString("alex"));
 		System.out.println("-----");
 		
 //		if (StringUtils.isBlank(dmpJSon.getAsString("user_agent"))){
