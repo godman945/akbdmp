@@ -196,9 +196,17 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			File database = new File(path[5].toString());
 			reader = new DatabaseReader.Builder(database).build();  
 			
+			
+			
+			
+			
+			json.put("alex", "44444444444445555555555555555");
+			System.out.println(json.getAsString("alex"));
+			
+			
 			//24館別階層對應表
 			FileSystem fs = FileSystem.get(conf);
-			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/GeoLite2-City.mmdb");
+			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/24h_menu-1.csv");
 			FSDataInputStream inputStream = fs.open(category24MappingFile);
 			Reader reader = new InputStreamReader(inputStream);
 			CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
@@ -213,6 +221,15 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	
 	
 	public synchronized void map(LongWritable offset, Text value, Context context) {
+		
+		
+		
+		json.put("alex2", "44444444444445555555555555555");
+		System.out.println(json.getAsString("alex2"));
+		
+		
+		
+		
 //		清空mapper中json資料
 //		System.out.println("---------***---------");
 //		json.put("alex", "5555");
