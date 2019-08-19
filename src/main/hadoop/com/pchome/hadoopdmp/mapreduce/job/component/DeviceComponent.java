@@ -1,4 +1,7 @@
 package com.pchome.hadoopdmp.mapreduce.job.component;
+
+import net.minidev.json.JSONObject;
+
 //import org.apache.log4j.Logger;
 //
 //import eu.bitwalker.useragentutils.Browser;
@@ -13,7 +16,7 @@ public class DeviceComponent {
 	public net.minidev.json.JSONObject parseUserAgentToDevice(net.minidev.json.JSONObject dmpJSon) throws Exception {
 		
 		System.out.println(">>>>>>>>"+dmpJSon);
-		net.minidev.json.JSONObject n = new net.minidev.json.JSONObject();
+		JSONObject n = new JSONObject();
 		n.put("alex", "XXXXX");
 		System.out.println(n.getAsString("alex"));
 		System.out.println("-----");
