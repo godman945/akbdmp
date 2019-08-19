@@ -1,6 +1,7 @@
 package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
 import java.io.IOException;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -189,6 +190,21 @@ public class DmpLogDriver {
 				DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fs);
 			}
 	        
+			
+			String[] filePaths = {
+				"/hadoop_file/pfp_ad_category_new.csv",
+				"/hadoop_file/ClsfyGndAgeCrspTable.txt",
+				"/hadoop_file/log4j.xml",
+				"/hadoop_file/DMP_24h_category.csv",
+				"/hadoop_file/DMP_Ruten_category.csv",
+				"/hadoop_file/GeoLite2-City.mmdb",
+				"/hadoop_file/ThirdAdClassTable.txt"
+			};
+			for (String filePath : filePaths) {
+				DistributedCache.addCacheFile(new URI(filePath), job.getConfiguration());
+			}
+			
+			
 			if (job.waitForCompletion(true)) {
 				log.info("Job1 is OK");
 			} else {

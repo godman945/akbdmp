@@ -9,14 +9,16 @@ import com.maxmind.geoip2.model.CityResponse;
 import com.pchome.hadoopdmp.mapreduce.job.component.IpAddress.IpAdd;
 import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper;
 
+import net.minidev.json.JSONObject;
+
 public class GeoIpComponent {
 
 	Log log = LogFactory.getLog("GeoIpComponent");
 	private static String ip = ""; 
 	private static IpAdd ipAdd = new IpAdd();
 	private static CityResponse response = null;
-	public net.minidev.json.JSONObject ipTransformGEO(net.minidev.json.JSONObject dmpJSon_997) throws Exception {
-		System.out.println("11111111111");
+	public JSONObject ipTransformGEO(JSONObject dmpJSon_997) throws Exception {
+		System.out.println("11111111111----");
 		// 判斷是否為正確ip格式
 		ip = dmpJSon_997.getAsString("ip");
 		if (!ipAdd.isIP(ip)) {
