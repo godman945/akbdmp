@@ -23,7 +23,7 @@ public class GeoIpComponent {
 		// ip轉換國家、城市
 		InetAddress ipAddress = InetAddress.getByName(ip);
 		try {
-			response = DmpLogMapper.reader.city(ipAddress);
+			response = DmpLogMapper.databaseReader.city(ipAddress);
 		} catch (Exception e) {
 //			System.out.println("The address is not in the database:" + ip);
 			throw e;

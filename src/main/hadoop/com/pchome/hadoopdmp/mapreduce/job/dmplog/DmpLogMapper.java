@@ -58,7 +58,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public static DeviceComponent deviceComponent = new DeviceComponent();
 	public static String record_date;
 	public static String record_hour;
-	public static DatabaseReader reader = null;
+	public static DatabaseReader databaseReader = null;
 	private static String logpath = "";
 	private static String logStr = "";
 	private static String[] values = null;
@@ -159,8 +159,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			}
 			// IP轉城市
 			File database = new File(path[5].toString());
-			reader = new DatabaseReader.Builder(database).build();
-
+			databaseReader = new DatabaseReader.Builder(database).build();
+			System.out.println(">>>>>>>>>>>>>>>>databaseReader:"+databaseReader == null);
 			// 24館別階層對應表
 			FileSystem fs = FileSystem.get(conf);
 			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path(
@@ -487,10 +487,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		try {
 			geoIpComponent.ipTransformGEO(dmpDataJson);
 		} catch (Exception e) {
-			System.out.println(">>>>process source area fail:" + e.getMessage());
-			System.out.println(">>>>>>logStr:" + logStr);
-			System.out.println(">>>>>>fileName:" + fileName);
-			return;
+			System.out.println(">>>>process source area fail:"+dmpDataJson.getAsString("ip")+">>>>" + e.getMessage());
 		}
 		// 2.裝置處理元件(UserAgent轉成裝置資訊)
 		try {
