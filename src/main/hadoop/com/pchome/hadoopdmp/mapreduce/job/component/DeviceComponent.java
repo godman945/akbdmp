@@ -16,8 +16,11 @@ public class DeviceComponent {
 	public net.minidev.json.JSONObject parseUserAgentToDevice(net.minidev.json.JSONObject dmpJSon) throws Exception {
 		
 		System.out.println(">>>>>>>>"+dmpJSon);
+		System.out.println(">>>>>>>>ZZZZZZZZZz");
 		JSONObject n = new JSONObject();
+		System.out.println(">>>>>>>>ZZZZZZZZZz000001");
 		n.put("alex", "XXXXX");
+		System.out.println(">>>>>>>>ZZZZZZZZZz000002");
 		System.out.println(n.getAsString("alex"));
 		System.out.println("-----");
 		
