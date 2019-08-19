@@ -18,7 +18,7 @@ public class GeoIpComponent {
 	private static IpAdd ipAdd = new IpAdd();
 	private static CityResponse response = null;
 	public JSONObject ipTransformGEO(JSONObject dmpJSon_997) throws Exception {
-		System.out.println("11111111111----");
+		System.out.println("11111111111----:"+dmpJSon_997);
 		// 判斷是否為正確ip格式
 		ip = dmpJSon_997.getAsString("ip");
 		if (!ipAdd.isIP(ip)) {
