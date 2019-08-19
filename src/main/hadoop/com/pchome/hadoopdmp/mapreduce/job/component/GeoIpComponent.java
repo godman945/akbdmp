@@ -20,6 +20,9 @@ public class GeoIpComponent {
 	public JSONObject ipTransformGEO(JSONObject dmpJSon_997) throws Exception {
 		System.out.println("11111111111----:"+dmpJSon_997);
 		// 判斷是否為正確ip格式
+		System.out.println("ZZZZZZZZZZZZZz000000");
+		System.out.println(dmpJSon_997.get("trigger_type"));
+		System.out.println(dmpJSon_997.get("ip"));
 		ip = dmpJSon_997.getAsString("ip");
 		System.out.println("ZZZZZZZZZZZZZz");
 		if (!ipAdd.isIP(ip)) {
