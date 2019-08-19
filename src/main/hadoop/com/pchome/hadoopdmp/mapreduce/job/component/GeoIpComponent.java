@@ -22,7 +22,8 @@ public class GeoIpComponent {
 		// 判斷是否為正確ip格式
 		ip = dmpJSon_997.getAsString("ip");
 		if (!ipAdd.isIP(ip)) {
-			dmpJSon_997.put("area_info_classify", "null");
+			System.out.println("area_info_classify ><><><>< null");
+			dmpJSon_997.put("area_info_classify", "");
 			return dmpJSon_997;
 		}
 		System.out.println("2222222222222");
