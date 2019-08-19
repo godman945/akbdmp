@@ -16,12 +16,14 @@ public class GeoIpComponent {
 	private static IpAdd ipAdd = new IpAdd();
 	private static CityResponse response = null;
 	public net.minidev.json.JSONObject ipTransformGEO(net.minidev.json.JSONObject dmpJSon_997) throws Exception {
+		System.out.println("11111111111");
 		// 判斷是否為正確ip格式
 		ip = dmpJSon_997.getAsString("ip");
 		if (!ipAdd.isIP(ip)) {
 			dmpJSon_997.put("area_info_classify", "null");
 			return dmpJSon_997;
 		}
+		System.out.println("2222222222222");
 		// ip轉換國家、城市
 		InetAddress ipAddress = DmpLogMapper.ipAddress.getByName(ip);
 		try {
@@ -30,6 +32,7 @@ public class GeoIpComponent {
 			System.out.println("The address is not in the database:" + ip);
 			throw e;
 		}
+		System.out.println("33333333333");
 		if (response == null) {
 			dmpJSon_997.put("area_info_classify", "N");
 			return dmpJSon_997;
@@ -38,6 +41,7 @@ public class GeoIpComponent {
 		String cityStr = response.getCity().getNames().get("en");
 		dmpJSon_997.put("area_country", countryStr);
 		dmpJSon_997.put("area_city", cityStr);
+		System.out.println("44444444444");
 		return dmpJSon_997;
 	}
 }
