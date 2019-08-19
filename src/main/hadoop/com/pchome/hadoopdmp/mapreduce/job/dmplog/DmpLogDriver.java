@@ -165,26 +165,26 @@ public class DmpLogDriver {
 			
 	        
 	    	String[] jarPaths = {
-					"/hadoop_jar/lib/commons-lang-2.6.jar",
-					"/hadoop_jar/lib/commons-logging-1.1.1.jar",
-					"/hadoop_jar/lib/log4j-1.2.15.jar",
-					"/hadoop_jar/lib/mongo-java-driver-2.11.3.jar",
-					"/hadoop_jar/lib/softdepot-1.0.9.jar",
-					"/hadoop_jar/lib/solr-solrj-4.5.0.jar",
-					"/hadoop_jar/lib/noggit-0.5.jar",
-					"/hadoop_jar/lib/httpcore-4.2.2.jar",
-					"/hadoop_jar/lib/httpclient-4.2.3.jar",
-					"/hadoop_jar/lib/httpmime-4.2.3.jar",
-					"/hadoop_jar/lib/mysql-connector-java-5.1.12-bin.jar",
-					"/hadoop_jar/lib/hadoop-lzo-0.4.20.jar",
-					
-					// add kafka jar
-					"/hadoop_jar/lib/kafka-clients-0.9.0.0.jar",
-					"/hadoop_jar/lib/kafka_2.11-0.9.0.0.jar",
-					"/hadoop_jar/lib/slf4j-api-1.7.19.jar",
-					"/hadoop_jar/lib/slf4j-log4j12-1.7.6.jar",
+//					"/hadoop_jar/lib/commons-lang-2.6.jar",
+//					"/hadoop_jar/lib/commons-logging-1.1.1.jar",
+//					"/hadoop_jar/lib/log4j-1.2.15.jar",
+//					"/hadoop_jar/lib/mongo-java-driver-2.11.3.jar",
+//					"/hadoop_jar/lib/softdepot-1.0.9.jar",
+//					"/hadoop_jar/lib/solr-solrj-4.5.0.jar",
+//					"/hadoop_jar/lib/noggit-0.5.jar",
+//					"/hadoop_jar/lib/httpcore-4.2.2.jar",
+//					"/hadoop_jar/lib/httpclient-4.2.3.jar",
+//					"/hadoop_jar/lib/httpmime-4.2.3.jar",
+//					"/hadoop_jar/lib/mysql-connector-java-5.1.12-bin.jar",
+//					"/hadoop_jar/lib/hadoop-lzo-0.4.20.jar",
+//					
+//					// add kafka jar
+//					"/hadoop_jar/lib/kafka-clients-0.9.0.0.jar",
+//					"/hadoop_jar/lib/kafka_2.11-0.9.0.0.jar",
+//					"/hadoop_jar/lib/slf4j-api-1.7.19.jar",
+//					"/hadoop_jar/lib/slf4j-log4j12-1.7.6.jar",
 					"/hadoop_jar/lib/json-smart-2.3.jar",
-					"/hadoop_jar/lib/asm-1.0.2.jar" 
+//					"/hadoop_jar/lib/asm-1.0.2.jar" 
 			}; 
 			for (String jarPath : jarPaths) {
 				DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fs);
