@@ -25,6 +25,9 @@ public class GeoIpComponent {
 		System.out.println(dmpJSon_997.get("ip"));
 		System.out.println(ipAdd.isIP(dmpJSon_997.get("ip").toString()));
 		
+		
+		System.out.println("QQQQQQQQQQQQQQQQ:"+dmpJSon_997.getAsString("ip"));
+		
 		ip = dmpJSon_997.get("ip").toString();
 		
 		System.out.println("ZZZZZZZZZZZZZz");
