@@ -3,7 +3,6 @@ package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.InetAddress;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -60,7 +59,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public static String record_date;
 	public static String record_hour;
 	public static DatabaseReader reader = null;
-	public static InetAddress ipAddress = null;
 	private static String logpath = "";
 	private static String logStr = "";
 	private static String[] values = null;
