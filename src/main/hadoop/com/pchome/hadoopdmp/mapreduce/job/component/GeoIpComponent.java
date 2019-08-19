@@ -23,9 +23,10 @@ public class GeoIpComponent {
 		System.out.println("ZZZZZZZZZZZZZz000000");
 		System.out.println(dmpJSon_997.get("trigger_type"));
 		System.out.println(dmpJSon_997.get("ip"));
+		System.out.println(ipAdd.isIP(dmpJSon_997.get("ip").toString()));
 		ip = dmpJSon_997.getAsString("ip");
 		System.out.println("ZZZZZZZZZZZZZz");
-		if (!ipAdd.isIP(ip)) {
+		if (!ipAdd.isIP(dmpJSon_997.get("ip").toString())) {
 			System.out.println("area_info_classify ><><><>< null");
 			dmpJSon_997.put("area_info_classify", "");
 			return dmpJSon_997;
