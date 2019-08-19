@@ -202,16 +202,16 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			
 			
 			
-			//24館別階層對應表
-			FileSystem fs = FileSystem.get(conf);
-			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/GeoLite2-City.mmdb");
-			FSDataInputStream inputStream = fs.open(category24MappingFile);
-			Reader reader = new InputStreamReader(inputStream);
-			CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
-			for (CSVRecord csvRecord : csvParser) {
-				String data = csvRecord.get(1)+"<PCHOME>"+csvRecord.get(3)+"<PCHOME>"+csvRecord.get(5);
-				categoryLevelMappingList.add(data);
-			}
+//			//24館別階層對應表
+//			FileSystem fs = FileSystem.get(conf);
+//			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/GeoLite2-City.mmdb");
+//			FSDataInputStream inputStream = fs.open(category24MappingFile);
+//			Reader reader = new InputStreamReader(inputStream);
+//			CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
+//			for (CSVRecord csvRecord : csvParser) {
+//				String data = csvRecord.get(1)+"<PCHOME>"+csvRecord.get(3)+"<PCHOME>"+csvRecord.get(5);
+//				categoryLevelMappingList.add(data);
+//			}
 		} catch (Exception e) {
 			System.out.println("Mapper setup error>>>>>> " + e.getMessage());
 		}
