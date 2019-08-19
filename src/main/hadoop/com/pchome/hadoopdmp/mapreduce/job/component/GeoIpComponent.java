@@ -17,7 +17,9 @@ public class GeoIpComponent {
 	private static String ip = ""; 
 	private static IpAdd ipAdd = new IpAdd();
 	private static CityResponse response = null;
-	public JSONObject ipTransformGEO(JSONObject dmpJSon_997) throws Exception {
+	public net.minidev.json.JSONObject ipTransformGEO(net.minidev.json.JSONObject dmpJSon_997) throws Exception {
+		net.minidev.json.JSONObject dmpJSon = dmpJSon_997;
+		
 		System.out.println("11111111111----:"+dmpJSon_997);
 		// 判斷是否為正確ip格式
 		System.out.println("ZZZZZZZZZZZZZz000000");
@@ -26,7 +28,7 @@ public class GeoIpComponent {
 		System.out.println(ipAdd.isIP(dmpJSon_997.get("ip").toString()));
 		
 		
-		System.out.println("QQQQQQQQQQQQQQQQ:"+dmpJSon_997.getAsString("ip"));
+		System.out.println("QQQQQQQQQQQQQQQQ:"+dmpJSon.getAsString("ip"));
 		
 		ip = dmpJSon_997.get("ip").toString();
 		
