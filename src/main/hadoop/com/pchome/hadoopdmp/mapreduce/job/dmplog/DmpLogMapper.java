@@ -51,39 +51,9 @@ import com.pchome.hadoopdmp.spring.config.bean.mongodborg.MongodbOrgHadoopConfig
 @Component
 public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 
-//	private static int recordCount = 0;
-//	private static int kdclLogLength = 30;
-//	private static int campaignLogLength = 9;
-
-//	private Text keyOut = new Text();
-//	private Text valueOut = new Text();
-//
-//	public static String record_date;
-//	public static String record_hour;
-//	public static ArrayList<Map<String, String>> categoryList = new ArrayList<Map<String, String>>();		     //分類表	
-//	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();				 //分類個資表
-//	public static List<CategoryCodeBean> category24hBeanList = new ArrayList<CategoryCodeBean>();				 //24H分類表
-//	public static List<CategoryRutenCodeBean> categoryRutenBeanList = new ArrayList<CategoryRutenCodeBean>();	 //Ruten分類表
-//	public static PersonalInfoComponent personalInfoComponent = new PersonalInfoComponent();
-//	public static GeoIpComponent geoIpComponent = new GeoIpComponent();
-//	public static DateTimeComponent dateTimeComponent = new DateTimeComponent();
-//	public static DeviceComponent deviceComponent = new DeviceComponent();
-//	private DB mongoOrgOperations;
-//	public static DatabaseReader reader = null;
-//	public static InetAddress ipAddress = null;
-//	private static DBCollection dBCollection_class_url;
-//	private static InputSplit inputSplit;
-//	public static List<String> categoryLevelMappingList = new ArrayList<String>();
-//	public static Map<String, JSONObject> categoryLevelMappingMap = new HashMap<String, JSONObject>();
-//	public static ACategoryLogData aCategoryLogDataClick = null;
-//	public static ACategoryLogData aCategoryLogDataRetun = null;
-//	public static ACategoryLogData aCategoryLogData24H = null;
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-//	private static int totalCount= 0;
 //	private static String[] markLevelList = {"mark_layer1","mark_layer2","mark_layer3"};
 //	private static String[] markValueList = {"mark_value1","mark_value2","mark_value3"};
-
 	private static Logger log = Logger.getLogger(DmpLogMapper.class);
 	public static GeoIpComponent geoIpComponent = new GeoIpComponent();
 	public static DeviceComponent deviceComponent = new DeviceComponent();
@@ -489,6 +459,19 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					}
 					dmpDataJson.put("mark_value", pageCategory);
 				}
+				
+				// 館別分類
+				try {
+					if (StringUtils.isNotBlank(dmpDataJson.getAsString("mark_value"))) {
+						process24CategoryLevel(dmpDataJson);
+					}
+				} catch (Exception e) {
+					System.out.println(">>>>>>>fail process 24 category level:" + e.getMessage());
+					return;
+				}
+				
+				
+				
 			} catch (Exception e) {
 				System.out.println(">>>>bulog set json fail:" + e.getMessage());
 				System.out.println(">>>>bulog set json fail log size:" + logStr.split(paclSymbol, -1).length);
@@ -565,19 +548,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			System.out.println(">>>>>>fileName:" + fileName);
 			return;
 		}
-
-		// 館別分類
-		if (logpath.contains("bu_log")) {
-			try {
-				if (StringUtils.isNotBlank(dmpDataJson.getAsString("mark_value"))) {
-					process24CategoryLevel(dmpDataJson);
-				}
-			} catch (Exception e) {
-				System.out.println(">>>>>>>fail process 24 category level:" + e.getMessage());
-				return;
-			}
-		}
-
 //		寫入reduce
 		try {
 			context.write(new Text(dmpDataJson.getAsString("uuid")), new Text(dmpDataJson.toString()));
