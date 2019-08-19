@@ -6,10 +6,8 @@ import java.util.regex.Pattern;
 public class IpAddress {
 	public static class IpAdd  
     {  
-        public boolean isIP(String addr)  
-        {  
-            if(addr.length() < 7 || addr.length() > 15 || "".equals(addr))  
-            {  
+        public boolean isIP(String addr) throws Exception {  
+            if(addr.length() < 7 || addr.length() > 15 || "".equals(addr)) {  
                 return false;  
             }  
             String rexp = "([1-9]|[1-9]\\d|1\\d{2}|2[0-4]\\d|25[0-5])(\\.(\\d|[1-9]\\d|1\\d{2}|2[0-4]\\d|25[0-5])){3}";  
