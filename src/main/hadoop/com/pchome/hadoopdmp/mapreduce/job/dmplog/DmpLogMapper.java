@@ -170,31 +170,33 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				}
 			}
 			
-//			// load 24h分類表(DMP_24h_category.csv)
-//			Path category24HPath = Paths.get(path[3].toString());
-//			List<String> lines24H = Files.readAllLines(category24HPath, charset);
-//			for (String line : lines24H) {
-//				CategoryCodeBean categoryBean = new CategoryCodeBean();
-//				String[] tmpStrAry = line.split(","); // 0001000000000000;M,35
-//				categoryBean.setNumberCode(tmpStrAry[0].replaceAll("\"", ""));
-//				categoryBean.setChineseDesc(tmpStrAry[1].replaceAll("\"", ""));
-//				categoryBean.setBreadCrumb(tmpStrAry[2].replaceAll("\"", ""));
-//				categoryBean.setEnglishCode(tmpStrAry[3].replaceAll("\"", ""));
-//				category24hBeanList.add(categoryBean);
-//			}
-//			// load Ruten分類表(DMP_Ruten_category.csv)
-//			Path categoryRutenPath = Paths.get(path[4].toString());
-//			List<String> linesRuten = Files.readAllLines(categoryRutenPath, charset);
-//			for (String line : linesRuten) {
-//				CategoryRutenCodeBean categoryRutenBean = new CategoryRutenCodeBean();
-//				String[] tmpStrAry = line.split(","); //"0001000000000000","電腦、電腦周邊"
-//				categoryRutenBean.setNumberCode(tmpStrAry[0].replaceAll("\"", ""));
-//				categoryRutenBean.setChineseDesc(tmpStrAry[1].replaceAll("\"", ""));
-//				categoryRutenBeanList.add(categoryRutenBean);
-//			}
-			System.out.println("**************@@@@@@@@@@@");
+			// load 24h分類表(DMP_24h_category.csv)
+			Path category24HPath = Paths.get(path[3].toString());
+			List<String> lines24H = Files.readAllLines(category24HPath, charset);
+			for (String line : lines24H) {
+				CategoryCodeBean categoryBean = new CategoryCodeBean();
+				String[] tmpStrAry = line.split(","); // 0001000000000000;M,35
+				categoryBean.setNumberCode(tmpStrAry[0].replaceAll("\"", ""));
+				categoryBean.setChineseDesc(tmpStrAry[1].replaceAll("\"", ""));
+				categoryBean.setBreadCrumb(tmpStrAry[2].replaceAll("\"", ""));
+				categoryBean.setEnglishCode(tmpStrAry[3].replaceAll("\"", ""));
+				category24hBeanList.add(categoryBean);
+			}
+			// load Ruten分類表(DMP_Ruten_category.csv)
+			Path categoryRutenPath = Paths.get(path[4].toString());
+			List<String> linesRuten = Files.readAllLines(categoryRutenPath, charset);
+			for (String line : linesRuten) {
+				CategoryRutenCodeBean categoryRutenBean = new CategoryRutenCodeBean();
+				String[] tmpStrAry = line.split(","); //"0001000000000000","電腦、電腦周邊"
+				categoryRutenBean.setNumberCode(tmpStrAry[0].replaceAll("\"", ""));
+				categoryRutenBean.setChineseDesc(tmpStrAry[1].replaceAll("\"", ""));
+				categoryRutenBeanList.add(categoryRutenBean);
+			}
+			System.out.println("**************@@@@@@@@@@@:"+path[5].toString());
+			System.out.println(new File(path[5].toString()).exists());
+			
 			//IP轉城市
-			File database = new File(new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/24h_menu-1.csv").toString());
+			File database = new File(path[5].toString());
 			reader = new DatabaseReader.Builder(database).build();  
 			System.out.println("**************@@@@@@@@@@@");
 			
@@ -202,7 +204,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			
 			//24館別階層對應表
 			FileSystem fs = FileSystem.get(conf);
-			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/24h_menu-1.csv");
+			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/GeoLite2-City.mmdb");
 			FSDataInputStream inputStream = fs.open(category24MappingFile);
 			Reader reader = new InputStreamReader(inputStream);
 			CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
