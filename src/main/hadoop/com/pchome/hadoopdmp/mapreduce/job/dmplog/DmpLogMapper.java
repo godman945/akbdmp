@@ -191,9 +191,14 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				categoryRutenBean.setChineseDesc(tmpStrAry[1].replaceAll("\"", ""));
 				categoryRutenBeanList.add(categoryRutenBean);
 			}
+			System.out.println("**************@@@@@@@@@@@");
 			//IP轉城市
 			File database = new File(path[5].toString());
 			reader = new DatabaseReader.Builder(database).build();  
+			System.out.println("**************@@@@@@@@@@@");
+			
+			
+			
 			//24館別階層對應表
 			FileSystem fs = FileSystem.get(conf);
 			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/24h_menu-1.csv");
