@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import java.net.InetAddress;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,8 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import java.io.File;
@@ -78,7 +81,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //	public static ACategoryLogData aCategoryLogDataClick = null;
 //	public static ACategoryLogData aCategoryLogDataRetun = null;
 //	public static ACategoryLogData aCategoryLogData24H = null;
-//	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	
 	
@@ -125,7 +128,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public void setup(Context context) {
 		System.out.println(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"+context.getConfiguration().get("spring.profiles.active"));
 		try {
-			System.out.println("*********>>>>>>>>>>>:"+System.currentTimeMillis());
+			System.out.println("*********>>>>>>>>>>>:"+ sdf.format(new Date()));
 			record_date = context.getConfiguration().get("job.date");
 			record_hour = context.getConfiguration().get("job.hour");
 			System.out.println("record_date:" + record_date);
