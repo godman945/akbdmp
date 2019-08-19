@@ -183,7 +183,7 @@ public class DmpLogDriver {
 //					"/hadoop_jar/lib/kafka_2.11-0.9.0.0.jar",
 //					"/hadoop_jar/lib/slf4j-api-1.7.19.jar",
 //					"/hadoop_jar/lib/slf4j-log4j12-1.7.6.jar",
-					"/hadoop_jar/lib/json-smart-2.3.jar",
+//					"/hadoop_jar/lib/json-smart-1.3.1.jar",
 //					"/hadoop_jar/lib/asm-1.0.2.jar" 
 			}; 
 			for (String jarPath : jarPaths) {
