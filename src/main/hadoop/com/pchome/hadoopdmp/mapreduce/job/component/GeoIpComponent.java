@@ -15,7 +15,7 @@ public class GeoIpComponent {
 	private static CityResponse response = null;
 	public net.minidev.json.JSONObject ipTransformGEO(net.minidev.json.JSONObject dmpJSon) throws Exception {
 		// 判斷是否為正確ip格式
-		ip = dmpJSon.get("ip").toString();
+		ip = dmpJSon.getAsString("ip").toString();
 		if (!ipAdd.isIP(ip)) {
 			dmpJSon.put("area_info_classify", "");
 			return dmpJSon;
