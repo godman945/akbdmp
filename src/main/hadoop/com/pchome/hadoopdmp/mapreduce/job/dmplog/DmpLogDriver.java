@@ -155,7 +155,7 @@ public class DmpLogDriver {
 			job.setReducerClass(DmpLogReducer.class);
 //			job.setInputFormatClass(com.hadoop.mapreduce.LzoSplitInputFormat.class);
 //			job.setInputFormatClass(com.hadoop.mapreduce.LzoSplitInputFormat.class);
-			job.setInputFormatClass(Text.class);
+//			job.setInputFormatClass();
 			job.setMapOutputKeyClass(Text.class);
 			job.setMapOutputValueClass(Text.class);
 			job.setOutputKeyClass(Text.class);
