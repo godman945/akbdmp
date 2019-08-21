@@ -84,6 +84,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static net.minidev.json.JSONObject dmpDataJson999 = new net.minidev.json.JSONObject();
 	private static net.minidev.json.JSONObject dmpDataJson = new net.minidev.json.JSONObject();
 
+	
+	private static int count = 0;
 	public void setup(Context context) {
 		System.out.println(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"
 				+ context.getConfiguration().get("spring.profiles.active"));
@@ -182,9 +184,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		inputSplit = (InputSplit) context.getInputSplit();
 		logpath = ((FileSplit) inputSplit).getPath().toString();
 		String fileName = ((FileSplit) inputSplit).getPath().getName();
-		values = null;
-		logStr = "";
-		logStr = value.toString();
+		
 		dmpDataJson.clear();
 		dmpDataJson.put("fileName", "");
 		dmpDataJson.put("log_date", "");
@@ -250,6 +250,14 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		dmpDataJson.put("mark_layer3", "");
 		dmpDataJson.put("mark_layer4", "");
 
+		values = null;
+		logStr = "";
+		logStr = value.toString();
+		if(count == 1000) {
+			System.out.println(logStr);
+			count = 0;
+		}
+		count = count + 1;
 		if (logpath.contains("kdcl_log")) {
 			try {
 				// kdcl log raw data格式為一般或是Campaign
