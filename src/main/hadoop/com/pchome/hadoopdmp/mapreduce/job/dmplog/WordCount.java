@@ -37,7 +37,7 @@ public class WordCount {
 		
 		
 		List<Path> listPath = new ArrayList<Path>();  
-		Path a = new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/	test.lzo");
+		Path a = new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/test.lzo");
 		listPath.add(a);
 		
 //		Path b = new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/b.txt.lzo");
