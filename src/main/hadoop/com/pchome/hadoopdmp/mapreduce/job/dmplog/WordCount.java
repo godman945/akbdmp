@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.filecache.DistributedCache;
@@ -22,6 +24,9 @@ import com.hadoop.mapreduce.LzoTextInputFormat;
 
 public class WordCount {
 	public static void main(String[] args) throws Exception {
+		
+		System.setProperty("hadoop.home.dir", "D:\\hadoop_2.8.5");
+		System.getProperties().put("HADOOP_USER_NAME", "webuser");
 		Configuration conf = new Configuration();
 		conf.set("mapreduce.map.output.compress.codec", "com.hadoop.mapreduce.LzoTextInputFormat");
 		conf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
@@ -30,45 +35,25 @@ public class WordCount {
 		conf.set("mapred.compress.map.output", "true");
 		conf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
 		
-		FileSystem fs = FileSystem.get(conf);
-		fs.delete(new Path("hdfs://druid1.mypchome.com.tw:9000/durid_source"), true);
-		System.out.println("1111111111");
-		System.out.println(fs.exists(new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/kdcl_log/2019-08-04/00/20190804_00_4c.log.lzo")));
 		
+		List<Path> listPath = new ArrayList<Path>();  
+		Path a = new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/a.txt.lzo");
+		listPath.add(a);
 		
+		Path b = new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/b.txt.lzo");
+		listPath.add(b);
 		
-		CompressionCodecFactory compressionCodecs = new CompressionCodecFactory(conf);
-    	System.out.println("11111111111111");
-		CompressionCodec codec = compressionCodecs.getCodec(new Path("/druid_source/kdcl_log/2019-08-04/00/20190804_00_4c.log.lzo"));
+		Path[] paths = new Path[listPath.size()];  
+		listPath.toArray(paths);
 		
-//		 InputStream in = null;
-//		 OutputStream out = null;
-//		 try {
-//			 in = codec.createInputStream(fs.open(new Path("/druid_source/kdcl_log/2019-08-04/00/20190804_00_4c.log.lzo")));
-//			 
-//			 
-//			 StringBuilder stringBuilder = new StringBuilder();
-//				String line = null;
-//				
-//				try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, "utf-8"))) {	
-//					while ((line = bufferedReader.readLine()) != null) {
-//						stringBuilder.append(line);
-//						System.out.println(stringBuilder);
-//					}
-//				}
-//		 } finally {
-//			 in.close();
-//		 }
-//		System.out.println(codec == null);
-		
-		
-		
-		System.out.println("22222222222222222");
+		FileSystem fileSystem = FileSystem.get(conf);
+		fileSystem.delete(new Path("hdfs://druid1.mypchome.com.tw:9000/test"), true);
 		
 		
 		
 		
 		
+//		System.out.println(fs.exists(new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/kdcl_log/2019-08-04/00/20190804_00_4c.log.lzo")));
 		
 		Job job = new Job(conf, "word count");
 		job.setJarByClass(WordCount.class);
@@ -80,16 +65,13 @@ public class WordCount {
 		job.setMapOutputValueClass(Text.class);
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(IntWritable.class);
+//		FileInputFormat.addInputPath(job, new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/kdcl_log/2019-08-04/00/20190804_00_4c.log.lzo"));
+		FileInputFormat.setInputPaths(job, paths);
 		
 		
-//		job.setInputFormatClass(TextInputFormat.class);
-//		job.setMapOutputKeyClass(Text.class);
-//		job.setMapOutputValueClass(IntWritable.class);
-//		job.setOutputKeyClass(Text.class);
-//		job.setOutputValueClass(IntWritable.class);
-		FileInputFormat.addInputPath(job, new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/kdcl_log/2019-08-04/00/20190804_00_4c.log.lzo"));
-		FileOutputFormat.setOutputPath(job, new Path("/durid_source"));
 		
+		FileOutputFormat.setOutputPath(job, new Path("/test"));
+		System.exit(job.waitForCompletion(true) ? 0 : 1);
 		String[] jarPaths = {
 				"/hadoop_jar/lib/commons-lang-2.6.jar",
 				"/hadoop_jar/lib/commons-logging-1.1.1.jar",
@@ -113,7 +95,7 @@ public class WordCount {
 				"/hadoop_jar/lib/asm-1.0.2.jar" 
 		}; 
 		for (String jarPath : jarPaths) {
-			DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fs);
+			DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fileSystem);
 		}
 		
 		

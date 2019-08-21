@@ -26,9 +26,7 @@ public class TokenizerMapper extends Mapper<LongWritable, Text, Text, Text> {
     	try {
     		System.out.println(value.toString());
     		
-    		json.put("alex", "5555");
     		
-    		System.out.println(json.get("alex"));
     		this.values = value.toString().split(kdclSymbol,-1);
     		if(count == 0) {
     			for (String string : values) {
