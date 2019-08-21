@@ -53,65 +53,62 @@ public class DmpLogDriver {
 	        conf.set("job.hour",dmpHour);
 	        conf.set("mapred.max.split.size","3045728000"); //3045728 49 //3045728000 7
 	        conf.set("mapred.min.split.size","1015544000"); //1015544 49 //1015544000 7
-			
-			
+	        conf.set("mapred.child.java.opts", "-Xmx4048M");
 	        //輸入檔案
 	        List<Path> listPath = new ArrayList<Path>();  
 	        FileSystem fileSystem = FileSystem.get(conf);
 	        String hour = "";
 	        if(dmpHour.equals("day")) {//計算整天
-//	  			for (int i = 0; i < 24; i++) {
-//	  				hour = "";
-//	  				if(i == 0) {
-//	  					hour = "00";
-//	  				}else if(String.valueOf(i).length() == 1) {
-//	  					hour = "0"+i;
-//	  				}else if(String.valueOf(i).length() == 2) {
-//	  					hour = String.valueOf(i);
-//	  				}
-//	  				//載入bu log file
-//	  				Path buPath = new Path("/druid_source/bu_log/"+dmpDate+"/"+hour);
-//	  				FileStatus[] buStatus = fs.listStatus(buPath); 
-//	  				for (FileStatus fileStatus : buStatus) {
-//	  					String pathStr = fileStatus.getPath().toString();
-//	  					String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
-//	  					if(extensionName.equals("LZO")) {
-//	  						listPath.add(new Path(fileStatus.getPath().toString()));
-//	  					}
-//	  				}
-//	  				//載入kdcl log file
-//	  				Path kdclPath = new Path("/druid_source/kdcl_log/"+dmpDate+"/"+hour);
-//			        FileStatus[] kdclStatus = fs.listStatus(kdclPath); 
-//					for (FileStatus fileStatus : kdclStatus) {
-//						String pathStr = fileStatus.getPath().toString();
-//						String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
-//						if(extensionName.equals("LZO")) {
-//							listPath.add(new Path(fileStatus.getPath().toString()));
-//						}
-//					}
-//					//載入pacl log file
-//					Path paclPath = new Path("/druid_source/pacl_log/"+dmpDate+"/"+hour);
-//			        FileStatus[] paclStatus = fs.listStatus(paclPath); 
-//					for (FileStatus fileStatus : paclStatus) {
-//						String pathStr = fileStatus.getPath().toString();
-//						String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
-//						if(extensionName.equals("LZO")) {
-//							listPath.add(new Path(fileStatus.getPath().toString()));
-//						}
-//					}
-//	  			}
+	  			for (int i = 0; i < 24; i++) {
+	  				hour = "";
+	  				if(i == 0) {
+	  					hour = "00";
+	  				}else if(String.valueOf(i).length() == 1) {
+	  					hour = "0"+i;
+	  				}else if(String.valueOf(i).length() == 2) {
+	  					hour = String.valueOf(i);
+	  				}
+	  				//載入bu log file
+	  				Path buPath = new Path("/druid_source/bu_log/"+dmpDate+"/"+hour);
+	  				FileStatus[] buStatus = fileSystem.listStatus(buPath); 
+	  				for (FileStatus fileStatus : buStatus) {
+	  					String pathStr = fileStatus.getPath().toString();
+	  					String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
+	  					if(extensionName.equals("LZO")) {
+	  						listPath.add(new Path(fileStatus.getPath().toString()));
+	  					}
+	  				}
+	  				//載入kdcl log file
+	  				Path kdclPath = new Path("/druid_source/kdcl_log/"+dmpDate+"/"+hour);
+			        FileStatus[] kdclStatus = fileSystem.listStatus(kdclPath); 
+					for (FileStatus fileStatus : kdclStatus) {
+						String pathStr = fileStatus.getPath().toString();
+						String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
+						if(extensionName.equals("LZO")) {
+							listPath.add(new Path(fileStatus.getPath().toString()));
+						}
+					}
+					//載入pacl log file
+					Path paclPath = new Path("/druid_source/pacl_log/"+dmpDate+"/"+hour);
+			        FileStatus[] paclStatus = fileSystem.listStatus(paclPath); 
+					for (FileStatus fileStatus : paclStatus) {
+						String pathStr = fileStatus.getPath().toString();
+						String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
+						if(extensionName.equals("LZO")) {
+							listPath.add(new Path(fileStatus.getPath().toString()));
+						}
+					}
+	  			}
 	        	
 //  				//載入bu log file
 //  				Path buPath = new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/bu_log/"+dmpDate+"/kdcl_bulog_20190804_day.lzo");
 //  				listPath.add(buPath);
-  				//載入kdcl log file
-  				Path kdclPath = new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/kdcl_log/"+dmpDate+"/kdcl_kdcllog_20190804_day.lzo");
-  				listPath.add(kdclPath);
+//  				//載入kdcl log file
+//  				Path kdclPath = new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/kdcl_log/"+dmpDate+"/kdcl_kdcllog_20190804_day.lzo");
+//  				listPath.add(kdclPath);
 //  				//載入pacl log file
 //  				Path paclPath = new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/pacl_log/"+dmpDate+"/kdcl_pacllog_20190804_day.lzo");
 //  				listPath.add(paclPath);
-  				
-  				
   				
 	        }else {//計算小時
 	        	//載入bu log file
