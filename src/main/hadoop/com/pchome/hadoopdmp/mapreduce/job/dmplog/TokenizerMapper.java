@@ -25,16 +25,7 @@ public class TokenizerMapper extends Mapper<LongWritable, Text, Text, Text> {
     public synchronized void map(LongWritable offset, Text value, Context context)  {
     	try {
     		System.out.println(value.toString());
-    		
-    		
     		this.values = value.toString().split(kdclSymbol,-1);
-    		if(count == 0) {
-    			for (String string : values) {
-    				System.out.println(string);
-    			}
-    			count = count + 1;
-    		}
-    		System.out.println("-----");
 //    		String value2 = new String(value.getBytes(), 0, value.getLength(), "utf-8");	
 //    		System.out.println(value2);
     	}catch(Exception e) {
