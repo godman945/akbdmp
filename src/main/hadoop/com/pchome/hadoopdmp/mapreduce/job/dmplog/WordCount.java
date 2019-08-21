@@ -32,7 +32,7 @@ public class WordCount {
 //		conf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
 //		conf.set("io.compression.codecs", "org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec,org.apache.hadoop.io.compress.BZip2Codec");
 //		conf.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
-		conf.set("mapred.compress.map.output", "true");
+//		conf.set("mapred.compress.map.output", "true");
 		
 		
 		
@@ -49,11 +49,6 @@ public class WordCount {
 		FileSystem fileSystem = FileSystem.get(conf);
 		fileSystem.delete(new Path("hdfs://192.168.2.157:9000/home/webuser/alex/test"), true);
 		
-		
-		
-		
-		
-//		System.out.println(fs.exists(new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/kdcl_log/2019-08-04/00/20190804_00_4c.log.lzo")));
 		
 		Job job = new Job(conf, "word count");
 		job.setJarByClass(WordCount.class);
