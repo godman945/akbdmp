@@ -60,9 +60,9 @@ public class WordCount {
 		job.setMapperClass(TokenizerMapper.class);
 		job.setReducerClass(IntSumReducer.class);
 		job.setCombinerClass(IntSumReducer.class);
-		job.setInputFormatClass(LzoTextInputFormat.class);
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(Text.class);
+//		job.setInputFormatClass(LzoTextInputFormat.class);
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(IntWritable.class);
 //		FileInputFormat.addInputPath(job, new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/kdcl_log/2019-08-04/00/20190804_00_4c.log.lzo"));
