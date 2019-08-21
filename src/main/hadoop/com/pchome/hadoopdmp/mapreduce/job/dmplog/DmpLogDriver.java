@@ -108,7 +108,7 @@ public class DmpLogDriver {
   				listPath.add(kdclPath);
   				//載入pacl log file
   				Path paclPath = new Path("hdfs://druid1.mypchome.com.tw:9000/druid_source/pacl_log/"+dmpDate+"/kdcl_pacllog_20190804_day.lzo");
-  				listPath.add(kdclPath);
+  				listPath.add(paclPath);
   				
   				
   				
