@@ -47,7 +47,7 @@ public class WordCount {
 		listPath.toArray(paths);
 		
 		FileSystem fileSystem = FileSystem.get(conf);
-		fileSystem.delete(new Path("hdfs://druid1.mypchome.com.tw:9000/test"), true);
+		fileSystem.delete(new Path("hdfs://192.168.2.157:9000/home/webuser/alex/test"), true);
 		
 		
 		
@@ -70,7 +70,7 @@ public class WordCount {
 		
 		
 		
-		FileOutputFormat.setOutputPath(job, new Path("/test"));
+		FileOutputFormat.setOutputPath(job, new Path("/home/webuser/alex/test"));
 		System.exit(job.waitForCompletion(true) ? 0 : 1);
 		String[] jarPaths = {
 				"/hadoop_jar/lib/commons-lang-2.6.jar",
