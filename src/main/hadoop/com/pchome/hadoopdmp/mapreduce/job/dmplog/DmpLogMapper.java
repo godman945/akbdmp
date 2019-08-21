@@ -192,6 +192,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		logpath = ((FileSplit) inputSplit).getPath().toString();
 		String fileName = ((FileSplit) inputSplit).getPath().getName();
 		
+		
+		System.out.println("alex:"+value+" fileName:"+fileName);
+		
+		
 		dmpDataJson.clear();
 		dmpDataJson.put("fileName", "");
 		dmpDataJson.put("log_date", "");
