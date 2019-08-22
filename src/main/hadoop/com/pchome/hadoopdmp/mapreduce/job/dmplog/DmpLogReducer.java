@@ -94,13 +94,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	public static Map<String, String> pfbxWebsiteCategory = new HashMap<String, String>();
 	public static List<String> categoryLevelMappingList = new ArrayList<String>();
 	
-	
-	
 	public static int bu_log_count = 0;
 	public static int kdcl_log_count = 0;
 	public static int pack_log_count = 0;
-	
-	
 	
 	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
@@ -273,10 +269,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("vpv")).append("\"");
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ck")).append("\"");
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pv")).append("\"");
-							keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("category")).append("\"");
 							context.write(new Text(wiriteToDruid.toString()), null);
 							wiriteToDruid.setLength(0);
-							
 							if(dmpJSon.getAsString("log_source").equals("pacl_log")) {
 								pack_log_count = pack_log_count + 1;
 							}else if(dmpJSon.getAsString("log_source").equals("kdcl_log")) {
@@ -336,7 +331,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("vpv")).append("\"");
 					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ck")).append("\"");
 					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pv")).append("\"");
-					keyOut.set("\""+dmpJSon.getAsString("uuid")+"\"".trim());
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("category")).append("\"");
 					context.write(new Text(wiriteToDruid.toString()), null);
 					wiriteToDruid.setLength(0);
 					

@@ -51,8 +51,8 @@ public class DmpLogDriver {
 	        conf.set("spring.profiles.active", env);
 	        conf.set("job.date",dmpDate);
 	        conf.set("job.hour",dmpHour);
-	        conf.set("mapred.max.split.size","3045728000"); //3045728 49 //3045728000 7
-	        conf.set("mapred.min.split.size","1015544000"); //1015544 49 //1015544000 7
+//	        conf.set("mapred.max.split.size","3045728000"); //3045728 49 //3045728000 7
+//	        conf.set("mapred.min.split.size","1015544000"); //1015544 49 //1015544000 7
 	        conf.set("mapred.child.java.opts", "-Xmx4048M");
 	        //輸入檔案
 	        List<Path> listPath = new ArrayList<Path>();  

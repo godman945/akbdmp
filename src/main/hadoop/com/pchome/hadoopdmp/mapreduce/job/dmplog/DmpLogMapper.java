@@ -565,7 +565,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		if (markValue.length() == 4) {
 			level = 2;
 		}
-		if (markValue.length() == 6) {
+		if (markValue.length() >= 6) {
 			level = 3;
 		}
 		if (categoryLevelMappingMap.containsKey(markValue)) {
