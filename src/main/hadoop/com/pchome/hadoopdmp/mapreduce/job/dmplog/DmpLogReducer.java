@@ -213,6 +213,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				}
 				//產出csv
 				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_value"))) {
+					System.out.println("mark_value:"+dmpJSon.getAsString("mark_value"));
+					System.out.println("category:"+dmpJSon.getAsString("category"));
 					for (int i= 0; i < markLevelList.length; i++) {
 						if(StringUtils.isNotBlank(dmpJSon.getAsString(markLevelList[i]))) {
 							if(dmpJSon.getAsString("mark_value").equals(dmpJSon.getAsString(markValueList[i]))) {
@@ -270,6 +272,11 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ck")).append("\"");
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pv")).append("\"");
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("category")).append("\"");
+							
+							System.out.println("markValueList[i]"+markValueList[i]);
+							System.out.println("markLevelList[i]"+markLevelList[i]);
+							
+							
 							context.write(new Text(wiriteToDruid.toString()), null);
 							wiriteToDruid.setLength(0);
 							if(dmpJSon.getAsString("log_source").equals("pacl_log")) {
