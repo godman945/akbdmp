@@ -206,15 +206,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				}
 				String pfbxCustomerInfoId = dmpJSon.getAsString("pfbx_customer_info_id");
 				String webClass = StringUtils.isBlank(pfbxWebsiteCategory.get(pfbxCustomerInfoId)) ? "" : pfbxWebsiteCategory.get(pfbxCustomerInfoId);
-				
-				
-				if(dmpJSon.getAsString("uuid").equals("13ca77f3-b5f4-4843-9fb7-56c82accaef9") && dmpJSon.getAsString("log_source").equals("bu_log")) {
-					log.info("13ca77f3-b5f4-4843-9fb7-56c82accaef9:"+dmpJSon);
-				}
 				//產出csv
 				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_value"))) {
-					System.out.println("mark_value:"+dmpJSon.getAsString("mark_value"));
-					System.out.println("category:"+dmpJSon.getAsString("category"));
 					for (int i= 0; i < markLevelList.length; i++) {
 						if(StringUtils.isNotBlank(dmpJSon.getAsString(markLevelList[i]))) {
 							if(dmpJSon.getAsString("mark_value").equals(dmpJSon.getAsString(markValueList[i]))) {
@@ -272,13 +265,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ck")).append("\"");
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pv")).append("\"");
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("category")).append("\"");
-							
-							System.out.println("markValueList[i]"+markValueList[i]);
-							System.out.println("markLevelList[i]"+markLevelList[i]);
-							
-							
 							context.write(new Text(wiriteToDruid.toString()), null);
 							wiriteToDruid.setLength(0);
+							
 							if(dmpJSon.getAsString("log_source").equals("pacl_log")) {
 								pack_log_count = pack_log_count + 1;
 							}else if(dmpJSon.getAsString("log_source").equals("kdcl_log")) {
