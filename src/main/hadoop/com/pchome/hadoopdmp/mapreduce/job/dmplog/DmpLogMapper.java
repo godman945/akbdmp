@@ -87,8 +87,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	
 	private static int count = 0;
 	public void setup(Context context) {
-		System.out.println(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"
-				+ context.getConfiguration().get("spring.profiles.active"));
+		System.out.println(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"	+ context.getConfiguration().get("spring.profiles.active"));
 		try {
 			System.out.println("*********>>>>>>>>>>>:" + sdf.format(new Date()));
 			record_date = context.getConfiguration().get("job.date");
@@ -113,8 +112,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			for (String line : lines) {
 				String[] tmpStrAry = line.split(";"); // 0001000000000000;M,35
 				String[] tmpStrAry2 = tmpStrAry[1].split(",");
-				clsfyCraspMap.put(tmpStrAry[0],
-						new combinedValue(tmpStrAry[1].split(",")[0], tmpStrAry2.length > 1 ? tmpStrAry2[1] : ""));
+				clsfyCraspMap.put(tmpStrAry[0],new combinedValue(tmpStrAry[1].split(",")[0], tmpStrAry2.length > 1 ? tmpStrAry2[1] : ""));
 			}
 			// load 分類表(pfp_ad_category_new.csv)
 			Path cate_path = Paths.get(path[0].toString());
@@ -162,7 +160,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			// IP轉城市
 			File database = new File(path[5].toString());
 			databaseReader = new DatabaseReader.Builder(database).build();
-			System.out.println(">>>>>>>>>>>>>>>>databaseReader:"+databaseReader == null);
+
+			
 			// 24館別階層對應表
 			FileSystem fs = FileSystem.get(conf);
 			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("hdfs://hpd11.mypchome.com.tw:9000/hadoop_file/24h_menu-1.csv");
@@ -174,7 +173,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				categoryLevelMappingList.add(data);
 			}
 			
-			System.out.println("categoryLevelMappingList:"+categoryLevelMappingList);
 		} catch (Exception e) {
 			System.out.println("Mapper setup error>>>>>> " + e.getMessage());
 		}
@@ -253,10 +251,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		values = null;
 		logStr = "";
 		logStr = value.toString();
-		if(count == 1000) {
-			System.out.println(logStr);
-			count = 0;
-		}
 		count = count + 1;
 		if (logpath.contains("kdcl_log")) {
 			try {
@@ -562,8 +556,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	// 處理24館別階層
 	private void process24CategoryLevel(net.minidev.json.JSONObject dmpDataJson) throws Exception {
 		String markValue = dmpDataJson.getAsString("mark_value");
-		
-		System.out.println("markValue:"+markValue);
 		int level = 0;
 		if (markValue.length() == 4) {
 			level = 2;
@@ -591,9 +583,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					layerJson.put("mark_layer1", "1");
 					layerJson.put("mark_value1", level1);
 					categoryLevelMappingMap.put(markValue, layerJson);
-					
-					System.out.println("layerJson1:"+layerJson);
-					
 					break;
 				} else if (level2.equals(markValue)) {
 					dmpDataJson.put("mark_layer1", "1");
@@ -606,9 +595,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					layerJson.put("mark_layer2", "2");
 					layerJson.put("mark_value2", level2);
 					categoryLevelMappingMap.put(markValue, layerJson);
-					
-					
-					System.out.println("layerJson2:"+layerJson);
 					break;
 				} else if (level3.equals(markValue)) {
 					dmpDataJson.put("mark_layer1", "1");
@@ -625,9 +611,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					layerJson.put("mark_layer3", "3");
 					layerJson.put("mark_value3", level3);
 					categoryLevelMappingMap.put(markValue, layerJson);
-					
-					
-					System.out.println("layerJson3:"+layerJson);
 					break;
 				}
 			}
