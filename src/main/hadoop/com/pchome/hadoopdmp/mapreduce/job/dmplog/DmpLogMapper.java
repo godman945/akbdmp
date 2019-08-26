@@ -164,7 +164,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			
 			// 24館別階層對應表
 			FileSystem fs = FileSystem.get(conf);
-			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("hdfs://hpd11.mypchome.com.tw:9000/hadoop_file/24h_menu-1.csv");
+			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/24h_menu-1.csv");
 			FSDataInputStream inputStream = fs.open(category24MappingFile);
 			Reader reader = new InputStreamReader(inputStream);
 			CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
