@@ -206,8 +206,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				
 				Collections.sort(logJsonList, new Comparator<JSONObject>() {
 					public int compare(JSONObject a, JSONObject b) {
-						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					    try {
+					    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					    	System.out.println("FFFFF");
 							return sdf.parse(b.getAsString("log_date")).compareTo(sdf.parse(a.getAsString("log_date")));
 						} catch (Exception e) {
