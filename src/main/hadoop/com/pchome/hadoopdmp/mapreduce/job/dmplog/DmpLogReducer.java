@@ -212,9 +212,11 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 							System.out.println("ERROR:"+e.getMessage());
 							e.printStackTrace();
 						}
+					    System.out.println("HHHHHHHh");
 						return 0;
 					  }
-					});
+				});
+				
 				System.out.println("7777777777777");
 				System.out.println("------------**------------");
 				System.out.println(uuidKey.toString().split("<PCHOME>")[0]);
