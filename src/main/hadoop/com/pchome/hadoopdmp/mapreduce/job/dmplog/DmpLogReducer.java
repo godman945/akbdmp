@@ -211,8 +211,11 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					    	
 					    	System.out.println(b.getAsString("log_date"));
 					    	System.out.println(a.getAsString("log_date"));
+					    	
+					    	System.out.println(sdf == null);
+					    	
 							return sdf.parse(b.getAsString("log_date")).compareTo(sdf.parse(a.getAsString("log_date")));
-						} catch (Exception e) {
+						} catch (ParseException e) {
 							System.out.println("ERROR:"+e.getMessage());
 							e.printStackTrace();
 						}
