@@ -5,12 +5,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.ResultSet;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -35,12 +32,10 @@ import org.springframework.stereotype.Component;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.pchome.hadoopdmp.mapreduce.job.component.PersonalInfoComponent;
-import com.pchome.hadoopdmp.mapreduce.job.pacllog.PcalConditionBean;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 import com.pchome.hadoopdmp.spring.config.bean.mongodborg.MongodbOrgHadoopConfig;
 import com.pchome.soft.util.MysqlUtil;
 
-import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 
 @SuppressWarnings("deprecation")
@@ -50,31 +45,59 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	private static Log log = LogFactory.getLog("DmpLogReducer");
 
 	private Text keyOut = new Text();
+
 	private Text valueOut = new Text();
+
+	public static String record_date;
+
+	private String kafkaMetadataBrokerlist;
+
+	private String kafkaAcks;
+
+	private String kafkaRetries;
+
+	private String kafkaBatchSize;
+
+	private String kafkaLingerMs;
+
+	private String kafkaBufferMemory;
+
+	private String kafkaSerializerClass;
+
+	private String kafkaKeySerializer;
+
+	private String kafkaValueSerializer;
+
+	public static Producer<String, String> producer = null;
+
 	public RedisTemplate<String, Object> redisTemplate = null;
+
+	
+
 	public JSONParser jsonParser = null;
+
 	public String redisFountKey;
+
+
 	public Map<String, Integer> redisClassifyMap = null;
-	public SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private static String[] weeks = {"SUN","MON","TUE","WED","THU","FRI","SAT"};
 	private static String[] markLevelList = {"mark_layer1","mark_layer2","mark_layer3"};
 	private static String[] markValueList = {"mark_value1","mark_value2","mark_value3"};
 	private static Calendar calendar = Calendar.getInstance();
 	private static StringBuffer wiriteToDruid = new StringBuffer();
-//	private static net.minidev.json.JSONObject dmpJSon =  new net.minidev.json.JSONObject();
+	private static net.minidev.json.JSONObject dmpJSon =  new net.minidev.json.JSONObject();
 	public static PersonalInfoComponent personalInfoComponent = new PersonalInfoComponent();
 	private static DBCollection dBCollection_user_detail;
 	private DB mongoOrgOperations;
 	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();
 	public static Map<String, String> pfbxWebsiteCategory = new HashMap<String, String>();
 	public static List<String> categoryLevelMappingList = new ArrayList<String>();
+	
 	public static int bu_log_count = 0;
 	public static int kdcl_log_count = 0;
 	public static int pack_log_count = 0;
-	public static MysqlUtil mysqlUtil = null;
-	public static Map<String, PcalConditionBean> convertConditionMap = new HashMap<String, PcalConditionBean>();
-	private StringBuffer userDefineConvertDbInfoSqlStr = new StringBuffer();
-
+	
 	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
@@ -82,9 +105,31 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			this.redisTemplate = (RedisTemplate<String, Object>) ctx.getBean("redisTemplate");
+			this.kafkaMetadataBrokerlist = ctx.getEnvironment().getProperty("kafka.metadata.broker.list");
+			this.kafkaAcks = ctx.getEnvironment().getProperty("kafka.acks");
+			this.kafkaRetries = ctx.getEnvironment().getProperty("kafka.retries");
+			this.kafkaBatchSize = ctx.getEnvironment().getProperty("kafka.batch.size");
+			this.kafkaLingerMs = ctx.getEnvironment().getProperty("kafka.linger.ms");
+			this.kafkaBufferMemory = ctx.getEnvironment().getProperty("kafka.buffer.memory");
+			this.kafkaSerializerClass = ctx.getEnvironment().getProperty("kafka.serializer.class");
+			this.kafkaKeySerializer = ctx.getEnvironment().getProperty("kafka.key.serializer");
+			this.kafkaValueSerializer = ctx.getEnvironment().getProperty("kafka.value.serializer");
 			this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
 			dBCollection_user_detail = this.mongoOrgOperations.getCollection("user_detail");
+
+			Properties props = new Properties();
+			props.put("bootstrap.servers", kafkaMetadataBrokerlist);
+			props.put("acks", kafkaAcks);
+			props.put("retries", kafkaRetries);
+			props.put("batch.size", kafkaBatchSize);
+			props.put("linger.ms", kafkaLingerMs);
+			props.put("buffer.memory", kafkaBufferMemory);
+			props.put("serializer.class", kafkaSerializerClass);
+			props.put("key.serializer", kafkaKeySerializer);
+			props.put("value.serializer", kafkaValueSerializer);
+			producer = new KafkaProducer<String, String>(props);
 			jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
+
 			String recordDate = context.getConfiguration().get("job.date");
 			String env = context.getConfiguration().get("spring.profiles.active");
 			if (env.equals("prd")) {
@@ -112,34 +157,15 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			}
 			
 			//取得DB所有網站分類代號
-			mysqlUtil = MysqlUtil.getInstance();
+			MysqlUtil mysqlUtil = MysqlUtil.getInstance();
 			mysqlUtil.setConnection(context.getConfiguration().get("spring.profiles.active"));
-			StringBuffer findWebClassCodeSqlStr = new StringBuffer();
-			findWebClassCodeSqlStr.append(" SELECT a.customer_info_id,a.category_code FROM pfbx_allow_url a WHERE 1 = 1 and a.default_type = 'Y' ORDER BY a.customer_info_id  ");
-			ResultSet resultSet = mysqlUtil.query(findWebClassCodeSqlStr.toString());
+			StringBuffer sql = new StringBuffer();
+			sql.append(" SELECT a.customer_info_id,a.category_code FROM pfbx_allow_url a WHERE 1 = 1 and a.default_type = 'Y' ORDER BY a.customer_info_id  ");
+			ResultSet resultSet = mysqlUtil.query(sql.toString());
 			while(resultSet.next()){
 				pfbxWebsiteCategory.put(resultSet.getString("customer_info_id"), resultSet.getString("category_code"));
 			}
-			
-			//查詢轉換相關資訊
-			userDefineConvertDbInfoSqlStr.append(" SELECT   ");
-			userDefineConvertDbInfoSqlStr.append(" 	c.convert_type,  ");
-			userDefineConvertDbInfoSqlStr.append(" 	c.convert_seq,  ");
-			userDefineConvertDbInfoSqlStr.append(" 	c.click_range_date,  ");
-			userDefineConvertDbInfoSqlStr.append(" 	c.imp_range_date,  ");
-			userDefineConvertDbInfoSqlStr.append(" 	c.convert_price,  ");
-			userDefineConvertDbInfoSqlStr.append(" 	c.convert_status,  ");
-			userDefineConvertDbInfoSqlStr.append(" 	c.convert_belong,  ");
-			userDefineConvertDbInfoSqlStr.append(" 	c.convert_num_type,  ");
-			userDefineConvertDbInfoSqlStr.append(" 	Group_concat(convert_rule_id SEPARATOR ':')convert_rule_id,  ");
-			userDefineConvertDbInfoSqlStr.append(" 	c.pfp_customer_info_id  ");
-			userDefineConvertDbInfoSqlStr.append(" FROM   pfp_code_convert c  ");
-			userDefineConvertDbInfoSqlStr.append(" LEFT JOIN pfp_code_convert_rule r  ");
-			userDefineConvertDbInfoSqlStr.append(" ON( c.convert_seq = r.convert_seq )  ");
-			userDefineConvertDbInfoSqlStr.append(" WHERE  1 = 1  ");
-			userDefineConvertDbInfoSqlStr.append(" AND c.convert_seq = 'CONVERT_ID'");
-			userDefineConvertDbInfoSqlStr.append(" GROUP  BY r.convert_seq  ");
-			
+			mysqlUtil.closeConnection();
 		} catch (Throwable e) {
 			log.error("reduce setup error>>>>>> " + e);
 		}
@@ -148,19 +174,18 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	private static int count = 0;
 	private static Set<String> uuidSet = new HashSet<String>();
 	private static long uuidPv = 0;
+	
 	private static Map<String,Integer> uuidMap = new HashMap<String,Integer>();
-	private static PcalConditionBean pcalConditionBean;
-	private static List<net.minidev.json.JSONObject> logJsonList = new ArrayList<net.minidev.json.JSONObject>();
-	private static String logSource = "";
-	private static String convertPrice = "";
-	private static String convertNum = "";
+	
+	
+	
 	@Override
 	public void reduce(Text uuidKey, Iterable<Text> dmpJsonStr, Context context) {
 		try {
 			for (Text text : dmpJsonStr) {
 				wiriteToDruid.setLength(0);
-//				dmpJSon.clear();
-				net.minidev.json.JSONObject dmpJSon = (net.minidev.json.JSONObject) jsonParser.parse(text.toString());
+				dmpJSon.clear();
+				dmpJSon = (net.minidev.json.JSONObject) jsonParser.parse(text.toString());
 				if(StringUtils.isBlank(dmpJSon.getAsString("uuid"))) {
 					log.error(">>>>>>>>>>>>>>>>>no uuid");
 					break;
@@ -181,223 +206,142 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				}
 				String pfbxCustomerInfoId = dmpJSon.getAsString("pfbx_customer_info_id");
 				String webClass = StringUtils.isBlank(pfbxWebsiteCategory.get(pfbxCustomerInfoId)) ? "" : pfbxWebsiteCategory.get(pfbxCustomerInfoId);
-				dmpJSon.put("web_class", webClass);
-				dmpJSon.put("week_day", weeks[week_index]);
-				logJsonList.add(dmpJSon);
-			}
-			logSource = "";
-			logSource = uuidKey.toString().split("<PCHOME>")[1];
-			//需要計算轉換先排序查看最新一筆轉換是否有自行設定轉換價值進行計算
-			if(logSource.equals("pacl_log")){
-				Collections.sort(logJsonList, new Comparator<JSONObject>() {
-					public int compare(JSONObject a, JSONObject b) {
-					    try {
-							return sdf.parse(b.getAsString("log_date")).compareTo(sdf.parse(a.getAsString("log_date")));
-						} catch (ParseException e) {
-							e.printStackTrace();
+				//產出csv
+				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_value"))) {
+					for (int i= 0; i < markLevelList.length; i++) {
+						if(StringUtils.isNotBlank(dmpJSon.getAsString(markLevelList[i]))) {
+							if(dmpJSon.getAsString("mark_value").equals(dmpJSon.getAsString(markValueList[i]))) {
+								dmpJSon.put("pv", 1);
+							}else {
+								dmpJSon.put("pv", 0);
+							}
+							wiriteToDruid.append("\""+dmpJSon.getAsString("fileName")+"\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_date")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.get("memid")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid_flag")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ip")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("url")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("referer")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("domain")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_source")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("trigger_type")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfp_customer_info_id")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfd_customer_info_id")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_customer_info_id")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("style_id")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("action_id")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("group_id")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_id")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_position_id")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_country")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_city")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_info")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_phone_info")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_os_info")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_browser_info")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex_source")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age_source")).append("\"");
+							wiriteToDruid.append(",").append("\"").append("audicen_id_default").append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_id")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_x")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_y")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_event")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("event_id")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_id")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_price")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_dis")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString(markValueList[i])).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString(markLevelList[i])).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op1")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op2")).append("\"");
+							wiriteToDruid.append(",").append("\"").append("ad_price_default").append("\"");
+							wiriteToDruid.append(",").append("\"").append(webClass).append("\"");
+							wiriteToDruid.append(",").append("\"").append(weeks[week_index]).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_view")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("vpv")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ck")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pv")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("category")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("convert_price")).append("\"");
+							context.write(new Text(wiriteToDruid.toString()), null);
+							wiriteToDruid.setLength(0);
+							
+							if(dmpJSon.getAsString("log_source").equals("pacl_log")) {
+								pack_log_count = pack_log_count + 1;
+							}else if(dmpJSon.getAsString("log_source").equals("kdcl_log")) {
+								kdcl_log_count = kdcl_log_count + 1;
+							}else if(dmpJSon.getAsString("log_source").equals("bu_log")) {
+								bu_log_count = bu_log_count + 1;
+							}
 						}
-						return 0;
-					  }
-				});
-				
-				if(uuidKey.toString().split("<PCHOME>")[0].equals("xxx-c14b6ddb-643f-41e2-a88b-693e3834d8ca")) {
-					for (JSONObject jsonObject : logJsonList) {
-						System.out.println(jsonObject);
 					}
-					System.out.println("----------");
+				}else {
+					wiriteToDruid.append("\""+dmpJSon.getAsString("fileName")+"\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_date")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.get("memid")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid_flag")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ip")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("url")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("referer")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("domain")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_source")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("trigger_type")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfp_customer_info_id")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfd_customer_info_id")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_customer_info_id")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("style_id")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("action_id")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("group_id")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_id")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_position_id")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_country")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_city")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_info")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_phone_info")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_os_info")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_browser_info")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex_source")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age_source")).append("\"");
+					wiriteToDruid.append(",").append("\"").append("audicen_id_default").append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_id")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_x")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_y")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_event")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("event_id")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_id")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_price")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_dis")).append("\"");
+					wiriteToDruid.append(",").append("\"").append("").append("\"");
+					wiriteToDruid.append(",").append("\"").append("").append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op1")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op2")).append("\"");
+					wiriteToDruid.append(",").append("\"").append("ad_price_default").append("\"");
+					wiriteToDruid.append(",").append("\"").append(webClass).append("\"");
+					wiriteToDruid.append(",").append("\"").append(weeks[week_index]).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_view")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("vpv")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ck")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pv")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("category")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("convert_price")).append("\"");
+					context.write(new Text(wiriteToDruid.toString()), null);
+					wiriteToDruid.setLength(0);
+					
+					if(dmpJSon.getAsString("log_source").equals("pacl_log")) {
+						pack_log_count = pack_log_count + 1;
+					}else if(dmpJSon.getAsString("log_source").equals("kdcl_log")) {
+						kdcl_log_count = kdcl_log_count + 1;
+					}else if(dmpJSon.getAsString("log_source").equals("bu_log")) {
+						bu_log_count = bu_log_count + 1;
+					}
 				}
 			}
-			
-			
-			for (JSONObject logJsonObject : logJsonList) {
-				// pacl須計算轉換數
-				if (logJsonObject.getAsString("event_id").equals("convert")) {
-					convertPrice = "";
-					convertNum = "";
-					String convertId = logJsonObject.getAsString("event_id");
-					// 1.取得轉換規則
-					if (convertConditionMap.get(convertId) == null) {
-						ResultSet resultSet = mysqlUtil
-								.query(userDefineConvertDbInfoSqlStr.toString().replace("CONVERT_ID", convertId));
-						while (resultSet.next()) {
-							int clickRangeDate = resultSet.getInt("click_range_date");
-							int impRangeDate = resultSet.getInt("imp_range_date");
-							String convertPrice = resultSet.getString("convert_price");
-							String convertStatus = resultSet.getString("convert_status");
-							String convertBelong = resultSet.getString("convert_belong");
-							int convertNumType = resultSet.getInt("convert_num_type");
-							String convertRule = resultSet.getString("convert_rule_id");
-							String convertType = resultSet.getString("convert_type");
-
-							pcalConditionBean = new PcalConditionBean();
-							pcalConditionBean.setClickRangeDate(clickRangeDate);
-							pcalConditionBean.setImpRangeDate(impRangeDate);
-							pcalConditionBean.setConvertPrice(convertPrice);
-							pcalConditionBean.setConvertStatus(convertStatus);
-							pcalConditionBean.setConvertNumType(convertNumType);
-							pcalConditionBean.setConvertBelong(convertBelong);
-							pcalConditionBean.setConvertRule(convertRule);
-							pcalConditionBean.setConvertType(convertType);
-							convertConditionMap.put(convertId, pcalConditionBean);
-							
-							
-							System.out.println(pcalConditionBean.getClickRangeDate());
-							System.out.println(pcalConditionBean.getConvertBelong());
-							
-						}
-					} else {
-
-					}
-				}
-			}
-			
-			
-			
-			
-			
-			logJsonList.clear();	
-				
-				
-				
-				
-				
-				
-				
-				
-//				//產出csv
-//				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_value"))) { //BULOG
-//					for (int i= 0; i < markLevelList.length; i++) {
-//						if(StringUtils.isNotBlank(dmpJSon.getAsString(markLevelList[i]))) {
-//							if(dmpJSon.getAsString("mark_value").equals(dmpJSon.getAsString(markValueList[i]))) {
-//								dmpJSon.put("pv", 1);
-//							}else {
-//								dmpJSon.put("pv", 0);
-//							}
-//							wiriteToDruid.append("\""+dmpJSon.getAsString("fileName")+"\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_date")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.get("memid")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid_flag")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ip")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("url")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("referer")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("domain")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_source")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("trigger_type")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfp_customer_info_id")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfd_customer_info_id")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_customer_info_id")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("style_id")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("action_id")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("group_id")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_id")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_position_id")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_country")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_city")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_info")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_phone_info")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_os_info")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_browser_info")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex_source")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age_source")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append("audicen_id_default").append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_id")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_x")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_y")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_event")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("event_id")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_id")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_price")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_dis")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString(markValueList[i])).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString(markLevelList[i])).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op1")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op2")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append("ad_price_default").append("\"");
-//							wiriteToDruid.append(",").append("\"").append(webClass).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(weeks[week_index]).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_view")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("vpv")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ck")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pv")).append("\"");
-//							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("category")).append("\"");
-//							context.write(new Text(wiriteToDruid.toString()), null);
-//							wiriteToDruid.setLength(0);
-//							
-//							if(dmpJSon.getAsString("log_source").equals("pacl_log")) {
-//								pack_log_count = pack_log_count + 1;
-//							}else if(dmpJSon.getAsString("log_source").equals("kdcl_log")) {
-//								kdcl_log_count = kdcl_log_count + 1;
-//							}else if(dmpJSon.getAsString("log_source").equals("bu_log")) {
-//								bu_log_count = bu_log_count + 1;
-//							}
-//						}
-//					}
-//				}else {
-//					wiriteToDruid.append("\""+dmpJSon.getAsString("fileName")+"\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_date")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.get("memid")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid_flag")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ip")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("url")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("referer")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("domain")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_source")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("trigger_type")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfp_customer_info_id")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfd_customer_info_id")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_customer_info_id")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("style_id")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("action_id")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("group_id")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_id")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_position_id")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_country")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_city")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_info")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_phone_info")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_os_info")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_browser_info")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex_source")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age_source")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append("audicen_id_default").append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_id")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_x")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_y")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_event")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("event_id")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_id")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_price")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_dis")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append("").append("\"");
-//					wiriteToDruid.append(",").append("\"").append("").append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op1")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op2")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append("ad_price_default").append("\"");
-//					wiriteToDruid.append(",").append("\"").append(webClass).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(weeks[week_index]).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_view")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("vpv")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ck")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pv")).append("\"");
-//					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("category")).append("\"");
-//					context.write(new Text(wiriteToDruid.toString()), null);
-//					wiriteToDruid.setLength(0);
-//					
-//					if(dmpJSon.getAsString("log_source").equals("pacl_log")) {
-//						pack_log_count = pack_log_count + 1;
-//					}else if(dmpJSon.getAsString("log_source").equals("kdcl_log")) {
-//						kdcl_log_count = kdcl_log_count + 1;
-//					}else if(dmpJSon.getAsString("log_source").equals("bu_log")) {
-//						bu_log_count = bu_log_count + 1;
-//					}
-//				}
-			
 		} catch (Throwable e) {
 			 log.error(">>>>>> reduce error :"+e.getMessage());
 		}
@@ -406,12 +350,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	
 	public void cleanup(Context context) {
 		try {
-			mysqlUtil.closeConnection();
-			
 			System.out.println("total bu_log  >>>>>>>>>>>>>>>>>>>>>>>>"+bu_log_count);
 			System.out.println("total kdcl_log>>>>>>>>>>>>>>>>>>>>>>>>"+kdcl_log_count);
 			System.out.println("total pack_log>>>>>>>>>>>>>>>>>>>>>>>>"+pack_log_count);
-			
 		} catch (Exception e) {
 			log.error("reduce cleanup error>>>>>> " +e);
 		}
@@ -426,47 +367,4 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			this.age = age;
 		}
 	}
-	
-	
-	
-	public static void main(String args[]) {
-		try {
-			
-			System.out.println("FFFF");
-			
-			List<JSONObject> list = new ArrayList<JSONObject>();
-			JSONParser jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
-			JSONObject a =  (JSONObject) jsonParser.parse("{'referer':'','fileName':'pacl1-14.lzo','device_info_source':'user-agent','mark_value':'','pv':1,'device_browser_info':'CHROME','trigger_type':'pv','prod_dis':'','uuid':'48d2eea2-5218-4985-b752-eb26422ffc66','device_phone_info':'MICROSOFT','prod_id':'','screen_y':'1040','ad_view':0,'screen_x':'1920','action_id':'','pfd_customer_info_id':'','device_info_classify':'Y','memid':'','sex_source':'','mark_layer4':'','mark_layer3':'','area_city':null,'mark_layer2':'','ip':'203.69.23.145','mark_layer1':'','ad_id':'','pfbx_position_id':'','log_date':'2019-07-02 14:40:56','domain':'travel.pchome.com.tw','log_source':'pacl_log','device_os_info':'WINDOWS','week_day':'TUE','web_class':'','prod_price':'','pfp_customer_info_id':'','area_country':'Taiwan','hour':'','area_info_source':'ip','uuid_flag':'n','area_info_classify':'','user_agent':'Mozilla\\/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit\\/537.36 (KHTML, like Gecko) Chrome\\/75.0.3770.100 Safari\\/537.36','email':'','ad_class':'','category_source':'','pfbx_customer_info_id':'','personal_info_api_classify':'','sex':'','ck':0,'age_source':'','url':'http:\\/\\/travel.pchome.com.tw\\/expert\\/29\\/monograph\\/13278','pa_event':'convert','op2':'','op1':'','event_id':'CAC20181210000000001','device_info':'COMPUTER','group_id':'','class_adclick_classify':'','style_id':'','category':'','vpv':0,'age':'','pa_id':'1543389867659'}");
-			JSONObject b =  (JSONObject) jsonParser.parse("{'referer':'','fileName':'pacl1-14.lzo','device_info_source':'user-agent','mark_value':'','pv':1,'device_browser_info':'CHROME','trigger_type':'pv','prod_dis':'','uuid':'48d2eea2-5218-4985-b752-eb26422ffc66','device_phone_info':'MICROSOFT','prod_id':'','screen_y':'1040','ad_view':0,'screen_x':'1920','action_id':'','pfd_customer_info_id':'','device_info_classify':'Y','memid':'','sex_source':'','mark_layer4':'','mark_layer3':'','area_city':null,'mark_layer2':'','ip':'203.69.23.145','mark_layer1':'','ad_id':'','pfbx_position_id':'','log_date':'2019-07-02 14:40:47','domain':'travel.pchome.com.tw','log_source':'pacl_log','device_os_info':'WINDOWS','week_day':'TUE','web_class':'','prod_price':'','pfp_customer_info_id':'','area_country':'Taiwan','hour':'','area_info_source':'ip','uuid_flag':'n','area_info_classify':'','user_agent':'Mozilla\\/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit\\/537.36 (KHTML, like Gecko) Chrome\\/75.0.3770.100 Safari\\/537.36','email':'','ad_class':'','category_source':'','pfbx_customer_info_id':'','personal_info_api_classify':'','sex':'','ck':0,'age_source':'','url':'http:\\/\\/travel.pchome.com.tw\\/expert\\/29\\/monograph\\/13278','pa_event':'convert','op2':'','op1':'','event_id':'CAC20181210000000001','device_info':'COMPUTER','group_id':'','class_adclick_classify':'','style_id':'','category':'','vpv':0,'age':'','pa_id':'1543389867659'}");
-			JSONObject c =  (JSONObject) jsonParser.parse("{'referer':'http:\\/\\/showstg.pchome.com.tw\\/pfp\\/prodListTableStyleView.html?catalogSeq=PC201901080000000003&currentPage=1&pageSizeSelected=10&prodStatus=&prodName=','fileName':'pacl2-14.lzo','device_info_source':'user-agent','mark_value':'','pv':1,'device_browser_info':'CHROME','trigger_type':'pv','prod_dis':'','uuid':'xxx-c14b6ddb-643f-41e2-a88b-693e3834d8ca','device_phone_info':'MICROSOFT','prod_id':'','screen_y':'1040','ad_view':0,'screen_x':'1920','action_id':'','pfd_customer_info_id':'','device_info_classify':'Y','memid':'','sex_source':'','mark_layer4':'','mark_layer3':'','area_city':'Taoyuan District','mark_layer2':'','ip':'220.130.135.118','mark_layer1':'','ad_id':'','pfbx_position_id':'','log_date':'2019-07-02 14:44:11','domain':'travel.pchome.com.tw','log_source':'pacl_log','device_os_info':'WINDOWS','week_day':'TUE','web_class':'','prod_price':'','pfp_customer_info_id':'','area_country':'Taiwan','hour':'','area_info_source':'ip','uuid_flag':'y','area_info_classify':'','user_agent':'Mozilla\\/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit\\/537.36 (KHTML, like Gecko) Chrome\\/75.0.3770.100 Safari\\/537.36','email':'','ad_class':'','category_source':'','pfbx_customer_info_id':'','personal_info_api_classify':'','sex':'','ck':0,'age_source':'','url':'http:\\/\\/travel.pchome.com.tw\\/expert\\/32\\/monograph\\/9492','pa_event':'convert','op2':'','op1':'','event_id':'CAC20181210000000001','device_info':'COMPUTER','group_id':'','class_adclick_classify':'','style_id':'','category':'','vpv':0,'age':'','pa_id':'1543389867659'}");
-			
-			
-			list.add(a);
-			list.add(b);
-			list.add(c);
-			
-			final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Collections.sort(list, new Comparator<JSONObject>() {
-				public int compare(JSONObject a, JSONObject b) {
-				    try {
-						return sdf.parse(b.getAsString("log_date")).compareTo(sdf.parse(a.getAsString("log_date")));
-					} catch (ParseException e) {
-						e.printStackTrace();
-					}
-					return 0;
-				  }
-				});
-			for (JSONObject jsonObject : list) {
-				System.out.println(jsonObject.get("log_date"));
-			}
-			
-			
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		
-
-	}
-	
-	
 }

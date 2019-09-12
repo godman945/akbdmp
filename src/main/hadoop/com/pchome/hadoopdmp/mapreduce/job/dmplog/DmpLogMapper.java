@@ -239,9 +239,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		dmpDataJson.put("screen_y", "");
 		dmpDataJson.put("pa_event", "");
 		dmpDataJson.put("event_id", "");
-		dmpDataJson.put("roule_id", "");
-		dmpDataJson.put("convert_price", "0");
-		dmpDataJson.put("convert_num", "0");
+		dmpDataJson.put("convert_price", "");
 		dmpDataJson.put("prod_id", "");
 		dmpDataJson.put("prod_price", "");
 		dmpDataJson.put("prod_dis", "");
@@ -387,10 +385,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("prod_price", values[14]);
 						dmpDataJson.put("prod_dis", values[15]);
 					}else if(values[11].toUpperCase().equals("PAGE_VIEW")) {
-						dmpDataJson.put("event_id", "");
+						dmpDataJson.put("event_id", "page_view");
 					}else if(values[11].toUpperCase().equals("CONVERT")) {
 						dmpDataJson.put("event_id", values[12]);
-						dmpDataJson.put("roule_id", values[13]);
 						dmpDataJson.put("convert_price", values[14]);
 					}
 					
