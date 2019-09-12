@@ -195,8 +195,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			
 			System.out.println(uuidKey.toString());
 			System.out.println(uuidKey.toString().split("<PCHOME>")[0]);
-			System.out.println(uuidKey.toString().split("<PCHOME>")[1]);
-			
+			System.out.println(logSource);
+			System.out.println("**********");
 			
 			
 			//需要計算轉換先排序查看最新一筆轉換是否有自行設定轉換價值進行計算
