@@ -208,6 +208,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					public int compare(JSONObject a, JSONObject b) {
 					    try {
 					    	System.out.println("FFFFF");
+					    	
+					    	System.out.println(b.getAsString("log_date"));
+					    	System.out.println(a.getAsString("log_date"));
 							return sdf.parse(b.getAsString("log_date")).compareTo(sdf.parse(a.getAsString("log_date")));
 						} catch (Exception e) {
 							System.out.println("ERROR:"+e.getMessage());
