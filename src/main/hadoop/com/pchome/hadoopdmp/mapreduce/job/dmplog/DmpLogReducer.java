@@ -188,6 +188,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				if(dmpJSon.getAsString("event_id").equals("CAC20181210000000001")) {
 					System.out.println(dmpJSon);
 				}
+				
 				logJsonList.add(dmpJSon);
 			}
 			logSource = "";
@@ -212,8 +213,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					  }
 					});
 				
-				
-				
+				System.out.println("------------**------------");
+				System.out.println(uuidKey.toString().split("<PCHOME>")[0]);
+				System.out.println(uuidKey.toString().split("<PCHOME>")[0].equals("48d2eea2-5218-4985-b752-eb26422ffc66"));
 				if(uuidKey.toString().split("<PCHOME>")[0].equals("48d2eea2-5218-4985-b752-eb26422ffc66")) {
 					for (JSONObject jsonObject : logJsonList) {
 						System.out.println(jsonObject.get("log_date"));
