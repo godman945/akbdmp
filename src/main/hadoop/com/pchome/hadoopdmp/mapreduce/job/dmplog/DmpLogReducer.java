@@ -55,7 +55,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	public JSONParser jsonParser = null;
 	public String redisFountKey;
 	public Map<String, Integer> redisClassifyMap = null;
-	public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private static String[] weeks = {"SUN","MON","TUE","WED","THU","FRI","SAT"};
 	private static String[] markLevelList = {"mark_layer1","mark_layer2","mark_layer3"};
 	private static String[] markValueList = {"mark_value1","mark_value2","mark_value3"};
@@ -203,6 +203,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			//需要計算轉換先排序查看最新一筆轉換是否有自行設定轉換價值進行計算
 			if(logSource.equals("pacl_log")){
 				System.out.println("DDDDDDDDDD");
+				
 				Collections.sort(logJsonList, new Comparator<JSONObject>() {
 					public int compare(JSONObject a, JSONObject b) {
 					    try {
