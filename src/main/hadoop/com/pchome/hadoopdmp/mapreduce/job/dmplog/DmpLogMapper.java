@@ -240,7 +240,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		dmpDataJson.put("pa_event", "");
 		dmpDataJson.put("event_id", "");
 		dmpDataJson.put("roule_id", "");
-		dmpDataJson.put("convert_price", "");
+		dmpDataJson.put("convert_price", "0");
+		dmpDataJson.put("convert_num", "0");
 		dmpDataJson.put("prod_id", "");
 		dmpDataJson.put("prod_price", "");
 		dmpDataJson.put("prod_dis", "");

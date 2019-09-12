@@ -148,12 +148,12 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	private static int count = 0;
 	private static Set<String> uuidSet = new HashSet<String>();
 	private static long uuidPv = 0;
-	
 	private static Map<String,Integer> uuidMap = new HashMap<String,Integer>();
-	
-	
+	private static PcalConditionBean pcalConditionBean;
 	private static List<net.minidev.json.JSONObject> logJsonList = new ArrayList<net.minidev.json.JSONObject>();
 	private static String logSource = "";
+	private static String convertPrice = "";
+	private static String convertNum = "";
 	@Override
 	public void reduce(Text uuidKey, Iterable<Text> dmpJsonStr, Context context) {
 		try {
@@ -200,13 +200,61 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					  }
 				});
 				
-				if(uuidKey.toString().split("<PCHOME>")[0].equals("RLE20190123000000002")) {
+				if(uuidKey.toString().split("<PCHOME>")[0].equals("xxx-c14b6ddb-643f-41e2-a88b-693e3834d8ca")) {
 					for (JSONObject jsonObject : logJsonList) {
 						System.out.println(jsonObject);
 					}
 					System.out.println("----------");
 				}
-			}	
+			}
+			
+			
+			for (JSONObject logJsonObject : logJsonList) {
+				// pacl須計算轉換數
+				if (logJsonObject.getAsString("event_id").equals("convert")) {
+					convertPrice = "";
+					convertNum = "";
+					String convertId = logJsonObject.getAsString("event_id");
+					// 1.取得轉換規則
+					if (convertConditionMap.get(convertId) == null) {
+						ResultSet resultSet = mysqlUtil
+								.query(userDefineConvertDbInfoSqlStr.toString().replace("CONVERT_ID", convertId));
+						while (resultSet.next()) {
+							int clickRangeDate = resultSet.getInt("click_range_date");
+							int impRangeDate = resultSet.getInt("imp_range_date");
+							String convertPrice = resultSet.getString("convert_price");
+							String convertStatus = resultSet.getString("convert_status");
+							String convertBelong = resultSet.getString("convert_belong");
+							int convertNumType = resultSet.getInt("convert_num_type");
+							String convertRule = resultSet.getString("convert_rule_id");
+							String convertType = resultSet.getString("convert_type");
+
+							pcalConditionBean = new PcalConditionBean();
+							pcalConditionBean.setClickRangeDate(clickRangeDate);
+							pcalConditionBean.setImpRangeDate(impRangeDate);
+							pcalConditionBean.setConvertPrice(convertPrice);
+							pcalConditionBean.setConvertStatus(convertStatus);
+							pcalConditionBean.setConvertNumType(convertNumType);
+							pcalConditionBean.setConvertBelong(convertBelong);
+							pcalConditionBean.setConvertRule(convertRule);
+							pcalConditionBean.setConvertType(convertType);
+							convertConditionMap.put(convertId, pcalConditionBean);
+							
+							
+							System.out.println(pcalConditionBean.getClickRangeDate());
+							System.out.println(pcalConditionBean.getConvertBelong());
+							
+						}
+					} else {
+
+					}
+				}
+			}
+			
+			
+			
+			
+			
 			logJsonList.clear();	
 				
 				
