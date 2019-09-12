@@ -192,41 +192,19 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			}
 			logSource = "";
 			logSource = uuidKey.toString().split("<PCHOME>")[1];
-			
-			System.out.println(uuidKey.toString());
-			System.out.println(uuidKey.toString().split("<PCHOME>")[0]);
-			System.out.println(logSource);
-			System.out.println("**********");
-			
-			
 			//需要計算轉換先排序查看最新一筆轉換是否有自行設定轉換價值進行計算
 			if(logSource.equals("pacl_log")){
-				System.out.println("DDDDDDDDDD");
-				System.out.println(logJsonList);
 				Collections.sort(logJsonList, new Comparator<JSONObject>() {
 					public int compare(JSONObject a, JSONObject b) {
 					    try {
-					    	System.out.println("FFFFF");
-					    	
-					    	System.out.println(b.getAsString("log_date"));
-					    	System.out.println(a.getAsString("log_date"));
-					    	
-					    	System.out.println(sdf == null);
-					    	
 							return sdf.parse(b.getAsString("log_date")).compareTo(sdf.parse(a.getAsString("log_date")));
 						} catch (ParseException e) {
-							System.out.println("ERROR:"+e.getMessage());
 							e.printStackTrace();
 						}
-					    System.out.println("HHHHHHHh");
 						return 0;
 					  }
 				});
 				
-				System.out.println("7777777777777");
-				System.out.println("------------**------------");
-				System.out.println(uuidKey.toString().split("<PCHOME>")[0]);
-				System.out.println(uuidKey.toString().split("<PCHOME>")[0].equals("48d2eea2-5218-4985-b752-eb26422ffc66"));
 				if(uuidKey.toString().split("<PCHOME>")[0].equals("48d2eea2-5218-4985-b752-eb26422ffc66")) {
 					for (JSONObject jsonObject : logJsonList) {
 						System.out.println(jsonObject.get("log_date"));
