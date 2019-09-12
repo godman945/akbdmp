@@ -203,7 +203,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			//需要計算轉換先排序查看最新一筆轉換是否有自行設定轉換價值進行計算
 			if(logSource.equals("pacl_log")){
 				System.out.println("DDDDDDDDDD");
-				
+				System.out.println(logJsonList);
 				Collections.sort(logJsonList, new Comparator<JSONObject>() {
 					public int compare(JSONObject a, JSONObject b) {
 					    try {
