@@ -55,7 +55,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	public JSONParser jsonParser = null;
 	public String redisFountKey;
 	public Map<String, Integer> redisClassifyMap = null;
-	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private static String[] weeks = {"SUN","MON","TUE","WED","THU","FRI","SAT"};
 	private static String[] markLevelList = {"mark_layer1","mark_layer2","mark_layer3"};
 	private static String[] markValueList = {"mark_value1","mark_value2","mark_value3"};
@@ -208,7 +208,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					    try {
 					    	System.out.println("FFFFF");
 							return sdf.parse(b.getAsString("log_date")).compareTo(sdf.parse(a.getAsString("log_date")));
-						} catch (ParseException e) {
+						} catch (Exception e) {
 							System.out.println("ERROR:"+e.getMessage());
 							e.printStackTrace();
 						}
