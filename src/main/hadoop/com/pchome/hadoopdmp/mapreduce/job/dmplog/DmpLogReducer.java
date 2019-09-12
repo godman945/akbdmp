@@ -61,7 +61,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	private static String[] markValueList = {"mark_value1","mark_value2","mark_value3"};
 	private static Calendar calendar = Calendar.getInstance();
 	private static StringBuffer wiriteToDruid = new StringBuffer();
-	private static net.minidev.json.JSONObject dmpJSon =  new net.minidev.json.JSONObject();
+//	private static net.minidev.json.JSONObject dmpJSon =  new net.minidev.json.JSONObject();
 	public static PersonalInfoComponent personalInfoComponent = new PersonalInfoComponent();
 	private static DBCollection dBCollection_user_detail;
 	private DB mongoOrgOperations;
@@ -157,11 +157,10 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	@Override
 	public void reduce(Text uuidKey, Iterable<Text> dmpJsonStr, Context context) {
 		try {
-			logJsonList.clear();
 			for (Text text : dmpJsonStr) {
 				wiriteToDruid.setLength(0);
-				dmpJSon.clear();
-				dmpJSon = (net.minidev.json.JSONObject) jsonParser.parse(text.toString());
+//				dmpJSon.clear();
+				net.minidev.json.JSONObject dmpJSon = (net.minidev.json.JSONObject) jsonParser.parse(text.toString());
 				if(StringUtils.isBlank(dmpJSon.getAsString("uuid"))) {
 					log.error(">>>>>>>>>>>>>>>>>no uuid");
 					break;
@@ -235,7 +234,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					System.out.println("----------");
 				}
 			}	
-				
+			logJsonList.clear();	
 				
 				
 				
