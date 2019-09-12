@@ -47,6 +47,9 @@ import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryRutenCodeBean;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 import com.pchome.hadoopdmp.spring.config.bean.mongodborg.MongodbOrgHadoopConfig;
 
+import net.minidev.json.JSONObject;
+import net.minidev.json.parser.JSONParser;
+
 @Component
 public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 
@@ -236,6 +239,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		dmpDataJson.put("screen_y", "");
 		dmpDataJson.put("pa_event", "");
 		dmpDataJson.put("event_id", "");
+		dmpDataJson.put("roule_id", "");
+		dmpDataJson.put("convert_price", "");
 		dmpDataJson.put("prod_id", "");
 		dmpDataJson.put("prod_price", "");
 		dmpDataJson.put("prod_dis", "");
@@ -384,6 +389,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("event_id", "");
 					}else if(values[11].toUpperCase().equals("CONVERT")) {
 						dmpDataJson.put("event_id", values[12]);
+						dmpDataJson.put("roule_id", values[13]);
+						dmpDataJson.put("convert_price", values[14]);
 					}
 					
 					if(values[5].contains("24h.pchome.com.tw")) {
@@ -469,9 +476,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					System.out.println(">>>>>>>fail process 24 category level:" + e.getMessage());
 					return;
 				}
-				
-				
-				
 			} catch (Exception e) {
 				System.out.println(">>>>bulog set json fail:" + e.getMessage());
 				System.out.println(">>>>bulog set json fail log size:" + logStr.split(paclSymbol, -1).length);
@@ -483,7 +487,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				return;
 			}
 		}
-
 		// 開始DMP資訊
 		// 1.地區處理元件(ip 轉國家、城市)
 		try {
@@ -547,7 +550,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		}
 //		寫入reduce
 		try {
-			context.write(new Text(dmpDataJson.getAsString("uuid")), new Text(dmpDataJson.toString()));
+			context.write(new Text(dmpDataJson.getAsString("uuid")+"<PCHOME>"+dmpDataJson.getAsString("log_source")), new Text(dmpDataJson.toString()));
 		} catch (Exception e) {
 			log.error(">>>>write to reduce fail:" + e.getMessage());
 		}

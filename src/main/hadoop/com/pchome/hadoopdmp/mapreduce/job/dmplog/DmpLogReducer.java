@@ -5,9 +5,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.ResultSet;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -37,6 +40,7 @@ import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig
 import com.pchome.hadoopdmp.spring.config.bean.mongodborg.MongodbOrgHadoopConfig;
 import com.pchome.soft.util.MysqlUtil;
 
+import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 
 @SuppressWarnings("deprecation")
@@ -67,12 +71,10 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	public static int bu_log_count = 0;
 	public static int kdcl_log_count = 0;
 	public static int pack_log_count = 0;
-	
-	
 	public static MysqlUtil mysqlUtil = null;
-	
 	public static Map<String, PcalConditionBean> convertConditionMap = new HashMap<String, PcalConditionBean>();
 	private StringBuffer userDefineConvertDbInfoSqlStr = new StringBuffer();
+
 	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
@@ -150,12 +152,12 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	private static Map<String,Integer> uuidMap = new HashMap<String,Integer>();
 	
 	
-	private static List<net.minidev.json.JSONObject> logJson = new ArrayList<net.minidev.json.JSONObject>();
+	private static List<net.minidev.json.JSONObject> logJsonList = new ArrayList<net.minidev.json.JSONObject>();
+	private static String logSource = "";
 	@Override
 	public void reduce(Text uuidKey, Iterable<Text> dmpJsonStr, Context context) {
 		try {
-			
-			
+			logJsonList.clear();
 			for (Text text : dmpJsonStr) {
 				wiriteToDruid.setLength(0);
 				dmpJSon.clear();
@@ -183,18 +185,36 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				dmpJSon.put("web_class", webClass);
 				dmpJSon.put("week_day", weeks[week_index]);
 				
-				
-				
 				if(dmpJSon.getAsString("event_id").equals("CAC20181210000000001")) {
 					System.out.println(dmpJSon);
 				}
-				
-				
-				
+				logJsonList.add(dmpJSon);
 			}
-			
+			logSource = "";
+			logSource = uuidKey.toString().split("<PCHOME>")[1];
+				
+			//需要計算轉換先排序查看最新一筆轉換是否有自行設定轉換價值進行計算
+			if(logSource.equals("pacl_log")){
+				Collections.sort(logJsonList, new Comparator<JSONObject>() {
+					public int compare(JSONObject a, JSONObject b) {
+					    try {
+							return sdf.parse(b.getAsString("log_date")).compareTo(sdf.parse(a.getAsString("log_date")));
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+						return 0;
+					  }
+					});
 				
 				
+				
+				if(uuidKey.toString().split("<PCHOME>")[0].equals("48d2eea2-5218-4985-b752-eb26422ffc66")) {
+					for (JSONObject jsonObject : logJsonList) {
+						System.out.println(jsonObject.get("log_date"));
+					}
+					System.out.println("----------");
+				}
+			}	
 				
 				
 				
@@ -366,4 +386,47 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			this.age = age;
 		}
 	}
+	
+	
+	
+	public static void main(String args[]) {
+		try {
+			
+			System.out.println("FFFF");
+			
+			List<JSONObject> list = new ArrayList<JSONObject>();
+			JSONParser jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
+			JSONObject a =  (JSONObject) jsonParser.parse("{'referer':'','fileName':'pacl1-14.lzo','device_info_source':'user-agent','mark_value':'','pv':1,'device_browser_info':'CHROME','trigger_type':'pv','prod_dis':'','uuid':'48d2eea2-5218-4985-b752-eb26422ffc66','device_phone_info':'MICROSOFT','prod_id':'','screen_y':'1040','ad_view':0,'screen_x':'1920','action_id':'','pfd_customer_info_id':'','device_info_classify':'Y','memid':'','sex_source':'','mark_layer4':'','mark_layer3':'','area_city':null,'mark_layer2':'','ip':'203.69.23.145','mark_layer1':'','ad_id':'','pfbx_position_id':'','log_date':'2019-07-02 14:40:56','domain':'travel.pchome.com.tw','log_source':'pacl_log','device_os_info':'WINDOWS','week_day':'TUE','web_class':'','prod_price':'','pfp_customer_info_id':'','area_country':'Taiwan','hour':'','area_info_source':'ip','uuid_flag':'n','area_info_classify':'','user_agent':'Mozilla\\/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit\\/537.36 (KHTML, like Gecko) Chrome\\/75.0.3770.100 Safari\\/537.36','email':'','ad_class':'','category_source':'','pfbx_customer_info_id':'','personal_info_api_classify':'','sex':'','ck':0,'age_source':'','url':'http:\\/\\/travel.pchome.com.tw\\/expert\\/29\\/monograph\\/13278','pa_event':'convert','op2':'','op1':'','event_id':'CAC20181210000000001','device_info':'COMPUTER','group_id':'','class_adclick_classify':'','style_id':'','category':'','vpv':0,'age':'','pa_id':'1543389867659'}");
+			JSONObject b =  (JSONObject) jsonParser.parse("{'referer':'','fileName':'pacl1-14.lzo','device_info_source':'user-agent','mark_value':'','pv':1,'device_browser_info':'CHROME','trigger_type':'pv','prod_dis':'','uuid':'48d2eea2-5218-4985-b752-eb26422ffc66','device_phone_info':'MICROSOFT','prod_id':'','screen_y':'1040','ad_view':0,'screen_x':'1920','action_id':'','pfd_customer_info_id':'','device_info_classify':'Y','memid':'','sex_source':'','mark_layer4':'','mark_layer3':'','area_city':null,'mark_layer2':'','ip':'203.69.23.145','mark_layer1':'','ad_id':'','pfbx_position_id':'','log_date':'2019-07-02 14:40:47','domain':'travel.pchome.com.tw','log_source':'pacl_log','device_os_info':'WINDOWS','week_day':'TUE','web_class':'','prod_price':'','pfp_customer_info_id':'','area_country':'Taiwan','hour':'','area_info_source':'ip','uuid_flag':'n','area_info_classify':'','user_agent':'Mozilla\\/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit\\/537.36 (KHTML, like Gecko) Chrome\\/75.0.3770.100 Safari\\/537.36','email':'','ad_class':'','category_source':'','pfbx_customer_info_id':'','personal_info_api_classify':'','sex':'','ck':0,'age_source':'','url':'http:\\/\\/travel.pchome.com.tw\\/expert\\/29\\/monograph\\/13278','pa_event':'convert','op2':'','op1':'','event_id':'CAC20181210000000001','device_info':'COMPUTER','group_id':'','class_adclick_classify':'','style_id':'','category':'','vpv':0,'age':'','pa_id':'1543389867659'}");
+			JSONObject c =  (JSONObject) jsonParser.parse("{'referer':'http:\\/\\/showstg.pchome.com.tw\\/pfp\\/prodListTableStyleView.html?catalogSeq=PC201901080000000003&currentPage=1&pageSizeSelected=10&prodStatus=&prodName=','fileName':'pacl2-14.lzo','device_info_source':'user-agent','mark_value':'','pv':1,'device_browser_info':'CHROME','trigger_type':'pv','prod_dis':'','uuid':'xxx-c14b6ddb-643f-41e2-a88b-693e3834d8ca','device_phone_info':'MICROSOFT','prod_id':'','screen_y':'1040','ad_view':0,'screen_x':'1920','action_id':'','pfd_customer_info_id':'','device_info_classify':'Y','memid':'','sex_source':'','mark_layer4':'','mark_layer3':'','area_city':'Taoyuan District','mark_layer2':'','ip':'220.130.135.118','mark_layer1':'','ad_id':'','pfbx_position_id':'','log_date':'2019-07-02 14:44:11','domain':'travel.pchome.com.tw','log_source':'pacl_log','device_os_info':'WINDOWS','week_day':'TUE','web_class':'','prod_price':'','pfp_customer_info_id':'','area_country':'Taiwan','hour':'','area_info_source':'ip','uuid_flag':'y','area_info_classify':'','user_agent':'Mozilla\\/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit\\/537.36 (KHTML, like Gecko) Chrome\\/75.0.3770.100 Safari\\/537.36','email':'','ad_class':'','category_source':'','pfbx_customer_info_id':'','personal_info_api_classify':'','sex':'','ck':0,'age_source':'','url':'http:\\/\\/travel.pchome.com.tw\\/expert\\/32\\/monograph\\/9492','pa_event':'convert','op2':'','op1':'','event_id':'CAC20181210000000001','device_info':'COMPUTER','group_id':'','class_adclick_classify':'','style_id':'','category':'','vpv':0,'age':'','pa_id':'1543389867659'}");
+			
+			
+			list.add(a);
+			list.add(b);
+			list.add(c);
+			
+			final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Collections.sort(list, new Comparator<JSONObject>() {
+				public int compare(JSONObject a, JSONObject b) {
+				    try {
+						return sdf.parse(b.getAsString("log_date")).compareTo(sdf.parse(a.getAsString("log_date")));
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+					return 0;
+				  }
+				});
+			for (JSONObject jsonObject : list) {
+				System.out.println(jsonObject.get("log_date"));
+			}
+			
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+
+	}
+	
+	
 }
