@@ -344,7 +344,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				
 				
 				if(uuidKey.toString().split("<PCHOME>")[0].equals("fbedd0e3-c5cc-47f2-bfe7-11d317ec3c24")) {
-					System.out.println("@@@@@@@@@@:" + dmpJsonStr);
+					System.out.println("@@@@@@@@@@:" + dmpJSon);
 				}
 			}
 		} catch (Throwable e) {
