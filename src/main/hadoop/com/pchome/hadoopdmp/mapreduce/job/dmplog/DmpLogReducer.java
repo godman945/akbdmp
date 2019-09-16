@@ -269,13 +269,20 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 							context.write(new Text(wiriteToDruid.toString()), null);
 							wiriteToDruid.setLength(0);
 							
-							if(dmpJSon.getAsString("log_source").equals("pacl_log")) {
+//							if(dmpJSon.getAsString("log_source").equals("pacl_log")) {
+//								pack_log_count = pack_log_count + 1;
+//							}else if(dmpJSon.getAsString("log_source").equals("kdcl_log")) {
+//								kdcl_log_count = kdcl_log_count + 1;
+//							}else if(dmpJSon.getAsString("log_source").equals("bu_log")) {
+//								bu_log_count = bu_log_count + 1;
+//							}
+							
+							if(uuidKey.toString().split("<PCHOME>")[0].equals("fbedd0e3-c5cc-47f2-bfe7-11d317ec3c24")) {
 								pack_log_count = pack_log_count + 1;
-							}else if(dmpJSon.getAsString("log_source").equals("kdcl_log")) {
-								kdcl_log_count = kdcl_log_count + 1;
-							}else if(dmpJSon.getAsString("log_source").equals("bu_log")) {
-								bu_log_count = bu_log_count + 1;
+								System.out.println("count>>>>"+pack_log_count+"<<<@@@@@@@@@@:" + dmpJSon);
 							}
+							
+							
 						}
 					}
 				}else {
@@ -333,12 +340,17 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					context.write(new Text(wiriteToDruid.toString()), null);
 					wiriteToDruid.setLength(0);
 					
-					if(dmpJSon.getAsString("log_source").equals("pacl_log")) {
+//					if(dmpJSon.getAsString("log_source").equals("pacl_log")) {
+//						pack_log_count = pack_log_count + 1;
+//					}else if(dmpJSon.getAsString("log_source").equals("kdcl_log")) {
+//						kdcl_log_count = kdcl_log_count + 1;
+//					}else if(dmpJSon.getAsString("log_source").equals("bu_log")) {
+//						bu_log_count = bu_log_count + 1;
+//					}
+					
+					if(uuidKey.toString().split("<PCHOME>")[0].equals("fbedd0e3-c5cc-47f2-bfe7-11d317ec3c24")) {
 						pack_log_count = pack_log_count + 1;
-					}else if(dmpJSon.getAsString("log_source").equals("kdcl_log")) {
-						kdcl_log_count = kdcl_log_count + 1;
-					}else if(dmpJSon.getAsString("log_source").equals("bu_log")) {
-						bu_log_count = bu_log_count + 1;
+						System.out.println("count>>>>"+pack_log_count+"<<<@@@@@@@@@@:" + dmpJSon);
 					}
 				}
 				
