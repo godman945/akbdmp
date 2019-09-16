@@ -341,6 +341,11 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 						bu_log_count = bu_log_count + 1;
 					}
 				}
+				
+				
+				if(uuidKey.toString().split("<PCHOME>")[0].equals("fbedd0e3-c5cc-47f2-bfe7-11d317ec3c24")) {
+					System.out.println("@@@@@@@@@@:" + dmpJsonStr);
+				}
 			}
 		} catch (Throwable e) {
 			 log.error(">>>>>> reduce error :"+e.getMessage());
