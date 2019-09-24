@@ -257,7 +257,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString(markLevelList[i])).append("\"");
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op1")).append("\"");
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op2")).append("\"");
-							wiriteToDruid.append(",").append("\"").append("ad_price_default").append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_price")).append("\"");
 							wiriteToDruid.append(",").append("\"").append(webClass).append("\"");
 							wiriteToDruid.append(",").append("\"").append(weeks[week_index]).append("\"");
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_view")).append("\"");
@@ -269,20 +269,13 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 							context.write(new Text(wiriteToDruid.toString()), null);
 							wiriteToDruid.setLength(0);
 							
-//							if(dmpJSon.getAsString("log_source").equals("pacl_log")) {
-//								pack_log_count = pack_log_count + 1;
-//							}else if(dmpJSon.getAsString("log_source").equals("kdcl_log")) {
-//								kdcl_log_count = kdcl_log_count + 1;
-//							}else if(dmpJSon.getAsString("log_source").equals("bu_log")) {
-//								bu_log_count = bu_log_count + 1;
-//							}
-							
-							if(uuidKey.toString().split("<PCHOME>")[0].equals("fbedd0e3-c5cc-47f2-bfe7-11d317ec3c24")) {
+							if(dmpJSon.getAsString("log_source").equals("pacl_log")) {
 								pack_log_count = pack_log_count + 1;
-								System.out.println("count>>>>"+pack_log_count+"<<<@@@@@@@@@@:" + dmpJSon);
+							}else if(dmpJSon.getAsString("log_source").equals("kdcl_log")) {
+								kdcl_log_count = kdcl_log_count + 1;
+							}else if(dmpJSon.getAsString("log_source").equals("bu_log")) {
+								bu_log_count = bu_log_count + 1;
 							}
-							
-							
 						}
 					}
 				}else {
@@ -340,23 +333,14 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					context.write(new Text(wiriteToDruid.toString()), null);
 					wiriteToDruid.setLength(0);
 					
-//					if(dmpJSon.getAsString("log_source").equals("pacl_log")) {
-//						pack_log_count = pack_log_count + 1;
-//					}else if(dmpJSon.getAsString("log_source").equals("kdcl_log")) {
-//						kdcl_log_count = kdcl_log_count + 1;
-//					}else if(dmpJSon.getAsString("log_source").equals("bu_log")) {
-//						bu_log_count = bu_log_count + 1;
-//					}
-					
-					if(uuidKey.toString().split("<PCHOME>")[0].equals("fbedd0e3-c5cc-47f2-bfe7-11d317ec3c24")) {
+					if(dmpJSon.getAsString("log_source").equals("pacl_log")) {
 						pack_log_count = pack_log_count + 1;
-						System.out.println("count>>>>"+pack_log_count+"<<<@@@@@@@@@@:" + dmpJSon);
+					}else if(dmpJSon.getAsString("log_source").equals("kdcl_log")) {
+						kdcl_log_count = kdcl_log_count + 1;
+					}else if(dmpJSon.getAsString("log_source").equals("bu_log")) {
+						bu_log_count = bu_log_count + 1;
 					}
-				}
-				
-				
-				if(uuidKey.toString().split("<PCHOME>")[0].equals("fbedd0e3-c5cc-47f2-bfe7-11d317ec3c24")) {
-					System.out.println("@@@@@@@@@@:" + dmpJSon);
+					
 				}
 			}
 		} catch (Throwable e) {

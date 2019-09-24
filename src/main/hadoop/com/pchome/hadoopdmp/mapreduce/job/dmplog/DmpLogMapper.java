@@ -251,7 +251,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		dmpDataJson.put("mark_layer2", "");
 		dmpDataJson.put("mark_layer3", "");
 		dmpDataJson.put("mark_layer4", "");
-
+		dmpDataJson.put("ad_price", "");
+		
+		
 		values = null;
 		logStr = "";
 		logStr = value.toString();
@@ -305,6 +307,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						System.out.println("kdcl log process domain fail json:" + dmpDataJson);
 						return;
 					}
+					dmpDataJson.put("ad_price", values[17]);
 					dmpDataJson.put("log_source", "kdcl_log");
 					dmpDataJson.put("pfd_customer_info_id", values[24]);
 					dmpDataJson.put("pfp_customer_info_id", values[6]);
