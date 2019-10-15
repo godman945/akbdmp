@@ -40,10 +40,11 @@ public class DeviceComponent {
 			mobile_type = "";    
 			if (matcher.find()) {    
 				mobile_type = matcher.group(1).trim();
-				dmpJSon.put("mobile_type", mobile_type);
 			}    
-			
-			
+			if (mobile_type.indexOf("AppleWebKit") >= 0) {
+				mobile_type = "";
+			}    
+			dmpJSon.put("mobile_type", mobile_type);
 			
 			
 			
