@@ -266,7 +266,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pv")).append("\"");
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("category")).append("\"");
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("convert_price")).append("\"");
-							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("mobile_type")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_type")).append("\"");
 							context.write(new Text(wiriteToDruid.toString()), null);
 							wiriteToDruid.setLength(0);
 							
@@ -331,7 +331,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pv")).append("\"");
 					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("category")).append("\"");
 					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("convert_price")).append("\"");
-					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("mobile_type")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_type")).append("\"");
 					context.write(new Text(wiriteToDruid.toString()), null);
 					wiriteToDruid.setLength(0);
 					

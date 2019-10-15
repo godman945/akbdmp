@@ -41,10 +41,10 @@ public class DeviceComponent {
 			if (matcher.find()) {    
 				mobile_type = matcher.group(1).trim();
 			}    
-			if (mobile_type.indexOf("AppleWebKit") >= 0) {
+			if (mobile_type.indexOf("AppleWebKit") >= 0 || mobile_type.indexOf("Gecko") >= 0 || mobile_type.indexOf("Trident") >= 0) {
 				mobile_type = "";
 			}    
-			dmpJSon.put("mobile_type", mobile_type);
+			dmpJSon.put("device_type", mobile_type);
 			
 			
 			

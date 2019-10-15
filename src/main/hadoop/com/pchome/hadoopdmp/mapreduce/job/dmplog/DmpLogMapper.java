@@ -226,7 +226,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		dmpDataJson.put("device_browser_info", "");
 		dmpDataJson.put("device_info_source", "");
 		dmpDataJson.put("device_info_classify", "");
-		dmpDataJson.put("mobile_type", "");
+		dmpDataJson.put("device_type", "");
 		dmpDataJson.put("category", "");
 		dmpDataJson.put("class_adclick_classify", "");
 		dmpDataJson.put("category_source", "");
