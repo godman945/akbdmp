@@ -1,9 +1,11 @@
 package com.pchome.hadoopdmp.mapreduce.job.component;
 
-import net.minidev.json.JSONObject;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+
 import eu.bitwalker.useragentutils.Browser;
 import eu.bitwalker.useragentutils.OperatingSystem;
 import eu.bitwalker.useragentutils.UserAgent;
@@ -14,6 +16,8 @@ public class DeviceComponent {
 	private static UserAgent userAgent = null;
 	private static Browser browser  = null;
 	private static OperatingSystem operatingSystem = null;
+	private static Pattern pattern = Pattern.compile(";\\s?(\\S*?\\s?\\S*?)\\s?(Build)?/");
+	private static String mobile_type = "";  
 	
 	public net.minidev.json.JSONObject parseUserAgentToDevice(net.minidev.json.JSONObject dmpJSon) throws Exception {
 		if (StringUtils.isBlank(dmpJSon.getAsString("user_agent"))){
@@ -32,6 +36,19 @@ public class DeviceComponent {
 			dmpJSon.put("device_os_info", operatingSystem.getGroup().toString());
 			dmpJSon.put("device_browser_info", browser.getGroup().toString());
 			dmpJSon.put("device_info_source", "user-agent");
+			Matcher matcher = pattern.matcher(dmpJSon.getAsString("user_agent"));    
+			mobile_type = "";    
+			if (matcher.find()) {    
+				mobile_type = matcher.group(1).trim();
+				dmpJSon.put("mobile_type", mobile_type);
+			}    
+			
+			
+			
+			
+			
+			
+			
 			if ((!StringUtils.equals(dmpJSon.getAsString("device_info"),"UNKNOWN")) && 
 			   (!StringUtils.equals(dmpJSon.getAsString("device_phone_info"),"UNKNOWN")) &&
 			   (!StringUtils.equals(dmpJSon.getAsString("device_os_info"),"UNKNOWN")) && 
