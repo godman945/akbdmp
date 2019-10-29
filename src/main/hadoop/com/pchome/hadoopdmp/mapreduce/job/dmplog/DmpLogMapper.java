@@ -183,7 +183,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			
 			
 			
-			
+			BufferedReader bf=new BufferedReader(new InputStreamReader(menu24hCsvFileInputStream));//防止中文乱码
+			String line = null;
+			while ((line = bf.readLine()) != null) {
+				System.out.println("><><><><"+line);
+			}
 			
 			
 			
