@@ -541,7 +541,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		try {
 			geoIpComponent.ipTransformGEO(dmpDataJson);
 		} catch (Exception e) {
-			System.out.println(">>>>process source area fail:"+dmpDataJson.getAsString("ip")+">>>>" + e.getMessage());
+//			System.out.println(">>>>process source area fail:"+dmpDataJson.getAsString("ip")+">>>>" + e.getMessage());
 		}
 		// 2.裝置處理元件(UserAgent轉成裝置資訊)
 		try {

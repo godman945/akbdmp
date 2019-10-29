@@ -208,6 +208,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				String webClass = StringUtils.isBlank(pfbxWebsiteCategory.get(pfbxCustomerInfoId)) ? "" : pfbxWebsiteCategory.get(pfbxCustomerInfoId);
 				//產出csv
 				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_value"))) {
+					System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>mark_value:"+dmpJSon.getAsString("mark_value"));
+					System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>dmpJSon:"+dmpJSon);
 					for (int i= 0; i < markLevelList.length; i++) {
 						if(StringUtils.isNotBlank(dmpJSon.getAsString(markLevelList[i]))) {
 							if(dmpJSon.getAsString("mark_value").equals(dmpJSon.getAsString(markValueList[i]))) {
