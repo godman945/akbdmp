@@ -177,7 +177,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			}
 			System.out.println(">>>>>>>>>>>>>>>>>>>>>brandJsonArray:"+brandJsonArray);
 			// 24館別階層對應表
-			org.apache.hadoop.fs.Path menu24hCsvFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/24h_menu-1.csv");
+			org.apache.hadoop.fs.Path menu24hCsvFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/24h_menu_new.csv");
 			FSDataInputStream menu24hCsvFileInputStream = fs.open(menu24hCsvFile);
 			
 			
