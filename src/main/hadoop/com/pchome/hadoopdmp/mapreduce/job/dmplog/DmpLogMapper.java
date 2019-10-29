@@ -191,7 +191,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			
 			
 //			Reader menu24hCsvreader = new InputStreamReader(menu24hCsvFileInputStream);
-			CSVParser menu24hCsvParser = new CSVParser(new InputStreamReader(menu24hCsvFileInputStream,"GBK"), CSVFormat.DEFAULT);
+			CSVParser menu24hCsvParser = new CSVParser(new InputStreamReader(menu24hCsvFileInputStream,"UTF-8"), CSVFormat.DEFAULT);
 			int first = 0;
 			for (CSVRecord csvRecord : menu24hCsvParser) {
 				if(first == 0) {
