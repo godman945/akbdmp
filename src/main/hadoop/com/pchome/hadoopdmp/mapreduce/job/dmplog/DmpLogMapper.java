@@ -1,7 +1,6 @@
 package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
@@ -31,7 +30,6 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.filecache.DistributedCache;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
@@ -49,15 +47,10 @@ import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryRutenCodeBean;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 import com.pchome.hadoopdmp.spring.config.bean.mongodborg.MongodbOrgHadoopConfig;
 
-import net.minidev.json.JSONObject;
-import net.minidev.json.parser.JSONParser;
-
 @Component
 public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//	private static String[] markLevelList = {"mark_layer1","mark_layer2","mark_layer3"};
-//	private static String[] markValueList = {"mark_value1","mark_value2","mark_value3"};
 	private static Logger log = Logger.getLogger(DmpLogMapper.class);
 	public static GeoIpComponent geoIpComponent = new GeoIpComponent();
 	public static DeviceComponent deviceComponent = new DeviceComponent();
@@ -77,7 +70,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>(); // 分類個資表
 	public static List<CategoryCodeBean> category24hBeanList = new ArrayList<CategoryCodeBean>(); // 24H分類表
 	public static List<CategoryRutenCodeBean> categoryRutenBeanList = new ArrayList<CategoryRutenCodeBean>();
-//	public static List<String> categoryLevelMappingList = new ArrayList<String>();
 	public static ACategoryLogData aCategoryLogDataClick = null;
 	public static ACategoryLogData aCategoryLogDataRetun = null;
 	public static ACategoryLogData aCategoryLogData24H = null;
