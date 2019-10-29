@@ -1,5 +1,6 @@
 package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -178,6 +179,25 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			// 24館別階層對應表
 			org.apache.hadoop.fs.Path menu24hCsvFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/24h_menu-1.csv");
 			FSDataInputStream menu24hCsvFileInputStream = fs.open(menu24hCsvFile);
+			
+			
+			
+			BufferedReader reader = new BufferedReader(new InputStreamReader(menu24hCsvFileInputStream)); // 解决乱码
+			String line = null;
+			StringBuffer sb = new StringBuffer();
+			while((line = reader.readLine())!=null){
+				System.out.println(line);
+			}
+
+			
+			System.out.println("**************");
+			
+			
+			
+			
+			
+			
+			
 			Reader menu24hCsvreader = new InputStreamReader(menu24hCsvFileInputStream);
 			CSVParser menu24hCsvParser = new CSVParser(menu24hCsvreader, CSVFormat.DEFAULT);
 			int first = 0;
