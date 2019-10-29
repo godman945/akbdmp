@@ -213,12 +213,21 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				for (Object object : brandJsonArray) {
 					org.json.JSONObject brandJson  = (org.json.JSONObject) object;
 					if(csvRecord.get(0).contains(brandJson.getString("brand_name"))) {
+						System.out.println(brandJson);
+						System.out.println(menu24hMappingJson);
+						System.out.println("---");
 						menu24hMappingJson.put("level_1_brand", brandJson.getString("brand_db_seq"));
 					}
 					if(csvRecord.get(2).contains(brandJson.getString("brand_name"))) {
+						System.out.println(brandJson);
+						System.out.println(menu24hMappingJson);
+						System.out.println("---");
 						menu24hMappingJson.put("level_2_brand", brandJson.getString("brand_db_seq"));
 					}
 					if(csvRecord.get(4).contains(brandJson.getString("brand_name"))) {
+						System.out.println(brandJson);
+						System.out.println(menu24hMappingJson);
+						System.out.println("---");
 						menu24hMappingJson.put("level_3_brand", brandJson.getString("brand_db_seq"));
 					}
 				}
