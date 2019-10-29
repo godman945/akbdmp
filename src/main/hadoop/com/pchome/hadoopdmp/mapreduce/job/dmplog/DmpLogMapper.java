@@ -163,13 +163,13 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			
 			
              FileSystem fs2 = FileSystem.get(conf);
-             FSDataInputStream fin = fs2.open(new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/adm_brand_correspond.csv"));
+             FSDataInputStream fin = fs2.open(new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/24h_menu_new.csv"));
              BufferedReader in = null;
 				String line;
 				try {
 					in = new BufferedReader(new InputStreamReader(fin, "UTF-8"));
 					while ((line = in.readLine()) != null) {
-						System.out.println("line:" + line);
+						System.out.println(">>>>>>>>>line:" + line);
 		
 					}
 		
@@ -268,7 +268,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				menu24hMappingJsonArray.put(menu24hMappingJson);
 			}
 			
-			System.out.println("ALEX>>>>>>>>>>"+menu24hMappingJsonArray);
+//			System.out.println("ALEX>>>>>>>>>>"+menu24hMappingJsonArray);
 			
 			
 			
