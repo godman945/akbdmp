@@ -81,7 +81,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static net.minidev.json.JSONObject json = new net.minidev.json.JSONObject();
 	private static net.minidev.json.JSONObject dmpDataJson = new net.minidev.json.JSONObject();
 	private static org.json.JSONArray menu24hMappingJsonArray = new org.json.JSONArray();
-	
+	private static org.json.JSONArray brandJsonArray = new org.json.JSONArray();
 	private static int count = 0;
 	public void setup(Context context) {
 		System.out.println(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"	+ context.getConfiguration().get("spring.profiles.active"));
@@ -165,7 +165,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			FSDataInputStream brandCsvFileInputStream = fs.open(brandCsvFile);
 			Reader brandCsvreader = new InputStreamReader(brandCsvFileInputStream);
 			CSVParser brandCsvParser = new CSVParser(brandCsvreader, CSVFormat.DEFAULT);
-			org.json.JSONArray brandJsonArray = new org.json.JSONArray();
+			
 			for (CSVRecord csvRecord : brandCsvParser) {
 				if(csvRecord.get(1).equals("NA")) {
 					continue;
@@ -175,6 +175,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				brandJson.put("brand_name", csvRecord.get(1));
 				brandJsonArray.put(brandJson);
 			}
+			
+			System.out.println(brandJsonArray);
+			
 			// 24館別階層對應表
 			org.apache.hadoop.fs.Path menu24hCsvFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/24h_menu_new.csv");
 			FSDataInputStream menu24hCsvFileInputStream = fs.open(menu24hCsvFile);
