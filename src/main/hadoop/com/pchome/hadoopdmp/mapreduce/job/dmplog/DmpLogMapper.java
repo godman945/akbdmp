@@ -175,7 +175,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				brandJson.put("brand_name", csvRecord.get(1));
 				brandJsonArray.put(brandJson);
 			}
-			
+			System.out.println("@@@@@@@@@1:");
 			// 24館別階層對應表
 			org.apache.hadoop.fs.Path menu24hCsvFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/24h_menu_new.csv");
 			FSDataInputStream menu24hCsvFileInputStream = fs.open(menu24hCsvFile);
@@ -184,6 +184,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			Reader menu24hCsvreader = new InputStreamReader(brandCsvFileInputStream);
 //			CSVParser menu24hCsvParser = new CSVParser(menu24hCsvreader, CSVFormat.DEFAULT);
 			int first = 0;
+			System.out.println("@@@@@@@@@2:");
 			for (CSVRecord csvRecord : menu24hCsvParser) {
 				if(first == 0) {
 					first = 1;
@@ -211,6 +212,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //				}
 				
 				for (Object object : brandJsonArray) {
+					System.out.println("@@@@@@@@@3:"+object);
 					org.json.JSONObject brandJson  = (org.json.JSONObject) object;
 					if(csvRecord.get(0).contains(brandJson.getString("brand_name"))) {
 						System.out.println(brandJson);
