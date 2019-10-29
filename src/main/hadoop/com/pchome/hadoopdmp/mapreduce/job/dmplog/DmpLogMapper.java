@@ -180,19 +180,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			org.apache.hadoop.fs.Path menu24hCsvFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/24h_menu_new.csv");
 			FSDataInputStream menu24hCsvFileInputStream = fs.open(menu24hCsvFile);
 			
-			
-			
-			
-			BufferedReader bf=new BufferedReader(new InputStreamReader(menu24hCsvFileInputStream));//防止中文乱码
-			String line = null;
-			while ((line = bf.readLine()) != null) {
-				System.out.println("><><><><"+line);
-			}
-			
-			
-			
-			
-			Reader menu24hCsvreader = new InputStreamReader(menu24hCsvFileInputStream);
+			Reader menu24hCsvreader = new BufferedReader(new InputStreamReader(menu24hCsvFileInputStream,"UTF-8"));     
+//			Reader menu24hCsvreader = new InputStreamReader(menu24hCsvFileInputStream);
 			CSVParser menu24hCsvParser = new CSVParser(menu24hCsvreader, CSVFormat.DEFAULT);
 			int first = 0;
 			for (CSVRecord csvRecord : menu24hCsvParser) {
