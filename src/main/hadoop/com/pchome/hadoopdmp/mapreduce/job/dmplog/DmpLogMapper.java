@@ -1,6 +1,7 @@
 package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
@@ -30,6 +31,7 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.filecache.DistributedCache;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
@@ -75,7 +77,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>(); // 分類個資表
 	public static List<CategoryCodeBean> category24hBeanList = new ArrayList<CategoryCodeBean>(); // 24H分類表
 	public static List<CategoryRutenCodeBean> categoryRutenBeanList = new ArrayList<CategoryRutenCodeBean>();
-	public static List<String> categoryLevelMappingList = new ArrayList<String>();
+//	public static List<String> categoryLevelMappingList = new ArrayList<String>();
 	public static ACategoryLogData aCategoryLogDataClick = null;
 	public static ACategoryLogData aCategoryLogDataRetun = null;
 	public static ACategoryLogData aCategoryLogData24H = null;
@@ -84,9 +86,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public static Map<String, org.json.JSONObject> categoryLevelMappingMap = new HashMap<String, org.json.JSONObject>();
 
 	private static net.minidev.json.JSONObject json = new net.minidev.json.JSONObject();
-	private static net.minidev.json.JSONObject dmpDataJson999 = new net.minidev.json.JSONObject();
 	private static net.minidev.json.JSONObject dmpDataJson = new net.minidev.json.JSONObject();
-
+	private static org.json.JSONArray menu24hMappingJsonArray = new org.json.JSONArray();
 	
 	private static int count = 0;
 	public void setup(Context context) {
@@ -165,16 +166,67 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			databaseReader = new DatabaseReader.Builder(database).build();
 
 			
-			// 24館別階層對應表
+			//品牌對應表
 			FileSystem fs = FileSystem.get(conf);
-			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/24h_menu-1.csv");
-			FSDataInputStream inputStream = fs.open(category24MappingFile);
-			Reader reader = new InputStreamReader(inputStream);
-			CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
-			for (CSVRecord csvRecord : csvParser) {
-				String data = csvRecord.get(1) + "<PCHOME>" + csvRecord.get(3) + "<PCHOME>" + csvRecord.get(5);
-				categoryLevelMappingList.add(data);
+			org.apache.hadoop.fs.Path brandCsvFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/adm_brand_correspond.csv");
+			FSDataInputStream brandCsvFileInputStream = fs.open(brandCsvFile);
+			Reader brandCsvreader = new InputStreamReader(brandCsvFileInputStream);
+			CSVParser brandCsvParser = new CSVParser(brandCsvreader, CSVFormat.DEFAULT);
+			org.json.JSONArray brandJsonArray = new org.json.JSONArray();
+			for (CSVRecord csvRecord : brandCsvParser) {
+				if(csvRecord.get(1).equals("NA")) {
+					continue;
+				}
+				org.json.JSONObject brandJson = new org.json.JSONObject();
+				brandJson.put("brand_db_seq", csvRecord.get(0));
+				brandJson.put("brand_name", csvRecord.get(1));
+				brandJsonArray.put(brandJson);
 			}
+			
+			// 24館別階層對應表
+			org.apache.hadoop.fs.Path menu24hCsvFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/24h_menu-1.csv");
+			FSDataInputStream menu24hCsvFileInputStream = fs.open(menu24hCsvFile);
+			Reader menu24hCsvreader = new InputStreamReader(menu24hCsvFileInputStream);
+			CSVParser menu24hCsvParser = new CSVParser(menu24hCsvreader, CSVFormat.DEFAULT);
+			int first = 0;
+			for (CSVRecord csvRecord : menu24hCsvParser) {
+				if(first == 0) {
+					first = 1;
+					continue;
+				}
+				org.json.JSONObject menu24hMappingJson = new org.json.JSONObject();
+				menu24hMappingJson.put("level_1_code", csvRecord.get(1));
+				menu24hMappingJson.put("level_2_code", csvRecord.get(3));
+				menu24hMappingJson.put("level_3_code", csvRecord.get(5));
+				
+				for (Object object : brandJsonArray) {
+					org.json.JSONObject brandJson  = (org.json.JSONObject) object;
+					if(csvRecord.get(0).contains(brandJson.getString("brand_name"))) {
+						menu24hMappingJson.put("level_1_brand", brandJson.getString("brand_db_seq"));
+					}
+					if(csvRecord.get(2).contains(brandJson.getString("brand_name"))) {
+						menu24hMappingJson.put("level_2_brand", brandJson.getString("brand_db_seq"));
+					}
+					if(csvRecord.get(4).contains(brandJson.getString("brand_name"))) {
+						menu24hMappingJson.put("level_3_brand", brandJson.getString("brand_db_seq"));
+					}
+				}
+				menu24hMappingJsonArray.put(menu24hMappingJson);
+			}
+			
+			System.out.println("ALEX>>>>>>>>>>"+menu24hMappingJsonArray);
+			
+			
+			
+//			FileSystem fs = FileSystem.get(conf);
+//			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/24h_menu-1.csv");
+//			FSDataInputStream inputStream = fs.open(category24MappingFile);
+//			Reader reader = new InputStreamReader(inputStream);
+//			CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
+//			for (CSVRecord csvRecord : csvParser) {
+//				String data = csvRecord.get(1) + "<PCHOME>" + csvRecord.get(3) + "<PCHOME>" + csvRecord.get(5);
+//				categoryLevelMappingList.add(data);
+//			}
 			
 		} catch (Exception e) {
 			System.out.println("Mapper setup error>>>>>> " + e.getMessage());
@@ -251,8 +303,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		dmpDataJson.put("mark_layer1", "");
 		dmpDataJson.put("mark_layer2", "");
 		dmpDataJson.put("mark_layer3", "");
-		dmpDataJson.put("mark_layer4", "");
+		dmpDataJson.put("mark_layer4", ""); //目前沒有單張頁
 		dmpDataJson.put("ad_price", "");
+		dmpDataJson.put("level_1_brand", "");
+		dmpDataJson.put("level_2_brand", "");
+		dmpDataJson.put("level_3_brand", "");
 		
 		
 		values = null;
@@ -558,7 +613,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		}
 	}
 
-	// 處理24館別階層
+	/*
+	 * 	處理24館別階層
+	 * 	1.判斷代碼長度確認第幾層館別
+	 * 	2.判斷是否已有對應的館別存放在categoryLevelMappingMap中避免重新再比對
+	 * */ 
 	private void process24CategoryLevel(net.minidev.json.JSONObject dmpDataJson) throws Exception {
 		String markValue = dmpDataJson.getAsString("mark_value");
 		int level = 0;
@@ -568,6 +627,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		if (markValue.length() >= 6) {
 			level = 3;
 		}
+		
 		if (categoryLevelMappingMap.containsKey(markValue)) {
 			org.json.JSONObject layerJson = categoryLevelMappingMap.get(markValue);
 			Iterator<String> keys = layerJson.keys();
@@ -576,50 +636,125 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				String value = layerJson.getString(key);
 				dmpDataJson.put(key, value);
 			}
-		} else {
-			for (String string : categoryLevelMappingList) {
-				String level1 = string.split("<PCHOME>")[0];
-				String level2 = string.split("<PCHOME>")[1];
-				String level3 = string.split("<PCHOME>")[2];
-				if (level1.equals(markValue)) {
+		}else {
+			for (Object object : menu24hMappingJsonArray) {
+				org.json.JSONObject menu24hMappingJson = (org.json.JSONObject) object;
+				if(menu24hMappingJson.has("level_1_code") && menu24hMappingJson.getString("level_1_code").equals(markValue)) {
 					dmpDataJson.put("mark_layer1", "1");
-					dmpDataJson.put("mark_value1", level1);
+					dmpDataJson.put("mark_value1", menu24hMappingJson.getString("level_1_code"));
+					//檢查是否有對應品牌名稱
+					if(menu24hMappingJson.has("level_1_brand")) {
+						dmpDataJson.put("level_1_brand", menu24hMappingJson.getString("level_1_brand"));
+					}
 					org.json.JSONObject layerJson = new org.json.JSONObject();
 					layerJson.put("mark_layer1", "1");
-					layerJson.put("mark_value1", level1);
+					layerJson.put("mark_value1", menu24hMappingJson.getString("level_1_code"));
 					categoryLevelMappingMap.put(markValue, layerJson);
 					break;
-				} else if (level2.equals(markValue)) {
+				}else if(menu24hMappingJson.has("level_2_code") && menu24hMappingJson.getString("level_2_code").equals(markValue)) {
 					dmpDataJson.put("mark_layer1", "1");
-					dmpDataJson.put("mark_value1", level1);
+					dmpDataJson.put("mark_value1", menu24hMappingJson.getString("level_1_code"));
 					dmpDataJson.put("mark_layer2", "2");
-					dmpDataJson.put("mark_value2", level2);
+					dmpDataJson.put("mark_value2", menu24hMappingJson.getString("level_2_code"));
+					//檢查是否有對應品牌名稱
+					if(menu24hMappingJson.has("level_1_brand")) {
+						dmpDataJson.put("level_1_brand", menu24hMappingJson.getString("level_1_brand"));
+					}
+					if(menu24hMappingJson.has("level_2_brand")) {
+						dmpDataJson.put("level_2_brand", menu24hMappingJson.getString("level_2_brand"));
+					}
 					org.json.JSONObject layerJson = new org.json.JSONObject();
 					layerJson.put("mark_layer1", "1");
-					layerJson.put("mark_value1", level1);
+					layerJson.put("mark_value1", menu24hMappingJson.getString("level_1_code"));
 					layerJson.put("mark_layer2", "2");
-					layerJson.put("mark_value2", level2);
+					layerJson.put("mark_value2", menu24hMappingJson.getString("level_2_code"));
 					categoryLevelMappingMap.put(markValue, layerJson);
 					break;
-				} else if (level3.equals(markValue)) {
+				}else if(menu24hMappingJson.has("level_3_code") && menu24hMappingJson.getString("level_3_code").equals(markValue)) {
 					dmpDataJson.put("mark_layer1", "1");
-					dmpDataJson.put("mark_value1", level1);
+					dmpDataJson.put("mark_value1", menu24hMappingJson.getString("level_1_code"));
 					dmpDataJson.put("mark_layer2", "2");
-					dmpDataJson.put("mark_value2", level2);
+					dmpDataJson.put("mark_value2", menu24hMappingJson.getString("level_2_code"));
 					dmpDataJson.put("mark_layer3", "3");
-					dmpDataJson.put("mark_value3", level3);
+					dmpDataJson.put("mark_value3", menu24hMappingJson.getString("level_3_code"));
+					//檢查是否有對應品牌名稱
+					if(menu24hMappingJson.has("level_1_brand")) {
+						dmpDataJson.put("level_1_brand", menu24hMappingJson.getString("level_1_brand"));
+					}
+					if(menu24hMappingJson.has("level_2_brand")) {
+						dmpDataJson.put("level_2_brand", menu24hMappingJson.getString("level_2_brand"));
+					}
+					if(menu24hMappingJson.has("level_3_brand")) {
+						dmpDataJson.put("level_3_brand", menu24hMappingJson.getString("level_3_brand"));
+					}
 					org.json.JSONObject layerJson = new org.json.JSONObject();
 					layerJson.put("mark_layer1", "1");
-					layerJson.put("mark_value1", level1);
+					layerJson.put("mark_value1", menu24hMappingJson.getString("level_1_code"));
 					layerJson.put("mark_layer2", "2");
-					layerJson.put("mark_value2", level2);
+					layerJson.put("mark_value2", menu24hMappingJson.getString("level_2_code"));
 					layerJson.put("mark_layer3", "3");
-					layerJson.put("mark_value3", level3);
+					layerJson.put("mark_value3", menu24hMappingJson.getString("level_3_code"));
 					categoryLevelMappingMap.put(markValue, layerJson);
 					break;
 				}
 			}
 		}
+//		menu24hMappingJsonArray
+		
+		
+		
+//		if (categoryLevelMappingMap.containsKey(markValue)) {
+//			org.json.JSONObject layerJson = categoryLevelMappingMap.get(markValue);
+//			Iterator<String> keys = layerJson.keys();
+//			while (keys.hasNext()) {
+//				String key = keys.next();
+//				String value = layerJson.getString(key);
+//				dmpDataJson.put(key, value);
+//			}
+//		} else {
+//			for (String string : categoryLevelMappingList) {
+//				String level1 = string.split("<PCHOME>")[0];
+//				String level2 = string.split("<PCHOME>")[1];
+//				String level3 = string.split("<PCHOME>")[2];
+//				if (level1.equals(markValue)) {
+//					dmpDataJson.put("mark_layer1", "1");
+//					dmpDataJson.put("mark_value1", level1);
+//					org.json.JSONObject layerJson = new org.json.JSONObject();
+//					layerJson.put("mark_layer1", "1");
+//					layerJson.put("mark_value1", level1);
+//					categoryLevelMappingMap.put(markValue, layerJson);
+//					break;
+//				} else if (level2.equals(markValue)) {
+//					dmpDataJson.put("mark_layer1", "1");
+//					dmpDataJson.put("mark_value1", level1);
+//					dmpDataJson.put("mark_layer2", "2");
+//					dmpDataJson.put("mark_value2", level2);
+//					org.json.JSONObject layerJson = new org.json.JSONObject();
+//					layerJson.put("mark_layer1", "1");
+//					layerJson.put("mark_value1", level1);
+//					layerJson.put("mark_layer2", "2");
+//					layerJson.put("mark_value2", level2);
+//					categoryLevelMappingMap.put(markValue, layerJson);
+//					break;
+//				} else if (level3.equals(markValue)) {
+//					dmpDataJson.put("mark_layer1", "1");
+//					dmpDataJson.put("mark_value1", level1);
+//					dmpDataJson.put("mark_layer2", "2");
+//					dmpDataJson.put("mark_value2", level2);
+//					dmpDataJson.put("mark_layer3", "3");
+//					dmpDataJson.put("mark_value3", level3);
+//					org.json.JSONObject layerJson = new org.json.JSONObject();
+//					layerJson.put("mark_layer1", "1");
+//					layerJson.put("mark_value1", level1);
+//					layerJson.put("mark_layer2", "2");
+//					layerJson.put("mark_value2", level2);
+//					layerJson.put("mark_layer3", "3");
+//					layerJson.put("mark_value3", level3);
+//					categoryLevelMappingMap.put(markValue, layerJson);
+//					break;
+//				}
+//			}
+//		}
 	}
 
 	public class combinedValue {

@@ -267,6 +267,14 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("category")).append("\"");
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("convert_price")).append("\"");
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_type")).append("\"");
+							//判斷目前為第幾層資料
+							if(i == 0 && StringUtils.isNotBlank(dmpJSon.getAsString("level_1_brand"))) {
+								wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("level_1_brand")).append("\"");
+							}else if(i == 1 && StringUtils.isNotBlank(dmpJSon.getAsString("level_2_brand"))) {
+								wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("level_2_brand")).append("\"");
+							}else if(i == 2 && StringUtils.isNotBlank(dmpJSon.getAsString("level_3_brand"))) {
+								wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("level_3_brand")).append("\"");
+							}
 							context.write(new Text(wiriteToDruid.toString()), null);
 							wiriteToDruid.setLength(0);
 							
