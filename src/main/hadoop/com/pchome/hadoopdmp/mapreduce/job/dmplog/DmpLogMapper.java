@@ -160,40 +160,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 
 			
 			//品牌對應表
-			
-			
-             FileSystem fs2 = FileSystem.get(conf);
-             FSDataInputStream fin = fs2.open(new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/24h_menu_new.csv"));
-             BufferedReader in = null;
-				String line;
-				try {
-					in = new BufferedReader(new InputStreamReader(fin, "UTF-8"));
-					while ((line = in.readLine()) != null) {
-						System.out.println(">>>>>>>>>line:" + line);
-		
-					}
-		
-				} finally {
-					if (in != null) {
-						in.close();
-					}
-					
-				}
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
 			FileSystem fs = FileSystem.get(conf);
 			org.apache.hadoop.fs.Path brandCsvFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/adm_brand_correspond.csv");
 			FSDataInputStream brandCsvFileInputStream = fs.open(brandCsvFile);
@@ -209,21 +175,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				brandJson.put("brand_name", csvRecord.get(1));
 				brandJsonArray.put(brandJson);
 			}
-//			System.out.println(">>>>>>>>>>>>>>>>>>>>>brandJsonArray:"+brandJsonArray);
 			// 24館別階層對應表
 			org.apache.hadoop.fs.Path menu24hCsvFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/24h_menu_new.csv");
 			FSDataInputStream menu24hCsvFileInputStream = fs.open(menu24hCsvFile);
-			
-//			Reader menu24hCsvreader = new BufferedReader(new InputStreamReader(menu24hCsvFileInputStream,"GBK"));     
-//			String temp;
-//			while ((temp = bis.readLine()) != null) {  
-//	        }         
-
-			
-			
-			
-			
-			
 //			Reader menu24hCsvreader = new InputStreamReader(menu24hCsvFileInputStream);
 			CSVParser menu24hCsvParser = new CSVParser(new InputStreamReader(menu24hCsvFileInputStream,"UTF-8"), CSVFormat.DEFAULT);
 			int first = 0;
@@ -244,7 +198,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				
 				if(csvRecord.get(5).equals("DSAW2P")) {
 					System.out.println(">>>>>>>>>>>>>> DSAW2P is exist");
-					System.out.println(">>>>>>>>>>>>>> DSAW2P CN:"+new String(csvRecord.get(4).getBytes("utf-8")));
+					System.out.println(">>>>>>>>>>>>>> DSAW2P CN:"+csvRecord.get(4));
 					if(csvRecord.get(4).contains("直播")) {
 						System.out.println("AAAAAAAAAAAAAAAAA");
 					}else {
@@ -268,7 +222,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				menu24hMappingJsonArray.put(menu24hMappingJson);
 			}
 			
-//			System.out.println("ALEX>>>>>>>>>>"+menu24hMappingJsonArray);
+			System.out.println("ALEX>>>>>>>>>>"+menu24hMappingJsonArray);
 			
 			
 			
