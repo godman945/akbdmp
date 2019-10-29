@@ -78,26 +78,26 @@ public class DmpLogDriver {
 	  						listPath.add(new Path(fileStatus.getPath().toString()));
 	  					}
 	  				}
-	  				//載入kdcl log file	hc3位置 /home/webuser/akb/storedata/alllog/
-	  				Path kdclPath = new Path("/druid_source/kdcl_log/"+dmpDate+"/"+hour);
-			        FileStatus[] kdclStatus = fileSystem.listStatus(kdclPath); 
-					for (FileStatus fileStatus : kdclStatus) {
-						String pathStr = fileStatus.getPath().toString();
-						String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
-						if(extensionName.equals("LZO")) {
-							listPath.add(new Path(fileStatus.getPath().toString()));
-						}
-					}
-					//載入pacl log file	hc3位置 /home/webuser/pa/storedata/alllog/
-					Path paclPath = new Path("/druid_source/pacl_log/"+dmpDate+"/"+hour);
-			        FileStatus[] paclStatus = fileSystem.listStatus(paclPath); 
-					for (FileStatus fileStatus : paclStatus) {
-						String pathStr = fileStatus.getPath().toString();
-						String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
-						if(extensionName.equals("LZO")) {
-							listPath.add(new Path(fileStatus.getPath().toString()));
-						}
-					}
+//	  				//載入kdcl log file	hc3位置 /home/webuser/akb/storedata/alllog/
+//	  				Path kdclPath = new Path("/druid_source/kdcl_log/"+dmpDate+"/"+hour);
+//			        FileStatus[] kdclStatus = fileSystem.listStatus(kdclPath); 
+//					for (FileStatus fileStatus : kdclStatus) {
+//						String pathStr = fileStatus.getPath().toString();
+//						String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
+//						if(extensionName.equals("LZO")) {
+//							listPath.add(new Path(fileStatus.getPath().toString()));
+//						}
+//					}
+//					//載入pacl log file	hc3位置 /home/webuser/pa/storedata/alllog/
+//					Path paclPath = new Path("/druid_source/pacl_log/"+dmpDate+"/"+hour);
+//			        FileStatus[] paclStatus = fileSystem.listStatus(paclPath); 
+//					for (FileStatus fileStatus : paclStatus) {
+//						String pathStr = fileStatus.getPath().toString();
+//						String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
+//						if(extensionName.equals("LZO")) {
+//							listPath.add(new Path(fileStatus.getPath().toString()));
+//						}
+//					}
 	  			}
 	        	
 //  				//載入bu log file
