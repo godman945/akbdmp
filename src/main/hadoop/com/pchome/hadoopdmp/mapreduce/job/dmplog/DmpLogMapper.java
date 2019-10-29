@@ -190,6 +190,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				menu24hMappingJson.put("level_1_code", csvRecord.get(1));
 				menu24hMappingJson.put("level_2_code", csvRecord.get(3));
 				menu24hMappingJson.put("level_3_code", csvRecord.get(5));
+
+				menu24hMappingJson.put("level_1_name", csvRecord.get(0));
+				menu24hMappingJson.put("level_2_name", csvRecord.get(2));
+				menu24hMappingJson.put("level_3_name", csvRecord.get(4));
 				
 				for (Object object : brandJsonArray) {
 					org.json.JSONObject brandJson  = (org.json.JSONObject) object;
