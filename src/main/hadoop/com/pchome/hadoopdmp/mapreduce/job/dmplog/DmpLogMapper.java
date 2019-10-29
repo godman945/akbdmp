@@ -208,8 +208,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				
 				if(csvRecord.get(5).equals("DSAW2P")) {
 					System.out.println(">>>>>>>>>>>>>> DSAW2P is exist");
-					System.out.println(">>>>>>>>>>>>>> DSAW2P CN:"+csvRecord.get(4));
-					
+					System.out.println(">>>>>>>>>>>>>> DSAW2P CN:"+new String(csvRecord.get(4).getBytes("utf-8")));
 					if(csvRecord.get(4).contains("直播")) {
 						System.out.println("AAAAAAAAAAAAAAAAA");
 					}else {
