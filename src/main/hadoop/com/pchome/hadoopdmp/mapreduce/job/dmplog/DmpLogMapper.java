@@ -163,8 +163,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			FileSystem fs = FileSystem.get(conf);
 			org.apache.hadoop.fs.Path brandCsvFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/adm_brand_correspond.csv");
 			FSDataInputStream brandCsvFileInputStream = fs.open(brandCsvFile);
-//			Reader brandCsvreader = new InputStreamReader(brandCsvFileInputStream);
-//			CSVParser brandCsvParser = new CSVParser(brandCsvreader, CSVFormat.DEFAULT);
 			CSVParser brandCsvParser = new CSVParser(new InputStreamReader(brandCsvFileInputStream,"UTF-8"), CSVFormat.DEFAULT);
 			org.json.JSONArray brandJsonArray = new org.json.JSONArray();
 			for (CSVRecord csvRecord : brandCsvParser) {
@@ -175,18 +173,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				brandJson.put("brand_db_seq", csvRecord.get(0));
 				brandJson.put("brand_name", csvRecord.get(1));
 				brandJsonArray.put(brandJson);
-				
-				if(csvRecord.get(1).contains("直播")) {
-					System.out.println(">>>>>>>>>>>>>>>>>>>>>直播::"+csvRecord.get(1));
-				}
-				
 			}
-			System.out.println(">>>>>>>>>>>>>>>>>>>>>brandJsonArray:"+brandJsonArray);
 			// 24館別階層對應表
 			org.apache.hadoop.fs.Path menu24hCsvFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/24h_menu-1.csv");
 			FSDataInputStream menu24hCsvFileInputStream = fs.open(menu24hCsvFile);
-//			Reader menu24hCsvreader = new InputStreamReader(menu24hCsvFileInputStream);
-//			CSVParser menu24hCsvParser = new CSVParser(menu24hCsvreader, CSVFormat.DEFAULT);
 			CSVParser menu24hCsvParser = new CSVParser(new InputStreamReader(menu24hCsvFileInputStream,"UTF-8"), CSVFormat.DEFAULT);
 			int first = 0;
 			for (CSVRecord csvRecord : menu24hCsvParser) {
@@ -198,33 +188,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				menu24hMappingJson.put("level_1_code", csvRecord.get(1));
 				menu24hMappingJson.put("level_2_code", csvRecord.get(3));
 				menu24hMappingJson.put("level_3_code", csvRecord.get(5));
-
-//				menu24hMappingJson.put("level_1_name", csvRecord.get(0));
-//				menu24hMappingJson.put("level_2_name", csvRecord.get(2));
-//				menu24hMappingJson.put("level_3_name", csvRecord.get(4));
-				
-				
-//				if(csvRecord.get(5).equals("DSAW2P")) {
-//					System.out.println(">>>>>>>>>>>>>> DSAW2P is exist");
-//					System.out.println(">>>>>>>>>>>>>> DSAW2P CN:"+csvRecord.get(4));
-//					log.info(">>>>>>>>>>>>>> DSAW2P CN:"+csvRecord.get(4));
-//					if(csvRecord.get(4).contains("直播")) {
-//						System.out.println("AAAAAAAAAAAAAAAAA");
-//					}else {
-//						System.out.println("BBBBBBBBBBBBBb");
-//					}
-//				}
-				if(csvRecord.get(5).equals("DSAW2P")) {
-					for (Object object : brandJsonArray) {
-						org.json.JSONObject brandJson  = (org.json.JSONObject) object;
-						if(brandJson.getString("brand_name").contains("直播")) {
-							System.out.println("AAAAAAAAAAAAAAAAA");
-						}else {
-							System.out.println("BBBBBBBBBBBBBb");
-						}
-					}
-				}
-				
 				for (Object object : brandJsonArray) {
 					org.json.JSONObject brandJson  = (org.json.JSONObject) object;
 					if(csvRecord.get(0).contains(brandJson.getString("brand_name"))) {
