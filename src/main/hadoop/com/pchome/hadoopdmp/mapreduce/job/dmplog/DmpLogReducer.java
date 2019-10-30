@@ -69,12 +69,15 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	public static PersonalInfoComponent personalInfoComponent = new PersonalInfoComponent();
 	private static DBCollection dBCollection_user_detail;
 	private DB mongoOrgOperations;
-	public static List<String> categoryLevelMappingList = new ArrayList<String>();
-	public static int bu_log_count = 0;
-	public static int kdcl_log_count = 0;
-	public static int pack_log_count = 0;
-	public static Map<String,String> industryMap = new HashMap<String, String>();
-	public MysqlUtil mysqlUtil = null;
+	private static List<String> categoryLevelMappingList = new ArrayList<String>();
+	private static int bu_log_count = 0;
+	private static int kdcl_log_count = 0;
+	private static int pack_log_count = 0;
+	private static Map<String,String> industryMap = new HashMap<String, String>();
+	private MysqlUtil mysqlUtil = null;
+	
+	
+	public static Map<String,String> markValueMap = new HashMap<String, String>();
 	
 	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
@@ -143,15 +146,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			while(resultSet.next()){
 				pfbxWebsiteCategory.put(resultSet.getString("customer_info_id"), resultSet.getString("category_code"));
 			}
-			
-			sql.setLength(0);
-			sql.append(" SELECT industry FROM pfp_customer_info where 1 =1 and customer_info_id = 'AC2013071700001'  ");
-			resultSet = mysqlUtil.query(sql.toString());
-			while(resultSet.next()){
-				 System.out.println(">>>>>>>>>>>industry:"+resultSet.getString("industry"));
-			}
-			
-			
 		} catch (Throwable e) {
 			log.error("reduce setup error>>>>>> " + e);
 		}
@@ -215,6 +209,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 							}else {
 								dmpJSon.put("pv", 0);
 							}
+							markValueMap.put(dmpJSon.getAsString("mark_value"), dmpJSon.getAsString("mark_value"));
+							
 							wiriteToDruid.append("\""+dmpJSon.getAsString("fileName")+"\"");
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_date")).append("\"");
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.get("memid")).append("\"");
@@ -278,6 +274,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("industry")).append("\"");
 							context.write(new Text(wiriteToDruid.toString()), null);
 							wiriteToDruid.setLength(0);
+							
 							if(dmpJSon.getAsString("log_source").equals("pacl_log")) {
 								pack_log_count = pack_log_count + 1;
 							}else if(dmpJSon.getAsString("log_source").equals("kdcl_log")) {
@@ -366,6 +363,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			System.out.println("total bu_log  >>>>>>>>>>>>>>>>>>>>>>>>"+bu_log_count);
 			System.out.println("total kdcl_log>>>>>>>>>>>>>>>>>>>>>>>>"+kdcl_log_count);
 			System.out.println("total pack_log>>>>>>>>>>>>>>>>>>>>>>>>"+pack_log_count);
+			System.out.println("markValueMap >>>>>>>>>>>>>>>>>>>>>>>>"+markValueMap);
 		} catch (Exception e) {
 			log.error("reduce cleanup error>>>>>> " +e);
 		}
