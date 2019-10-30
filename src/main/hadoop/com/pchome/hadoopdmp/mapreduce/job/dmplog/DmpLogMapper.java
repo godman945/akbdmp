@@ -302,6 +302,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		dmpDataJson.put("level_1_brand", "");
 		dmpDataJson.put("level_2_brand", "");
 		dmpDataJson.put("level_3_brand", "");
+		dmpDataJson.put("industry", "");
 		
 		
 		values = null;

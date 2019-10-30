@@ -9,11 +9,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -43,60 +41,40 @@ import net.minidev.json.parser.JSONParser;
 public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	private static Log log = LogFactory.getLog("DmpLogReducer");
-
-	private Text keyOut = new Text();
-
-	private Text valueOut = new Text();
-
 	public static String record_date;
-
 	private String kafkaMetadataBrokerlist;
-
 	private String kafkaAcks;
-
 	private String kafkaRetries;
-
 	private String kafkaBatchSize;
-
 	private String kafkaLingerMs;
-
 	private String kafkaBufferMemory;
-
 	private String kafkaSerializerClass;
-
 	private String kafkaKeySerializer;
-
 	private String kafkaValueSerializer;
-
 	public static Producer<String, String> producer = null;
-
 	public RedisTemplate<String, Object> redisTemplate = null;
-
-	
-
 	public JSONParser jsonParser = null;
-
 	public String redisFountKey;
-
-
-	public Map<String, Integer> redisClassifyMap = null;
-	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private static String[] weeks = {"SUN","MON","TUE","WED","THU","FRI","SAT"};
 	private static String[] markLevelList = {"mark_layer1","mark_layer2","mark_layer3"};
 	private static String[] markValueList = {"mark_value1","mark_value2","mark_value3"};
 	private static Calendar calendar = Calendar.getInstance();
+	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private static StringBuffer wiriteToDruid = new StringBuffer();
+	public static StringBuffer industrySqlBuffer = new StringBuffer();
+	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();
+	public static Map<String, String> pfbxWebsiteCategory = new HashMap<String, String>();
+	public Map<String, Integer> redisClassifyMap = null;
 	private static net.minidev.json.JSONObject dmpJSon =  new net.minidev.json.JSONObject();
 	public static PersonalInfoComponent personalInfoComponent = new PersonalInfoComponent();
 	private static DBCollection dBCollection_user_detail;
 	private DB mongoOrgOperations;
-	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>();
-	public static Map<String, String> pfbxWebsiteCategory = new HashMap<String, String>();
 	public static List<String> categoryLevelMappingList = new ArrayList<String>();
-	
 	public static int bu_log_count = 0;
 	public static int kdcl_log_count = 0;
 	public static int pack_log_count = 0;
+	public static Map<String,String> industryMap = new HashMap<String, String>();
+	public MysqlUtil mysqlUtil = null;
 	
 	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
@@ -157,7 +135,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			}
 			
 			//取得DB所有網站分類代號
-			MysqlUtil mysqlUtil = MysqlUtil.getInstance();
+			mysqlUtil = MysqlUtil.getInstance();
 			mysqlUtil.setConnection(context.getConfiguration().get("spring.profiles.active"));
 			StringBuffer sql = new StringBuffer();
 			sql.append(" SELECT a.customer_info_id,a.category_code FROM pfbx_allow_url a WHERE 1 = 1 and a.default_type = 'Y' ORDER BY a.customer_info_id  ");
@@ -165,19 +143,10 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			while(resultSet.next()){
 				pfbxWebsiteCategory.put(resultSet.getString("customer_info_id"), resultSet.getString("category_code"));
 			}
-			mysqlUtil.closeConnection();
 		} catch (Throwable e) {
 			log.error("reduce setup error>>>>>> " + e);
 		}
 	}
-	
-	private static int count = 0;
-	private static Set<String> uuidSet = new HashSet<String>();
-	private static long uuidPv = 0;
-	
-	private static Map<String,Integer> uuidMap = new HashMap<String,Integer>();
-	
-	
 	
 	@Override
 	public void reduce(Text uuidKey, Iterable<Text> dmpJsonStr, Context context) {
@@ -190,12 +159,34 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					log.error(">>>>>>>>>>>>>>>>>no uuid");
 					break;
 				}
-				
 				//6.個資
 				try {
 					personalInfoComponent.processPersonalInfo(dmpJSon, dBCollection_user_detail);
 				}catch(Exception e) {
 					log.error(">>>>>>>fail process processPersonalInfo:"+e.getMessage());
+					continue;
+				}
+				//7.產業別
+				try { 
+					if(industryMap.containsKey(dmpJSon.getAsString("pfp_customer_info_id"))) {
+						dmpJSon.put("industry",industryMap.get(dmpJSon.getAsString("pfp_customer_info_id")));
+					}else {
+						industrySqlBuffer.setLength(0);
+						industrySqlBuffer.append(" SELECT industry FROM pfp_customer_info where 1 =1 and customer_info_id = '").append(dmpJSon.getAsString("pfp_customer_info_id")).append("'");
+						ResultSet resultSet = mysqlUtil.query(industrySqlBuffer.toString());
+						while(resultSet.next()){
+							String industry = resultSet.getString("industry");
+							for (EnumAccountIndustry enumAccountIndustry : EnumAccountIndustry.values()) {
+								if(industry.contentEquals(enumAccountIndustry.getName())) {
+									industryMap.put(dmpJSon.getAsString("pfp_customer_info_id"), enumAccountIndustry.getValue());
+									dmpJSon.put("industry",enumAccountIndustry.getValue());
+									break;
+								}
+							}
+						}
+					}
+				}catch(Exception e) {
+					log.error(">>>>>>>fail process industry:"+e.getMessage());
 					continue;
 				}
 				
@@ -351,14 +342,19 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					}else if(dmpJSon.getAsString("log_source").equals("bu_log")) {
 						bu_log_count = bu_log_count + 1;
 					}
-					
 				}
 			}
 		} catch (Throwable e) {
 			 log.error(">>>>>> reduce error :"+e.getMessage());
 		}
+		finally{
+			try {
+				this.mysqlUtil.closeConnection();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
-	
 	
 	public void cleanup(Context context) {
 		try {
@@ -370,10 +366,10 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		}
 	}
 	
+	//年齡推估
 	public class combinedValue {
 		public String gender;
 		public String age;
-
 		public combinedValue(String gender, String age) {
 			this.gender = gender;
 			this.age = age;
