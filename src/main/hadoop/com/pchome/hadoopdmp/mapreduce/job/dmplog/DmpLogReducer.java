@@ -266,9 +266,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 							}else if(i == 2 && StringUtils.isNotBlank(dmpJSon.getAsString("level_3_brand"))) {
 								wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("level_3_brand")).append("\"");
 							}
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("industry")).append("\"");
 							context.write(new Text(wiriteToDruid.toString()), null);
 							wiriteToDruid.setLength(0);
-							
 							if(dmpJSon.getAsString("log_source").equals("pacl_log")) {
 								pack_log_count = pack_log_count + 1;
 							}else if(dmpJSon.getAsString("log_source").equals("kdcl_log")) {
@@ -331,7 +331,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("category")).append("\"");
 					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("convert_price")).append("\"");
 					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_type")).append("\"");
+					//非bulog沒有mark_value，沒有品牌可對應
 					wiriteToDruid.append(",").append("\"").append("").append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("industry")).append("\"");
 					context.write(new Text(wiriteToDruid.toString()), null);
 					wiriteToDruid.setLength(0);
 					
