@@ -174,6 +174,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				brandJson.put("brand_db_seq", csvRecord.get(0));
 				brandJson.put("brand_name", csvRecord.get(1));
 				brandJsonArray.put(brandJson);
+				
+				if(csvRecord.get(1).contains("直播")) {
+					System.out.println(">>>>>>>>>>>>>>>>>>>>>直播::"+csvRecord.get(1));
+				}
+				
 			}
 			System.out.println(">>>>>>>>>>>>>>>>>>>>>brandJsonArray:"+brandJsonArray);
 			// 24館別階層對應表
