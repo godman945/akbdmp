@@ -207,8 +207,17 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 //					}else {
 //						System.out.println("BBBBBBBBBBBBBb");
 //					}
-//					
 //				}
+				if(csvRecord.get(5).equals("DSAW2P")) {
+					for (Object object : brandJsonArray) {
+						org.json.JSONObject brandJson  = (org.json.JSONObject) object;
+						if(brandJson.getString("brand_name").contains("直播")) {
+							System.out.println("AAAAAAAAAAAAAAAAA");
+						}else {
+							System.out.println("BBBBBBBBBBBBBb");
+						}
+					}
+				}
 				
 				for (Object object : brandJsonArray) {
 					org.json.JSONObject brandJson  = (org.json.JSONObject) object;
