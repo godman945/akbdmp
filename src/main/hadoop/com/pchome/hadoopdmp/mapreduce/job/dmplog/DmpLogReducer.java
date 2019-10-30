@@ -176,7 +176,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					continue;
 				}
 				//7.產業別
-				try { 
+				try {
 					if(industryMap.containsKey(dmpJSon.getAsString("pfp_customer_info_id"))) {
 						dmpJSon.put("industry",industryMap.get(dmpJSon.getAsString("pfp_customer_info_id")));
 					}else {
@@ -358,17 +358,11 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		} catch (Throwable e) {
 			 log.error(">>>>>> reduce error :"+e.getMessage());
 		}
-		finally{
-			try {
-				this.mysqlUtil.closeConnection();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 	}
 	
 	public void cleanup(Context context) {
 		try {
+			this.mysqlUtil.closeConnection();
 			System.out.println("total bu_log  >>>>>>>>>>>>>>>>>>>>>>>>"+bu_log_count);
 			System.out.println("total kdcl_log>>>>>>>>>>>>>>>>>>>>>>>>"+kdcl_log_count);
 			System.out.println("total pack_log>>>>>>>>>>>>>>>>>>>>>>>>"+pack_log_count);
