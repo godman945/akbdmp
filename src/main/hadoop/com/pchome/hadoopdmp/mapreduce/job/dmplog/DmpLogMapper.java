@@ -163,8 +163,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			FileSystem fs = FileSystem.get(conf);
 			org.apache.hadoop.fs.Path brandCsvFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/adm_brand_correspond.csv");
 			FSDataInputStream brandCsvFileInputStream = fs.open(brandCsvFile);
-			Reader brandCsvreader = new InputStreamReader(brandCsvFileInputStream);
-			CSVParser brandCsvParser = new CSVParser(brandCsvreader, CSVFormat.DEFAULT);
+//			Reader brandCsvreader = new InputStreamReader(brandCsvFileInputStream);
+//			CSVParser brandCsvParser = new CSVParser(brandCsvreader, CSVFormat.DEFAULT);
+			CSVParser brandCsvParser = new CSVParser(new InputStreamReader(brandCsvFileInputStream,"UTF-8"), CSVFormat.DEFAULT);
 			org.json.JSONArray brandJsonArray = new org.json.JSONArray();
 			for (CSVRecord csvRecord : brandCsvParser) {
 				if(csvRecord.get(1).equals("NA")) {
