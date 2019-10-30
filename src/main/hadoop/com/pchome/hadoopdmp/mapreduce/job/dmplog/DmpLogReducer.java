@@ -143,6 +143,15 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			while(resultSet.next()){
 				pfbxWebsiteCategory.put(resultSet.getString("customer_info_id"), resultSet.getString("category_code"));
 			}
+			
+			sql.setLength(0);
+			sql.append(" SELECT industry FROM pfp_customer_info where 1 =1 and customer_info_id = 'AC2013071700001'  ");
+			resultSet = mysqlUtil.query(sql.toString());
+			while(resultSet.next()){
+				 System.out.println(">>>>>>>>>>>industry:"+resultSet.getString("industry"));
+			}
+			
+			
 		} catch (Throwable e) {
 			log.error("reduce setup error>>>>>> " + e);
 		}
