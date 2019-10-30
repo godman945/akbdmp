@@ -193,22 +193,22 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				menu24hMappingJson.put("level_2_code", csvRecord.get(3));
 				menu24hMappingJson.put("level_3_code", csvRecord.get(5));
 
-				menu24hMappingJson.put("level_1_name", csvRecord.get(0));
-				menu24hMappingJson.put("level_2_name", csvRecord.get(2));
-				menu24hMappingJson.put("level_3_name", csvRecord.get(4));
+//				menu24hMappingJson.put("level_1_name", csvRecord.get(0));
+//				menu24hMappingJson.put("level_2_name", csvRecord.get(2));
+//				menu24hMappingJson.put("level_3_name", csvRecord.get(4));
 				
 				
-				if(csvRecord.get(5).equals("DSAW2P")) {
-					System.out.println(">>>>>>>>>>>>>> DSAW2P is exist");
-					System.out.println(">>>>>>>>>>>>>> DSAW2P CN:"+csvRecord.get(4));
-					log.info(">>>>>>>>>>>>>> DSAW2P CN:"+csvRecord.get(4));
-					if(csvRecord.get(4).contains("直播")) {
-						System.out.println("AAAAAAAAAAAAAAAAA");
-					}else {
-						System.out.println("BBBBBBBBBBBBBb");
-					}
-					
-				}
+//				if(csvRecord.get(5).equals("DSAW2P")) {
+//					System.out.println(">>>>>>>>>>>>>> DSAW2P is exist");
+//					System.out.println(">>>>>>>>>>>>>> DSAW2P CN:"+csvRecord.get(4));
+//					log.info(">>>>>>>>>>>>>> DSAW2P CN:"+csvRecord.get(4));
+//					if(csvRecord.get(4).contains("直播")) {
+//						System.out.println("AAAAAAAAAAAAAAAAA");
+//					}else {
+//						System.out.println("BBBBBBBBBBBBBb");
+//					}
+//					
+//				}
 				
 				for (Object object : brandJsonArray) {
 					org.json.JSONObject brandJson  = (org.json.JSONObject) object;
