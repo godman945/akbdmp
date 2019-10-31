@@ -203,30 +203,44 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				menu24hMappingJsonArray.put(menu24hMappingJson);
 			}
 			
+			
+			
+			
+			
+			
+			
+			
 			brandCsvParser.close();
 			menu24hCsvParser.close();
 			brandCsvFileInputStream.close();
 			menu24hCsvFileInputStream.close();
 
-			System.out.println("ALEX>>>>>>>>>>"+menu24hMappingJsonArray);
+			
+			alex();
 			
 			
-			
-//			FileSystem fs = FileSystem.get(conf);
-//			org.apache.hadoop.fs.Path category24MappingFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/24h_menu-1.csv");
-//			FSDataInputStream inputStream = fs.open(category24MappingFile);
-//			Reader reader = new InputStreamReader(inputStream);
-//			CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
-//			for (CSVRecord csvRecord : csvParser) {
-//				String data = csvRecord.get(1) + "<PCHOME>" + csvRecord.get(3) + "<PCHOME>" + csvRecord.get(5);
-//				categoryLevelMappingList.add(data);
-//			}
 			
 		} catch (Exception e) {
 			System.out.println("Mapper setup error>>>>>> " + e.getMessage());
 		}
 	}
 
+	
+	
+	
+	private void alex() {
+		System.out.println("SSSSSSSSSSSSSSSSSSSSSSSSSSs");
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public synchronized void map(LongWritable offset, Text value, Context context) {
 //		清空mapper中json資料
 		inputSplit = (InputSplit) context.getInputSplit();
@@ -615,14 +629,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	 * */ 
 	private void process24CategoryLevel(net.minidev.json.JSONObject dmpDataJson) throws Exception {
 		String markValue = dmpDataJson.getAsString("mark_value");
-		int level = 0;
-		if (markValue.length() == 4) {
-			level = 2;
-		}
-		if (markValue.length() >= 6) {
-			level = 3;
-		}
-		
 		if (categoryLevelMappingMap.containsKey(markValue)) {
 			org.json.JSONObject layerJson = categoryLevelMappingMap.get(markValue);
 			Iterator<String> keys = layerJson.keys();
