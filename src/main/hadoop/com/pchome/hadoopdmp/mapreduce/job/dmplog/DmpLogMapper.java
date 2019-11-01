@@ -63,7 +63,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static String kdclSymbol = String.valueOf(new char[] { 9, 31 });
 	private static String paclSymbol = String.valueOf(new char[] { 9, 31 });
 	private static int kdclLogLength = 30;
-	private static int campaignLogLength = 9;
 	private static Map<String, String> hostNameMap = new HashMap<String, String>();
 	public static ArrayList<Map<String, String>> categoryList = new ArrayList<Map<String, String>>(); // 分類表
 	public static Map<String, combinedValue> clsfyCraspMap = new HashMap<String, combinedValue>(); // 分類個資表
@@ -75,12 +74,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private DB mongoOrgOperations;
 	private static DBCollection dBCollection_class_url;
 	public static Map<String, org.json.JSONObject> categoryLevelMappingMap = new HashMap<String, org.json.JSONObject>();
-
-	private static net.minidev.json.JSONObject json = new net.minidev.json.JSONObject();
 	private static net.minidev.json.JSONObject dmpDataJson = new net.minidev.json.JSONObject();
 	private static org.json.JSONArray menu24hMappingJsonArray = new org.json.JSONArray();
-	
 	private static int count = 0;
+	
 	public void setup(Context context) {
 		System.out.println(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"	+ context.getConfiguration().get("spring.profiles.active"));
 		try {
@@ -91,10 +88,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			System.out.println("record_hour:" + record_hour);
 			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-			this.aCategoryLogDataClick = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
-			this.aCategoryLogDataRetun = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
-			this.aCategoryLogData24H = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
-//			
+			DmpLogMapper.aCategoryLogDataClick = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
+			DmpLogMapper.aCategoryLogDataRetun = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
+			DmpLogMapper.aCategoryLogData24H = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
+			
 			this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
 			dBCollection_class_url = this.mongoOrgOperations.getCollection("class_url");
 			// load 推估分類個資表(ClsfyGndAgeCrspTable.txt)
@@ -210,24 +207,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				}
 				menu24hMappingJsonArray.put(menu24hMappingJson);
 			}
-			
-			
-			System.out.println("ALEX>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+menu24hMappingJsonArray);
-			
-			
-			
-			
-			
 			brandCsvParser.close();
 			menu24hCsvParser.close();
 			brandCsvFileInputStream.close();
 			menu24hCsvFileInputStream.close();
-
-			
-			
-			
-			
-			
 		} catch (Exception e) {
 			System.out.println("Mapper setup error>>>>>> " + e.getMessage());
 		}
@@ -430,6 +413,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		dmpDataJson.put("level_2_brand", "");
 		dmpDataJson.put("level_3_brand", "");
 		dmpDataJson.put("industry", "");
+		dmpDataJson.put("24h_price_code", "");
 		
 		
 		values = null;
@@ -801,6 +785,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					if(menu24hMappingJson.has("level_3_brand")) {
 						dmpDataJson.put("level_3_brand", menu24hMappingJson.getString("level_3_brand"));
 					}
+					if(menu24hMappingJson.has("24h_price_code") ) {
+						dmpDataJson.put("24h_price_code", menu24hMappingJson.getString("24h_price_code"));
+					}
+					
 					org.json.JSONObject layerJson = new org.json.JSONObject();
 					layerJson.put("mark_layer1", "1");
 					layerJson.put("mark_value1", menu24hMappingJson.getString("level_1_code"));
