@@ -787,6 +787,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					}
 					if(menu24hMappingJson.has("24h_price_code") ) {
 						dmpDataJson.put("24h_price_code", menu24hMappingJson.getString("24h_price_code"));
+						System.out.println("ADD >>>>>>>>>>>>>>>>>" + menu24hMappingJson.getString("24h_price_code"));
 					}
 					
 					org.json.JSONObject layerJson = new org.json.JSONObject();
