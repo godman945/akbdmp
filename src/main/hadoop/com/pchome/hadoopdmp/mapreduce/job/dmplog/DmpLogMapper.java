@@ -1,9 +1,7 @@
 package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -200,11 +198,21 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						menu24hMappingJson.put("level_3_brand", brandJson.getString("brand_db_seq"));
 					}
 				}
+				
+				//傳送第三層館別名稱回傳價格區間代碼
+				try {
+					if(csvRecord.get(4).contains("$")) {
+						String priceCode = get24hPriceCode(csvRecord.get(4));
+						menu24hMappingJson.put("level_3_price_code", priceCode);
+					}
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
 				menu24hMappingJsonArray.put(menu24hMappingJson);
 			}
 			
 			
-			
+			System.out.println("ALEX>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+menu24hMappingJsonArray);
 			
 			
 			
@@ -216,7 +224,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			menu24hCsvFileInputStream.close();
 
 			
-			alex();
+			
 			
 			
 			
@@ -226,10 +234,115 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	}
 
 	
+	private static StringBuffer menu24hLevelNamePriceBuffer = new StringBuffer();
+	private static String menu24hLevelNamePriceStr = "";
+	private static int menu24hLevelNamePriceStartStr = 0;
+	private static int strTimes = 0;
+	private static int strTimes2 = 0;
+	private static int menu24hLevelPriceMin = 0;
+	private static int menu24hLevelPriceMax = 0;
+	private static boolean priceCodeFlag = false;
 	
-	
-	private void alex() {
-		System.out.println("SSSSSSSSSSSSSSSSSSSSSSSSSSs");
+	private String get24hPriceCode(String menu24hLevelName) throws Exception {
+		priceCodeFlag = false;
+		menu24hLevelPriceMin = 0;
+		menu24hLevelPriceMax = 0;
+		strTimes2 = 0;
+		strTimes = 0;
+		menu24hLevelNamePriceStartStr = 0;
+		menu24hLevelNamePriceBuffer.setLength(0);
+		
+		menu24hLevelNamePriceStr = menu24hLevelName;
+		//從第一個$出現且後面為數字擷取字串
+		for (int i = 0; i < menu24hLevelNamePriceStr.split("").length; i++) {
+			if((i < menu24hLevelNamePriceStr.length() -1)) {
+				if(menu24hLevelNamePriceStr.split("")[i].equals("$") && Character.isDigit(menu24hLevelNamePriceStr.charAt(i+1))) {
+					menu24hLevelNamePriceStartStr = i;
+					break;
+				}
+			}
+		}
+		//沒有$符號後接數字
+		if(menu24hLevelNamePriceStartStr == 0) {
+			return "";
+		}
+		menu24hLevelNamePriceStr = menu24hLevelNamePriceStr.substring(menu24hLevelNamePriceStartStr,menu24hLevelNamePriceStr.length());
+		menu24hLevelNamePriceStr = menu24hLevelNamePriceStr.replaceAll("[^$~０１２３４５６７８９\\-\\d]", "");
+		//字串符合區間格式
+		if(menu24hLevelNamePriceStr.contains("~") || menu24hLevelNamePriceStr.contains("-")) {
+			for (String string : menu24hLevelNamePriceStr.split("")) {
+				if (string.equals("$")) {
+					if (menu24hLevelNamePriceBuffer.length() == 0) {
+						menu24hLevelNamePriceBuffer.append("$");
+					} else {
+						menu24hLevelNamePriceBuffer.append("~$");
+					}
+					continue;
+				}
+				//判斷每次$後第幾位元開始不是數字
+				if (Character.isDigit(menu24hLevelNamePriceStr.charAt(menu24hLevelNamePriceStr.indexOf(string)))) {
+					if (strTimes == 0) {
+						menu24hLevelNamePriceBuffer.append(string);
+					}
+					if (strTimes == 1) {
+						//判斷$字號出現幾次
+						strTimes2 = 0;
+						for (String string2 : menu24hLevelNamePriceBuffer.toString().split("")) {
+							if (string2.equals("$")) {
+								strTimes2 = strTimes2 + 1;
+							}
+						}
+						if (strTimes2 != 2) {
+							break;
+						} else {
+							menu24hLevelNamePriceBuffer.append(string);
+						}
+					}
+					continue;
+				}
+				//區間判斷用，變別第二的$出現時機
+				if (!Character.isDigit(menu24hLevelNamePriceStr.charAt(menu24hLevelNamePriceStr.indexOf(string)))) {
+					strTimes = strTimes + 1;
+				}
+			}
+		}
+		//價格字串有經過區間處理
+		if(menu24hLevelNamePriceBuffer.length() != 0) {
+			menu24hLevelNamePriceStr = menu24hLevelNamePriceBuffer.toString();
+		}
+		menu24hLevelNamePriceStr = menu24hLevelNamePriceStr.replaceAll("[^~０１２３４５６７８９\\-\\d]", "");
+		priceCodeFlag = false;
+		String priceCode = "";
+		String priceCodeStandbyMin = "";
+		for (EnumDmpPriceRange enumDmpPriceRange : EnumDmpPriceRange.values()) {
+			if(StringUtils.isNotBlank(menu24hLevelNamePriceStr) && menu24hLevelNamePriceStr.contains("~") && menu24hLevelNamePriceStr.split("~").length == 2) {
+				menu24hLevelPriceMin = Integer.parseInt(menu24hLevelNamePriceStr.split("~")[0]);
+				menu24hLevelPriceMax = Integer.parseInt(menu24hLevelNamePriceStr.split("~")[1]);
+				if(menu24hLevelPriceMin >= enumDmpPriceRange.getMin() && menu24hLevelPriceMax <= enumDmpPriceRange.getMax()) {
+					priceCode = enumDmpPriceRange.toString();
+					priceCodeFlag = true;
+					break;
+				}
+				if(menu24hLevelPriceMin >= enumDmpPriceRange.getMin()) {
+					priceCodeStandbyMin = enumDmpPriceRange.toString();
+				}
+			}
+			if(StringUtils.isNotBlank(menu24hLevelNamePriceStr) && !menu24hLevelNamePriceStr.contains("~")) {
+				if(Integer.parseInt(menu24hLevelNamePriceStr) >= enumDmpPriceRange.getMin() && Integer.parseInt(menu24hLevelNamePriceStr) <= enumDmpPriceRange.getMax()) {
+					priceCode = enumDmpPriceRange.toString();
+					priceCodeFlag = true;
+					break;
+				}	
+			}
+		}
+		
+		if(priceCodeFlag == true && StringUtils.isNotBlank(priceCode)) {
+			return priceCode;
+		}
+		if(priceCodeFlag == false && StringUtils.isNotBlank(priceCodeStandbyMin)) {
+			return priceCodeStandbyMin;
+		}
+		return "";
 	}
 	
 	
