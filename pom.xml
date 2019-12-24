@@ -60,11 +60,6 @@
 	  	
 	  	<repository>
 			<id>central</id>
-			<url>file://D:\Users\alexchen\.m2\repository</url>
-		</repository> 
-	  	
-	  	<repository>
-			<id>central</id>
 			<url>file://home/webuser/.m2/repository</url>
 		</repository> 
 	  	
