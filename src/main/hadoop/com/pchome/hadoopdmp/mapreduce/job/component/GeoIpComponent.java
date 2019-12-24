@@ -19,6 +19,9 @@ public class GeoIpComponent {
 		
 		log.info(">>>>>>>>>>>>>>>>>>>>>"+dmpJSon.getClass());
 		
+		log.info("ALEX>>>>>>>>>>>>>"+dmpJSon.getAsString("ip"));
+		
+		
 		ip = dmpJSon.getAsString("ip").toString();
 		if (!ipAdd.isIP(ip)) {
 			dmpJSon.put("area_info_classify", "");
