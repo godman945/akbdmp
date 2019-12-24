@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import com.maxmind.geoip2.model.CityResponse;
 import com.pchome.hadoopdmp.mapreduce.job.component.IpAddress.IpAdd;
 import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper;
+import net.minidev.json.JSONObject;
 
 public class GeoIpComponent {
 
