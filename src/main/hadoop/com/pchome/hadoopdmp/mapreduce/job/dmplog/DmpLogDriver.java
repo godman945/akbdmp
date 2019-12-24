@@ -171,7 +171,7 @@ public class DmpLogDriver {
 			
 	        
 	    	String[] jarPaths = {
-					//"/hadoop_jar/lib/json-smart-2.3.jar",
+					"/hadoop_jar/lib/json-smart-2.3.jar",
 			}; 
 			for (String jarPath : jarPaths) {
 				DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fileSystem);
