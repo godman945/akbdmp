@@ -57,6 +57,19 @@
 	   		<url>http://maven.twttr.com/</url>
 	  	</repository>
 	  	-->
+	  	
+	  	<repository>
+			<id>central</id>
+			<url>file://D:\Users\alexchen\.m2\repository</url>
+		</repository> 
+	  	
+	  	<repository>
+			<id>central</id>
+			<url>file://home/webuser/.m2/repository</url>
+		</repository> 
+	  	
+	  	
+	  	
 	  	<repository>
 			<snapshots>
 				<enabled>false</enabled>
@@ -312,13 +325,14 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!--  
+		
 		<dependency>
 		    <groupId>com.hadoop.gplcompression</groupId>
 		    <artifactId>hadoop-lzo</artifactId>
 		    <version>0.4.20</version>
 		</dependency>
-		-->
+		
+				
 		<!-- http -->
 		<dependency>
 		    <groupId>org.apache.httpcomponents</groupId>
