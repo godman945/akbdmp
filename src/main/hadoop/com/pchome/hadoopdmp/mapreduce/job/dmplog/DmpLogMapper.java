@@ -156,7 +156,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			
 			//品牌對應表
 			FileSystem fs = FileSystem.get(conf);
-			org.apache.hadoop.fs.Path brandCsvFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/adm_brand_correspond.csv");
+			org.apache.hadoop.fs.Path brandCsvFile = new org.apache.hadoop.fs.Path("hdfs://hdn1.mypchome.com.tw:9000/hadoop_file/adm_brand_correspond.csv");
 			FSDataInputStream brandCsvFileInputStream = fs.open(brandCsvFile);
 			CSVParser brandCsvParser = new CSVParser(new InputStreamReader(brandCsvFileInputStream,"UTF-8"), CSVFormat.DEFAULT);
 			org.json.JSONArray brandJsonArray = new org.json.JSONArray();
@@ -170,7 +170,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				brandJsonArray.put(brandJson);
 			}
 			// 24館別階層對應表
-			org.apache.hadoop.fs.Path menu24hCsvFile = new org.apache.hadoop.fs.Path("hdfs://druid1.mypchome.com.tw:9000/hadoop_file/24h_menu-1.csv");
+			org.apache.hadoop.fs.Path menu24hCsvFile = new org.apache.hadoop.fs.Path("hdfs://hdn1.mypchome.com.tw:9000/hadoop_file/24h_menu-1.csv");
 			FSDataInputStream menu24hCsvFileInputStream = fs.open(menu24hCsvFile);
 			CSVParser menu24hCsvParser = new CSVParser(new InputStreamReader(menu24hCsvFileInputStream,"UTF-8"), CSVFormat.DEFAULT);
 			int first = 0;
