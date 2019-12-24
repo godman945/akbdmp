@@ -18,8 +18,8 @@ public class GeoIpComponent {
 		// 判斷是否為正確ip格式
 		
 		log.info(">>>>>>>>>>>>>>>>>>>>>"+dmpJSon.getClass());
-		
-		log.info("ALEX>>>>>>>>>>>>>"+dmpJSon.getAsString("ip"));
+		log.info("ALEX>>>>>>>>>>>>>>>>>>>>>"+dmpJSon);
+		log.info("ALEX2>>>>>>>>>>>>>"+dmpJSon.getAsString("ip"));
 		
 		
 		ip = dmpJSon.getAsString("ip").toString();
