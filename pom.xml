@@ -66,6 +66,13 @@
 			<url>http://repo.maven.apache.org/maven2</url>
 		</repository>
 		 
+		 
+		 <repository>
+			<id>central</id>
+			<url>file://home/webuser/.m2/repository</url>
+		 </repository> 
+		 
+		 
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
