@@ -60,7 +60,7 @@
 	  	
 	  	<repository>
 			<id>central</id>
-			<url>file://home/webuser/.m2/repository</url>
+			<url>home/webuser/.m2/repository</url>
 		</repository> 
 	  	
 	  	
