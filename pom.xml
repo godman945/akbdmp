@@ -95,6 +95,20 @@
 			<url>http://repo.maven.apache.org/maven2</url>
 		</pluginRepository>
 		
+		
+		
+		<pluginRepository>
+			<id>nexus</id>
+			<name>nexus</name>
+			<url>http://gitrun.mypchome.com.tw:8081/repository/java-group/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</pluginRepository>
+		
 	</pluginRepositories>
 
 	<properties>
