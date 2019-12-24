@@ -67,10 +67,18 @@
 		</repository>
 		 
 		 
-		 <repository>
-			<id>central</id>
-			<url>file://home/webuser/.m2/repository</url>
-		 </repository> 
+		<repository>
+			<id>nexus</id>
+			<name>nexus</name>
+			<url>http://gitrun.mypchome.com.tw:8081/repository/java-group/</url>
+			<layout>default</layout>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
 		 
 		 
 	</repositories>
