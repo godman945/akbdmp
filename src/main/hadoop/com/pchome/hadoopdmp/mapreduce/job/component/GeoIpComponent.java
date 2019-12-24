@@ -18,6 +18,10 @@ public class GeoIpComponent {
 	private static CityResponse response = null;
 	public net.minidev.json.JSONObject ipTransformGEO(net.minidev.json.JSONObject dmpJSon) throws Exception {
 		// 判斷是否為正確ip格式
+		net.minidev.json.JSONObject alex = dmpJSon;
+		
+		log.info("ALEX2>>>>>>>>>>>>>"+alex.getAsString("ip"));
+		
 		
 		log.info(">>>>>>>>>>>>>>>>>>>>>"+dmpJSon.getClass());
 		log.info("ALEX>>>>>>>>>>>>>>>>>>>>>"+dmpJSon);
