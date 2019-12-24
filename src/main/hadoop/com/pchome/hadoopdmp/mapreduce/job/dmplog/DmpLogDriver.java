@@ -51,8 +51,6 @@ public class DmpLogDriver {
 	        conf.set("spring.profiles.active", env);
 	        conf.set("job.date",dmpDate);
 	        conf.set("job.hour",dmpHour);
-//	        conf.set("mapred.max.split.size","3045728000"); //3045728 49 //3045728000 7
-//	        conf.set("mapred.min.split.size","1015544000"); //1015544 49 //1015544000 7
 	        conf.set("mapred.child.java.opts", "-Xmx4048M");
 	        //輸入檔案
 	        List<Path> listPath = new ArrayList<Path>();  
@@ -69,7 +67,7 @@ public class DmpLogDriver {
 	  					hour = String.valueOf(i);
 	  				}
 //	  				載入bu log file  hc3位置 /home/webuser/akb/storedata/bulog/
-	  				Path buPath = new Path("/druid_source/bu_log/"+dmpDate+"/"+hour);
+	  				Path buPath = new Path("/druid/dmp_log_source/bu_log/"+dmpDate+"/"+hour);
 	  				FileStatus[] buStatus = fileSystem.listStatus(buPath); 
 	  				for (FileStatus fileStatus : buStatus) {
 	  					String pathStr = fileStatus.getPath().toString();
@@ -79,7 +77,7 @@ public class DmpLogDriver {
 	  					}
 	  				}
 	  				//載入kdcl log file	hc3位置 /home/webuser/akb/storedata/alllog/
-	  				Path kdclPath = new Path("/druid_source/kdcl_log/"+dmpDate+"/"+hour);
+	  				Path kdclPath = new Path("/druid/dmp_log_source/kdcl_log/"+dmpDate+"/"+hour);
 			        FileStatus[] kdclStatus = fileSystem.listStatus(kdclPath); 
 					for (FileStatus fileStatus : kdclStatus) {
 						String pathStr = fileStatus.getPath().toString();
@@ -89,7 +87,7 @@ public class DmpLogDriver {
 						}
 					}
 					//載入pacl log file	hc3位置 /home/webuser/pa/storedata/alllog/
-					Path paclPath = new Path("/druid_source/pacl_log/"+dmpDate+"/"+hour);
+					Path paclPath = new Path("/druid/dmp_log_source/pacl_log/"+dmpDate+"/"+hour);
 			        FileStatus[] paclStatus = fileSystem.listStatus(paclPath); 
 					for (FileStatus fileStatus : paclStatus) {
 						String pathStr = fileStatus.getPath().toString();
@@ -112,7 +110,7 @@ public class DmpLogDriver {
   				
 	        }else {//計算小時
 	        	//載入bu log file
-		        Path buPath = new Path("/druid_source/bu_log/"+dmpDate+"/"+dmpHour);
+		        Path buPath = new Path("/druid/dmp_log_source/bu_log/"+dmpDate+"/"+dmpHour);
 		        FileStatus[] buStatus = fileSystem.listStatus(buPath); 
 				for (FileStatus fileStatus : buStatus) {
 					String pathStr = fileStatus.getPath().toString();
@@ -122,7 +120,7 @@ public class DmpLogDriver {
 					}
 				}
 //				載入kdcl log file
-		        Path kdclPath = new Path("/druid_source/kdcl_log/"+dmpDate+"/"+dmpHour);
+		        Path kdclPath = new Path("/druid/dmp_log_source/kdcl_log/"+dmpDate+"/"+dmpHour);
 		        FileStatus[] kdclStatus = fileSystem.listStatus(kdclPath); 
 				for (FileStatus fileStatus : kdclStatus) {
 					String pathStr = fileStatus.getPath().toString();
@@ -132,7 +130,7 @@ public class DmpLogDriver {
 					}
 				}
 				//載入pacl log file
-				Path paclPath = new Path("/druid_source/pacl_log/"+dmpDate+"/"+dmpHour);
+				Path paclPath = new Path("/druid/dmp_log_source/pacl_log/"+dmpDate+"/"+dmpHour);
 		        FileStatus[] paclStatus = fileSystem.listStatus(paclPath); 
 				for (FileStatus fileStatus : paclStatus) {
 					String pathStr = fileStatus.getPath().toString();
@@ -148,14 +146,10 @@ public class DmpLogDriver {
 				log.info(">>>>>>>>>>JOB INPUT PATH:"+path.toString()+" is exist:"+fileSystem.exists(path));
 			}
 			
-			
 			Job job = new Job(conf, "dmp_log_"+ env + "_druid_test");
 			job.setJarByClass(DmpLogDriver.class);
 			job.setMapperClass(DmpLogMapper.class);
 			job.setReducerClass(DmpLogReducer.class);
-//			job.setInputFormatClass(com.hadoop.mapreduce.LzoSplitInputFormat.class);
-//			job.setInputFormatClass(com.hadoop.mapreduce.LzoSplitInputFormat.class);
-//			job.setInputFormatClass();
 			job.setMapOutputKeyClass(Text.class);
 			job.setMapOutputValueClass(Text.class);
 			job.setOutputKeyClass(Text.class);
@@ -163,41 +157,21 @@ public class DmpLogDriver {
 			job.getConfiguration().set("mapreduce.output.basename", "druid_"+dmpDate+"_"+dmpHour);
 			job.setNumReduceTasks(1); 
 			
-			
 			if(env.equals("prd")) {
-				deleteExistedDir(fileSystem, new Path("/druid_source/dmp_output/"+dmpDate+"/"+dmpHour), true);
-				FileOutputFormat.setOutputPath(job, new Path("/druid_source/dmp_output/"+dmpDate+"/"+dmpHour));
+				deleteExistedDir(fileSystem, new Path("/druid/druid_mapreduce_csv/"+dmpDate+"/"+dmpHour), true);
+				FileOutputFormat.setOutputPath(job, new Path("/druid/druid_mapreduce_csv/"+dmpDate+"/"+dmpHour));
 			}else {
-				deleteExistedDir(fileSystem, new Path("/druid_source/dmp_output/"+dmpDate+"/"+dmpHour), true);
-				FileOutputFormat.setOutputPath(job, new Path("/druid_source/dmp_output/"+dmpDate+"/"+dmpHour));
+				deleteExistedDir(fileSystem, new Path("/druid/druid_mapreduce_csv/"+dmpDate+"/"+dmpHour), true);
+				FileOutputFormat.setOutputPath(job, new Path("/druid/druid_mapreduce_csv/"+dmpDate+"/"+dmpHour));
 			}
-			log.info("JOB OUTPUT PATH:"+"/druid_source/dmp_output/"+dmpDate+"/"+dmpHour);
+			log.info("JOB OUTPUT PATH:"+"/druid/druid_mapreduce_csv/"+dmpDate+"/"+dmpHour);
 			FileInputFormat.setInputPaths(job, paths);
 			FileOutputFormat.setCompressOutput(job, true);  //job使用压缩  
 	        FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);  
 			
 	        
 	    	String[] jarPaths = {
-//					"/hadoop_jar/lib/commons-lang-2.6.jar",
-//					"/hadoop_jar/lib/commons-logging-1.1.1.jar",
-//					"/hadoop_jar/lib/log4j-1.2.15.jar",
-//					"/hadoop_jar/lib/mongo-java-driver-2.11.3.jar",
-//					"/hadoop_jar/lib/softdepot-1.0.9.jar",
-//					"/hadoop_jar/lib/solr-solrj-4.5.0.jar",
-//					"/hadoop_jar/lib/noggit-0.5.jar",
-//					"/hadoop_jar/lib/httpcore-4.2.2.jar",
-//					"/hadoop_jar/lib/httpclient-4.2.3.jar",
-//					"/hadoop_jar/lib/httpmime-4.2.3.jar",
-//					"/hadoop_jar/lib/mysql-connector-java-5.1.12-bin.jar",
-//					"/hadoop_jar/lib/hadoop-lzo-0.4.20.jar",
-//					
-//					// add kafka jar
-//					"/hadoop_jar/lib/kafka-clients-0.9.0.0.jar",
-//					"/hadoop_jar/lib/kafka_2.11-0.9.0.0.jar",
-//					"/hadoop_jar/lib/slf4j-api-1.7.19.jar",
-//					"/hadoop_jar/lib/slf4j-log4j12-1.7.6.jar",
 					"/hadoop_jar/lib/json-smart-2.3.jar",
-//					"/hadoop_jar/lib/asm-1.0.2.jar" 
 			}; 
 			for (String jarPath : jarPaths) {
 				DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fileSystem);
