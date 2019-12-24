@@ -653,6 +653,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		// 開始DMP資訊
 		// 1.地區處理元件(ip 轉國家、城市)
 		try {
+			
+			log.info("><><><><><@@"+dmpDataJson.getAsString("ip"));
+			
 			geoIpComponent.ipTransformGEO(dmpDataJson);
 		} catch (Exception e) {
 //			System.out.println(">>>>process source area fail:"+dmpDataJson.getAsString("ip")+">>>>" + e.getMessage());
