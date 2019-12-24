@@ -6,7 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import com.maxmind.geoip2.model.CityResponse;
 import com.pchome.hadoopdmp.mapreduce.job.component.IpAddress.IpAdd;
 import com.pchome.hadoopdmp.mapreduce.job.dmplog.DmpLogMapper;
-import net.minidev.json.JSONObject;
+
 
 public class GeoIpComponent {
 
@@ -16,6 +16,9 @@ public class GeoIpComponent {
 	private static CityResponse response = null;
 	public net.minidev.json.JSONObject ipTransformGEO(net.minidev.json.JSONObject dmpJSon) throws Exception {
 		// 判斷是否為正確ip格式
+		
+		log.info(">>>>>>>>>>>>>>>>>>>>>"+dmpJSon.getClass());
+		
 		ip = dmpJSon.getAsString("ip").toString();
 		if (!ipAdd.isIP(ip)) {
 			dmpJSon.put("area_info_classify", "");
