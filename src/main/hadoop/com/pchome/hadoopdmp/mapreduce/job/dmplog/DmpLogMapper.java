@@ -46,9 +46,6 @@ import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryRutenCodeBean;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 import com.pchome.hadoopdmp.spring.config.bean.mongodborg.MongodbOrgHadoopConfig;
 
-import net.minidev.json.JSONObject;
-import net.minidev.json.parser.JSONParser;
-
 @Component
 public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 
@@ -80,7 +77,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static net.minidev.json.JSONObject dmpDataJson = new net.minidev.json.JSONObject();
 	private static org.json.JSONArray menu24hMappingJsonArray = new org.json.JSONArray();
 	private static int count = 0;
-	private static JSONParser jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
 	
 	public void setup(Context context) {
 		System.out.println(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"	+ context.getConfiguration().get("spring.profiles.active"));
@@ -657,9 +653,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		// 開始DMP資訊
 		// 1.地區處理元件(ip 轉國家、城市)
 		try {
-			JSONObject alex = (JSONObject) jsonParser.parse(dmpDataJson.toString());
-			log.info("><><><><><@@"+alex.getAsString("ip"));
-			
 			geoIpComponent.ipTransformGEO(dmpDataJson);
 		} catch (Exception e) {
 //			System.out.println(">>>>process source area fail:"+dmpDataJson.getAsString("ip")+">>>>" + e.getMessage());
