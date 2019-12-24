@@ -140,6 +140,7 @@ public class DmpLogDriver {
 					}
 				}
 	        }
+	        
 			Path[] paths = new Path[listPath.size()];  
 			listPath.toArray(paths);
 			for (Path path : paths) {
