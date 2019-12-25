@@ -25,7 +25,6 @@ import org.springframework.stereotype.Component;
 
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 
-import jdk.nashorn.internal.scripts.JS;
 import net.minidev.json.JSONObject;
 @Component
 public class DmpLogDriver {
