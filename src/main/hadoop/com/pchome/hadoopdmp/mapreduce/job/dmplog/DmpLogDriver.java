@@ -24,6 +24,9 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.stereotype.Component;
 
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
+
+import jdk.nashorn.internal.scripts.JS;
+import net.minidev.json.JSONObject;
 @Component
 public class DmpLogDriver {
 
@@ -178,6 +181,20 @@ public class DmpLogDriver {
 				DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fileSystem);
 			}
 	        
+			
+			
+			
+			
+			
+			JSONObject a = new JSONObject();
+			
+			a.put("ALEX", "CCCCCCCCCCCCCCCCCCCC");
+			
+			
+			log.info("@@@@@@@@@@@:"+a);
+			log.info("@@@@@@@@@@@:"+a.getAsString("ALEX"));
+			
+			
 			
 			String[] filePaths = {
 				"/hadoop_file/pfp_ad_category_new.csv",
