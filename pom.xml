@@ -14,6 +14,16 @@
 		<outputDirectory>target/classes</outputDirectory>
 		<plugins>
 			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-war-plugin</artifactId>
+			    <version>2.6</version>
+			    <configuration>
+			        <failOnMissingWebXml>false</failOnMissingWebXml>
+			    </configuration>
+			</plugin>
+		
+		
+			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
 					<source>1.7</source>
@@ -231,6 +241,10 @@
 					<artifactId>slf4j-api</artifactId>
 					<groupId>org.slf4j</groupId>
 				</exclusion>
+				<exclusion>
+			     	<groupId>net.minidev</groupId>
+		   			<artifactId>json-smart</artifactId>
+			    </exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -263,7 +277,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
  
 		<!-- hadoop <version>1.7</version> 
  			<scope>system</scope> 
@@ -275,8 +288,8 @@
 		-->
 		<dependency>
 		    <groupId>org.apache.hadoop</groupId>
-		    <artifactId>hadoop-yarn-client</artifactId>
-		    <version>2.8.1</version>
+		    <artifactId>hadoop-client</artifactId>
+		    <version>2.8.5</version>
 		</dependency>
 		
 		
@@ -284,7 +297,13 @@
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-hdfs</artifactId>
-			<version>2.7.1</version>
+			<version>2.8.5</version>
+			<exclusions>
+				<exclusion>
+				    <groupId>asm</groupId>
+				    <artifactId>asm</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -310,9 +329,13 @@
 					<artifactId>slf4j-log4j12</artifactId>
 					<groupId>org.slf4j</groupId>
 				</exclusion>
+				<exclusion>
+			     	<groupId>com.sun.jersey</groupId>
+    				<artifactId>jersey-json</artifactId>
+			    </exclusion>
 			</exclusions>
 		</dependency>
-		<!--  -->
+		
 		<dependency>
 		    <groupId>com.hadoop.gplcompression</groupId>
 		    <artifactId>hadoop-lzo</artifactId>
@@ -505,7 +528,7 @@
  		<dependency>
 		    <groupId>org.apache.hadoop</groupId>
 		    <artifactId>hadoop-common</artifactId>
-		    <version>2.6.5</version>
+		    <version>2.8.5</version>
 		    <exclusions>
 				<exclusion>
 					<artifactId>slf4j-api</artifactId>
@@ -518,6 +541,14 @@
 				<exclusion>
 			     	<groupId>org.slf4j</groupId>
 					<artifactId>slf4j-api</artifactId>
+			    </exclusion>
+			    <exclusion>
+			     	<groupId>net.minidev</groupId>
+		   			<artifactId>json-smart</artifactId>
+			    </exclusion>
+			    <exclusion>
+			     	<groupId>com.sun.jersey</groupId>
+    				<artifactId>jersey-json</artifactId>
 			    </exclusion>
 			</exclusions>
 		</dependency>
@@ -557,19 +588,21 @@
  		</dependency> 
  		 -->
  		
- 		<dependency>
-		    <groupId>org.apache.calcite.avatica</groupId>
-		    <artifactId>avatica-core</artifactId>
-		    <version>1.11.0</version>
-		</dependency>
+ 		 <dependency>
+            <groupId>net.minidev</groupId>
+            <artifactId>asm</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.minidev</groupId>
+            <artifactId>json-smart</artifactId>
+            <version>2.2.1</version>
+        </dependency>
+
+
  		 
- 		 
-		<dependency>
-		    <groupId>net.minidev</groupId>
-		    <artifactId>json-smart</artifactId>
-		    <version>2.3</version>
-		</dependency>
- 		 
+
  		 
 	</dependencies>
 </project>
