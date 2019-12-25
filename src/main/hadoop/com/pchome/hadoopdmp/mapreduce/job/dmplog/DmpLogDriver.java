@@ -175,25 +175,11 @@ public class DmpLogDriver {
 	        
 	    	String[] jarPaths = {
 					"/hadoop_jar/lib/json-smart-2.3.jar",
+					"/hadoop_jar/lib/asm-1.0.2.jar"
 			}; 
 			for (String jarPath : jarPaths) {
 				DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fileSystem);
 			}
-	        
-			
-			
-			
-			
-			
-			JSONObject a = new JSONObject();
-			
-			a.put("ALEX", "CCCCCCCCCCCCCCCCCCCC");
-			
-			
-			log.info("@@@@@@@@@@@:"+a);
-			log.info("@@@@@@@@@@@:"+a.getAsString("ALEX"));
-			
-			
 			
 			String[] filePaths = {
 				"/hadoop_file/pfp_ad_category_new.csv",
