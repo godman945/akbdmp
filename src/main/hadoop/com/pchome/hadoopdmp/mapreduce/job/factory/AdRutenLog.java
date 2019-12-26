@@ -48,49 +48,31 @@ public class AdRutenLog extends ACategoryLogData {
 	private static Elements breadcrumbE;
 	private static BasicDBObject intModifier = new BasicDBObject();
 	public Object processCategory(net.minidev.json.JSONObject dmpJSon, DBCollection dbCollectionUrl) throws Exception {
-		System.out.println("*********** ruten 1");
-		
 		transformUrl.setLength(0);
 		category = "";
 		categorySource = "";
 		classRutenUrlClassify = "" ;
 		this.dBCollection = dbCollectionUrl;
 		sourceUrl = dmpJSon.getAsString("referer");
-		
-		System.out.println("*********** ruten 2");
-		
 		if (StringUtils.isBlank(sourceUrl)) {
-//			dmpJSon.put("class_ruten_url_classify", "N");
 			dmpJSon.put("classify", "N");
 			dmpJSon.put("behavior", "ruten");
 			return dmpJSon;
 		}else {
-			System.out.println("*********** ruten 3");
-			
 			//查詢url
 			dbObject = queryClassUrl(sourceUrl.trim());
 			if(dbObject != null){
 				if(dbObject.get("status").equals("0")){
-					System.out.println("*********** ruten 4");
-					
 					classRutenUrlClassify = "N"; 
 					// url 存在 status = 0 跳過回傳空值 , mongo update_date 更新(一天一次) mongo,query_time+1 如大於 2000 不再加  classRutenUrl = "N"
-//					log.info("dbObject:"+dbObject);
 					updateClassUrlUpdateDate(sourceUrl.trim(),dbObject);
 					updateClassUrlQueryTime(sourceUrl.trim(),dbObject);
-					
-					System.out.println("*********** ruten 5");
-					
 				}else if((dbObject.get("status").equals("1")) && (StringUtils.isNotBlank(dbObject.get("ad_class").toString()))){
-					System.out.println("*********** ruten 6");
-					
 					category = dbObject.get("ad_class").toString();
 					categorySource = "ruten";
 					classRutenUrlClassify = "Y"; 
 					//url 存在 status = 1 取分類代號回傳 mongodn update_date 更新(一天一次) classRutenUrl = "Y";
 					updateClassUrlUpdateDate(sourceUrl.trim(),dbObject);
-					
-					System.out.println("*********** ruten 7");
 				}
 			} else {
 				try {
