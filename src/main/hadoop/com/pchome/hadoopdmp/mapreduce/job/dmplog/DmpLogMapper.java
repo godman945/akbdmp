@@ -88,23 +88,19 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			
 			
 			
-			
-			MysqlUtil mysqlUtil = MysqlUtil.getInstance();
-			mysqlUtil.setConnection("prd");
-			StringBuffer sql = new StringBuffer();
-			sql.append(" SELECT a.customer_info_id,a.category_code FROM pfbx_allow_url a WHERE 1 = 1 and a.default_type = 'Y' ORDER BY a.customer_info_id  ");
-			ResultSet resultSet = mysqlUtil.query(sql.toString());
-			while(resultSet.next()){
-				log.info(resultSet.getString("customer_info_id"));
+			try {
+				log.info("connection MySql");
+				MysqlUtil mysqlUtil = MysqlUtil.getInstance();
+				mysqlUtil.setConnection("prd");
+				StringBuffer sql = new StringBuffer();
+				sql.append(" SELECT a.customer_info_id,a.category_code FROM pfbx_allow_url a WHERE 1 = 1 and a.default_type = 'Y' ORDER BY a.customer_info_id  ");
+				ResultSet resultSet = mysqlUtil.query(sql.toString());
+				while(resultSet.next()){
+					log.info(resultSet.getString("customer_info_id"));
+				}
+			}catch(Exception e) {
+				log.error(e.getMessage());
 			}
-			
-			
-			
-			
-			
-			
-			
-			
 			
 			
 			record_date = context.getConfiguration().get("job.date");
@@ -116,6 +112,21 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			DmpLogMapper.aCategoryLogDataClick = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
 			DmpLogMapper.aCategoryLogDataRetun = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
 			DmpLogMapper.aCategoryLogData24H = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
+			
+			
+			
+			
+			try {
+				log.info("connection MONGO");
+				this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
+			}catch(Exception e) {
+				log.error(e.getMessage());
+			}
+			
+			
+			
+			
+			
 			
 			this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
 			dBCollection_class_url = this.mongoOrgOperations.getCollection("class_url");
