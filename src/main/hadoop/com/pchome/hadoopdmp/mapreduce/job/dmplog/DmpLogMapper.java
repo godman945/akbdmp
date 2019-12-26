@@ -96,7 +96,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				sql.append(" SELECT a.customer_info_id,a.category_code FROM pfbx_allow_url a WHERE 1 = 1 and a.default_type = 'Y' ORDER BY a.customer_info_id  ");
 				ResultSet resultSet = mysqlUtil.query(sql.toString());
 				while(resultSet.next()){
-					log.info(resultSet.getString("customer_info_id"));
+					System.out.println(resultSet.getString("customer_info_id"));
 				}
 			}catch(Exception e) {
 				log.error(e.getMessage());
@@ -119,6 +119,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			try {
 				log.info("connection MONGO");
 				this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
+				dBCollection_class_url = this.mongoOrgOperations.getCollection("class_url");
+				System.out.println(dBCollection_class_url.count());
 			}catch(Exception e) {
 				log.error(e.getMessage());
 			}
