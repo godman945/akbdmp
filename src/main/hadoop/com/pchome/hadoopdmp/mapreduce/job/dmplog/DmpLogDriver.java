@@ -236,25 +236,18 @@ public class DmpLogDriver {
 	 * */
 	public static void main(String[] args)  {
 		try {
-//			if(args.length != 3) {
-//				System.out.println("arg length fail");
-//			}
-//			if(args[0].equals("prd")){
-//				System.setProperty("spring.profiles.active", "prd");	
-//			}else {
-//				System.setProperty("spring.profiles.active", "stg");
-//			}
-//			
-//			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-//			DmpLogDriver dmpLogDriver = (DmpLogDriver) ctx.getBean(DmpLogDriver.class);
-//			dmpLogDriver.drive(args[0],args[1],args[2]);
+			if(args.length != 3) {
+				System.out.println("arg length fail");
+			}
+			if(args[0].equals("prd")){
+				System.setProperty("spring.profiles.active", "prd");	
+			}else {
+				System.setProperty("spring.profiles.active", "stg");
+			}
 			
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-			System.setProperty("spring.profiles.active","prd");
-			RedisTemplate<String, Object> redisTemplate = (RedisTemplate) ctx.getBean(RedisTemplate.class);
-			redisTemplate.opsForValue().set("ALEX", "123");
-			System.out.println(redisTemplate.opsForValue().get("ALEX"));
-			
+			DmpLogDriver dmpLogDriver = (DmpLogDriver) ctx.getBean(DmpLogDriver.class);
+			dmpLogDriver.drive(args[0],args[1],args[2]);
 		}catch(Exception e) {
 			log.error(e.getMessage());
 		}
