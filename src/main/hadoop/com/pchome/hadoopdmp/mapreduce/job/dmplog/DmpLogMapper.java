@@ -7,6 +7,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,6 +46,7 @@ import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryLogFactory;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryRutenCodeBean;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 import com.pchome.hadoopdmp.spring.config.bean.mongodborg.MongodbOrgHadoopConfig;
+import com.pchome.soft.util.MysqlUtil;
 
 @Component
 public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
@@ -82,6 +84,29 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		System.out.println(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"	+ context.getConfiguration().get("spring.profiles.active"));
 		try {
 			System.out.println("*********>>>>>>>>>>>:" + sdf.format(new Date()));
+			
+			
+			
+			
+			
+			MysqlUtil mysqlUtil = MysqlUtil.getInstance();
+			mysqlUtil.setConnection("prd");
+			StringBuffer sql = new StringBuffer();
+			sql.append(" SELECT a.customer_info_id,a.category_code FROM pfbx_allow_url a WHERE 1 = 1 and a.default_type = 'Y' ORDER BY a.customer_info_id  ");
+			ResultSet resultSet = mysqlUtil.query(sql.toString());
+			while(resultSet.next()){
+				log.info(resultSet.getString("customer_info_id"));
+			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 			record_date = context.getConfiguration().get("job.date");
 			record_hour = context.getConfiguration().get("job.hour");
 			System.out.println("record_date:" + record_date);
