@@ -99,7 +99,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					System.out.println(resultSet.getString("customer_info_id"));
 				}
 			}catch(Exception e) {
-				log.error(e.getMessage());
+				System.out.println(e.getMessage());
 			}
 			
 			
