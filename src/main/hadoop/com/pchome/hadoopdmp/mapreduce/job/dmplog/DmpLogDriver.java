@@ -2,6 +2,7 @@ package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
 import java.io.IOException;
 import java.net.URI;
+import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,6 +25,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.stereotype.Component;
 
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
+import com.pchome.soft.util.MysqlUtil;
 
 import net.minidev.json.JSONObject;
 @Component
@@ -232,18 +234,30 @@ public class DmpLogDriver {
 	 * */
 	public static void main(String[] args)  {
 		try {
-			if(args.length != 3) {
-				System.out.println("arg length fail");
-			}
-			if(args[0].equals("prd")){
-				System.setProperty("spring.profiles.active", "prd");	
-			}else {
-				System.setProperty("spring.profiles.active", "stg");
+//			if(args.length != 3) {
+//				System.out.println("arg length fail");
+//			}
+//			if(args[0].equals("prd")){
+//				System.setProperty("spring.profiles.active", "prd");	
+//			}else {
+//				System.setProperty("spring.profiles.active", "stg");
+//			}
+//			
+//			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//			DmpLogDriver dmpLogDriver = (DmpLogDriver) ctx.getBean(DmpLogDriver.class);
+//			dmpLogDriver.drive(args[0],args[1],args[2]);
+			
+			MysqlUtil mysqlUtil = MysqlUtil.getInstance();
+			mysqlUtil.setConnection("stg");
+			StringBuffer sql = new StringBuffer();
+			sql.append(" SELECT a.customer_info_id,a.category_code FROM pfbx_allow_url a WHERE 1 = 1 and a.default_type = 'Y' ORDER BY a.customer_info_id  ");
+			ResultSet resultSet = mysqlUtil.query(sql.toString());
+			while(resultSet.next()){
+				System.out.println(resultSet.getString("customer_info_id"));;
 			}
 			
-			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-			DmpLogDriver dmpLogDriver = (DmpLogDriver) ctx.getBean(DmpLogDriver.class);
-			dmpLogDriver.drive(args[0],args[1],args[2]);
+			
+			
 		}catch(Exception e) {
 			log.error(e.getMessage());
 		}
