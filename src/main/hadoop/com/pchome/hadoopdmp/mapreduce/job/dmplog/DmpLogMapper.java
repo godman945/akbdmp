@@ -89,7 +89,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			
 			
 			try {
-				log.info("connection MySql");
+				System.out.println("connection MySql");
 				MysqlUtil mysqlUtil = MysqlUtil.getInstance();
 				mysqlUtil.setConnection("prd");
 				StringBuffer sql = new StringBuffer();
@@ -117,7 +117,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			
 			
 			try {
-				log.info("connection MONGO");
+				System.out.println("connection MONGO");
 				this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
 				dBCollection_class_url = this.mongoOrgOperations.getCollection("class_url");
 				System.out.println(dBCollection_class_url.count());
