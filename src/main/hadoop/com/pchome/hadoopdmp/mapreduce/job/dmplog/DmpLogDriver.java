@@ -250,6 +250,7 @@ public class DmpLogDriver {
 //			dmpLogDriver.drive(args[0],args[1],args[2]);
 			
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+			System.setProperty("spring.profiles.active","prd");
 			RedisTemplate<String, Object> redisTemplate = (RedisTemplate) ctx.getBean(RedisTemplate.class);
 			redisTemplate.opsForValue().set("ALEX", "123");
 			System.out.println(redisTemplate.opsForValue().get("ALEX"));
