@@ -178,7 +178,8 @@ public class DmpLogDriver {
 	        
 	    	String[] jarPaths = {
 					"/hadoop_jar/lib/json-smart-2.3.jar",
-					"/hadoop_jar/lib/asm-1.0.2.jar" 
+					"/hadoop_jar/lib/asm-1.0.2.jar" ,
+					"/hadoop_jar/lib/mysql-connector-java-5.1.12-bin.jar"
 			}; 
 			for (String jarPath : jarPaths) {
 				DistributedCache.addArchiveToClassPath(new Path(jarPath), job.getConfiguration(), fileSystem);
