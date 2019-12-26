@@ -22,6 +22,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
@@ -235,18 +236,24 @@ public class DmpLogDriver {
 	 * */
 	public static void main(String[] args)  {
 		try {
-			if(args.length != 3) {
-				System.out.println("arg length fail");
-			}
-			if(args[0].equals("prd")){
-				System.setProperty("spring.profiles.active", "prd");	
-			}else {
-				System.setProperty("spring.profiles.active", "stg");
-			}
+//			if(args.length != 3) {
+//				System.out.println("arg length fail");
+//			}
+//			if(args[0].equals("prd")){
+//				System.setProperty("spring.profiles.active", "prd");	
+//			}else {
+//				System.setProperty("spring.profiles.active", "stg");
+//			}
+//			
+//			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//			DmpLogDriver dmpLogDriver = (DmpLogDriver) ctx.getBean(DmpLogDriver.class);
+//			dmpLogDriver.drive(args[0],args[1],args[2]);
 			
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-			DmpLogDriver dmpLogDriver = (DmpLogDriver) ctx.getBean(DmpLogDriver.class);
-			dmpLogDriver.drive(args[0],args[1],args[2]);
+			RedisTemplate<String, Object> redisTemplate = (RedisTemplate) ctx.getBean(RedisTemplate.class);
+			redisTemplate.opsForValue().set("ALEX", "123");
+			System.out.println(redisTemplate.opsForValue().get("ALEX"));
+			
 		}catch(Exception e) {
 			log.error(e.getMessage());
 		}
