@@ -78,7 +78,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public static Map<String, org.json.JSONObject> categoryLevelMappingMap = new HashMap<String, org.json.JSONObject>();
 	private static net.minidev.json.JSONObject dmpDataJson = new net.minidev.json.JSONObject();
 	private static org.json.JSONArray menu24hMappingJsonArray = new org.json.JSONArray();
-	private static int count = 0;
+	
+	
 	
 	public void setup(Context context) {
 		System.out.println(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"	+ context.getConfiguration().get("spring.profiles.active"));
@@ -228,6 +229,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static int menu24hLevelPriceMax = 0;
 	private static boolean priceCodeFlag = false;
 	
+	
+	private static int alex_count= 0;
+	
+	
 	private String get24hPriceCode(String menu24hLevelName) throws Exception {
 		priceCodeFlag = false;
 		menu24hLevelPriceMin = 0;
@@ -340,6 +345,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	
 	
 	public synchronized void map(LongWritable offset, Text value, Context context) {
+		alex_count = alex_count + 1;
+		
+		
+		
 //		清空mapper中json資料
 		inputSplit = (InputSplit) context.getInputSplit();
 		logpath = ((FileSplit) inputSplit).getPath().toString();
@@ -421,7 +430,13 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		values = null;
 		logStr = "";
 		logStr = value.toString();
-		count = count + 1;
+		
+		
+		if(alex_count%5000 == 0) {
+			System.out.println(">>>>>>>ALEX:"+logStr);
+		}
+		
+		
 		if (logpath.contains("kdcl_log")) {
 			try {
 				// kdcl log raw data格式為一般或是Campaign
