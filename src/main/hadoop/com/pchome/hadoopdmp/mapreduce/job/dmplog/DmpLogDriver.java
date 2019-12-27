@@ -109,7 +109,7 @@ public class DmpLogDriver {
 	        	
 	  			
 	  			Path bupath = new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/bu_log/2019-12-01/2019_1201_day.lzo");
-	  			Path kdclpath = new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/kdcl_log/2019-12-01/2019_1201_day.lzo");
+	  			Path kdclpath = new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/kdcl_log/2019-12-01/kdcl_2019_1201_day.lzo");
   				listPath.add(bupath);
   				listPath.add(kdclpath);
   				
