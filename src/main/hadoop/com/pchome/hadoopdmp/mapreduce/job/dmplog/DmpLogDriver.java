@@ -58,24 +58,24 @@ public class DmpLogDriver {
 	        conf.set("job.hour",dmpHour);
 	        conf.set("mapred.child.java.opts", "-Xmx4048M");
 	        
-	        conf.set("mapred.max.split.size","900457280000"); //3045728 49 //3045728000 7
-	        conf.set("mapred.min.split.size","900457280000"); //1015544 49 //1015544000 7
+	        conf.set("mapred.max.split.size","3045728"); //3045728 49 //3045728000 7
+	        conf.set("mapred.min.split.size","1015544"); //1015544 49 //1015544000 7
 	        
 	        //輸入檔案
 	        List<Path> listPath = new ArrayList<Path>();  
 	        FileSystem fileSystem = FileSystem.get(conf);
 	        String hour = "";
 	        if(dmpHour.equals("day")) {//計算整天
-	  			for (int i = 0; i < 24; i++) {
-	  				hour = "";
-	  				if(i == 0) {
-	  					hour = "00";
-	  				}else if(String.valueOf(i).length() == 1) {
-	  					hour = "0"+i;
-	  				}else if(String.valueOf(i).length() == 2) {
-	  					hour = String.valueOf(i);
-	  				}
-//	  				載入bu log file  hc3位置 /home/webuser/akb/storedata/bulog/
+//	  			for (int i = 0; i < 24; i++) {
+//	  				hour = "";
+//	  				if(i == 0) {
+//	  					hour = "00";
+//	  				}else if(String.valueOf(i).length() == 1) {
+//	  					hour = "0"+i;
+//	  				}else if(String.valueOf(i).length() == 2) {
+//	  					hour = String.valueOf(i);
+//	  				}
+////	  				載入bu log file  hc3位置 /home/webuser/akb/storedata/bulog/
 //	  				Path buPath = new Path("/druid/dmp_log_source/bu_log/"+dmpDate+"/"+hour);
 //	  				FileStatus[] buStatus = fileSystem.listStatus(buPath); 
 //	  				for (FileStatus fileStatus : buStatus) {
@@ -105,13 +105,12 @@ public class DmpLogDriver {
 //							listPath.add(new Path(fileStatus.getPath().toString()));
 //						}
 //					}
-	  				
-	  				Path buPath = new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/bu_log/2019-12-01/2019_1201_day.lzo");
-	  				listPath.add(buPath);
-	  				
-	  				
-	  			}
+//	  			}
 	        	
+	  			
+	  			Path path = new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/bu_log/2019-12-01/2019_1201_day.lzo");
+  				listPath.add(path);
+	  			
 	        }else {//計算小時
 	        	//載入bu log file
 		        Path buPath = new Path("/druid/dmp_log_source/bu_log/"+dmpDate+"/"+dmpHour);
