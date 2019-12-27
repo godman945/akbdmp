@@ -57,6 +57,10 @@ public class DmpLogDriver {
 	        conf.set("job.date",dmpDate);
 	        conf.set("job.hour",dmpHour);
 	        conf.set("mapred.child.java.opts", "-Xmx4048M");
+	        
+	        conf.set("mapred.max.split.size","900457280000"); //3045728 49 //3045728000 7
+	        conf.set("mapred.min.split.size","900457280000"); //1015544 49 //1015544000 7
+	        
 	        //輸入檔案
 	        List<Path> listPath = new ArrayList<Path>();  
 	        FileSystem fileSystem = FileSystem.get(conf);
@@ -72,35 +76,40 @@ public class DmpLogDriver {
 	  					hour = String.valueOf(i);
 	  				}
 //	  				載入bu log file  hc3位置 /home/webuser/akb/storedata/bulog/
-	  				Path buPath = new Path("/druid/dmp_log_source/bu_log/"+dmpDate+"/"+hour);
-	  				FileStatus[] buStatus = fileSystem.listStatus(buPath); 
-	  				for (FileStatus fileStatus : buStatus) {
-	  					String pathStr = fileStatus.getPath().toString();
-	  					String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
-	  					if(extensionName.equals("LZO")) {
-	  						listPath.add(new Path(fileStatus.getPath().toString()));
-	  					}
-	  				}
-	  				//載入kdcl log file	hc3位置 /home/webuser/akb/storedata/alllog/
-	  				Path kdclPath = new Path("/druid/dmp_log_source/kdcl_log/"+dmpDate+"/"+hour);
-			        FileStatus[] kdclStatus = fileSystem.listStatus(kdclPath); 
-					for (FileStatus fileStatus : kdclStatus) {
-						String pathStr = fileStatus.getPath().toString();
-						String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
-						if(extensionName.equals("LZO")) {
-							listPath.add(new Path(fileStatus.getPath().toString()));
-						}
-					}
-					//載入pacl log file	hc3位置 /home/webuser/pa/storedata/alllog/
-					Path paclPath = new Path("/druid/dmp_log_source/pacl_log/"+dmpDate+"/"+hour);
-			        FileStatus[] paclStatus = fileSystem.listStatus(paclPath); 
-					for (FileStatus fileStatus : paclStatus) {
-						String pathStr = fileStatus.getPath().toString();
-						String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
-						if(extensionName.equals("LZO")) {
-							listPath.add(new Path(fileStatus.getPath().toString()));
-						}
-					}
+//	  				Path buPath = new Path("/druid/dmp_log_source/bu_log/"+dmpDate+"/"+hour);
+//	  				FileStatus[] buStatus = fileSystem.listStatus(buPath); 
+//	  				for (FileStatus fileStatus : buStatus) {
+//	  					String pathStr = fileStatus.getPath().toString();
+//	  					String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
+//	  					if(extensionName.equals("LZO")) {
+//	  						listPath.add(new Path(fileStatus.getPath().toString()));
+//	  					}
+//	  				}
+//	  				//載入kdcl log file	hc3位置 /home/webuser/akb/storedata/alllog/
+//	  				Path kdclPath = new Path("/druid/dmp_log_source/kdcl_log/"+dmpDate+"/"+hour);
+//			        FileStatus[] kdclStatus = fileSystem.listStatus(kdclPath); 
+//					for (FileStatus fileStatus : kdclStatus) {
+//						String pathStr = fileStatus.getPath().toString();
+//						String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
+//						if(extensionName.equals("LZO")) {
+//							listPath.add(new Path(fileStatus.getPath().toString()));
+//						}
+//					}
+//					//載入pacl log file	hc3位置 /home/webuser/pa/storedata/alllog/
+//					Path paclPath = new Path("/druid/dmp_log_source/pacl_log/"+dmpDate+"/"+hour);
+//			        FileStatus[] paclStatus = fileSystem.listStatus(paclPath); 
+//					for (FileStatus fileStatus : paclStatus) {
+//						String pathStr = fileStatus.getPath().toString();
+//						String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
+//						if(extensionName.equals("LZO")) {
+//							listPath.add(new Path(fileStatus.getPath().toString()));
+//						}
+//					}
+	  				
+	  				Path buPath = new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/bu_log/2019-12-01/2019_1201_day.lzo");
+	  				listPath.add(buPath);
+	  				
+	  				
 	  			}
 	        	
 	        }else {//計算小時
