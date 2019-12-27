@@ -84,25 +84,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		System.out.println(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"	+ context.getConfiguration().get("spring.profiles.active"));
 		try {
 			System.out.println("*********>>>>>>>>>>>:" + sdf.format(new Date()));
-			
-			
-			
-			
-			try {
-				System.out.println("connection MySql");
-				MysqlUtil mysqlUtil = MysqlUtil.getInstance();
-				mysqlUtil.setConnection("prd");
-				StringBuffer sql = new StringBuffer();
-				sql.append(" SELECT a.customer_info_id,a.category_code FROM pfbx_allow_url a WHERE 1 = 1 and a.default_type = 'Y' ORDER BY a.customer_info_id  ");
-				ResultSet resultSet = mysqlUtil.query(sql.toString());
-				while(resultSet.next()){
-					System.out.println(resultSet.getString("customer_info_id"));
-				}
-			}catch(Exception e) {
-				System.out.println(e.getMessage());
-			}
-			
-			
 			record_date = context.getConfiguration().get("job.date");
 			record_hour = context.getConfiguration().get("job.hour");
 			System.out.println("record_date:" + record_date);
@@ -112,23 +93,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			DmpLogMapper.aCategoryLogDataClick = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.AD_CLICK);
 			DmpLogMapper.aCategoryLogDataRetun = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_RETUN);
 			DmpLogMapper.aCategoryLogData24H = CategoryLogFactory.getACategoryLogObj(CategoryLogEnum.PV_24H);
-			
-			
-			
-			
-			try {
-				System.out.println("connection MONGO");
-				this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
-				dBCollection_class_url = this.mongoOrgOperations.getCollection("class_url");
-				System.out.println(dBCollection_class_url.count());
-			}catch(Exception e) {
-				log.error(e.getMessage());
-			}
-			
-			
-			
-			
-			
 			
 			this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
 			dBCollection_class_url = this.mongoOrgOperations.getCollection("class_url");
