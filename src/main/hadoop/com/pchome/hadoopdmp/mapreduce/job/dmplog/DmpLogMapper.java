@@ -349,7 +349,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		try {
 			inputSplit = (InputSplit) context.getInputSplit();
 			logpath = ((FileSplit) inputSplit).getPath().toString();
-			System.out.println("START  " + alex_count + ">>>>" + "[log]:" + value.toString());
+			System.out.println("START  " + alex_count + ">>>>" + "[log]:" + value.toString()+" [log size]:"+value.toString().split(kdclSymbol, -1));
 		}catch(Exception e) {
 			System.out.println("****FAIL*****");
 			System.out.println("****FAIL*****:"+e);
