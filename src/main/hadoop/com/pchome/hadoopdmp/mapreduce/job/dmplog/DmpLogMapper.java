@@ -435,9 +435,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		if (logpath.contains("kdcl_log")) {
 			try {
 				// kdcl log raw data格式為一般或是Campaign
-				
-				System.out.println(">>>>>>kdcl log:"+logStr);
-				System.out.println(">>>>>>kdcl log kdclSymbol:"+(logStr.indexOf(kdclSymbol) > -1));
 				if (logStr.indexOf(kdclSymbol) > -1) {
 					// values[0] date time (2018-01-04 04:57:12)
 					// values[1] memid
@@ -458,14 +455,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					if (StringUtils.isBlank(values[4]) || !(values[4].contains("http"))) {
 						return;
 					}
-
-					
-					
-					
-					
-					
-					
-					
 					dmpDataJson.put("fileName", fileName);
 					dmpDataJson.put("log_date", values[0]);
 					dmpDataJson.put("memid", values[1]);
@@ -601,6 +590,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					return;
 				}
 		} else if (logpath.contains("bu_log")) {
+			System.out.println(">>>>>>bu log:"+logStr);
+			System.out.println(">>>>>>bu log kdclSymbol:"+(logStr.indexOf(kdclSymbol) > -1));
+			
 			try {
 				String[] values = logStr.split(paclSymbol, -1);
 				if (StringUtils.isBlank(values[2])) {
