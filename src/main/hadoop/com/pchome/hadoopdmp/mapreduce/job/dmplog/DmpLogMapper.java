@@ -435,6 +435,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		if (logpath.contains("kdcl_log")) {
 			try {
 				// kdcl log raw data格式為一般或是Campaign
+				
+				System.out.println(">>>>>>kdcl log:"+logStr);
+				System.out.println(">>>>>>kdcl log kdclSymbol:"+(logStr.indexOf(kdclSymbol) > -1));
 				if (logStr.indexOf(kdclSymbol) > -1) {
 					// values[0] date time (2018-01-04 04:57:12)
 					// values[1] memid
@@ -458,11 +461,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 
 					
 					
-					if(alex_count %5000 == 0) {
-						System.out.println(">>>>>>>fileName:"+fileName);
-						System.out.println(">>>>>>>ALEX:"+logStr);
-						alex_count = 0;
-					}
 					
 					
 					
