@@ -346,9 +346,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	
 	public synchronized void map(LongWritable offset, Text value, Context context) {
 		alex_count = alex_count + 1;
-		
-		
-		
 //		清空mapper中json資料
 		inputSplit = (InputSplit) context.getInputSplit();
 		logpath = ((FileSplit) inputSplit).getPath().toString();
@@ -426,10 +423,15 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		dmpDataJson.put("industry", "");
 		dmpDataJson.put("24h_price_code", "");
 		
-		
+		try {
 		values = null;
 		logStr = "";
 		logStr = value.toString();
+		System.out.println(">>>>>>>>>>>ALEX:" + logStr);
+		}catch(Exception e) {
+			System.out.println("****FAIL*****");
+			System.out.println("****FAIL*****:"+e);
+		}
 		
 		
 		if (logpath.contains("kdcl_log")) {
@@ -590,9 +592,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					return;
 				}
 		} else if (logpath.contains("bu_log")) {
-			System.out.println(">>>>>>bu log:"+logStr);
-			System.out.println(">>>>>>bu log kdclSymbol:"+(logStr.indexOf(kdclSymbol) > -1));
-			
 			try {
 				String[] values = logStr.split(paclSymbol, -1);
 				if (StringUtils.isBlank(values[2])) {
