@@ -146,6 +146,7 @@ public class AdRutenLog extends ACategoryLogData {
 					classRutenUrlClassify = "N";
 					insertClassUrl(sourceUrl.trim(),"0","","","",1) ;
 					log.error(">>>>>>"+ e.getMessage());
+					log.error(">>>>>>"+ e);
 				}
 			}
 		}
