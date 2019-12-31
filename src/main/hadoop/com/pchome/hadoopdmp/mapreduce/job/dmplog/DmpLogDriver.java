@@ -2,7 +2,6 @@ package com.pchome.hadoopdmp.mapreduce.job.dmplog;
 
 import java.io.IOException;
 import java.net.URI;
-import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -23,13 +22,9 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
-import com.pchome.soft.util.MysqlUtil;
-
-import net.minidev.json.JSONObject;
 @Component
 public class DmpLogDriver {
 
@@ -65,7 +60,7 @@ public class DmpLogDriver {
 			
 			JobConf jobConf = new JobConf();
 			jobConf.setNumMapTasks(5);
-			jobConf.set("mapred.max.split.size","3045728"); //3045728 49 //3045728000 7
+			jobConf.set("mapred.max.split.size","5045728"); //3045728 49 //3045728000 7
 			jobConf.set("mapred.min.split.size","1015544"); //1015544 49 //1015544000 7
 			//ask推测执行
 			jobConf.set("mapred.map.tasks.speculative.execution","true");
@@ -78,6 +73,12 @@ public class DmpLogDriver {
 			jobConf.set("spring.profiles.active", env);
 			jobConf.set("job.date",dmpDate);
 			jobConf.set("job.hour",dmpHour);
+			
+			
+			jobConf.set("io.compression.codecs", "org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec,org.apache.hadoop.io.compress.BZip2Codec");
+//			jobConf.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
+//			jobConf.set("mapred.compress.map.output", "true");
+//			jobConf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
 			
 			
 			// hdfs
