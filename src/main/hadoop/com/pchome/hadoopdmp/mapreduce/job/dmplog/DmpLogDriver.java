@@ -64,8 +64,9 @@ public class DmpLogDriver {
 			
 			
 			JobConf jobConf = new JobConf();
-			jobConf.set("mapred.max.split.size","3045728");
-			jobConf.set("mapred.min.split.size","1015544");
+			jobConf.setNumMapTasks(5);
+			jobConf.set("mapred.max.split.size","3045728000"); //3045728 49 //3045728000 7
+			jobConf.set("mapred.min.split.size","1015544000"); //1015544 49 //1015544000 7
 			//ask推测执行
 			jobConf.set("mapred.map.tasks.speculative.execution","true");
 			jobConf.set("mapred.reduce.tasks.speculative.execution","true");
@@ -74,14 +75,11 @@ public class DmpLogDriver {
 			jobConf.set("mapreduce.map.memory.mb", "8192");
 			jobConf.set("mapreduce.reduce.memory.mb", "8192");
 			jobConf.set("mapreduce.job.running.map.limit", "100");
+
 			jobConf.set("spring.profiles.active", env);
 			jobConf.set("job.date",dmpDate);
 			jobConf.set("job.hour",dmpHour);
 			
-			jobConf.set("mapreduce.map.output.compress.codec", "com.hadoop.mapreduce.LzoTextInputFormat");
-			jobConf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
-			jobConf.set("io.compression.codecs", "org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec,org.apache.hadoop.io.compress.BZip2Codec");
-			jobConf.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
 			
 			// hdfs
 			Configuration conf = new Configuration();
@@ -91,6 +89,9 @@ public class DmpLogDriver {
 			conf.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
 			conf.set("mapred.compress.map.output", "true");
 			conf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
+	        conf.set("spring.profiles.active", env);
+	        conf.set("job.date",dmpDate);
+	        conf.set("job.hour",dmpHour);
 	        conf.set("mapred.child.java.opts", "-Xmx4048M");
 			
 			
