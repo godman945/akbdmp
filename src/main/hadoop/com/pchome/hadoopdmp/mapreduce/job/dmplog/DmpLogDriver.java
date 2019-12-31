@@ -60,8 +60,8 @@ public class DmpLogDriver {
 			
 			JobConf jobConf = new JobConf();
 			jobConf.setNumMapTasks(5);
-			jobConf.set("mapred.max.split.size","504572"); //3045728 49 //3045728000 7
-			jobConf.set("mapred.min.split.size","101554"); //1015544 49 //1015544000 7
+			jobConf.set("mapred.max.split.size","5045728"); //3045728 49 //3045728000 7
+			jobConf.set("mapred.min.split.size","1015544"); //1015544 49 //1015544000 7
 			//ask推测执行
 			jobConf.set("mapred.map.tasks.speculative.execution","true");
 			jobConf.set("mapred.reduce.tasks.speculative.execution","true");
