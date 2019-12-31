@@ -24,6 +24,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
+import com.hadoop.mapreduce.LzoTextInputFormat;
 import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
 @Component
 public class DmpLogDriver {
@@ -74,12 +75,12 @@ public class DmpLogDriver {
 			jobConf.set("job.date",dmpDate);
 			jobConf.set("job.hour",dmpHour);
 			
-			jobConf.set("io.compression.codecs", "org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzopCodec");
-			jobConf.set("io.compression.codecs", "org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec,org.apache.hadoop.io.compress.BZip2Codec");
-			jobConf.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
-			jobConf.set("mapred.compress.map.output", "true");
-			jobConf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
-			jobConf.set("mapreduce.map.output.compress.codec", "com.hadoop.mapreduce.LzoTextInputFormat");
+//			jobConf.set("io.compression.codecs", "org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzopCodec");
+//			jobConf.set("io.compression.codecs", "org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec,org.apache.hadoop.io.compress.BZip2Codec");
+//			jobConf.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
+//			jobConf.set("mapred.compress.map.output", "true");
+//			jobConf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
+//			jobConf.set("mapreduce.map.output.compress.codec", "com.hadoop.mapreduce.LzoTextInputFormat");
 			
 			// hdfs
 			Configuration conf = new Configuration();
@@ -194,13 +195,24 @@ public class DmpLogDriver {
 			}
 			
 			Job job = new Job(jobConf, "dmp_log_"+ env );
+//			job.setJarByClass(DmpLogDriver.class);
+//			job.setMapperClass(DmpLogMapper.class);
+//			job.setReducerClass(DmpLogReducer.class);
+//			job.setMapOutputKeyClass(Text.class);
+//			job.setMapOutputValueClass(Text.class);
+//			job.setOutputKeyClass(Text.class);
+//			job.setOutputValueClass(Text.class);
+			
 			job.setJarByClass(DmpLogDriver.class);
 			job.setMapperClass(DmpLogMapper.class);
 			job.setReducerClass(DmpLogReducer.class);
-			job.setMapOutputKeyClass(Text.class);
-			job.setMapOutputValueClass(Text.class);
-			job.setOutputKeyClass(Text.class);
-			job.setOutputValueClass(Text.class);
+			job.setMapOutputKeyClass(LzoTextInputFormat.class);
+			job.setMapOutputValueClass(LzoTextInputFormat.class);
+			job.setOutputKeyClass(LzoTextInputFormat.class);
+			job.setOutputValueClass(LzoTextInputFormat.class);
+			
+			
+			
 			
 			if(dmpHour.equals("day")) {
 				job.getConfiguration().set("mapreduce.output.basename", "druid_"+dmpDate);
