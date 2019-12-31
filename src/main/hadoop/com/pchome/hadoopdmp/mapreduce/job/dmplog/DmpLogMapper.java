@@ -229,10 +229,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static int menu24hLevelPriceMax = 0;
 	private static boolean priceCodeFlag = false;
 	
-	
-	private static int alex_count= 0;
-	
-	
 	private String get24hPriceCode(String menu24hLevelName) throws Exception {
 		priceCodeFlag = false;
 		menu24hLevelPriceMin = 0;
@@ -336,7 +332,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	}
 	
 	public synchronized void map(LongWritable offset, Text value, Context context) {
-		alex_count = alex_count + 1;
 		
 		inputSplit = (InputSplit) context.getInputSplit();
 		logpath = ((FileSplit) inputSplit).getPath().toString();
@@ -418,18 +413,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		values = null;
 		logStr = "";
 		
-		
-		
-		if(alex_count%5000==0) {
-			System.out.println("START  " + alex_count + ">>>>" + "[value]:" + value+" [fileName]:"+fileName);
-		}
-		
-		
 		logStr = value.toString();
-		
-		
-		
-		
 		if (logpath.contains("kdcl_log")) {
 			try {
 				// kdcl log raw data格式為一般或是Campaign
