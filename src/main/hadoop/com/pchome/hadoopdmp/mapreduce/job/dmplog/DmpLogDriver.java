@@ -210,6 +210,7 @@ public class DmpLogDriver {
 			job.setMapOutputValueClass(Text.class);
 			job.setOutputKeyClass(Text.class);
 			job.setOutputValueClass(Text.class);
+			job.setInputFormatClass(LzoTextInputFormat.class);
 			
 			
 			if(dmpHour.equals("day")) {
