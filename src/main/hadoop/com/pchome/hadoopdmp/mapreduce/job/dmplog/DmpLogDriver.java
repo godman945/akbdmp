@@ -91,11 +91,6 @@ public class DmpLogDriver {
 			conf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
 	        conf.set("mapred.child.java.opts", "-Xmx4048M");
 			
-	        conf.set("mapred.max.split.size","5045728"); //3045728 49 //3045728000 7
-	        conf.set("mapred.min.split.size","1015544"); //1015544 49 //1015544000 7
-			
-			
-			
 			
 			
 	        
@@ -147,11 +142,14 @@ public class DmpLogDriver {
 	        	
 	  			
 	  			Path bupath =   new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/bu_log/"+dmpDate+"/bu_"+dmpDate+"_log.lzo");
+	  			Path bupath2 =   new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/bu_log/bu_2019-11-01_log.lzo.index");
+	  			
 //	  			Path kdclpath = new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/kdcl_log/"+dmpDate+"/kdcl_"+dmpDate+"_log.lzo");
 //	  			Path paclpath = new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/pacl_log/"+dmpDate+"/pacl_"+dmpDate+"_log.lzo");
 	  			
 	  			
 	  			listPath.add(bupath);
+	  			listPath.add(bupath2);
 //  				listPath.add(kdclpath);
 //  				listPath.add(paclpath);
 	  			
