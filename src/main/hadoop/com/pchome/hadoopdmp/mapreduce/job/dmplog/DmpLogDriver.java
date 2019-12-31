@@ -73,13 +73,12 @@ public class DmpLogDriver {
 			jobConf.set("spring.profiles.active", env);
 			jobConf.set("job.date",dmpDate);
 			jobConf.set("job.hour",dmpHour);
-			
 //			jobConf.set("io.compression.codecs", "org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzopCodec");
 //			jobConf.set("io.compression.codecs", "org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec,org.apache.hadoop.io.compress.BZip2Codec");
 //			jobConf.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
 //			jobConf.set("mapred.compress.map.output", "true");
 //			jobConf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
-			
+			jobConf.set("mapreduce.map.output.compress.codec", "com.hadoop.mapreduce.LzoTextInputFormat");
 			
 			// hdfs
 			Configuration conf = new Configuration();
