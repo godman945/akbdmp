@@ -64,9 +64,8 @@ public class DmpLogDriver {
 			
 			
 			JobConf jobConf = new JobConf();
-			jobConf.setNumMapTasks(5);
-			jobConf.set("mapred.max.split.size","8045728"); //3045728 49 //3045728000 7
-			jobConf.set("mapred.min.split.size","2015544"); //1015544 49 //1015544000 7
+			jobConf.set("mapred.max.split.size","3045728");
+			jobConf.set("mapred.min.split.size","1015544");
 			//ask推测执行
 			jobConf.set("mapred.map.tasks.speculative.execution","true");
 			jobConf.set("mapred.reduce.tasks.speculative.execution","true");
@@ -78,7 +77,6 @@ public class DmpLogDriver {
 			jobConf.set("spring.profiles.active", env);
 			jobConf.set("job.date",dmpDate);
 			jobConf.set("job.hour",dmpHour);
-			
 			
 			jobConf.set("mapreduce.map.output.compress.codec", "com.hadoop.mapreduce.LzoTextInputFormat");
 			jobConf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
