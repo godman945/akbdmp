@@ -142,7 +142,7 @@ public class DmpLogDriver {
 	        	
 	  			
 	  			Path bupath =   new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/bu_log/"+dmpDate+"/bu_"+dmpDate+"_log.lzo");
-	  			Path bupath2 =   new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/bu_log/bu_2019-11-01_log.lzo.index");
+	  			Path bupath2 =   new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/bu_log/2019-11-01/bu_2019-11-01_log.lzo.index");
 	  			
 //	  			Path kdclpath = new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/kdcl_log/"+dmpDate+"/kdcl_"+dmpDate+"_log.lzo");
 //	  			Path paclpath = new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/pacl_log/"+dmpDate+"/pacl_"+dmpDate+"_log.lzo");
