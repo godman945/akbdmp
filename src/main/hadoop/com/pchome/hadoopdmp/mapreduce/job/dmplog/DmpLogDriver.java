@@ -42,23 +42,6 @@ public class DmpLogDriver {
 		try {
 			Calendar dmpDateCalendar = Calendar.getInstance();
 			dmpDateCalendar.setTime(sdf.parse(dmpDate));
-			
-//			Configuration conf = new Configuration();
-//			conf.set("mapreduce.map.output.compress.codec", "com.hadoop.mapreduce.LzoTextInputFormat");
-//			conf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
-//			conf.set("io.compression.codecs", "org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec,org.apache.hadoop.io.compress.BZip2Codec");
-//			conf.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
-//			conf.set("mapred.compress.map.output", "true");
-//			conf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
-//	        conf.set("spring.profiles.active", env);
-//	        conf.set("job.date",dmpDate);
-//	        conf.set("job.hour",dmpHour);
-//	        conf.set("mapred.child.java.opts", "-Xmx4048M");
-//	        conf.set("mapred.max.split.size","3045728000"); //3045728 49 //3045728000 7
-//	        conf.set("mapred.min.split.size","1015544000"); //1015544 49 //1015544000 7
-	        
-			
-			
 			JobConf jobConf = new JobConf();
 			jobConf.setNumMapTasks(5);
 			jobConf.set("mapred.max.split.size","5045728"); //3045728 49 //3045728000 7
@@ -75,13 +58,6 @@ public class DmpLogDriver {
 			jobConf.set("job.date",dmpDate);
 			jobConf.set("job.hour",dmpHour);
 			
-//			jobConf.set("io.compression.codecs", "org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzopCodec");
-//			jobConf.set("io.compression.codecs", "org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec,org.apache.hadoop.io.compress.BZip2Codec");
-//			jobConf.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
-//			jobConf.set("mapred.compress.map.output", "true");
-//			jobConf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
-//			jobConf.set("mapreduce.map.output.compress.codec", "com.hadoop.mapreduce.LzoTextInputFormat");
-			
 			// hdfs
 			Configuration conf = new Configuration();
 			conf.set("mapreduce.map.output.compress.codec", "com.hadoop.mapreduce.LzoTextInputFormat");
@@ -91,13 +67,6 @@ public class DmpLogDriver {
 			conf.set("mapred.compress.map.output", "true");
 			conf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
 	        conf.set("mapred.child.java.opts", "-Xmx4048M");
-			
-			
-			
-			
-			
-			
-			
 	        
 	        //輸入檔案
 	        List<Path> listPath = new ArrayList<Path>();  
@@ -146,12 +115,12 @@ public class DmpLogDriver {
 //	  			}
 	        	
 	  			
-	  			Path bupath =   new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/bu_log/"+dmpDate+"/bu_"+dmpDate+"_log.lzo");
-//	  			Path kdclpath = new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/kdcl_log/"+dmpDate+"/kdcl_"+dmpDate+"_log.lzo");
+//	  			Path bupath =   new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/bu_log/"+dmpDate+"/bu_"+dmpDate+"_log.lzo");
+	  			Path kdclpath = new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/kdcl_log/"+dmpDate+"/kdcl_"+dmpDate+"_log.lzo");
 //	  			Path paclpath = new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/pacl_log/"+dmpDate+"/pacl_"+dmpDate+"_log.lzo");
 	  			
 	  			
-	  			listPath.add(bupath);
+	  			listPath.add(kdclpath);
 //  				listPath.add(kdclpath);
 //  				listPath.add(paclpath);
 	  			
@@ -195,14 +164,6 @@ public class DmpLogDriver {
 			}
 			
 			Job job = new Job(jobConf, "dmp_log_"+ env );
-//			job.setJarByClass(DmpLogDriver.class);
-//			job.setMapperClass(DmpLogMapper.class);
-//			job.setReducerClass(DmpLogReducer.class);
-//			job.setMapOutputKeyClass(Text.class);
-//			job.setMapOutputValueClass(Text.class);
-//			job.setOutputKeyClass(Text.class);
-//			job.setOutputValueClass(Text.class);
-			
 			job.setJarByClass(DmpLogDriver.class);
 			job.setMapperClass(DmpLogMapper.class);
 			job.setReducerClass(DmpLogReducer.class);
