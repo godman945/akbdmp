@@ -17,6 +17,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.compress.GzipCodec;
+import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
@@ -46,6 +47,37 @@ public class DmpLogDriver {
 			Calendar dmpDateCalendar = Calendar.getInstance();
 			dmpDateCalendar.setTime(sdf.parse(dmpDate));
 			
+//			Configuration conf = new Configuration();
+//			conf.set("mapreduce.map.output.compress.codec", "com.hadoop.mapreduce.LzoTextInputFormat");
+//			conf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
+//			conf.set("io.compression.codecs", "org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec,org.apache.hadoop.io.compress.BZip2Codec");
+//			conf.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
+//			conf.set("mapred.compress.map.output", "true");
+//			conf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
+//	        conf.set("spring.profiles.active", env);
+//	        conf.set("job.date",dmpDate);
+//	        conf.set("job.hour",dmpHour);
+//	        conf.set("mapred.child.java.opts", "-Xmx4048M");
+//	        conf.set("mapred.max.split.size","3045728000"); //3045728 49 //3045728000 7
+//	        conf.set("mapred.min.split.size","1015544000"); //1015544 49 //1015544000 7
+	        
+			
+			
+			JobConf jobConf = new JobConf();
+			jobConf.setNumMapTasks(5);
+			jobConf.set("mapred.max.split.size","3045728000"); //3045728 49 //3045728000 7
+			jobConf.set("mapred.min.split.size","1015544000"); //1015544 49 //1015544000 7
+			//ask推测执行
+			jobConf.set("mapred.map.tasks.speculative.execution","true");
+			jobConf.set("mapred.reduce.tasks.speculative.execution","true");
+			//JVM
+			jobConf.set("mapred.child.java.opts", "-Xmx12288M");
+			jobConf.set("mapreduce.map.memory.mb", "8192");
+			jobConf.set("mapreduce.reduce.memory.mb", "8192");
+			jobConf.set("mapreduce.job.running.map.limit", "100");
+
+			
+			// hdfs
 			Configuration conf = new Configuration();
 			conf.set("mapreduce.map.output.compress.codec", "com.hadoop.mapreduce.LzoTextInputFormat");
 			conf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
@@ -57,8 +89,13 @@ public class DmpLogDriver {
 	        conf.set("job.date",dmpDate);
 	        conf.set("job.hour",dmpHour);
 	        conf.set("mapred.child.java.opts", "-Xmx4048M");
-	        conf.set("mapred.max.split.size","3045728000"); //3045728 49 //3045728000 7
-	        conf.set("mapred.min.split.size","1015544000"); //1015544 49 //1015544000 7
+			
+			
+			
+			
+			
+			
+			
 	        
 	        //輸入檔案
 	        List<Path> listPath = new ArrayList<Path>();  
@@ -155,7 +192,7 @@ public class DmpLogDriver {
 				log.info(">>>>>>>>>>JOB INPUT PATH:"+path.toString()+" is exist:"+fileSystem.exists(path));
 			}
 			
-			Job job = new Job(conf, "dmp_log_"+ env );
+			Job job = new Job(jobConf, "dmp_log_"+ env );
 			job.setJarByClass(DmpLogDriver.class);
 			job.setMapperClass(DmpLogMapper.class);
 			job.setReducerClass(DmpLogReducer.class);
