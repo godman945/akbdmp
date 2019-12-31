@@ -418,12 +418,18 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		values = null;
 		logStr = "";
 		
-		System.out.println("START  " + alex_count + ">>>>" + "[value]:" + value+" [fileName]:"+fileName);
+		
+		
+		if(alex_count%5000==0) {
+			System.out.println("START  " + alex_count + ">>>>" + "[value]:" + value+" [fileName]:"+fileName);
+			
+			
+		}
+		
 		
 		logStr = value.toString();
 		
 		
-		System.out.println("START  " + alex_count + ">>>>" + "[log]:" + logStr+" [fileName]:"+fileName);
 		
 		
 //		if (logpath.contains("kdcl_log")) {
