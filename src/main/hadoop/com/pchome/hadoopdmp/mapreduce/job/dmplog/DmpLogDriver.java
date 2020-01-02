@@ -71,6 +71,8 @@ public class DmpLogDriver {
 	        FileSystem fileSystem = FileSystem.get(conf);
 	        String hour = "";
 	        if(dmpHour.equals("day")) {//計算整天
+	        	
+	        	System.out.println("START DAY >>>>>>>>>>>");
 //	  			for (int i = 0; i < 24; i++) {
 //	  				hour = "";
 //	  				if(i == 0) {
@@ -118,9 +120,9 @@ public class DmpLogDriver {
 	  			Path paclpath = new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/pacl_log/"+dmpDate+"/pacl_"+dmpDate+"_log.lzo");
 	  			
 	  			
-//	  			listPath.add(bupath);
+	  			listPath.add(bupath);
   				listPath.add(kdclpath);
-//  				listPath.add(paclpath);
+  				listPath.add(paclpath);
 	  			
 	        }else {//計算小時
 	        	//載入bu log file
@@ -257,6 +259,7 @@ public class DmpLogDriver {
 	 * */
 	public static void main(String[] args)  {
 		try {
+			System.out.println("START DAY 1>>>>>>>>>>>");
 			if(args.length != 3) {
 				System.out.println("arg length fail");
 			}
@@ -265,10 +268,11 @@ public class DmpLogDriver {
 			}else {
 				System.setProperty("spring.profiles.active", "stg");
 			}
-			
+			System.out.println("START DAY 2>>>>>>>>>>>");
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			DmpLogDriver dmpLogDriver = (DmpLogDriver) ctx.getBean(DmpLogDriver.class);
 			dmpLogDriver.drive(args[0],args[1],args[2]); 
+			System.out.println("START DAY 3>>>>>>>>>>>");
 		}catch(Exception e) {
 			log.error(e.getMessage());
 		}
