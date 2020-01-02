@@ -167,6 +167,14 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				}
 				String pfbxCustomerInfoId = dmpJSon.getAsString("pfbx_customer_info_id");
 				String webClass = StringUtils.isBlank(pfbxWebsiteCategory.get(pfbxCustomerInfoId)) ? "" : pfbxWebsiteCategory.get(pfbxCustomerInfoId);
+				
+				
+				
+				if(dmpJSon.getAsString("vpv").equals("pv")) {
+					System.out.println("ALEX test vpv:"+dmpJSon);
+					dmpJSon.put("vpv", "0");
+				}
+				
 				//產出csv
 				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_value"))) {
 					for (int i= 0; i < markLevelList.length; i++) {
@@ -177,11 +185,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 								dmpJSon.put("pv", 0);
 							}
 							
-							
-							
-							if(dmpJSon.getAsString("vpv").equals("pv")) {
-								System.out.println("ALEX test vpv:"+dmpJSon);
-							}
 							
 							markValueMap.put(dmpJSon.getAsString("mark_value"), dmpJSon.getAsString("mark_value"));
 							
