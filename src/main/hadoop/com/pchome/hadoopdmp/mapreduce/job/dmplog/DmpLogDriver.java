@@ -50,14 +50,13 @@ public class DmpLogDriver {
 			jobConf.set("mapred.map.tasks.speculative.execution","true");
 			jobConf.set("mapred.reduce.tasks.speculative.execution","true");
 			//JVM
-			jobConf.set("mapred.child.java.opts", "-Xmx12288M");
+			jobConf.set("mapred.child.java.opts", "-Xmx153600M");
 			jobConf.set("mapreduce.map.memory.mb", "10240");
 			jobConf.set("mapreduce.reduce.memory.mb", "10240");
 			jobConf.set("mapreduce.job.running.map.limit", "100");
 			jobConf.set("spring.profiles.active", env);
 			jobConf.set("job.date",dmpDate);
 			jobConf.set("job.hour",dmpHour);
-			
 			// hdfs
 			Configuration conf = new Configuration();
 			conf.set("mapreduce.map.output.compress.codec", "com.hadoop.mapreduce.LzoTextInputFormat");
@@ -66,7 +65,7 @@ public class DmpLogDriver {
 			conf.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
 			conf.set("mapred.compress.map.output", "true");
 			conf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
-	        conf.set("mapred.child.java.opts", "-Xmx10240M");
+	        conf.set("mapred.child.java.opts", "-Xmx153600M");
 	        
 	        //輸入檔案
 	        List<Path> listPath = new ArrayList<Path>();  
