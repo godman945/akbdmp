@@ -50,10 +50,9 @@ public class DmpLogDriver {
 			jobConf.set("mapred.map.tasks.speculative.execution","true");
 			jobConf.set("mapred.reduce.tasks.speculative.execution","true");
 			//JVM
-			jobConf.set("mapred.child.java.opts", "-Xmx153600M");
-			jobConf.set("mapreduce.map.memory.mb", "10240");
-			jobConf.set("mapreduce.reduce.memory.mb", "10240");
-			jobConf.set("mapreduce.job.running.map.limit", "100");
+			jobConf.set("mapred.child.java.opts", "-Xmx8192M");
+			jobConf.set("mapreduce.map.memory.mb", "8192");
+			jobConf.set("mapreduce.reduce.memory.mb", "15360");
 			jobConf.set("spring.profiles.active", env);
 			jobConf.set("job.date",dmpDate);
 			jobConf.set("job.hour",dmpHour);
@@ -65,7 +64,7 @@ public class DmpLogDriver {
 			conf.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
 			conf.set("mapred.compress.map.output", "true");
 			conf.set("mapred.map.output.compression.codec", "com.hadoop.compression.lzo.LzoCodec");
-	        conf.set("mapred.child.java.opts", "-Xmx153600M");
+	        conf.set("mapred.child.java.opts", "-Xmx8192M");
 	        
 	        //輸入檔案
 	        List<Path> listPath = new ArrayList<Path>();  
@@ -114,14 +113,14 @@ public class DmpLogDriver {
 //	  			}
 	        	
 	  			
-	  			Path bupath =   new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/bu_log/"+dmpDate+"/bu_"+dmpDate+"_log.lzo");
+//	  			Path bupath =   new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/bu_log/"+dmpDate+"/bu_"+dmpDate+"_log.lzo");
 	  			Path kdclpath = new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/kdcl_log/"+dmpDate+"/kdcl_"+dmpDate+"_log.lzo");
-	  			Path paclpath = new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/pacl_log/"+dmpDate+"/pacl_"+dmpDate+"_log.lzo");
+//	  			Path paclpath = new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/pacl_log/"+dmpDate+"/pacl_"+dmpDate+"_log.lzo");
 	  			
 	  			
-	  			listPath.add(bupath);
+//	  			listPath.add(bupath);
   				listPath.add(kdclpath);
-  				listPath.add(paclpath);
+//  				listPath.add(paclpath);
 	  			
 	        }else {//計算小時
 	        	//載入bu log file

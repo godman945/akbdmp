@@ -6,12 +6,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -20,7 +18,6 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -42,15 +39,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 
 	private static Log log = LogFactory.getLog("DmpLogReducer");
 	public static String record_date;
-	private String kafkaMetadataBrokerlist;
-	private String kafkaAcks;
-	private String kafkaRetries;
-	private String kafkaBatchSize;
-	private String kafkaLingerMs;
-	private String kafkaBufferMemory;
-	private String kafkaSerializerClass;
-	private String kafkaKeySerializer;
-	private String kafkaValueSerializer;
 	public static Producer<String, String> producer = null;
 	public RedisTemplate<String, Object> redisTemplate = null;
 	public JSONParser jsonParser = null;
@@ -69,7 +57,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	public static PersonalInfoComponent personalInfoComponent = new PersonalInfoComponent();
 	private static DBCollection dBCollection_user_detail;
 	private DB mongoOrgOperations;
-	private static List<String> categoryLevelMappingList = new ArrayList<String>();
 	private static int bu_log_count = 0;
 	private static int kdcl_log_count = 0;
 	private static int pack_log_count = 0;
@@ -86,29 +73,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			this.redisTemplate = (RedisTemplate<String, Object>) ctx.getBean("redisTemplate");
-			this.kafkaMetadataBrokerlist = ctx.getEnvironment().getProperty("kafka.metadata.broker.list");
-			this.kafkaAcks = ctx.getEnvironment().getProperty("kafka.acks");
-			this.kafkaRetries = ctx.getEnvironment().getProperty("kafka.retries");
-			this.kafkaBatchSize = ctx.getEnvironment().getProperty("kafka.batch.size");
-			this.kafkaLingerMs = ctx.getEnvironment().getProperty("kafka.linger.ms");
-			this.kafkaBufferMemory = ctx.getEnvironment().getProperty("kafka.buffer.memory");
-			this.kafkaSerializerClass = ctx.getEnvironment().getProperty("kafka.serializer.class");
-			this.kafkaKeySerializer = ctx.getEnvironment().getProperty("kafka.key.serializer");
-			this.kafkaValueSerializer = ctx.getEnvironment().getProperty("kafka.value.serializer");
 			this.mongoOrgOperations = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
 			dBCollection_user_detail = this.mongoOrgOperations.getCollection("user_detail");
 
-			Properties props = new Properties();
-			props.put("bootstrap.servers", kafkaMetadataBrokerlist);
-			props.put("acks", kafkaAcks);
-			props.put("retries", kafkaRetries);
-			props.put("batch.size", kafkaBatchSize);
-			props.put("linger.ms", kafkaLingerMs);
-			props.put("buffer.memory", kafkaBufferMemory);
-			props.put("serializer.class", kafkaSerializerClass);
-			props.put("key.serializer", kafkaKeySerializer);
-			props.put("value.serializer", kafkaValueSerializer);
-			producer = new KafkaProducer<String, String>(props);
 			jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
 
 			String recordDate = context.getConfiguration().get("job.date");
