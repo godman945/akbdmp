@@ -176,6 +176,13 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 							}else {
 								dmpJSon.put("pv", 0);
 							}
+							
+							
+							
+							if(dmpJSon.getAsString("vpv").equals("pv")) {
+								System.out.println("ALEX test vpv:"+dmpJSon);
+							}
+							
 							markValueMap.put(dmpJSon.getAsString("mark_value"), dmpJSon.getAsString("mark_value"));
 							
 							wiriteToDruid.append("\""+dmpJSon.getAsString("fileName")+"\"");
