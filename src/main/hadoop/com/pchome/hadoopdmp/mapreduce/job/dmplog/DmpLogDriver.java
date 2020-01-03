@@ -173,7 +173,7 @@ public class DmpLogDriver {
 				log.info(">>>>>>>>>>JOB INPUT PATH:"+path.toString()+" is exist:"+fileSystem.exists(path));
 			}
 			
-			Job job = new Job(jobConf, "dmp_log_"+ env );
+			Job job = new Job(jobConf, "dmp_log_"+ env+"["+dmpDate+"_"+dmpHour+"]");
 			job.setJarByClass(DmpLogDriver.class);
 			job.setMapperClass(DmpLogMapper.class);
 			job.setReducerClass(DmpLogReducer.class);
