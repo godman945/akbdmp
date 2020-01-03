@@ -190,7 +190,7 @@ public class DmpLogDriver {
 				job.getConfiguration().set("mapreduce.output.basename", "druid_"+dmpDate+"_"+dmpHour);	
 			}
 			
-			job.setNumReduceTasks(5); 
+			job.setNumReduceTasks(1); 
 			
 			if(env.equals("prd")) {
 				if(dmpHour.equals("day")) {
