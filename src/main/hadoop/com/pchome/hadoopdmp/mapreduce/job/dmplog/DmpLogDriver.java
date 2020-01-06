@@ -155,9 +155,9 @@ public class DmpLogDriver {
 //				}
 	        	
 	        	
-	        	Path bupath =   new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/bu_log/"+dmpDate+"/"+dmpHour+"/bu_"+dmpDate+"_log.lzo");
+	        	Path bupath =   new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/bu_log/"+dmpDate+"/"+dmpHour+"/bu_"+dmpDate+"_"+dmpHour+"_log.lzo");
 	  			Path kdclpath = new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/kdcl_log/"+dmpDate+"/"+dmpHour+"/kdcl_"+dmpDate+"_"+dmpHour+"_log.lzo");
-	  			Path paclpath = new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/pacl_log/"+dmpDate+"/"+dmpHour+"/pacl_"+dmpDate+"_log.lzo");
+	  			Path paclpath = new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/pacl_log/"+dmpDate+"/"+dmpHour+"/pacl_"+dmpDate+"_"+dmpHour+"_log.lzo");
 	  			
 	  			
 	  			listPath.add(bupath);
