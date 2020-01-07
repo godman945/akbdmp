@@ -48,6 +48,7 @@ public class AdRutenLog extends ACategoryLogData {
 	private static Elements breadcrumbE;
 	private static BasicDBObject intModifier = new BasicDBObject();
 	public Object processCategory(net.minidev.json.JSONObject dmpJSon, DBCollection dbCollectionUrl) throws Exception {
+		dbObject = null;
 		transformUrl.setLength(0);
 		category = "";
 		categorySource = "";
@@ -76,7 +77,6 @@ public class AdRutenLog extends ACategoryLogData {
 				}
 			} else {
 				try {
-					if(dbObject == null) {
 						// url 不存在
 						System.out.println(">>>>dbObject == null:"+dbObject == null);
 						System.out.println(">>>>sourceUrl:"+sourceUrl);
@@ -143,7 +143,6 @@ public class AdRutenLog extends ACategoryLogData {
 							classRutenUrlClassify = "N";
 							insertClassUrl(sourceUrl.trim(),"0","","","url不符合Ruten商品頁",1) ;
 						}
-					}
 				} catch (Exception e) {
 					category = "";
 					categorySource = "";
