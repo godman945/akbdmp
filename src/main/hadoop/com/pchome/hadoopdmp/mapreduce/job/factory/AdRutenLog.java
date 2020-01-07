@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,6 +48,8 @@ public class AdRutenLog extends ACategoryLogData {
 	private static Document doc;
 	private static Elements breadcrumbE;
 	private static BasicDBObject intModifier = new BasicDBObject();
+	private static int[] sleepArray = {1500,2000,1000,500};
+	
 	public Object processCategory(net.minidev.json.JSONObject dmpJSon, DBCollection dbCollectionUrl) throws Exception {
 		dbObject = null;
 		transformUrl.setLength(0);
@@ -78,14 +81,12 @@ public class AdRutenLog extends ACategoryLogData {
 			} else {
 				try {
 						// url 不存在
-						System.out.println(">>>>dbObject == null:"+dbObject == null);
-						System.out.println(">>>>sourceUrl:"+sourceUrl);
 						matcher = p.matcher(sourceUrl.toString());
 						if (matcher.find()) {
 							// url是Ruten商品頁，爬蟲撈麵包屑(http與https)
 							transformUrl.append("http://m.ruten.com.tw/goods/show.php?g=");
 							transformUrl.append(matcher.group().replaceAll("(http|https)://goods.ruten.com.tw/item/\\S+\\?", ""));
-							Thread.sleep(1000);
+							Thread.sleep(sleepArray[new Random().nextInt(4)]);
 							doc = Jsoup.parse(new URL(transformUrl.toString()), 3000);
 							breadcrumbE = doc.body().select("table[class=goods-list]");
 							breadcrumbResult = "";
@@ -148,7 +149,6 @@ public class AdRutenLog extends ACategoryLogData {
 					categorySource = "";
 					classRutenUrlClassify = "N";
 					System.out.println("ERROR >>>>>>sourceUrl:" + sourceUrl.trim());
-					System.out.println("ERROR >>>>>>dmpJSon:" + dmpJSon);
 					System.out.println("ERROR >>>>>>" + e);
 				}
 			}
