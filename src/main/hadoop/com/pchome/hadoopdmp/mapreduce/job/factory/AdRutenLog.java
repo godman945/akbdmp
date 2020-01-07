@@ -82,7 +82,7 @@ public class AdRutenLog extends ACategoryLogData {
 						// url是Ruten商品頁，爬蟲撈麵包屑(http與https)
 						transformUrl.append("http://m.ruten.com.tw/goods/show.php?g=");
 						transformUrl.append(matcher.group().replaceAll("(http|https)://goods.ruten.com.tw/item/\\S+\\?", ""));
-						Thread.sleep(800);
+						Thread.sleep(1000);
 						doc = Jsoup.parse(new URL(transformUrl.toString()), 10000);
 						breadcrumbE = doc.body().select("table[class=goods-list]");
 						breadcrumbResult = "";
