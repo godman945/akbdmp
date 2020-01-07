@@ -144,7 +144,6 @@ public class AdRutenLog extends ACategoryLogData {
 					category = "";
 					categorySource = "";
 					classRutenUrlClassify = "N";
-					dbObject = queryClassUrl(sourceUrl.trim());
 					if(dbObject != null){
 						insertClassUrl(sourceUrl.trim(),"0","","","",1) ;
 					}
