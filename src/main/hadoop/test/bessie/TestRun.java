@@ -1,50 +1,66 @@
-//package test.bessie;
-//
-//import java.net.UnknownHostException;
-//import java.text.ParseException;
-//import java.text.SimpleDateFormat;
-//import java.util.ArrayList;
-//import java.util.Date;
-//import java.util.HashSet;
-//import java.util.List;
-//import java.util.Set;
-//
-//import org.apache.commons.lang.StringUtils;
-//import org.apache.commons.logging.Log;
-//import org.apache.commons.logging.LogFactory;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.context.ApplicationContext;
-//import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-//import org.springframework.data.authentication.UserCredentials;
-//import org.springframework.data.domain.PageRequest;
-//import org.springframework.data.domain.Sort;
-//import org.springframework.data.domain.Sort.Direction;
-//import org.springframework.data.mongodb.core.MongoOperations;
-//import org.springframework.data.mongodb.core.MongoTemplate;
-//import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
-//import org.springframework.data.mongodb.core.query.Criteria;
-//import org.springframework.data.mongodb.core.query.Query;
-//import org.springframework.stereotype.Component;
-//
-//import com.mongodb.Mongo;
-//import com.pchome.hadoopdmp.data.mongo.pojo.ClassCountMongoBean;
-//import com.pchome.hadoopdmp.data.mongo.pojo.ClassCountProdMongoBean;
-//import com.pchome.hadoopdmp.data.mongo.pojo.ClassUrlMongoBean;
-//import com.pchome.hadoopdmp.data.mongo.pojo.PersonalInformationProdMongoBean;
-//import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategory;
-//import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategoryAudienceAnalyze;
-//import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategoryGroup;
-//import com.pchome.hadoopdmp.data.mysql.pojo.DmpTransferDataLog;
+package test.bessie;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.UnknownHostException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.data.authentication.UserCredentials;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Component;
+
+import com.mongodb.Mongo;
+import com.pchome.hadoopdmp.data.mongo.pojo.ClassCountMongoBean;
+import com.pchome.hadoopdmp.data.mongo.pojo.ClassCountProdMongoBean;
+import com.pchome.hadoopdmp.data.mongo.pojo.ClassUrlMongoBean;
+import com.pchome.hadoopdmp.data.mongo.pojo.PersonalInformationProdMongoBean;
+import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategory;
+import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategoryAudienceAnalyze;
+import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategoryGroup;
+import com.pchome.hadoopdmp.data.mysql.pojo.DmpTransferDataLog;
 //import com.pchome.hadoopdmp.mysql.db.service.category.IAdmCategoryAudienceAnalyzeService;
 //import com.pchome.hadoopdmp.mysql.db.service.category.IAdmCategoryService;
 //import com.pchome.hadoopdmp.mysql.db.service.categorygroup.IAdmCategoryGroupService;
 //import com.pchome.hadoopdmp.mysql.db.service.transferdata.IDmpTransferDataLogService;
-//import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
-//import com.pchome.soft.util.DateFormatUtil;
-//
-//@Component
-//public class TestRun {
-//
+import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
+import com.pchome.soft.util.DateFormatUtil;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+@Component
+public class TestRun {
+
 ////	Log log = LogFactory.getLog(TestRun.class);
 //	Log log = LogFactory.getLog("TestRun");
 //
@@ -599,42 +615,98 @@
 //		
 //		log.info("TestRun set size : " + set.size());
 //	}
-//	
-//	public static void main(String[] args) {
-//		try {
+	
+	public static void main(String[] args) {
+		try {
+		
+			
+	    System.setProperty("webdriver.chrome.driver","/home/webuser/_alex/chromedriver.exe");
+		//設定Chrome為不顯示
+		ChromeOptions options = new ChromeOptions(); 
+		options.setHeadless(true); 
+		//連上網路
+		WebDriver driver = new ChromeDriver(options);  
+		driver.get("https://ck101.com/beauty/");
+		//執行JavascripExecutor
+		JavascriptExecutor js = (JavascriptExecutor)driver; 
+		String html = js.executeScript("return document.body.innerHTML;").toString();
+		//載入Jsoup並解析需腰的資訊
+		Document doc = Jsoup.parse(html);
+		System.out.println(doc);
+		driver.close();
+			
+			
+			
+			
+//			for (int i = 0; i < 1; i++) {
+//				String sourceUrl = "https://goods.ruten.com.tw/item/show?21934554524273";
+//				Pattern p = Pattern.compile("(http|https)://goods.ruten.com.tw/item/\\S+\\?\\d+");
+//				Matcher matcher = p.matcher(sourceUrl.toString());
+//				if (matcher.find()) {
+//					StringBuffer transformUrl = new StringBuffer();
+//					transformUrl.append("http://m.ruten.com.tw/goods/show.php?g=");
+//					transformUrl.append(matcher.group().replaceAll("(http|https)://goods.ruten.com.tw/item/\\S+\\?", ""));
+//					Document doc = Jsoup.parse(new URL(transformUrl.toString()), 3000);
+//					System.out.println(doc == null);
+//				}
+//			}
+			
+//			// 将string转成url对象
+//			URL realUrl = new URL("http://goods.ruten.com.tw/item/show?21934554524273");
+//						// 初始化一个链接到那个url的连接
+//			URLConnection connection = realUrl.openConnection();
+//			// 开始实际的连接
+//			connection.connect();
+//			// 初始化 BufferedReader输入流来读取URL的响应
+//			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+//			// 用来临时存储抓取到的每一行的数据
+//			String line;
+//			while ((line = in.readLine()) != null)
+//			{
+//				System.out.println(line);
+//			
+//			}
+
+			
+			
+			
+			
+			
+			
 //			System.out.println("SSSSSSSSSSSSS");
-////			System.setProperty("spring.profiles.active", "stg");
-////			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-////			TestRun TestRun = (TestRun) ctx.getBean(TestRun.class);
-//			// TestRun.hibernateDbTest();
-//			// TestRun.listTest();
-//			// TestRun.hibernateDbTest2();
-//			// TestRun.hibernateDbTest3();
-//			// TestRun.split();
-////			 TestRun.deleteHql();
-////			TestRun.split();
-////			 TestRun.insertHql();
-////			 TestRun.mongoRegex();
-////			 TestRun.age();
-////			TestRun.findByPage();
-////			TestRun.hibernateGroupBy();
-////			TestRun.newDate();
-////			TestRun.personalInfo();
-////			TestRun.ceil();
-////			TestRun.weightInfo();
-////			TestRun.newton();
-////			TestRun.betwenDate();
-////			TestRun.mongoQueryPage();
-////			TestRun.mongoPageNoSort();
-////			TestRun.testJson();
-////			TestRun.PersonalInfo();
-////			TestRun.mongoNE();
-////			TestRun.dmpTransferDataLog();
-////			TestRun.userDetail();
-////			TestRun.verifyTransferData();
-//		} catch (Exception e) {
-//			System.out.println(e.getMessage());
-//		}
-//
-//	}
-//}
+//			System.setProperty("spring.profiles.active", "stg");
+//			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//			TestRun TestRun = (TestRun) ctx.getBean(TestRun.class);
+			// TestRun.hibernateDbTest();
+			// TestRun.listTest();
+			// TestRun.hibernateDbTest2();
+			// TestRun.hibernateDbTest3();
+			// TestRun.split();
+//			 TestRun.deleteHql();
+//			TestRun.split();
+//			 TestRun.insertHql();
+//			 TestRun.mongoRegex();
+//			 TestRun.age();
+//			TestRun.findByPage();
+//			TestRun.hibernateGroupBy();
+//			TestRun.newDate();
+//			TestRun.personalInfo();
+//			TestRun.ceil();
+//			TestRun.weightInfo();
+//			TestRun.newton();
+//			TestRun.betwenDate();
+//			TestRun.mongoQueryPage();
+//			TestRun.mongoPageNoSort();
+//			TestRun.testJson();
+//			TestRun.PersonalInfo();
+//			TestRun.mongoNE();
+//			TestRun.dmpTransferDataLog();
+//			TestRun.userDetail();
+//			TestRun.verifyTransferData();
+		} catch (Exception e) {
+			System.out.println("FAIL");
+			System.out.println(e);
+		}
+
+	}
+}
