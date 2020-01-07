@@ -282,7 +282,7 @@ public class DmpLogDriver {
 			
 			
 			
-			 System.setProperty("webdriver.chrome.driver","/home/webuser/_alex/chromedriver.exe");
+			 System.setProperty("webdriver.chrome.driver","/home/webuser/_alex/chromedriver");
 				//設定Chrome為不顯示
 				ChromeOptions options = new ChromeOptions(); 
 				options.setHeadless(true); 
