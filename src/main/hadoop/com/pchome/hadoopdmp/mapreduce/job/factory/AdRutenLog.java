@@ -144,9 +144,13 @@ public class AdRutenLog extends ACategoryLogData {
 					category = "";
 					categorySource = "";
 					classRutenUrlClassify = "N";
-					insertClassUrl(sourceUrl.trim(),"0","","","",1) ;
-					log.error(">>>>>>"+ e.getMessage());
-					log.error(">>>>>>"+ e);
+					dbObject = queryClassUrl(sourceUrl.trim());
+					if(dbObject != null){
+						insertClassUrl(sourceUrl.trim(),"0","","","",1) ;
+					}
+					System.out.println("ERROR >>>>>>" + sourceUrl.trim());
+					System.out.println("ERROR >>>>>>" + e.getMessage());
+					System.out.println("ERROR >>>>>>" + e);
 				}
 			}
 		}
