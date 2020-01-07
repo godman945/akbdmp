@@ -83,7 +83,7 @@ public class AdRutenLog extends ACategoryLogData {
 						transformUrl.append("http://m.ruten.com.tw/goods/show.php?g=");
 						transformUrl.append(matcher.group().replaceAll("(http|https)://goods.ruten.com.tw/item/\\S+\\?", ""));
 						Thread.sleep(1000);
-						doc = Jsoup.parse(new URL(transformUrl.toString()), 10000);
+						doc = Jsoup.parse(new URL(transformUrl.toString()), 3000);
 						breadcrumbE = doc.body().select("table[class=goods-list]");
 						breadcrumbResult = "";
 						if (breadcrumbE.size() > 0) {
