@@ -48,7 +48,7 @@ public class AdRutenLog extends ACategoryLogData {
 	private static Document doc;
 	private static Elements breadcrumbE;
 	private static BasicDBObject intModifier = new BasicDBObject();
-	private static int[] sleepArray = {1500,2000,1000,500};
+	private static int[] sleepArray = {3000,1000,6000,8000};
 	
 	public Object processCategory(net.minidev.json.JSONObject dmpJSon, DBCollection dbCollectionUrl) throws Exception {
 		dbObject = null;
