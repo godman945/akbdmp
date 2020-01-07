@@ -147,10 +147,6 @@ public class AdRutenLog extends ACategoryLogData {
 					category = "";
 					categorySource = "";
 					classRutenUrlClassify = "N";
-					if(dbObject == null){
-						System.out.println("ERROR>>>>>> add insertClassUrl ");
-						insertClassUrl(sourceUrl.trim(),"0","","","",1) ;
-					}
 					System.out.println("ERROR >>>>>>sourceUrl:" + sourceUrl.trim());
 					System.out.println("ERROR >>>>>>dmpJSon:" + dmpJSon);
 					System.out.println("ERROR >>>>>>" + e);
