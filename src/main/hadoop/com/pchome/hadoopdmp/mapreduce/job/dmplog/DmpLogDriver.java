@@ -159,19 +159,22 @@ public class DmpLogDriver {
 	  			Path kdclpath = new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/kdcl_log/"+dmpDate+"/"+dmpHour+"/kdcl_"+dmpDate+"_"+dmpHour+"_log.lzo");
 	  			Path paclpath = new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/pacl_log/"+dmpDate+"/"+dmpHour+"/pacl_"+dmpDate+"_"+dmpHour+"_log.lzo");
 	  			
-	  			
-	  			listPath.add(bupath);
-  				listPath.add(kdclpath);
-  				listPath.add(paclpath);
-	        	
-	        	
+	  			if(fileSystem.exists(bupath)) {
+	  				listPath.add(bupath);
+	  				log.info(">>>>>>>>>>JOB INPUT ADD PATH:"+bupath.toString());
+	  			}
+	  			if(fileSystem.exists(kdclpath)) {
+	  				listPath.add(kdclpath);
+	  				log.info(">>>>>>>>>>JOB INPUT ADD PATH:"+kdclpath.toString());
+	  			}
+	  			if(fileSystem.exists(paclpath)) {
+	  				listPath.add(paclpath);
+	  				log.info(">>>>>>>>>>JOB INPUT ADD PATH:"+paclpath.toString());
+	  			}
 	        }
 	        
 			Path[] paths = new Path[listPath.size()];  
 			listPath.toArray(paths);
-			for (Path path : paths) {
-				log.info(">>>>>>>>>>JOB INPUT PATH:"+path.toString()+" is exist:"+fileSystem.exists(path));
-			}
 			
 			Job job = new Job(jobConf, "dmp_log_"+ env+"["+dmpDate+"_"+dmpHour+"]");
 			job.setJarByClass(DmpLogDriver.class);
