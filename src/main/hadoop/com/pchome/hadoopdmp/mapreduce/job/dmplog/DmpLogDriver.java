@@ -20,6 +20,12 @@ import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
@@ -272,17 +278,44 @@ public class DmpLogDriver {
 	 * */
 	public static void main(String[] args)  {
 		try {
-			if(args.length != 3) {
-				System.out.println("arg length fail");
-			}
-			if(args[0].equals("prd")){
-				System.setProperty("spring.profiles.active", "prd");	
-			}else {
-				System.setProperty("spring.profiles.active", "stg");
-			}
-			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-			DmpLogDriver dmpLogDriver = (DmpLogDriver) ctx.getBean(DmpLogDriver.class);
-			dmpLogDriver.drive(args[0],args[1],args[2]); 
+			
+			
+			
+			
+			 System.setProperty("webdriver.chrome.driver","/home/webuser/_alex/chromedriver.exe");
+				//設定Chrome為不顯示
+				ChromeOptions options = new ChromeOptions(); 
+				options.setHeadless(true); 
+				//連上網路
+				WebDriver driver = new ChromeDriver(options);  
+				driver.get("https://ck101.com/beauty/");
+				//執行JavascripExecutor
+				JavascriptExecutor js = (JavascriptExecutor)driver; 
+				String html = js.executeScript("return document.body.innerHTML;").toString();
+				//載入Jsoup並解析需腰的資訊
+				Document doc = Jsoup.parse(html);
+				System.out.println(doc);
+				driver.close();
+			
+			
+			
+			
+			
+			
+			
+			
+			
+//			if(args.length != 3) {
+//				System.out.println("arg length fail");
+//			}
+//			if(args[0].equals("prd")){
+//				System.setProperty("spring.profiles.active", "prd");	
+//			}else {
+//				System.setProperty("spring.profiles.active", "stg");
+//			}
+//			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
+//			DmpLogDriver dmpLogDriver = (DmpLogDriver) ctx.getBean(DmpLogDriver.class);
+//			dmpLogDriver.drive(args[0],args[1],args[2]); 
 		}catch(Exception e) {
 			log.error(e.getMessage());
 		}
