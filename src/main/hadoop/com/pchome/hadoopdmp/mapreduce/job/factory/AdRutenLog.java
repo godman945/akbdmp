@@ -77,6 +77,8 @@ public class AdRutenLog extends ACategoryLogData {
 			} else {
 				try {
 					// url 不存在
+					System.out.println(">>>>dbObject == null:"+dbObject == null);
+					System.out.println(">>>>sourceUrl:"+sourceUrl);
 					matcher = p.matcher(sourceUrl.toString());
 					if (matcher.find()) {
 						// url是Ruten商品頁，爬蟲撈麵包屑(http與https)
