@@ -694,9 +694,20 @@
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
 			<version>3.8.1</version>
+			<exclusions>
+			    <exclusion>
+					<groupId>com.google.guava</groupId>
+    				<artifactId>guava</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		
 
+<dependency>
+    <groupId>com.google.guava</groupId>
+    <artifactId>guava</artifactId>
+    <version>28.2-jre</version>
+</dependency>
 		
  		 
 	</dependencies>
