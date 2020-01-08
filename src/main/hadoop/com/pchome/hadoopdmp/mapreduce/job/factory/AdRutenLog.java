@@ -79,78 +79,78 @@ public class AdRutenLog extends ACategoryLogData {
 					updateClassUrlUpdateDate(sourceUrl.trim(),dbObject);
 				}
 			} else {
-				try {
-						// url 不存在
-						matcher = p.matcher(sourceUrl.toString());
-						if (matcher.find()) {
-							// url是Ruten商品頁，爬蟲撈麵包屑(http與https)
-							transformUrl.append("http://m.ruten.com.tw/goods/show.php?g=");
-							transformUrl.append(matcher.group().replaceAll("(http|https)://goods.ruten.com.tw/item/\\S+\\?", ""));
-							Thread.sleep(sleepArray[new Random().nextInt(4)]);
-							doc = Jsoup.parse(new URL(transformUrl.toString()), 3000);
-							breadcrumbE = doc.body().select("table[class=goods-list]");
-							breadcrumbResult = "";
-							if (breadcrumbE.size() > 0) {
-								for (int i = 0; i < breadcrumbE.get(0).getElementsByClass("rt-breadcrumb-link").size(); i++) {
-									if (i != (breadcrumbE.get(0).getElementsByClass("rt-breadcrumb-link").size() - 1)) {
-										breadcrumbResult = breadcrumbResult
-												+ breadcrumbE.get(0).getElementsByClass("rt-breadcrumb-link").get(i).text()
-												+ ">";
-									} else {
-										breadcrumbResult = breadcrumbResult
-												+ breadcrumbE.get(0).getElementsByClass("rt-breadcrumb-link").get(i).text();
-									}
-		
-								}
-								// 比對爬蟲回來的分類，由最底層分類開始比對Ruten分類表
-								breadcrumbAry = breadcrumbResult.split(">");
-								hasCategory = false;
-								for (int i = breadcrumbAry.length - 1; i >= 0; i--) {
-									if (hasCategory) {
-										break;
-									}
-									for (CategoryRutenCodeBean categoryRutenBean : DmpLogMapper.categoryRutenBeanList) {
-										if (categoryRutenBean.getChineseDesc().trim().equals(breadcrumbAry[i].trim())) {
-											category = categoryRutenBean.getNumberCode();
-											hasCategory = true;
-											break;
-										}
-									}
-								}
-								if (StringUtils.isNotBlank(category)) {
-									// 爬蟲有比對到Ruten分類
-									categorySource = "ruten";
-									classRutenUrlClassify = "Y";
-									//新增url
-									insertClassUrl(sourceUrl.trim(),"1",category,breadcrumbResult,"",0) ;
-								} else {
-									// 麵包屑沒有比對到Ruten分類
-									category = "";
-									categorySource = "";
-									classRutenUrlClassify = "N";
-									insertClassUrl(sourceUrl.trim(),"0","",breadcrumbResult,"爬不到麵包屑的訊息",1) ;
-								}
-							} else {
-								// 沒有麵包屑
-								category = "";
-								categorySource = "";
-								classRutenUrlClassify = "N";
-								insertClassUrl(sourceUrl.trim(),"0","","","沒有麵包屑的訊息",1) ;
-							}
-						} else {
-							// url不是Ruten商品頁，寫入mongo
+//				try {
+//						// url 不存在
+//						matcher = p.matcher(sourceUrl.toString());
+//						if (matcher.find()) {
+//							// url是Ruten商品頁，爬蟲撈麵包屑(http與https)
+//							transformUrl.append("http://m.ruten.com.tw/goods/show.php?g=");
+//							transformUrl.append(matcher.group().replaceAll("(http|https)://goods.ruten.com.tw/item/\\S+\\?", ""));
+//							Thread.sleep(sleepArray[new Random().nextInt(4)]);
+//							doc = Jsoup.parse(new URL(transformUrl.toString()), 3000);
+//							breadcrumbE = doc.body().select("table[class=goods-list]");
+//							breadcrumbResult = "";
+//							if (breadcrumbE.size() > 0) {
+//								for (int i = 0; i < breadcrumbE.get(0).getElementsByClass("rt-breadcrumb-link").size(); i++) {
+//									if (i != (breadcrumbE.get(0).getElementsByClass("rt-breadcrumb-link").size() - 1)) {
+//										breadcrumbResult = breadcrumbResult
+//												+ breadcrumbE.get(0).getElementsByClass("rt-breadcrumb-link").get(i).text()
+//												+ ">";
+//									} else {
+//										breadcrumbResult = breadcrumbResult
+//												+ breadcrumbE.get(0).getElementsByClass("rt-breadcrumb-link").get(i).text();
+//									}
+//		
+//								}
+//								// 比對爬蟲回來的分類，由最底層分類開始比對Ruten分類表
+//								breadcrumbAry = breadcrumbResult.split(">");
+//								hasCategory = false;
+//								for (int i = breadcrumbAry.length - 1; i >= 0; i--) {
+//									if (hasCategory) {
+//										break;
+//									}
+//									for (CategoryRutenCodeBean categoryRutenBean : DmpLogMapper.categoryRutenBeanList) {
+//										if (categoryRutenBean.getChineseDesc().trim().equals(breadcrumbAry[i].trim())) {
+//											category = categoryRutenBean.getNumberCode();
+//											hasCategory = true;
+//											break;
+//										}
+//									}
+//								}
+//								if (StringUtils.isNotBlank(category)) {
+//									// 爬蟲有比對到Ruten分類
+//									categorySource = "ruten";
+//									classRutenUrlClassify = "Y";
+//									//新增url
+//									insertClassUrl(sourceUrl.trim(),"1",category,breadcrumbResult,"",0) ;
+//								} else {
+//									// 麵包屑沒有比對到Ruten分類
+//									category = "";
+//									categorySource = "";
+//									classRutenUrlClassify = "N";
+//									insertClassUrl(sourceUrl.trim(),"0","",breadcrumbResult,"爬不到麵包屑的訊息",1) ;
+//								}
+//							} else {
+//								// 沒有麵包屑
+//								category = "";
+//								categorySource = "";
+//								classRutenUrlClassify = "N";
+//								insertClassUrl(sourceUrl.trim(),"0","","","沒有麵包屑的訊息",1) ;
+//							}
+//						} else {
+//							// url不是Ruten商品頁，寫入mongo
 							category = "";
 							categorySource = "";
 							classRutenUrlClassify = "N";
-							insertClassUrl(sourceUrl.trim(),"0","","","url不符合Ruten商品頁",1) ;
-						}
-				} catch (Exception e) {
-					category = "";
-					categorySource = "";
-					classRutenUrlClassify = "N";
-					System.out.println("ERROR >>>>>>sourceUrl:" + sourceUrl.trim());
-					System.out.println("ERROR >>>>>>" + e);
-				}
+//							insertClassUrl(sourceUrl.trim(),"0","","","url不符合Ruten商品頁",1) ;
+//						}
+//				} catch (Exception e) {
+//					category = "";
+//					categorySource = "";
+//					classRutenUrlClassify = "N";
+//					System.out.println("ERROR >>>>>>sourceUrl:" + sourceUrl.trim());
+//					System.out.println("ERROR >>>>>>" + e);
+//				}
 			}
 		}
 		dmpJSon.put("classify", classRutenUrlClassify);
