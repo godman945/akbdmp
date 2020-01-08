@@ -229,9 +229,6 @@ public class PersonalInfoComponent {
 				}
 			}
 		}		
-		if(this.uuid.equals("744d82cd-b1d3-4fd8-a7c1-1724901fe5f6")) {
-			log.info(">>>>>>>>>>>end:"+dmpJSon);
-		}
 		return dmpJSon;
 	}
 	
@@ -280,7 +277,6 @@ public class PersonalInfoComponent {
 		url.append("http://member.pchome.com.tw/findMemberInfo4ADAPI.html?ad_user_id=");
 		url.append(memid);
 		prsnlData = httpGet(url.toString());
-		log.info(">>>>>>>>>>>prsnlData:"+prsnlData);
 		String msex = JsonPath.parse(prsnlData).read("sexuality");
 		String mage = JsonPath.parse(prsnlData).read("birthday");
 		Map<String, String> memberInfoMapApi = new HashMap<String, String>();
