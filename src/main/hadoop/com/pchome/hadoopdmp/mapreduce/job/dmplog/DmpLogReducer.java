@@ -139,21 +139,21 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					break;
 				}
 				
-				if(dmpJSon.getAsString("log_source").equals("kdcl_log")) {
-					
-					if(dmpJSon.getAsString("trigger_type").equals("pv")) {
-						pvclk_pv_count = pvclk_pv_count + Integer.parseInt(dmpJSon.getAsString("pv"));
-					}else if(dmpJSon.getAsString("trigger_type").equals("ck")){
-						pvclk_ck_count = pvclk_ck_count + Integer.parseInt(dmpJSon.getAsString("ck"));
-					}
-					
-					
-					if(pvclk_total_count%10000 == 0) {
-						System.out.println(dmpJSon);
-					}
-					
-					pvclk_total_count = pvclk_total_count + 1;
-				}
+//				if(dmpJSon.getAsString("log_source").equals("kdcl_log")) {
+//					
+//					if(dmpJSon.getAsString("trigger_type").equals("pv")) {
+//						pvclk_pv_count = pvclk_pv_count + Integer.parseInt(dmpJSon.getAsString("pv"));
+//					}else if(dmpJSon.getAsString("trigger_type").equals("ck")){
+//						pvclk_ck_count = pvclk_ck_count + Integer.parseInt(dmpJSon.getAsString("ck"));
+//					}
+//					
+//					
+//					if(pvclk_total_count%10000 == 0) {
+//						System.out.println(dmpJSon);
+//					}
+//					
+//					pvclk_total_count = pvclk_total_count + 1;
+//				}
 				
 				//6.個資
 				try {
