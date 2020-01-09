@@ -141,11 +141,13 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				
 				if(dmpJSon.getAsString("log_source").equals("kdcl_log")) {
 					
-					if(StringUtils.isNotBlank(dmpJSon.getAsString("pv"))) {
+					if(dmpJSon.getAsString("trigger_type").equals("pv")) {
 						pvclk_pv_count = pvclk_pv_count + Integer.parseInt(dmpJSon.getAsString("pv"));
-					}else if(StringUtils.isNotBlank(dmpJSon.getAsString("ck"))){
+					}else if(dmpJSon.getAsString("trigger_type").equals("ck")){
 						pvclk_ck_count = pvclk_ck_count + Integer.parseInt(dmpJSon.getAsString("ck"));
 					}
+					
+					
 					if(pvclk_total_count%10000 == 0) {
 						System.out.println(dmpJSon);
 					}
