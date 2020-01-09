@@ -66,6 +66,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	
 	public static Map<String,String> markValueMap = new HashMap<String, String>();
 	private static long pvclk_pv_count = 0;
+	private static long pvclk_ck_count = 0;
 	
 	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
@@ -134,8 +135,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				if(dmpJSon.getAsString("log_source").equals("kdcl_log")) {
 					if(StringUtils.isNotBlank(dmpJSon.getAsString("pv"))) {
 						pvclk_pv_count = pvclk_pv_count + Integer.parseInt(dmpJSon.getAsString("pv"));
-					}else {
-						System.out.println("******** PV IS NULL ********");
+					}else if(StringUtils.isNotBlank(dmpJSon.getAsString("ck"))){
+						pvclk_ck_count = pvclk_ck_count + Integer.parseInt(dmpJSon.getAsString("ck"));
 					}
 				}
 				
@@ -350,6 +351,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		try {
 			this.mysqlUtil.closeConnection();
 			System.out.println("pvclk_pv_count >>>>>>>>>>>>>>>>>>>>>>>"+pvclk_pv_count);
+			System.out.println("pvclk_pv_count >>>>>>>>>>>>>>>>>>>>>>>"+pvclk_ck_count);
+			
 			System.out.println("total bu_log  >>>>>>>>>>>>>>>>>>>>>>>>"+bu_log_count);
 			System.out.println("total kdcl_log>>>>>>>>>>>>>>>>>>>>>>>>"+kdcl_log_count);
 			System.out.println("total pack_log>>>>>>>>>>>>>>>>>>>>>>>>"+pack_log_count);
