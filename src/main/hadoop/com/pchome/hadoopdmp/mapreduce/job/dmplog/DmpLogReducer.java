@@ -63,7 +63,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	private static Map<String,String> industryMap = new HashMap<String, String>();
 	private MysqlUtil mysqlUtil = null;
 	
-	
+	public static String record_hour;
 	public static Map<String,String> markValueMap = new HashMap<String, String>();
 	private static long pvclk_pv_count = 0;
 	private static long pvclk_ck_count = 0;
@@ -72,6 +72,12 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
 		try {
+			record_date = context.getConfiguration().get("job.date");
+			record_hour = context.getConfiguration().get("job.hour");
+			System.out.println("record_date:" + record_date);
+			System.out.println("record_hour:" + record_hour);
+			
+			
 			System.setProperty("spring.profiles.active", context.getConfiguration().get("spring.profiles.active"));
 			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
 			this.redisTemplate = (RedisTemplate<String, Object>) ctx.getBean("redisTemplate");
