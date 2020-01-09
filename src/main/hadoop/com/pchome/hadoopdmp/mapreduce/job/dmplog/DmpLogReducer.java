@@ -351,7 +351,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 		try {
 			this.mysqlUtil.closeConnection();
 			System.out.println("pvclk_pv_count >>>>>>>>>>>>>>>>>>>>>>>"+pvclk_pv_count);
-			System.out.println("pvclk_pv_count >>>>>>>>>>>>>>>>>>>>>>>"+pvclk_ck_count);
+			System.out.println("pvclk_ck_count >>>>>>>>>>>>>>>>>>>>>>>"+pvclk_ck_count);
 			
 			System.out.println("total bu_log  >>>>>>>>>>>>>>>>>>>>>>>>"+bu_log_count);
 			System.out.println("total kdcl_log>>>>>>>>>>>>>>>>>>>>>>>>"+kdcl_log_count);
