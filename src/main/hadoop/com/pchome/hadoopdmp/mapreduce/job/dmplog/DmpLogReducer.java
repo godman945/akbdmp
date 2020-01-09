@@ -67,6 +67,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	public static Map<String,String> markValueMap = new HashMap<String, String>();
 	private static long pvclk_pv_count = 0;
 	private static long pvclk_ck_count = 0;
+	private static long pvclk_total_count = 0;
 	
 	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
@@ -139,11 +140,17 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				}
 				
 				if(dmpJSon.getAsString("log_source").equals("kdcl_log")) {
+					
 					if(StringUtils.isNotBlank(dmpJSon.getAsString("pv"))) {
 						pvclk_pv_count = pvclk_pv_count + Integer.parseInt(dmpJSon.getAsString("pv"));
 					}else if(StringUtils.isNotBlank(dmpJSon.getAsString("ck"))){
 						pvclk_ck_count = pvclk_ck_count + Integer.parseInt(dmpJSon.getAsString("ck"));
 					}
+					if(pvclk_total_count%10000 == 0) {
+						System.out.println(dmpJSon);
+					}
+					
+					pvclk_total_count = pvclk_total_count + 1;
 				}
 				
 				//6.個資
