@@ -611,6 +611,12 @@ public class TestRun {
 			
 			long count = skip;
 			for (DBObject dbObject : dbCursor) {
+				
+				if(dbObject.get("url").toString().indexOf("ruten") < 0) {
+					System.out.println(">>>>>>>>>>>> delete :" + dbObject);
+					dBCollection_class_url.remove(dbObject);
+				}
+				
 				a.setLength(0);
 				if(count > skip) {
 					bw.newLine();
