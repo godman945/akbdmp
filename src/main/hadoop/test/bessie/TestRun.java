@@ -624,7 +624,7 @@ public class TestRun {
 				
 				count = count + 1;
 				if(count % 50000 == 0) {
-					System.out.println("process:"+skip+(skip+7500000));
+					System.out.println("process:"+skip+"-"+(skip+7500000));
 					System.out.println("process total:" + count);
 				}
 			}
