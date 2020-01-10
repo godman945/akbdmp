@@ -609,10 +609,10 @@ public class TestRun {
 			SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
 			DBCursor  dbCursor  = dBCollection_class_url.find().limit(7500000).skip(skip);
 			
-			long count = 30000000;
+			long count = skip;
 			for (DBObject dbObject : dbCursor) {
 				a.setLength(0);
-				if(count > 30000000) {
+				if(count > skip) {
 					bw.newLine();
 				}
 				a.append("\"").append(sdf1.format(dbObject.get("update_date"))).append("\"");
@@ -624,8 +624,8 @@ public class TestRun {
 				
 				count = count + 1;
 				if(count % 50000 == 0) {
-					System.out.println("執行30000000-37500000");
-					System.out.println("處理:" + count);
+					System.out.println("process:"+skip+(skip+7500000));
+					System.out.println("process total:" + count);
 				}
 			}
 			bw.close();
