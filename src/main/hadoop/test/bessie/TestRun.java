@@ -1,63 +1,26 @@
 package test.bessie;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.UnknownHostException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Arrays;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.data.authentication.UserCredentials;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
-import com.mongodb.Mongo;
-import com.pchome.hadoopdmp.data.mongo.pojo.ClassCountMongoBean;
-import com.pchome.hadoopdmp.data.mongo.pojo.ClassCountProdMongoBean;
-import com.pchome.hadoopdmp.data.mongo.pojo.ClassUrlMongoBean;
-import com.pchome.hadoopdmp.data.mongo.pojo.PersonalInformationProdMongoBean;
-import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategory;
-import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategoryAudienceAnalyze;
-import com.pchome.hadoopdmp.data.mysql.pojo.AdmCategoryGroup;
-import com.pchome.hadoopdmp.data.mysql.pojo.DmpTransferDataLog;
-//import com.pchome.hadoopdmp.mysql.db.service.category.IAdmCategoryAudienceAnalyzeService;
-//import com.pchome.hadoopdmp.mysql.db.service.category.IAdmCategoryService;
-//import com.pchome.hadoopdmp.mysql.db.service.categorygroup.IAdmCategoryGroupService;
-//import com.pchome.hadoopdmp.mysql.db.service.transferdata.IDmpTransferDataLogService;
-import com.pchome.hadoopdmp.spring.config.bean.allbeanscan.SpringAllHadoopConfig;
-import com.pchome.soft.util.DateFormatUtil;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
+import com.pchome.akbdmp.spring.config.bean.allbeanscan.SpringAllConfig;
+import com.pchome.hadoopdmp.spring.config.bean.mongodborg.MongodbOrgHadoopConfig;
 @Component
 public class TestRun {
 
@@ -618,22 +581,92 @@ public class TestRun {
 	
 	public static void main(String[] args) {
 		try {
-		
 			
-	    System.setProperty("webdriver.chrome.driver","/home/webuser/_alex/chromedriver.exe");
-		//設定Chrome為不顯示
-		ChromeOptions options = new ChromeOptions(); 
-		options.setHeadless(true); 
-		//連上網路
-		WebDriver driver = new ChromeDriver(options);  
-		driver.get("https://ck101.com/beauty/");
-		//執行JavascripExecutor
-		JavascriptExecutor js = (JavascriptExecutor)driver; 
-		String html = js.executeScript("return document.body.innerHTML;").toString();
-		//載入Jsoup並解析需腰的資訊
-		Document doc = Jsoup.parse(html);
-		System.out.println(doc);
-		driver.close();
+			int skip = (Integer.parseInt(args[0]) -1) * 7500000;
+			
+			
+			
+			MongoCredential credential = MongoCredential.createMongoCRCredential("webuser", "dmp", "MonG0Dmp".toCharArray());
+			MongoClient mongoClient = new MongoClient(new ServerAddress("mongodb.mypchome.com.tw", 27017), Arrays.asList(credential));
+			DB mongoProducer = mongoClient.getDB("dmp");
+			DBCollection dBCollection_class_url = mongoProducer.getCollection("class_url");
+			
+			BufferedWriter bw = new BufferedWriter(new FileWriter("home/webuser/_alex/url_class_"+skip+"-"+(skip+7500000)+".csv"));
+			StringBuffer a = new StringBuffer();
+			
+			SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+			DBCursor  dbCursor  = dBCollection_class_url.find().limit(7500000).skip(skip);
+			
+			long count = 30000000;
+			for (DBObject dbObject : dbCursor) {
+				a.setLength(0);
+				if(count > 30000000) {
+					bw.newLine();
+				}
+				a.append("\"").append(sdf1.format(dbObject.get("update_date"))).append("\"");
+				a.append(",").append("\"").append(dbObject.get("url")).append("\"");
+				a.append(",").append("\"").append((dbObject.get("ad_class").equals("null")||dbObject.get("ad_class") == null) ? "":dbObject.get("ad_class") ).append("\"");
+				a.append(",").append("\"").append(dbObject.get("status")).append("\"");
+				a.append(",").append("\"").append(dbObject.get("query_time")== null ? "0" : String.valueOf(dbObject.get("query_time"))).append("\"");
+				bw.write(a.toString());
+				
+				count = count + 1;
+				if(count % 50000 == 0) {
+					System.out.println("執行30000000-37500000");
+					System.out.println("處理:" + count);
+				}
+			}
+			bw.close();
+			
+			
+			
+			
+			
+			
+			
+//			System.setProperty("spring.profiles.active", "prd");
+//			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
+//			TestRun TestRun = (TestRun) ctx.getBean(TestRun.class);
+			
+//			DB mongoOrgOperations  = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
+//			DBCollection dBCollection_class_url = mongoOrgOperations.getCollection("class_url");
+//			System.out.println(dBCollection_class_url.count());
+			
+			
+			
+			
+//		File f = new File("D:\\Users\\alexchen\\Desktop\\hdfs_file_count");
+//			
+//		FileReader fr = new FileReader(f);
+//		BufferedReader br = new BufferedReader(fr);
+//		String line;
+//		double d = 0;
+//		while((line = br.readLine()) != null){
+//		    //process the line
+//			if(line.indexOf("G")>=0) {
+//				System.out.println(line);
+//				d = d+(Double.parseDouble(line.split(" ")[0]))*1024;
+//			}else if(line.indexOf("M")>=0){
+//				d = d+Double.parseDouble(line.split(" ")[0]);
+//			}
+//			
+//		}
+//		System.out.println(d);
+		
+//	    System.setProperty("webdriver.chrome.driver","D:\\Users\\alexchen\\Desktop\\chromedriver.exe");
+//		//設定Chrome為不顯示
+//		ChromeOptions options = new ChromeOptions(); 
+//		options.setHeadless(true); 
+//		//連上網路
+//		WebDriver driver = new ChromeDriver(options);  
+//		driver.get("https://ck101.com/beauty/");
+//		//執行JavascripExecutor
+//		JavascriptExecutor js = (JavascriptExecutor)driver; 
+//		String html = js.executeScript("return document.body.innerHTML;").toString();
+//		//載入Jsoup並解析需腰的資訊
+//		Document doc = Jsoup.parse(html);
+//		System.out.println(doc);
+//		driver.close();
 			
 			
 			
