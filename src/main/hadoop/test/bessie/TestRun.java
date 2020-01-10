@@ -2,6 +2,7 @@ package test.bessie;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
@@ -591,7 +592,18 @@ public class TestRun {
 			DB mongoProducer = mongoClient.getDB("dmp");
 			DBCollection dBCollection_class_url = mongoProducer.getCollection("class_url");
 			
-			BufferedWriter bw = new BufferedWriter(new FileWriter("home/webuser/_alex/url_class_"+skip+"-"+(skip+7500000)+".csv"));
+			
+			File file = new File("/home/webuser/_alex/url_class_"+skip+"-"+(skip+7500000)+".csv");
+			if(!file.exists()) {
+				file.createNewFile();
+			}else {
+				file.delete();
+				file.createNewFile();
+			}
+			
+			
+			
+			BufferedWriter bw = new BufferedWriter(new FileWriter("/home/webuser/_alex/url_class_"+skip+"-"+(skip+7500000)+".csv"));
 			StringBuffer a = new StringBuffer();
 			
 			SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
