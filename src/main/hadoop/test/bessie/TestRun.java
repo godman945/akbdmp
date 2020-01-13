@@ -6,8 +6,21 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -22,6 +35,9 @@ import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.pchome.akbdmp.spring.config.bean.allbeanscan.SpringAllConfig;
 import com.pchome.hadoopdmp.spring.config.bean.mongodborg.MongodbOrgHadoopConfig;
+
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
 @Component
 public class TestRun {
 
@@ -582,11 +598,45 @@ public class TestRun {
 	
 	public static void main(String[] args) {
 		try {
+//			Class.forName("org.apache.calcite.avatica.remote.Driver");    
+//			String url = "jdbc:avatica:remote:url=http://druidq1.mypchome.com.tw:8082/druid/v2/sql/avatica/";
+//			Connection con = DriverManager.getConnection(url);
+//			Properties connectionProperties = new Properties();
+//			con = DriverManager.getConnection(url, connectionProperties);
+//			StringBuffer sql = new StringBuffer();
+//			sql.append(" SELECT * from dmp_db limit 1  ");
+//			final PreparedStatement preparedStatement = con.prepareStatement(sql.toString());
+//			final ResultSet resultSet = preparedStatement.executeQuery();
+//			List<String> dataList = new ArrayList<String>();
+//			JSONArray array = new JSONArray();
+//			while (resultSet.next()) {
+//				ResultSetMetaData rsmd = resultSet.getMetaData();
+//				JSONObject json = new JSONObject(new LinkedHashMap<String, String>());
+//				for (int i = 1; i <= rsmd.getColumnCount(); i++) {
+//					json.put(rsmd.getColumnLabel(i), resultSet.getString(rsmd.getColumnName(i)));
+//				}
+//				array.add(json);
+//			}
+//			System.out.println(array);	
+			
+//			
+//			  boolean isurl = false;
+//			  String regex = "(((https|http)?://)?([a-z0-9]+[.])|(www.))"
+//		            + "\\w+[.|\\/]([a-z0-9]{0,})?[[.]([a-z0-9]{0,})]+((/[\\S&&[^,;\u4E00-\u9FA5]]+)+)?([.][a-z0-9]{0,}+|/?)";//设置正则表达式
+//
+//		        Pattern pat = Pattern.compile(regex.trim());//比对
+//		        Matcher mat = pat.matcher(urls.trim());
+//		        isurl = mat.matches();//判断是否匹配
+//		        if (isurl) {
+//		            isurl = true;
+//		        }
+//		        System.out.println(isurl);
+			
+			
+			
+			
 			
 			int skip = (Integer.parseInt(args[0]) -1) * 7500000;
-			
-			
-			
 			MongoCredential credential = MongoCredential.createMongoCRCredential("webuser", "dmp", "MonG0Dmp".toCharArray());
 			MongoClient mongoClient = new MongoClient(new ServerAddress("mongodb.mypchome.com.tw", 27017), Arrays.asList(credential));
 			DB mongoProducer = mongoClient.getDB("dmp");
@@ -600,9 +650,6 @@ public class TestRun {
 				file.delete();
 				file.createNewFile();
 			}
-			
-			
-			
 			BufferedWriter bw = new BufferedWriter(new FileWriter("/home/webuser/_alex/url_class_"+skip+"-"+(skip+7500000)+".csv"));
 			StringBuffer a = new StringBuffer();
 			
@@ -611,10 +658,16 @@ public class TestRun {
 			
 			long count = skip;
 			for (DBObject dbObject : dbCursor) {
+//				if(dbObject.get("url").toString().indexOf("ruten") < 0) {
+//					System.out.println(">>>>>>>>>>>> delete :" + dbObject);
+//					dBCollection_class_url.remove(dbObject);
+//				}
 				
-				if(dbObject.get("url").toString().indexOf("ruten") < 0) {
-					System.out.println(">>>>>>>>>>>> delete :" + dbObject);
-					dBCollection_class_url.remove(dbObject);
+				try {
+					URL url = new URL(dbObject.get("url").toString());
+				}catch (Exception e){
+					System.out.println("FAIL :" + dbObject.get("url").toString());
+					continue;
 				}
 				
 				a.setLength(0);
@@ -625,9 +678,8 @@ public class TestRun {
 				a.append(",").append("\"").append(dbObject.get("url")).append("\"");
 				a.append(",").append("\"").append((dbObject.get("ad_class").equals("null")||dbObject.get("ad_class") == null) ? "":dbObject.get("ad_class") ).append("\"");
 				a.append(",").append("\"").append(dbObject.get("status")).append("\"");
-				a.append(",").append("\"").append(dbObject.get("query_time")== null ? "0" : String.valueOf(dbObject.get("query_time"))).append("\"");
+				a.append(",").append("\"").append(dbObject.get("query_time")== null ? "1" : String.valueOf(dbObject.get("query_time"))).append("\"");
 				bw.write(a.toString());
-				
 				count = count + 1;
 				if(count % 50000 == 0) {
 					System.out.println("process:"+skip+"-"+(skip+7500000));
