@@ -585,6 +585,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				} else {
 					dmpDataJson.put("uuid_flag", "n");
 				}
+				if(values[7].contains("ruten")) {
+					System.out.println("RUTEN>>>>>:"+values[5]);
+					return;
+				}
 				dmpDataJson.put("url", values[6]);
 				dmpDataJson.put("referer", values[5]);
 				dmpDataJson.put("domain", values[7]);
@@ -606,7 +610,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				dmpDataJson.put("screen_y", values[10]);
 				dmpDataJson.put("event_id", "24h");
 				
-				if (dmpDataJson.getAsString("referer").contains("24h.pchome.com.tw")) {
+				if (dmpDataJson.getAsString("referer").contains("24h.pchome.com.tw")) {   
 					String pageCategory = "";
 					if (dmpDataJson.getAsString("referer").equals("https://24h.pchome.com.tw/")
 							|| dmpDataJson.getAsString("referer").contains("htm")
