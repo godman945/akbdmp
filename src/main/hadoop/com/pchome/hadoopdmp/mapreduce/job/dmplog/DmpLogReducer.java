@@ -201,17 +201,15 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					dmpJSon.put("vpv", "0");
 				}
 				
-				//產出csv
+				//產出bu log csv 
 				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_value"))) {
 					for (int i= 0; i < markLevelList.length; i++) {
 						if(StringUtils.isNotBlank(dmpJSon.getAsString(markLevelList[i]))) {
-							if(dmpJSon.getAsString("mark_value").equals(dmpJSon.getAsString(markValueList[i]))) {
-								dmpJSon.put("pv", 1);
-							}else {
-								dmpJSon.put("pv", 0);
-							}
-							
-							
+//							if(dmpJSon.getAsString("mark_value").equals(dmpJSon.getAsString(markValueList[i]))) {
+//								dmpJSon.put("pv", 1);
+//							}else {
+//								dmpJSon.put("pv", 0);
+//							}
 							markValueMap.put(dmpJSon.getAsString("mark_value"), dmpJSon.getAsString("mark_value"));
 							
 							wiriteToDruid.append("\""+dmpJSon.getAsString("fileName")+"\"");
