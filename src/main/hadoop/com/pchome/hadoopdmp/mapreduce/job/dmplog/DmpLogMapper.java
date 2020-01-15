@@ -586,7 +586,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("uuid_flag", "n");
 				}
 				if(values[7].contains("ruten")) {
-					System.out.println("RUTEN>>>>>:"+values[5]);
 					return;
 				}
 				dmpDataJson.put("url", values[6]);
