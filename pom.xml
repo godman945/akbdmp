@@ -606,13 +606,12 @@
 			</exclusions>
 		</dependency>
  		
- 			<!-- 
  		<dependency>
 		    <groupId>net.sourceforge.htmlunit</groupId>
 		    <artifactId>htmlunit</artifactId>
 		    <version>2.5</version>
 		</dependency>
- -->
+
 		
  		<!-- 
  		<dependency> 
