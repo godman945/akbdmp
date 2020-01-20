@@ -16,7 +16,6 @@ import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
-import com.pchome.akbdmp.adm.call.index.controller.AdmIndexController;
 
 @Configuration
 @EnableTransactionManagement
