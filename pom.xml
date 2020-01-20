@@ -1,12 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="https://maven.apache.org/POM/4.0.0" xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="https://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>src.main.api</groupId>
 	<packaging>war</packaging>
 	<artifactId>AkbDmp</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>AkbDmp Maven Webapp</name>
-	<url>http://maven.apache.org</url>
+	<url>https://maven.apache.org</url>
 	<build>
 		<finalName>AkbDmp</finalName>
 		<defaultGoal>install</defaultGoal>
@@ -73,8 +73,9 @@
 			</snapshots>
 			<id>central</id>
 			<name>Central Repository</name>
-			<url>http://repo.maven.apache.org/maven2</url>
+			<url>https://repo.maven.apache.org/maven2</url>
 		</repository>
+		 
 		 
 	</repositories>
 	<pluginRepositories>
@@ -87,7 +88,7 @@
 			</snapshots>
 			<id>central</id>
 			<name>Central Repository</name>
-			<url>http://repo.maven.apache.org/maven2</url>
+			<url>https://repo.maven.apache.org/maven2</url>
 		</pluginRepository>
 		
 	</pluginRepositories>
@@ -286,14 +287,19 @@
 			<version>1.2.0</version>
 		</dependency>
 		-->
+		<!-- 
 		<dependency>
 		    <groupId>org.apache.hadoop</groupId>
 		    <artifactId>hadoop-client</artifactId>
 		    <version>2.8.5</version>
+		    <exclusions>
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+    				<artifactId>guava</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
-		
-		
-		
+		 -->
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-hdfs</artifactId>
@@ -302,6 +308,10 @@
 				<exclusion>
 				    <groupId>asm</groupId>
 				    <artifactId>asm</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+    				<artifactId>guava</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -333,8 +343,13 @@
 			     	<groupId>com.sun.jersey</groupId>
     				<artifactId>jersey-json</artifactId>
 			    </exclusion>
+			    <exclusion>
+					<groupId>com.google.guava</groupId>
+    				<artifactId>guava</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
+		
 		
 		<dependency>
 		    <groupId>com.hadoop.gplcompression</groupId>
@@ -450,8 +465,13 @@
 			     	<groupId>org.slf4j</groupId>
 					<artifactId>slf4j-api</artifactId>
 			    </exclusion>
+			    <exclusion>
+					<groupId>com.google.guava</groupId>
+    				<artifactId>guava</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
+		
 		<dependency>
 		    <groupId>javax.servlet</groupId>
 		    <artifactId>jstl</artifactId>
@@ -550,8 +570,14 @@
 			     	<groupId>com.sun.jersey</groupId>
     				<artifactId>jersey-json</artifactId>
 			    </exclusion>
+			    <exclusion>
+					<groupId>com.google.guava</groupId>
+    				<artifactId>guava</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
+
+
 
 
 		<dependency>
@@ -614,7 +640,95 @@
 
 
  		 
+		<!-- webmagic start -->
+		<dependency>
+			<groupId>us.codecraft</groupId>
+			<artifactId>webmagic-core</artifactId>
+			<version>0.7.3</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>fastjson</artifactId>
+					<groupId>com.alibaba</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>commons-io</artifactId>
+					<groupId>commons-io</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>commons-io</artifactId>
+					<groupId>commons-io</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>fastjson</artifactId>
+					<groupId>com.alibaba</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>fastjson</artifactId>
+					<groupId>com.alibaba</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>log4j</artifactId>
+					<groupId>log4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>slf4j-log4j12</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>us.codecraft</groupId>
+			<artifactId>webmagic-extension</artifactId>
+			<version>0.7.3</version>
+		</dependency>
+		<dependency>
+			<groupId>us.codecraft</groupId>
+			<artifactId>webmagic-selenium</artifactId>
+			<version>0.7.3</version>
+		</dependency>
+		<dependency>
+			<groupId>net.minidev</groupId>
+			<artifactId>json-smart</artifactId>
+			<version>2.2.1</version>
+		</dependency>
+		<!-- webmagic end -->
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>3.8.1</version>
+			<exclusions>
+			    <exclusion>
+					<groupId>com.google.guava</groupId>
+    				<artifactId>guava</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	
+		<dependency>
+		    <groupId>com.google.guava</groupId>
+		    <artifactId>guava</artifactId>
+		    <version>28.2-jre</version>
+		</dependency>
 
- 		 
+		<!-- druid jdbc連線用 -->
+		<dependency>
+		    <groupId>org.apache.calcite.avatica</groupId>
+		    <artifactId>avatica-core</artifactId>
+		    <version>1.15.0</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.google.protobuf</groupId>
+		    <artifactId>protobuf-java</artifactId>
+		    <version>3.4.0</version>
+		</dependency>
+		
+		<!-- 
+		<dependency>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-resources-plugin</artifactId>
+		    <version>2.4.3</version>
+		</dependency>
+		 -->
 	</dependencies>
 </project>
