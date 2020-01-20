@@ -739,7 +739,11 @@
 		    <version>2.4.3</version>
 		</dependency>
 		 -->
-		 
+		 <dependency>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-clean-plugin</artifactId>
+		    <version>2.5</version>
+		</dependency>
 		 
 	</dependencies>
 </project>
