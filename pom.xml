@@ -290,13 +290,9 @@
 		    <groupId>org.apache.hadoop</groupId>
 		    <artifactId>hadoop-client</artifactId>
 		    <version>2.8.5</version>
-		    <exclusions>
-				<exclusion>
-					<groupId>com.google.guava</groupId>
-    				<artifactId>guava</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
+		
+		
 		
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
@@ -306,10 +302,6 @@
 				<exclusion>
 				    <groupId>asm</groupId>
 				    <artifactId>asm</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.google.guava</groupId>
-    				<artifactId>guava</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -341,13 +333,8 @@
 			     	<groupId>com.sun.jersey</groupId>
     				<artifactId>jersey-json</artifactId>
 			    </exclusion>
-			    <exclusion>
-					<groupId>com.google.guava</groupId>
-    				<artifactId>guava</artifactId>
-				</exclusion>
 			</exclusions>
 		</dependency>
-		
 		
 		<dependency>
 		    <groupId>com.hadoop.gplcompression</groupId>
@@ -463,13 +450,8 @@
 			     	<groupId>org.slf4j</groupId>
 					<artifactId>slf4j-api</artifactId>
 			    </exclusion>
-			    <exclusion>
-					<groupId>com.google.guava</groupId>
-    				<artifactId>guava</artifactId>
-				</exclusion>
 			</exclusions>
 		</dependency>
-		
 		<dependency>
 		    <groupId>javax.servlet</groupId>
 		    <artifactId>jstl</artifactId>
@@ -568,14 +550,8 @@
 			     	<groupId>com.sun.jersey</groupId>
     				<artifactId>jersey-json</artifactId>
 			    </exclusion>
-			    <exclusion>
-					<groupId>com.google.guava</groupId>
-    				<artifactId>guava</artifactId>
-				</exclusion>
 			</exclusions>
 		</dependency>
-
-
 
 
 		<dependency>
@@ -638,90 +614,7 @@
 
 
  		 
-		<!-- webmagic start -->
-		<dependency>
-			<groupId>us.codecraft</groupId>
-			<artifactId>webmagic-core</artifactId>
-			<version>0.7.3</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>fastjson</artifactId>
-					<groupId>com.alibaba</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>commons-io</artifactId>
-					<groupId>commons-io</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>commons-io</artifactId>
-					<groupId>commons-io</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>fastjson</artifactId>
-					<groupId>com.alibaba</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>fastjson</artifactId>
-					<groupId>com.alibaba</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>log4j</artifactId>
-					<groupId>log4j</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>slf4j-log4j12</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>us.codecraft</groupId>
-			<artifactId>webmagic-extension</artifactId>
-			<version>0.7.3</version>
-		</dependency>
-		<dependency>
-			<groupId>us.codecraft</groupId>
-			<artifactId>webmagic-selenium</artifactId>
-			<version>0.7.3</version>
-		</dependency>
-		<dependency>
-			<groupId>net.minidev</groupId>
-			<artifactId>json-smart</artifactId>
-			<version>2.2.1</version>
-		</dependency>
-		<!-- webmagic end -->
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-java</artifactId>
-			<version>3.8.1</version>
-			<exclusions>
-			    <exclusion>
-					<groupId>com.google.guava</groupId>
-    				<artifactId>guava</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-	
-		<dependency>
-		    <groupId>com.google.guava</groupId>
-		    <artifactId>guava</artifactId>
-		    <version>28.2-jre</version>
-		</dependency>
 
-		<!-- druid jdbc連線用 -->
-		<dependency>
-		    <groupId>org.apache.calcite.avatica</groupId>
-		    <artifactId>avatica-core</artifactId>
-		    <version>1.15.0</version>
-		</dependency>
-		
-		<dependency>
-		    <groupId>com.google.protobuf</groupId>
-		    <artifactId>protobuf-java</artifactId>
-		    <version>3.4.0</version>
-		</dependency>
-		
-		
  		 
 	</dependencies>
 </project>
