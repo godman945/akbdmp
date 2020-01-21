@@ -36,16 +36,6 @@
 			</plugin>
 			
 			<plugin>
-		        <groupId>org.apache.maven.plugins</groupId>
-		        <artifactId>maven-compiler-plugin</artifactId>
-		        <configuration>
-		            <source>1.7</source>
-		            <target>1.7</target>
-		        </configuration>
-		    </plugin>
-			
-			
-			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
 					<descriptorRefs>
@@ -86,7 +76,6 @@
 			<url>http://repo.maven.apache.org/maven2</url>
 		</repository>
 		 
-		 
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
@@ -124,7 +113,7 @@
 			<artifactId>spring-context</artifactId>
 			<version>4.2.4.RELEASE</version>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-tx</artifactId>
@@ -297,19 +286,6 @@
 			<version>1.2.0</version>
 		</dependency>
 		-->
-		<!-- 
-		<dependency>
-		    <groupId>org.apache.hadoop</groupId>
-		    <artifactId>hadoop-client</artifactId>
-		    <version>2.8.5</version>
-		    <exclusions>
-				<exclusion>
-					<groupId>com.google.guava</groupId>
-    				<artifactId>guava</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		 -->
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-hdfs</artifactId>
@@ -325,7 +301,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
@@ -359,13 +335,27 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+		<!-- 
 		
 		<dependency>
 		    <groupId>com.hadoop.gplcompression</groupId>
 		    <artifactId>hadoop-lzo</artifactId>
 		    <version>0.4.20</version>
 		</dependency>
+		
+		<dependency>
+		    <groupId>org.apache.hadoop</groupId>
+		    <artifactId>hadoop-client</artifactId>
+		    <version>2.8.5</version>
+		    <exclusions>
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+    				<artifactId>guava</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		-->
+		
 		
 		<!-- http -->
 		<dependency>
@@ -413,6 +403,7 @@
             <artifactId>tiles-api</artifactId>
             <version>3.0.1</version>
         </dependency>
+        
 		 <!-- Tiles Core -->
         <dependency>
             <groupId>org.apache.tiles</groupId>
@@ -434,6 +425,7 @@
 			<artifactId>javax.servlet.jsp-api</artifactId>
 			<version>2.3.1</version>
 		</dependency>
+		
         <!-- Tiles Servlet -->
         <dependency>
             <groupId>org.apache.tiles</groupId>
@@ -446,7 +438,7 @@
 		    <version>1.0.6</version>
 		</dependency>
  
-        <!-- Tiles JSP -->
+        <!-- Tiles JSP  -->
         <dependency>
             <groupId>org.apache.tiles</groupId>
             <artifactId>tiles-jsp</artifactId>
@@ -489,19 +481,20 @@
 		</dependency>
 		
 		
-		<!-- eclipse hibernate sl4j需要用1.5.8版
+		<!-- eclipse hibernate sl4j需要用1.5.8版 
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>1.5.8</version>
 		</dependency>
-
+		-->
+		
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
 			<version>1.5.8</version>
 		</dependency>
-		-->
+		
 		
 		<!-- -->
 		<dependency>
@@ -541,14 +534,14 @@
 		</dependency>
 		
 		
-		<!-- IP轉國家、城市-->
+		<!-- IP轉國家、城市 -->
 		<dependency>
         	<groupId>com.maxmind.geoip2</groupId>
         	<artifactId>geoip2</artifactId>
         	<version>2.1.0</version>
     	</dependency>
     
-   		<!-- UserAgent-->
+   		<!-- UserAgent -->
     	<dependency>
     		<groupId>eu.bitwalker</groupId>
     		<artifactId>UserAgentUtils</artifactId>
@@ -586,7 +579,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
+		
 
 
 
@@ -606,6 +599,7 @@
 			</exclusions>
 		</dependency>
  		
+ 			
  		<dependency>
 		    <groupId>net.sourceforge.htmlunit</groupId>
 		    <artifactId>htmlunit</artifactId>
@@ -623,7 +617,13 @@
  		</dependency> 
  		 -->
  		
- 		 <dependency>
+ 		 
+
+        
+
+
+ 		 
+		<dependency>
             <groupId>net.minidev</groupId>
             <artifactId>asm</artifactId>
             <version>1.0.2</version>
@@ -634,8 +634,8 @@
 				</exclusion>
 			</exclusions>
         </dependency>
-
-        <dependency>
+        
+		 <dependency>
             <groupId>net.minidev</groupId>
             <artifactId>json-smart</artifactId>
             <version>2.2.1</version>
@@ -646,73 +646,13 @@
 				</exclusion>
 			</exclusions>
         </dependency>
-
-
- 		 
-		<!-- webmagic start -->
-		<dependency>
-			<groupId>us.codecraft</groupId>
-			<artifactId>webmagic-core</artifactId>
-			<version>0.7.3</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>fastjson</artifactId>
-					<groupId>com.alibaba</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>commons-io</artifactId>
-					<groupId>commons-io</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>commons-io</artifactId>
-					<groupId>commons-io</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>fastjson</artifactId>
-					<groupId>com.alibaba</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>fastjson</artifactId>
-					<groupId>com.alibaba</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>log4j</artifactId>
-					<groupId>log4j</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>slf4j-log4j12</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>us.codecraft</groupId>
-			<artifactId>webmagic-extension</artifactId>
-			<version>0.7.3</version>
-		</dependency>
-		<dependency>
-			<groupId>us.codecraft</groupId>
-			<artifactId>webmagic-selenium</artifactId>
-			<version>0.7.3</version>
-		</dependency>
+        
 		<dependency>
 			<groupId>net.minidev</groupId>
 			<artifactId>json-smart</artifactId>
 			<version>2.2.1</version>
-		</dependency>
-		<!-- webmagic end -->
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-java</artifactId>
-			<version>3.8.1</version>
-			<exclusions>
-			    <exclusion>
-					<groupId>com.google.guava</groupId>
-    				<artifactId>guava</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-	
+		</dependency> 
+		
 		<dependency>
 		    <groupId>com.google.guava</groupId>
 		    <artifactId>guava</artifactId>
@@ -732,18 +672,13 @@
 		    <version>3.4.0</version>
 		</dependency>
 		
-		<!-- 
+		 <!-- 	 
 		<dependency>
-		    <groupId>org.apache.maven.plugins</groupId>
-		    <artifactId>maven-resources-plugin</artifactId>
-		    <version>2.4.3</version>
+		    <groupId>xerces</groupId>
+		    <artifactId>xercesImpl</artifactId>
+		    <version>2.12.0</version>
 		</dependency>
-		 -->
-		 <dependency>
-		    <groupId>org.apache.maven.plugins</groupId>
-		    <artifactId>maven-clean-plugin</artifactId>
-		    <version>2.5</version>
-		</dependency>
-		 
+  -->	
+		
 	</dependencies>
 </project>
