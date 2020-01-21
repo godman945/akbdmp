@@ -1,12 +1,12 @@
-<project xmlns="https://maven.apache.org/POM/4.0.0" xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="https://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>src.main.api</groupId>
 	<packaging>war</packaging>
 	<artifactId>AkbDmp</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>AkbDmp Maven Webapp</name>
-	<url>https://maven.apache.org</url>
+	<url>http://maven.apache.org</url>
 	<build>
 		<finalName>AkbDmp</finalName>
 		<defaultGoal>install</defaultGoal>
@@ -83,7 +83,7 @@
 			</snapshots>
 			<id>central</id>
 			<name>Central Repository</name>
-			<url>https://repo.maven.apache.org/maven2</url>
+			<url>http://repo.maven.apache.org/maven2</url>
 		</repository>
 		 
 		 
@@ -98,7 +98,7 @@
 			</snapshots>
 			<id>central</id>
 			<name>Central Repository</name>
-			<url>https://repo.maven.apache.org/maven2</url>
+			<url>http://repo.maven.apache.org/maven2</url>
 		</pluginRepository>
 		
 	</pluginRepositories>
