@@ -6,7 +6,7 @@
 	<artifactId>AkbDmp</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>AkbDmp Maven Webapp</name>
-	<url>http://maven.apache.org</url>
+	<url>https://maven.apache.org</url>
 	<build>
 		<finalName>AkbDmp</finalName>
 		<defaultGoal>install</defaultGoal>
@@ -26,8 +26,8 @@
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 					<encoding>UTF-8</encoding>
 					<compilerArguments>
 						<extdirs>${basedir}\src\main\webapp\WEB-INF\lib</extdirs>
@@ -73,7 +73,7 @@
 			</snapshots>
 			<id>central</id>
 			<name>Central Repository</name>
-			<url>http://repo.maven.apache.org/maven2</url>
+			<url>https://repo.maven.apache.org/maven2</url>
 		</repository>
 		 
 	</repositories>
@@ -87,7 +87,7 @@
 			</snapshots>
 			<id>central</id>
 			<name>Central Repository</name>
-			<url>http://repo.maven.apache.org/maven2</url>
+			<url>https://repo.maven.apache.org/maven2</url>
 		</pluginRepository>
 		
 	</pluginRepositories>
@@ -336,11 +336,7 @@
 			</exclusions>
 		</dependency>
 		
-	<dependency>
-		    <groupId>com.hadoop.gplcompression</groupId>
-		    <artifactId>hadoop-lzo</artifactId>
-		    <version>0.4.20</version>
-		</dependency>
+		
 
 
 
@@ -349,7 +345,11 @@
 		
 		<!-- 
 		
-	
+	<dependency>
+		    <groupId>com.hadoop.gplcompression</groupId>
+		    <artifactId>hadoop-lzo</artifactId>
+		    <version>0.4.20</version>
+		</dependency>
 		
 		<dependency>
 		    <groupId>org.apache.hadoop</groupId>
@@ -687,6 +687,6 @@
 		    <version>2.12.0</version>
 		</dependency>
   -->	
-		
+	
 	</dependencies>
 </project>
