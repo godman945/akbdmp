@@ -608,16 +608,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				dmpDataJson.put("source_date", values[0].split(" ")[0]);
 				dmpDataJson.put("hour", values[0].split(" ")[1].split(":")[0]);
 				
-				
-				if(values[2].equals("00114f95-cf97-4827-8c12-3d24a8813d4f")) {
-					
-					System.out.println("00114f95-cf97-4827-8c12-3d24a8813d4f>>>debug:"+values[0].split(" ")[0]);
-					System.out.println("00114f95-cf97-4827-8c12-3d24a8813d4f>>>debug:"+values[0].split(" ")[1].split(":")[0]);
-					
-				}
-				
-				
-				
 				dmpDataJson.put("fileName", fileName);
 				dmpDataJson.put("log_date", values[0]);
 				dmpDataJson.put("uuid", values[2]);

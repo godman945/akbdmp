@@ -266,12 +266,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("hour")).append("\"");
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("source_date")).append("\"");
 							
-							if(dmpJSon.getAsString("uuid").equals("00114f95-cf97-4827-8c12-3d24a8813d4f")) {
-								System.out.println("00114f95-cf97-4827-8c12-3d24a8813d4f>>>>>>>>>debug:"+dmpJSon.getAsString("hour"));
-								System.out.println("00114f95-cf97-4827-8c12-3d24a8813d4f>>>>>>>>>debug:"+dmpJSon.getAsString("source_date"));
-							}
-							
-							
 							context.write(new Text(wiriteToDruid.toString()), null);
 							wiriteToDruid.setLength(0);
 							
