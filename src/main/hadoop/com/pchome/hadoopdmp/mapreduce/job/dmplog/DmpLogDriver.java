@@ -5,6 +5,7 @@ import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -125,53 +126,52 @@ public class DmpLogDriver {
   				listPath.add(paclpath);
 	  			
 	        }else {//計算小時
-//	        	//載入bu log file
-//		        Path buPath = new Path("/druid/dmp_log_source/bu_log/"+dmpDate+"/"+dmpHour);
-//		        FileStatus[] buStatus = fileSystem.listStatus(buPath); 
-//				for (FileStatus fileStatus : buStatus) {
-//					String pathStr = fileStatus.getPath().toString();
-//					String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
-//					if(extensionName.equals("LZO")) {
-//						listPath.add(new Path(fileStatus.getPath().toString()));
-//					}
-//				}
-////				載入kdcl log file
-//		        Path kdclPath = new Path("/druid/dmp_log_source/kdcl_log/"+dmpDate+"/"+dmpHour);
-//		        FileStatus[] kdclStatus = fileSystem.listStatus(kdclPath); 
-//				for (FileStatus fileStatus : kdclStatus) {
-//					String pathStr = fileStatus.getPath().toString();
-//					String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
-//					if(extensionName.equals("LZO")) {
-//						listPath.add(new Path(fileStatus.getPath().toString()));
-//					}
-//				}
-//				//載入pacl log file
-//				Path paclPath = new Path("/druid/dmp_log_source/pacl_log/"+dmpDate+"/"+dmpHour);
-//		        FileStatus[] paclStatus = fileSystem.listStatus(paclPath); 
-//				for (FileStatus fileStatus : paclStatus) {
-//					String pathStr = fileStatus.getPath().toString();
-//					String extensionName = pathStr.substring(pathStr.length()-3,pathStr.length()).toUpperCase();
-//					if(extensionName.equals("LZO")) {
-//						listPath.add(new Path(fileStatus.getPath().toString()));
-//					}
-//				}
-	        	
+	        	//每次執行載入前兩小時內容
 	        	
 	        	Path bupath =   new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/bu_log/"+dmpDate+"/"+dmpHour+"/bu_"+dmpDate+"_"+dmpHour+"_log.lzo");
 	  			Path kdclpath = new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/kdcl_log/"+dmpDate+"/"+dmpHour+"/kdcl_"+dmpDate+"_"+dmpHour+"_log.lzo");
 	  			Path paclpath = new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/pacl_log/"+dmpDate+"/"+dmpHour+"/pacl_"+dmpDate+"_"+dmpHour+"_log.lzo");
 	  			
-	  			if(fileSystem.exists(bupath)) {
-	  				listPath.add(bupath);
-	  				log.info(">>>>>>>>>>JOB INPUT ADD PATH:"+bupath.toString());
-	  			}
 	  			if(fileSystem.exists(kdclpath)) {
 	  				listPath.add(kdclpath);
 	  				log.info(">>>>>>>>>>JOB INPUT ADD PATH:"+kdclpath.toString());
 	  			}
+	  			if(fileSystem.exists(bupath)) {
+	  				listPath.add(bupath);
+	  				log.info(">>>>>>>>>>JOB INPUT ADD PATH:"+bupath.toString());
+	  			}
 	  			if(fileSystem.exists(paclpath)) {
 	  				listPath.add(paclpath);
 	  				log.info(">>>>>>>>>>JOB INPUT ADD PATH:"+paclpath.toString());
+	  			}
+	  			
+	  			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH");
+        		Date processDate = sdf.parse(dmpDate+" "+dmpHour);
+        		Calendar cal = Calendar.getInstance();
+        		cal.setTime(processDate);
+        		cal.add(Calendar.HOUR_OF_DAY, -1); 
+	        		
+        		String processPreviousYear = sdf.format(cal.getTime()).split("-")[0];
+        		String processPreviousMonth = sdf.format(cal.getTime()).split("-")[1];
+        		String processPreviousDate = sdf.format(cal.getTime()).split("-")[2].split(" ")[0];
+        		String processPreviousHour = sdf.format(cal.getTime()).split("-")[2].split(" ")[1];
+	        	String processPrevious = processPreviousYear+"-"+processPreviousMonth+"-"+processPreviousDate;
+	        	
+	        	Path bupath2 =   new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/bu_log/"+processPrevious+"/"+processPreviousHour+"/bu_"+processPrevious+"_"+processPreviousHour+"_log.lzo");
+	  			Path kdclpath2 = new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/kdcl_log/"+processPrevious+"/"+processPreviousHour+"/kdcl_"+processPrevious+"_"+processPreviousHour+"_log.lzo");
+	  			Path paclpath2 = new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/pacl_log/"+processPrevious+"/"+processPreviousHour+"/pacl_"+processPrevious+"_"+processPreviousHour+"_log.lzo");
+	  			
+	  			if(fileSystem.exists(kdclpath2)) {
+	  				listPath.add(kdclpath2);
+	  				log.info(">>>>>>>>>>JOB INPUT ADD PATH:"+kdclpath2.toString());
+	  			}
+	  			if(fileSystem.exists(bupath2)) {
+	  				listPath.add(bupath2);
+	  				log.info(">>>>>>>>>>JOB INPUT ADD PATH:"+bupath2.toString());
+	  			}
+	  			if(fileSystem.exists(paclpath2)) {
+	  				listPath.add(paclpath2);
+	  				log.info(">>>>>>>>>>JOB INPUT ADD PATH:"+paclpath2.toString());
 	  			}
 	        }
 	        

@@ -117,7 +117,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 			mysqlUtil = MysqlUtil.getInstance();
 			mysqlUtil.setConnection(context.getConfiguration().get("spring.profiles.active"));
 			StringBuffer sql = new StringBuffer();
-			sql.append(" SELECT a.customer_info_id,a.category_code FROM pfbx_allow_url a WHERE 1 = 1 and a.default_type = 'Y' ORDER BY a.customer_info_id  ");
+			sql.append(" SELECT a.customer_info_id,a.category_code FROM pfbx_allow_url a WHERE 1 = 1 and a.default_type = 'Y' and a.category_code  !='' ORDER BY a.customer_info_id  ");
 			ResultSet resultSet = mysqlUtil.query(sql.toString());
 			while(resultSet.next()){
 				pfbxWebsiteCategory.put(resultSet.getString("customer_info_id"), resultSet.getString("category_code"));
@@ -195,11 +195,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				String webClass = StringUtils.isBlank(pfbxWebsiteCategory.get(pfbxCustomerInfoId)) ? "" : pfbxWebsiteCategory.get(pfbxCustomerInfoId);
 				
 				
+				System.out.println(pfbxCustomerInfoId+">>>>>>>>>>webClass:"+webClass);
 				
-				if(dmpJSon.getAsString("vpv").equals("pv")) {
-					System.out.println("ALEX test vpv:"+dmpJSon);
-					dmpJSon.put("vpv", "0");
-				}
 				
 				//產出bu log csv 
 				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_value"))) {

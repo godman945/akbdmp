@@ -228,6 +228,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static int menu24hLevelPriceMin = 0;
 	private static int menu24hLevelPriceMax = 0;
 	private static boolean priceCodeFlag = false;
+	private static String logDate = "";
 	
 	private String get24hPriceCode(String menu24hLevelName) throws Exception {
 		priceCodeFlag = false;
@@ -332,6 +333,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	}
 	
 	public synchronized void map(LongWritable offset, Text value, Context context) {
+		logDate = "";
 		
 		inputSplit = (InputSplit) context.getInputSplit();
 		logpath = ((FileSplit) inputSplit).getPath().toString();
@@ -409,6 +411,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		dmpDataJson.put("level_3_brand", "");
 		dmpDataJson.put("industry", "");
 		dmpDataJson.put("24h_price_code", "");
+		dmpDataJson.put("source_date", "");
 		
 		values = null;
 		logStr = "";
@@ -437,6 +440,14 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					if (StringUtils.isBlank(values[4]) || !(values[4].contains("http"))) {
 						return;
 					}
+					//前兩個小時log不包含目前需要處理的時間則剔除
+					logDate = values[0].split(" ")[1].split(":")[0];
+					if(!record_hour.equals(logDate)) {
+						return;
+					}
+					dmpDataJson.put("source_date", values[0].split(" ")[0]);
+					dmpDataJson.put("hour", values[0].split(" ")[1].split(":")[0]);
+					
 					dmpDataJson.put("fileName", fileName);
 					dmpDataJson.put("log_date", values[0]);
 					dmpDataJson.put("memid", values[1]);
@@ -510,6 +521,17 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		} else if (logpath.contains("pacl_log")) {
 				try {
 					this.values = this.logStr.split(paclSymbol,-1);
+					
+					
+					
+					//前兩個小時log不包含目前需要處理的時間則剔除
+					logDate = values[0].split(" ")[1].split(":")[0];
+					if(!record_hour.equals(logDate)) {
+						return;
+					}
+					dmpDataJson.put("source_date", values[0].split(" ")[0]);
+					dmpDataJson.put("hour", values[0].split(" ")[1].split(":")[0]);
+					
 					dmpDataJson.put("fileName", fileName);
 					dmpDataJson.put("log_date", values[0]);
 					dmpDataJson.put("memid","");
@@ -577,6 +599,15 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				if (StringUtils.isBlank(values[2])) {
 					return;
 				}
+				
+				//前兩個小時log不包含目前需要處理的時間則剔除
+				logDate = values[0].split(" ")[1].split(":")[0];
+				if(!record_hour.equals(logDate)) {
+					return;
+				}
+				dmpDataJson.put("source_date", values[0].split(" ")[0]);
+				dmpDataJson.put("hour", values[0].split(" ")[1].split(":")[0]);
+				
 				dmpDataJson.put("fileName", fileName);
 				dmpDataJson.put("log_date", values[0]);
 				dmpDataJson.put("uuid", values[2]);
