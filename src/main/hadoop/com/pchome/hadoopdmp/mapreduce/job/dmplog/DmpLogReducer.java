@@ -198,11 +198,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_value"))) {
 					for (int i= 0; i < markLevelList.length; i++) {
 						if(StringUtils.isNotBlank(dmpJSon.getAsString(markLevelList[i]))) {
-//							if(dmpJSon.getAsString("mark_value").equals(dmpJSon.getAsString(markValueList[i]))) {
-//								dmpJSon.put("pv", 1);
-//							}else {
-//								dmpJSon.put("pv", 0);
-//							}
 							markValueMap.put(dmpJSon.getAsString("mark_value"), dmpJSon.getAsString("mark_value"));
 							
 							wiriteToDruid.append("\""+dmpJSon.getAsString("fileName")+"\"");
@@ -270,6 +265,12 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 							
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("hour")).append("\"");
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("source_date")).append("\"");
+							
+							if(dmpJSon.getAsString("uuid").equals("00114f95-cf97-4827-8c12-3d24a8813d4f")) {
+								System.out.println("00114f95-cf97-4827-8c12-3d24a8813d4f>>>>>>>>>debug:"+dmpJSon.getAsString("hour"));
+								System.out.println("00114f95-cf97-4827-8c12-3d24a8813d4f>>>>>>>>>debug:"+dmpJSon.getAsString("source_date"));
+							}
+							
 							
 							context.write(new Text(wiriteToDruid.toString()), null);
 							wiriteToDruid.setLength(0);
