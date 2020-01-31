@@ -194,10 +194,6 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				String pfbxCustomerInfoId = dmpJSon.getAsString("pfbx_customer_info_id");
 				String webClass = StringUtils.isBlank(pfbxWebsiteCategory.get(pfbxCustomerInfoId)) ? "" : pfbxWebsiteCategory.get(pfbxCustomerInfoId);
 				
-				
-				System.out.println(pfbxCustomerInfoId+">>>>>>>>>>webClass:"+webClass);
-				
-				
 				//產出bu log csv 
 				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_value"))) {
 					for (int i= 0; i < markLevelList.length; i++) {
@@ -317,7 +313,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex_source")).append("\"");
 					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age")).append("\"");
 					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age_source")).append("\"");
-					wiriteToDruid.append(",").append("\"").append("audicen_id_default").append("\"");
+					wiriteToDruid.append(",").append("\"").append("").append("\"");
 					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_id")).append("\"");
 					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_x")).append("\"");
 					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_y")).append("\"");
