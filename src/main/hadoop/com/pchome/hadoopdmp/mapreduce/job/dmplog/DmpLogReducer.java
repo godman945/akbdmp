@@ -271,6 +271,10 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 							}
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("industry")).append("\"");
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("24h_price_code")).append("\"");
+							
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("hour")).append("\"");
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("source_date")).append("\"");
+							
 							context.write(new Text(wiriteToDruid.toString()), null);
 							wiriteToDruid.setLength(0);
 							
@@ -340,6 +344,10 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					wiriteToDruid.append(",").append("\"").append("").append("\"");
 					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("industry")).append("\"");
 					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("24h_price_code")).append("\"");
+					
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("hour")).append("\"");
+					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("source_date")).append("\"");
+					
 					context.write(new Text(wiriteToDruid.toString()), null);
 					wiriteToDruid.setLength(0);
 					
