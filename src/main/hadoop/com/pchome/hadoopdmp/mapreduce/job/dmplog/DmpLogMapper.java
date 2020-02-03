@@ -80,7 +80,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static org.json.JSONArray menu24hMappingJsonArray = new org.json.JSONArray();
 	
 	private static int debug_kdcl_count = 0;
-	private static int debug_kdcl_return_count = 0;
+	private static int debug_kdcl_count2 = 0;
 	
 	public void setup(Context context) {
 		System.out.println(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"	+ context.getConfiguration().get("spring.profiles.active"));
@@ -518,9 +518,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					}
 					
 					if(values[13].toUpperCase().equals("CK")) {
-//						debug_kdcl_count = debug_kdcl_count + Integer.parseInt(dmpDataJson.getAsString("ck"));
+						debug_kdcl_count2 = debug_kdcl_count2 + Integer.parseInt(dmpDataJson.getAsString("ck"));
 						debug_kdcl_count = debug_kdcl_count + 1;
-						System.out.println(">>>>>>>>>>>>>>>>@@>debug_kdcl_count:"+debug_kdcl_count);
+						System.out.println(">>>>>>>>>>>>>>>>@@>debug_kdcl_count:"+debug_kdcl_count+">>>>>>>debug_kdcl_count2:"+debug_kdcl_count2);
 					}
 					
 					
