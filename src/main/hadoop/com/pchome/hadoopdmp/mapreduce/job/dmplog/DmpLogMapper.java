@@ -433,26 +433,27 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					// values[13] ck,pv
 					// values[15] ad_class
 					this.values = this.logStr.split(kdclSymbol, -1);
-					if(values[13].equals("ck")) {
-					debug_kdcl_count_1 = debug_kdcl_count_1 + 1;
-						System.out.println("==>>>>>>>>>debug_kdcl_count_1:"+debug_kdcl_count_1);
+					if (values.length < kdclLogLength) {
+						return;
 					}
-					
-//					if (values.length < kdclLogLength) {
-//						return;
-//					}
-//					if ((StringUtils.equals(values[1], "null") || StringUtils.isBlank(values[1]))
-//							&& (StringUtils.equals(values[2], "null") || StringUtils.isBlank(values[2]))) {
-//						
+					if ((StringUtils.equals(values[1], "null") || StringUtils.isBlank(values[1]))
+							&& (StringUtils.equals(values[2], "null") || StringUtils.isBlank(values[2]))) {
+						
 //						if(values[13].equals("ck")) {
 //							debug_kdcl_count_1 = debug_kdcl_count_1 + 1;
 //							System.out.println("==>>>>>>>>>debug_kdcl_count_1:"+debug_kdcl_count_1);
 //							System.out.println("==>>>>>>>>>debug_kdcl_count_1:"+Arrays.asList(this.values));
 //						}
-//						
-//						return;
-//					}
+						return;
+					}
 //					
+					
+					if(values[13].equals("ck")) {
+						debug_kdcl_count_1 = debug_kdcl_count_1 + 1;
+							System.out.println("==>>>>>>>>>debug_kdcl_count_1:"+debug_kdcl_count_1);
+					}
+					
+					
 //					if (StringUtils.isBlank(values[4]) || !(values[4].contains("http"))) {
 //						
 //						if(values[13].equals("ck")) {
