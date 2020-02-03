@@ -433,111 +433,114 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					// values[13] ck,pv
 					// values[15] ad_class
 					this.values = this.logStr.split(kdclSymbol, -1);
-					
-					
-					if (values.length < kdclLogLength) {
-						return;
-					}
-					if ((StringUtils.equals(values[1], "null") || StringUtils.isBlank(values[1]))
-							&& (StringUtils.equals(values[2], "null") || StringUtils.isBlank(values[2]))) {
-						
-						if(values[13].equals("ck")) {
-							debug_kdcl_count_1 = debug_kdcl_count_1 + 1;
-							System.out.println("==>>>>>>>>>debug_kdcl_count_1:"+debug_kdcl_count_1);
-							System.out.println("==>>>>>>>>>debug_kdcl_count_1:"+Arrays.asList(this.values));
-						}
-						
-						return;
+					if(values[13].equals("ck")) {
+					debug_kdcl_count_1 = debug_kdcl_count_1 + 1;
+						System.out.println("==>>>>>>>>>debug_kdcl_count_1:"+debug_kdcl_count_1);
 					}
 					
-					if (StringUtils.isBlank(values[4]) || !(values[4].contains("http"))) {
-						
-						if(values[13].equals("ck")) {
-							debug_kdcl_count_2 = debug_kdcl_count_2 + 1;
-							System.out.println("==>>>>>>>>>debug_kdcl_count_2:"+debug_kdcl_count_2);
-							System.out.println("==>>>>>>>>>debug_kdcl_count_2:"+Arrays.asList(this.values));
-						}
-						
-						return;
-					}
-					
-					//前兩個小時log不包含目前需要處理的時間則剔除
-					logDate = values[0].split(" ")[1].split(":")[0];
-					if(!record_hour.equals(logDate)) {
-						return;
-					}
-					
-					
-					dmpDataJson.put("source_date", values[0].split(" ")[0]);
-					dmpDataJson.put("hour", values[0].split(" ")[1].split(":")[0]);
-					dmpDataJson.put("fileName", fileName);
-					dmpDataJson.put("log_date", values[0]);
-					dmpDataJson.put("memid", values[1]);
-					dmpDataJson.put("uuid", values[2]);
-					if (values[2].contains("xxx-")) {
-						dmpDataJson.put("uuid_flag", "y");
-					} else {
-						dmpDataJson.put("uuid_flag", "n");
-					}
-					dmpDataJson.put("referer", values[4]);
-					try {
-						if (hostNameMap.containsKey(values[4].toString())) {
-							dmpDataJson.put("domain", hostNameMap.get(values[4].toString()));
-						} else {
-							URI uri = new URI(values[4]);
-							String domain = uri.getHost();
-							dmpDataJson.put("domain", domain.startsWith("www.") ? domain.substring(4) : domain);
-							hostNameMap.put(values[4].toString(),domain.startsWith("www.") ? domain.substring(4) : domain);
-						}
-					} catch (Exception e) {
-						System.out.println("kdcl log process domain fail:" + e.getMessage());
-						System.out.println("kdcl log process domain fail json:" + dmpDataJson);
-						return;
-					}
-					
-					
-				
-					
-					dmpDataJson.put("ad_price", values[17]);
-					dmpDataJson.put("log_source", "kdcl_log");
-					dmpDataJson.put("pfd_customer_info_id", values[24]);
-					dmpDataJson.put("pfp_customer_info_id", values[6]);
-					dmpDataJson.put("style_id", values[7]);
-					dmpDataJson.put("action_id", values[21]);
-					dmpDataJson.put("group_id", values[22]);
-					dmpDataJson.put("ad_id", values[11]);
-					dmpDataJson.put("pfbx_customer_info_id", values[25]);
-					dmpDataJson.put("pfbx_position_id", values[26]);
-					dmpDataJson.put("ad_view", values[45]);
-					dmpDataJson.put("vpv", values[46]);
-					dmpDataJson.put("trigger_type", values[13]);
-					if (values[13].toUpperCase().equals("CK")) {
-						dmpDataJson.put("ck", 1);
-						dmpDataJson.put("pv", 0);
-					} else if (values[13].toUpperCase().equals("PV")) {
-						dmpDataJson.put("ck", 0);
-						dmpDataJson.put("pv", 1);
-					}
-					dmpDataJson.put("ad_class", values[15]);
-					dmpDataJson.put("ip", values[3]);
-					dmpDataJson.put("area_info_source", "ip");
-					// 裝置資訊 [device_info_classify] null:user_agent為空
-					dmpDataJson.put("user_agent", values[5].replaceAll("\"", ""));
-					
-					if (values[4].contains("24h.pchome.com.tw")) {
-						String pageCategory = "";
-						if (values[4].equals("https://24h.pchome.com.tw/") || values[4].contains("htm")
-								|| values[4].contains("index") || values[4].contains("?fq=")
-								|| values[4].contains("store/?q=")) {
-							return;
-						} else if (values[4].contains("?")) {
-							pageCategory = values[4].split("/")[values[4].split("/").length - 1];
-							pageCategory = pageCategory.substring(0, pageCategory.indexOf("?"));
-						} else {
-							pageCategory = values[4].split("/")[values[4].split("/").length - 1];
-						}
-						dmpDataJson.put("op1", pageCategory);
-					}
+//					if (values.length < kdclLogLength) {
+//						return;
+//					}
+//					if ((StringUtils.equals(values[1], "null") || StringUtils.isBlank(values[1]))
+//							&& (StringUtils.equals(values[2], "null") || StringUtils.isBlank(values[2]))) {
+//						
+//						if(values[13].equals("ck")) {
+//							debug_kdcl_count_1 = debug_kdcl_count_1 + 1;
+//							System.out.println("==>>>>>>>>>debug_kdcl_count_1:"+debug_kdcl_count_1);
+//							System.out.println("==>>>>>>>>>debug_kdcl_count_1:"+Arrays.asList(this.values));
+//						}
+//						
+//						return;
+//					}
+//					
+//					if (StringUtils.isBlank(values[4]) || !(values[4].contains("http"))) {
+//						
+//						if(values[13].equals("ck")) {
+//							debug_kdcl_count_2 = debug_kdcl_count_2 + 1;
+//							System.out.println("==>>>>>>>>>debug_kdcl_count_2:"+debug_kdcl_count_2);
+//							System.out.println("==>>>>>>>>>debug_kdcl_count_2:"+Arrays.asList(this.values));
+//						}
+//						
+//						return;
+//					}
+//					
+//					//前兩個小時log不包含目前需要處理的時間則剔除
+//					logDate = values[0].split(" ")[1].split(":")[0];
+//					if(!record_hour.equals(logDate)) {
+//						return;
+//					}
+//					
+//					
+//					dmpDataJson.put("source_date", values[0].split(" ")[0]);
+//					dmpDataJson.put("hour", values[0].split(" ")[1].split(":")[0]);
+//					dmpDataJson.put("fileName", fileName);
+//					dmpDataJson.put("log_date", values[0]);
+//					dmpDataJson.put("memid", values[1]);
+//					dmpDataJson.put("uuid", values[2]);
+//					if (values[2].contains("xxx-")) {
+//						dmpDataJson.put("uuid_flag", "y");
+//					} else {
+//						dmpDataJson.put("uuid_flag", "n");
+//					}
+//					dmpDataJson.put("referer", values[4]);
+//					try {
+//						if (hostNameMap.containsKey(values[4].toString())) {
+//							dmpDataJson.put("domain", hostNameMap.get(values[4].toString()));
+//						} else {
+//							URI uri = new URI(values[4]);
+//							String domain = uri.getHost();
+//							dmpDataJson.put("domain", domain.startsWith("www.") ? domain.substring(4) : domain);
+//							hostNameMap.put(values[4].toString(),domain.startsWith("www.") ? domain.substring(4) : domain);
+//						}
+//					} catch (Exception e) {
+//						System.out.println("kdcl log process domain fail:" + e.getMessage());
+//						System.out.println("kdcl log process domain fail json:" + dmpDataJson);
+//						return;
+//					}
+//					
+//					
+//				
+//					
+//					dmpDataJson.put("ad_price", values[17]);
+//					dmpDataJson.put("log_source", "kdcl_log");
+//					dmpDataJson.put("pfd_customer_info_id", values[24]);
+//					dmpDataJson.put("pfp_customer_info_id", values[6]);
+//					dmpDataJson.put("style_id", values[7]);
+//					dmpDataJson.put("action_id", values[21]);
+//					dmpDataJson.put("group_id", values[22]);
+//					dmpDataJson.put("ad_id", values[11]);
+//					dmpDataJson.put("pfbx_customer_info_id", values[25]);
+//					dmpDataJson.put("pfbx_position_id", values[26]);
+//					dmpDataJson.put("ad_view", values[45]);
+//					dmpDataJson.put("vpv", values[46]);
+//					dmpDataJson.put("trigger_type", values[13]);
+//					if (values[13].toUpperCase().equals("CK")) {
+//						dmpDataJson.put("ck", 1);
+//						dmpDataJson.put("pv", 0);
+//					} else if (values[13].toUpperCase().equals("PV")) {
+//						dmpDataJson.put("ck", 0);
+//						dmpDataJson.put("pv", 1);
+//					}
+//					dmpDataJson.put("ad_class", values[15]);
+//					dmpDataJson.put("ip", values[3]);
+//					dmpDataJson.put("area_info_source", "ip");
+//					// 裝置資訊 [device_info_classify] null:user_agent為空
+//					dmpDataJson.put("user_agent", values[5].replaceAll("\"", ""));
+//					
+//					if (values[4].contains("24h.pchome.com.tw")) {
+//						String pageCategory = "";
+//						if (values[4].equals("https://24h.pchome.com.tw/") || values[4].contains("htm")
+//								|| values[4].contains("index") || values[4].contains("?fq=")
+//								|| values[4].contains("store/?q=")) {
+//							return;
+//						} else if (values[4].contains("?")) {
+//							pageCategory = values[4].split("/")[values[4].split("/").length - 1];
+//							pageCategory = pageCategory.substring(0, pageCategory.indexOf("?"));
+//						} else {
+//							pageCategory = values[4].split("/")[values[4].split("/").length - 1];
+//						}
+//						dmpDataJson.put("op1", pageCategory);
+//					}
 					
 					
 					
