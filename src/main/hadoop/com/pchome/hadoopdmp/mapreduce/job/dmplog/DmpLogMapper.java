@@ -80,6 +80,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static org.json.JSONArray menu24hMappingJsonArray = new org.json.JSONArray();
 	
 	private static int debug_kdcl_count = 0;
+	private static int debug_kdcl_return_count = 0;
 	
 	public void setup(Context context) {
 		System.out.println(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"	+ context.getConfiguration().get("spring.profiles.active"));
@@ -442,6 +443,18 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						return;
 					}
 					
+					//前兩個小時log不包含目前需要處理的時間則剔除
+					logDate = values[0].split(" ")[1].split(":")[0];
+					if(!record_hour.equals(logDate)) {
+						debug_kdcl_return_count = debug_kdcl_return_count +1;
+						
+						if(debug_kdcl_return_count%10000==0) {
+							System.out.println(">>>>>>>>>>>return data :" + record_hour + "[VS]" + logDate);
+						}
+						
+						return;
+					}
+					
 					
 					if(values[13].toUpperCase().equals("CK")) {
 //						debug_kdcl_count = debug_kdcl_count + Integer.parseInt(dmpDataJson.getAsString("ck"));
@@ -449,11 +462,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						System.out.println(">>>>>>>>>>>>>>>>>debug_kdcl_count:"+debug_kdcl_count);
 					}
 					
-					//前兩個小時log不包含目前需要處理的時間則剔除
-					logDate = values[0].split(" ")[1].split(":")[0];
-					if(!record_hour.equals(logDate)) {
-						return;
-					}
 					dmpDataJson.put("source_date", values[0].split(" ")[0]);
 					dmpDataJson.put("hour", values[0].split(" ")[1].split(":")[0]);
 					dmpDataJson.put("fileName", fileName);
