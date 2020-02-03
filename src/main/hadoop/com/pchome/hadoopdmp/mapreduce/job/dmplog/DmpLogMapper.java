@@ -449,6 +449,12 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						return;
 					}
 					
+					
+					if(values[13].equals("ck")) {
+						debug_kdcl_count_ck = debug_kdcl_count_ck + 1;
+						System.out.println("==>>>>>>>>>debug_kdcl_count_ck:"+debug_kdcl_count_ck);
+					}
+					
 					dmpDataJson.put("source_date", values[0].split(" ")[0]);
 					dmpDataJson.put("hour", values[0].split(" ")[1].split(":")[0]);
 					dmpDataJson.put("fileName", fileName);
@@ -477,10 +483,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					}
 					
 					
-					if(values[13].equals("ck")) {
-						debug_kdcl_count_ck = debug_kdcl_count_ck + 1;
-						System.out.println("==>>>>>>>>>debug_kdcl_count_ck:"+debug_kdcl_count_ck);
-					}
+				
 					
 					dmpDataJson.put("ad_price", values[17]);
 					dmpDataJson.put("log_source", "kdcl_log");
