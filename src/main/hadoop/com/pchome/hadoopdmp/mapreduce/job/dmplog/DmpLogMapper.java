@@ -430,12 +430,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					// values[13] ck,pv
 					// values[15] ad_class
 					this.values = this.logStr.split(kdclSymbol, -1);
-					dmpDataJson.put("log_source", "kdcl_log");
-					if(dmpDataJson.getAsString("log_source").equals("kdcl_log") && values[13].toUpperCase().equals("CK")) {
-						debug_kdcl_count = debug_kdcl_count + Integer.parseInt(dmpDataJson.getAsString("ck"));
-						System.out.println(">>>>>>>>>>>>>>>>>debug_kdcl_count:"+debug_kdcl_count);
-					}
-					
 					
 					if (values.length < kdclLogLength) {
 						return;
@@ -447,6 +441,14 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					if (StringUtils.isBlank(values[4]) || !(values[4].contains("http"))) {
 						return;
 					}
+					
+					
+					if(values[13].toUpperCase().equals("CK")) {
+//						debug_kdcl_count = debug_kdcl_count + Integer.parseInt(dmpDataJson.getAsString("ck"));
+						debug_kdcl_count = debug_kdcl_count + 1;
+						System.out.println(">>>>>>>>>>>>>>>>>debug_kdcl_count:"+debug_kdcl_count);
+					}
+					
 					//前兩個小時log不包含目前需要處理的時間則剔除
 					logDate = values[0].split(" ")[1].split(":")[0];
 					if(!record_hour.equals(logDate)) {
@@ -479,6 +481,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						return;
 					}
 					dmpDataJson.put("ad_price", values[17]);
+					dmpDataJson.put("log_source", "kdcl_log");
 					dmpDataJson.put("pfd_customer_info_id", values[24]);
 					dmpDataJson.put("pfp_customer_info_id", values[6]);
 					dmpDataJson.put("style_id", values[7]);
