@@ -79,7 +79,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static net.minidev.json.JSONObject dmpDataJson = new net.minidev.json.JSONObject();
 	private static org.json.JSONArray menu24hMappingJsonArray = new org.json.JSONArray();
 	
-	
+	private static int debug_ad_click_count = 0;
 	
 	public void setup(Context context) {
 		System.out.println(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"	+ context.getConfiguration().get("spring.profiles.active"));
@@ -430,6 +430,15 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					// values[13] ck,pv
 					// values[15] ad_class
 					this.values = this.logStr.split(kdclSymbol, -1);
+					
+					
+					
+					
+					if(values[13].toUpperCase().equals("CK")) {
+						debug_ad_click_count = debug_ad_click_count + 1;
+						System.out.println(">>>>>debug_ad_click_count:"+debug_ad_click_count);
+					}
+					
 					if (values.length < kdclLogLength) {
 						return;
 					}
