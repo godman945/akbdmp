@@ -441,7 +441,14 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 							&& (StringUtils.equals(values[2], "null") || StringUtils.isBlank(values[2]))) {
 						return;
 					}
-					if (StringUtils.isBlank(values[4])) {
+					
+					
+					if(values[13].equals("ck")) {
+						debug_kdcl_count_ck = debug_kdcl_count_ck + 1;
+						System.out.println("==>>>>>>>>>debug_kdcl_count_ck:"+debug_kdcl_count_ck);
+					}
+					
+					if (StringUtils.isBlank(values[4]) || !(values[4].contains("http"))) {
 						return;
 					}
 					
@@ -451,11 +458,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						return;
 					}
 					
-					
-					if(values[13].equals("ck")) {
-						debug_kdcl_count_ck = debug_kdcl_count_ck + 1;
-						System.out.println("==>>>>>>>>>debug_kdcl_count_ck:"+debug_kdcl_count_ck);
-					}
 					
 					dmpDataJson.put("source_date", values[0].split(" ")[0]);
 					dmpDataJson.put("hour", values[0].split(" ")[1].split(":")[0]);
@@ -468,12 +470,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					} else {
 						dmpDataJson.put("uuid_flag", "n");
 					}
-					
-					
-					if (!(values[4].contains("http"))) {
-						dmpDataJson.put("referer", "https://"+values[4]);
-					}
-					
+					dmpDataJson.put("referer", values[4]);
 					try {
 						if (hostNameMap.containsKey(values[4].toString())) {
 							dmpDataJson.put("domain", hostNameMap.get(values[4].toString()));
