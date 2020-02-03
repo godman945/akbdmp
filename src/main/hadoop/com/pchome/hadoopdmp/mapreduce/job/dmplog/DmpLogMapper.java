@@ -446,20 +446,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					//前兩個小時log不包含目前需要處理的時間則剔除
 					logDate = values[0].split(" ")[1].split(":")[0];
 					if(!record_hour.equals(logDate)) {
-						debug_kdcl_return_count = debug_kdcl_return_count +1;
-						
-						if(debug_kdcl_return_count%10000==0) {
-							System.out.println(">>>>>>>>>>>return data :" + record_hour + "[VS]" + logDate);
-						}
-						
 						return;
-					}
-					
-					
-					if(values[13].toUpperCase().equals("CK")) {
-//						debug_kdcl_count = debug_kdcl_count + Integer.parseInt(dmpDataJson.getAsString("ck"));
-						debug_kdcl_count = debug_kdcl_count + 1;
-						System.out.println(">>>>>>>>>>>>>>>>>debug_kdcl_count:"+debug_kdcl_count);
 					}
 					
 					dmpDataJson.put("source_date", values[0].split(" ")[0]);
@@ -513,6 +500,14 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("area_info_source", "ip");
 					// 裝置資訊 [device_info_classify] null:user_agent為空
 					dmpDataJson.put("user_agent", values[5].replaceAll("\"", ""));
+					
+					
+					if(values[13].toUpperCase().equals("CK")) {
+//						debug_kdcl_count = debug_kdcl_count + Integer.parseInt(dmpDataJson.getAsString("ck"));
+						debug_kdcl_count = debug_kdcl_count + 1;
+						System.out.println(">>>>>>>>>>>>>>>>>debug_kdcl_count:"+debug_kdcl_count);
+					}
+					
 					if (values[4].contains("24h.pchome.com.tw")) {
 						String pageCategory = "";
 						if (values[4].equals("https://24h.pchome.com.tw/") || values[4].contains("htm")
