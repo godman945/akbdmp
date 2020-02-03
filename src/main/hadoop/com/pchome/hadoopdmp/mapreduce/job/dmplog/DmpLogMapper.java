@@ -517,7 +517,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("op1", pageCategory);
 					}
 					
-					if(values[13].toUpperCase().equals("CK")) {
+					if(dmpDataJson.getAsString("trigger_type").equals("ck")) {
 						debug_kdcl_count2 = debug_kdcl_count2 + Integer.parseInt(dmpDataJson.getAsString("ck"));
 						debug_kdcl_count = debug_kdcl_count + 1;
 						System.out.println(">>>>>>>>>>>>>>>>@@>debug_kdcl_count:"+debug_kdcl_count+">>>>>>>debug_kdcl_count2:"+debug_kdcl_count2);
