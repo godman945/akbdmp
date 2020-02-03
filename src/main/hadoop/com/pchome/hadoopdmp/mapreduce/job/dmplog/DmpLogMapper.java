@@ -520,13 +520,12 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					if(dmpDataJson.getAsString("trigger_type").equals("ck")) {
 						debug_kdcl_count_ck = debug_kdcl_count_ck + 1;
 						System.out.println("==>>>>>>>>>debug_kdcl_count_ck:"+debug_kdcl_count_ck);
-//						System.out.println(">>>>>>>>>>>>>>>>@@>debug_kdcl_count:"+debug_kdcl_count+">>>>>>>debug_kdcl_count2:"+debug_kdcl_count2);
 					}
-					if(dmpDataJson.getAsString("trigger_type").equals("pv")) {
-						debug_kdcl_count_pv = debug_kdcl_count_pv + 1;
-						System.out.println("==>>>>>>>>>debug_kdcl_count:"+debug_kdcl_count_pv);
-//						System.out.println(">>>>>>>>>>>>>>>>@@>debug_kdcl_count:"+debug_kdcl_count+">>>>>>>debug_kdcl_count2:"+debug_kdcl_count2);
-					}
+//					if(dmpDataJson.getAsString("trigger_type").equals("pv")) {
+//						debug_kdcl_count_pv = debug_kdcl_count_pv + 1;
+//						System.out.println("==>>>>>>>>>debug_kdcl_count:"+debug_kdcl_count_pv);
+////						System.out.println(">>>>>>>>>>>>>>>>@@>debug_kdcl_count:"+debug_kdcl_count+">>>>>>>debug_kdcl_count2:"+debug_kdcl_count2);
+//					}
 					
 //					if(dmpDataJson.getAsString("log_source").equals("kdcl_log")) {
 //						debug_kdcl_count = debug_kdcl_count + Integer.parseInt(dmpDataJson.getAsString("ck"));
@@ -698,77 +697,77 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				return;
 			}
 		}
-		// 開始DMP資訊
-		// 1.地區處理元件(ip 轉國家、城市)
-		try {
-			geoIpComponent.ipTransformGEO(dmpDataJson);
-		} catch (Exception e) {
-			System.out.println(">>>>process source area fail:"+dmpDataJson.getAsString("ip")+">>>>" + e);
-		}
-		// 2.裝置處理元件(UserAgent轉成裝置資訊)
-		try {
-			deviceComponent.parseUserAgentToDevice(dmpDataJson);
-		} catch (Exception e) {
-			System.out.println(">>>>process source device fail:" + e.getMessage());
-			System.out.println(">>>>>>logStr:" + logStr);
-			System.out.println(">>>>>>fileName:" + fileName);
-			return;
-		}
-		// 3.分類處理元件(分析click、24H、Ruten、campaign分類)
-		try {
-			if ((dmpDataJson.getAsString("trigger_type").equals("ck"))) {
-				// kdcl ad_click的adclass 或 campaign
-				// log的adclass //&&
-				// StringUtils.isNotBlank(dmpLogBeanResult.getAdClass())
-				
-				
-				
-				try {
-					DmpLogMapper.aCategoryLogDataClick.processCategory(dmpDataJson, null);
-				} catch (Exception e) {
-					System.out.println(">>>>process source ck_campaign fail:" + e.getMessage());
-					System.out.println(">>>>>>logStr:" + logStr);
-					System.out.println(">>>>>>fileName:" + fileName);
-					return;
-				}
-			} else if (dmpDataJson.getAsString("trigger_type").equals("pv")
-					&& StringUtils.isNotBlank(dmpDataJson.getAsString("referer"))
-					&& dmpDataJson.getAsString("referer").contains("ruten")) { // 露天
-				try {
-					DmpLogMapper.aCategoryLogDataRetun.processCategory(dmpDataJson, dBCollection_class_url);
-				} catch (Exception e) {
-					System.out.println(">>>>process source pv_ruten fail:" + e.getMessage());
-					System.out.println(">>>>>>logStr:" + logStr);
-					System.out.println(">>>>>>fileName:" + fileName);
-					return;
-				}
-			} else if (dmpDataJson.getAsString("trigger_type").equals("pv")
-					&& StringUtils.isNotBlank(dmpDataJson.getAsString("referer"))
-					&& dmpDataJson.getAsString("referer").contains("24h")) { // 24h
-				try {
-					DmpLogMapper.aCategoryLogData24H.processCategory(dmpDataJson, dBCollection_class_url);
-				} catch (Exception e) {
-					System.out.println(">>>>process source pv_24h fail:" + e.getMessage());
-					System.out.println(">>>>>>logStr:" + logStr);
-					System.out.println(">>>>>>dmpDataJson:" + dmpDataJson);
-					System.out.println(">>>>>>fileName:" + fileName);
-					return;
-				}
-			}
-		} catch (Exception e) {
-			System.out.println(">>>>process source class type fail:" + e.getMessage());
-			System.out.println(">>>>>>logStr:" + logStr);
-			System.out.println(">>>>>>dmpDataJson:" + dmpDataJson);
-			System.out.println(">>>>>>fileName:" + fileName);
-			return;
-		}
-//		寫入reduce
-		try {
-			
-			context.write(new Text(dmpDataJson.getAsString("uuid")+"<PCHOME>"+dmpDataJson.getAsString("log_source")), new Text(dmpDataJson.toString()));
-		} catch (Exception e) {
-			log.error(">>>>write to reduce fail:" + e.getMessage());
-		}
+//		// 開始DMP資訊
+//		// 1.地區處理元件(ip 轉國家、城市)
+//		try {
+//			geoIpComponent.ipTransformGEO(dmpDataJson);
+//		} catch (Exception e) {
+//			System.out.println(">>>>process source area fail:"+dmpDataJson.getAsString("ip")+">>>>" + e);
+//		}
+//		// 2.裝置處理元件(UserAgent轉成裝置資訊)
+//		try {
+//			deviceComponent.parseUserAgentToDevice(dmpDataJson);
+//		} catch (Exception e) {
+//			System.out.println(">>>>process source device fail:" + e.getMessage());
+//			System.out.println(">>>>>>logStr:" + logStr);
+//			System.out.println(">>>>>>fileName:" + fileName);
+//			return;
+//		}
+//		// 3.分類處理元件(分析click、24H、Ruten、campaign分類)
+//		try {
+//			if ((dmpDataJson.getAsString("trigger_type").equals("ck"))) {
+//				// kdcl ad_click的adclass 或 campaign
+//				// log的adclass //&&
+//				// StringUtils.isNotBlank(dmpLogBeanResult.getAdClass())
+//				
+//				
+//				
+//				try {
+//					DmpLogMapper.aCategoryLogDataClick.processCategory(dmpDataJson, null);
+//				} catch (Exception e) {
+//					System.out.println(">>>>process source ck_campaign fail:" + e.getMessage());
+//					System.out.println(">>>>>>logStr:" + logStr);
+//					System.out.println(">>>>>>fileName:" + fileName);
+//					return;
+//				}
+//			} else if (dmpDataJson.getAsString("trigger_type").equals("pv")
+//					&& StringUtils.isNotBlank(dmpDataJson.getAsString("referer"))
+//					&& dmpDataJson.getAsString("referer").contains("ruten")) { // 露天
+//				try {
+//					DmpLogMapper.aCategoryLogDataRetun.processCategory(dmpDataJson, dBCollection_class_url);
+//				} catch (Exception e) {
+//					System.out.println(">>>>process source pv_ruten fail:" + e.getMessage());
+//					System.out.println(">>>>>>logStr:" + logStr);
+//					System.out.println(">>>>>>fileName:" + fileName);
+//					return;
+//				}
+//			} else if (dmpDataJson.getAsString("trigger_type").equals("pv")
+//					&& StringUtils.isNotBlank(dmpDataJson.getAsString("referer"))
+//					&& dmpDataJson.getAsString("referer").contains("24h")) { // 24h
+//				try {
+//					DmpLogMapper.aCategoryLogData24H.processCategory(dmpDataJson, dBCollection_class_url);
+//				} catch (Exception e) {
+//					System.out.println(">>>>process source pv_24h fail:" + e.getMessage());
+//					System.out.println(">>>>>>logStr:" + logStr);
+//					System.out.println(">>>>>>dmpDataJson:" + dmpDataJson);
+//					System.out.println(">>>>>>fileName:" + fileName);
+//					return;
+//				}
+//			}
+//		} catch (Exception e) {
+//			System.out.println(">>>>process source class type fail:" + e.getMessage());
+//			System.out.println(">>>>>>logStr:" + logStr);
+//			System.out.println(">>>>>>dmpDataJson:" + dmpDataJson);
+//			System.out.println(">>>>>>fileName:" + fileName);
+//			return;
+//		}
+////		寫入reduce
+//		try {
+//			
+//			context.write(new Text(dmpDataJson.getAsString("uuid")+"<PCHOME>"+dmpDataJson.getAsString("log_source")), new Text(dmpDataJson.toString()));
+//		} catch (Exception e) {
+//			log.error(">>>>write to reduce fail:" + e.getMessage());
+//		}
 	}
 
 	/*
