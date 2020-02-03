@@ -79,8 +79,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static net.minidev.json.JSONObject dmpDataJson = new net.minidev.json.JSONObject();
 	private static org.json.JSONArray menu24hMappingJsonArray = new org.json.JSONArray();
 	
-	private static int debug_kdcl_count_ck = 0;
-	private static int debug_kdcl_count_pv = 0;
+	private static int debug_kdcl_count_1 = 0;
+	private static int debug_kdcl_count_2 = 0;
+	private static int debug_kdcl_count_3 = 0;
 	
 	public void setup(Context context) {
 		System.out.println(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"	+ context.getConfiguration().get("spring.profiles.active"));
@@ -433,22 +434,27 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					this.values = this.logStr.split(kdclSymbol, -1);
 					
 					
-					
 					if (values.length < kdclLogLength) {
 						return;
 					}
 					if ((StringUtils.equals(values[1], "null") || StringUtils.isBlank(values[1]))
 							&& (StringUtils.equals(values[2], "null") || StringUtils.isBlank(values[2]))) {
+						
+						if(values[13].equals("ck")) {
+							debug_kdcl_count_1 = debug_kdcl_count_1 + 1;
+							System.out.println("==>>>>>>>>>debug_kdcl_count_1:"+debug_kdcl_count_1);
+						}
+						
 						return;
 					}
 					
-					
-					if(values[13].equals("ck")) {
-						debug_kdcl_count_ck = debug_kdcl_count_ck + 1;
-						System.out.println("==>>>>>>>>>debug_kdcl_count_ck:"+debug_kdcl_count_ck);
-					}
-					
 					if (StringUtils.isBlank(values[4]) || !(values[4].contains("http"))) {
+						
+						if(values[13].equals("ck")) {
+							debug_kdcl_count_2 = debug_kdcl_count_2 + 1;
+							System.out.println("==>>>>>>>>>debug_kdcl_count_2:"+debug_kdcl_count_2);
+						}
+						
 						return;
 					}
 					
