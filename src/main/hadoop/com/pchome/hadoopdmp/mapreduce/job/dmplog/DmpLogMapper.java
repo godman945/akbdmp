@@ -432,12 +432,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					// values[15] ad_class
 					this.values = this.logStr.split(kdclSymbol, -1);
 					
-					if(values[13].equals("ck")) {
-						debug_kdcl_count_ck = debug_kdcl_count_ck + 1;
-						System.out.println("==>>>>>>>>>debug_kdcl_count_ck:"+debug_kdcl_count_ck);
-					}
-					
-					
 					if (values.length < kdclLogLength) {
 						return;
 					}
@@ -521,6 +515,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 							pageCategory = values[4].split("/")[values[4].split("/").length - 1];
 						}
 						dmpDataJson.put("op1", pageCategory);
+					}
+					
+					if(values[13].equals("ck")) {
+						debug_kdcl_count_ck = debug_kdcl_count_ck + 1;
+						System.out.println("==>>>>>>>>>debug_kdcl_count_ck:"+debug_kdcl_count_ck);
 					}
 					
 					
