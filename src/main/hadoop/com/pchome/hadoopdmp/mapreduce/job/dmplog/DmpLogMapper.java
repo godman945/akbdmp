@@ -431,6 +431,12 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					// values[15] ad_class
 					this.values = this.logStr.split(kdclSymbol, -1);
 					
+					if(dmpDataJson.getAsString("log_source").equals("kdcl_log") && values[13].toUpperCase().equals("CK")) {
+						debug_kdcl_count = debug_kdcl_count + Integer.parseInt(dmpDataJson.getAsString("ck"));
+						System.out.println(">>>>>>>>>>>>>>>>>debug_kdcl_count:"+debug_kdcl_count);
+					}
+					
+					
 					if (values.length < kdclLogLength) {
 						return;
 					}
