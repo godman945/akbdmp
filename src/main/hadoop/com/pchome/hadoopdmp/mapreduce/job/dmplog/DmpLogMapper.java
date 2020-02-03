@@ -79,8 +79,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static net.minidev.json.JSONObject dmpDataJson = new net.minidev.json.JSONObject();
 	private static org.json.JSONArray menu24hMappingJsonArray = new org.json.JSONArray();
 	
-	private static int debug_ad_click_count = 0;
-	private static int debug_exclude_count = 0;
+	private static int debug_kdcl_count = 0;
 	
 	public void setup(Context context) {
 		System.out.println(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"	+ context.getConfiguration().get("spring.profiles.active"));
@@ -504,13 +503,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						if (values[4].equals("https://24h.pchome.com.tw/") || values[4].contains("htm")
 								|| values[4].contains("index") || values[4].contains("?fq=")
 								|| values[4].contains("store/?q=")) {
-							
-							
-							if (values[13].toUpperCase().equals("CK")) {
-								debug_exclude_count = debug_exclude_count +1;
-								System.out.println(">>>>>>>>>>>debug_exclude_count:"+debug_exclude_count);
-							}
-							
 							return;
 						} else if (values[4].contains("?")) {
 							pageCategory = values[4].split("/")[values[4].split("/").length - 1];
@@ -690,7 +682,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		try {
 			geoIpComponent.ipTransformGEO(dmpDataJson);
 		} catch (Exception e) {
-//			System.out.println(">>>>process source area fail:"+dmpDataJson.getAsString("ip")+">>>>" + e.getMessage());
+			System.out.println(">>>>process source area fail:"+dmpDataJson.getAsString("ip")+">>>>" + e);
 		}
 		// 2.裝置處理元件(UserAgent轉成裝置資訊)
 		try {
@@ -748,6 +740,18 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		}
 //		寫入reduce
 		try {
+			
+			
+			if (dmpDataJson.getAsString("log_source").equals("kdcl_log")) {
+				debug_kdcl_count = debug_kdcl_count + Integer.parseInt(dmpDataJson.getAsString("ck"));
+				System.out.println(">>>>>>>>>>>debug_kdcl_count:"+debug_kdcl_count);
+			}
+			
+			
+			
+			
+			
+			
 			context.write(new Text(dmpDataJson.getAsString("uuid")+"<PCHOME>"+dmpDataJson.getAsString("log_source")), new Text(dmpDataJson.toString()));
 		} catch (Exception e) {
 			log.error(">>>>write to reduce fail:" + e.getMessage());
