@@ -502,12 +502,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("user_agent", values[5].replaceAll("\"", ""));
 					
 					
-					if(values[13].toUpperCase().equals("CK")) {
-//						debug_kdcl_count = debug_kdcl_count + Integer.parseInt(dmpDataJson.getAsString("ck"));
-						debug_kdcl_count = debug_kdcl_count + 1;
-						System.out.println(">>>>>>>>>>>>>>>>>debug_kdcl_count:"+debug_kdcl_count);
-					}
-					
 					if (values[4].contains("24h.pchome.com.tw")) {
 						String pageCategory = "";
 						if (values[4].equals("https://24h.pchome.com.tw/") || values[4].contains("htm")
@@ -522,6 +516,13 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						}
 						dmpDataJson.put("op1", pageCategory);
 					}
+					
+					if(values[13].toUpperCase().equals("CK")) {
+//						debug_kdcl_count = debug_kdcl_count + Integer.parseInt(dmpDataJson.getAsString("ck"));
+						debug_kdcl_count = debug_kdcl_count + 1;
+						System.out.println(">>>>>>>>>>>>>>>>@@>debug_kdcl_count:"+debug_kdcl_count);
+					}
+					
 					
 					if(dmpDataJson.getAsString("log_source").equals("kdcl_log")) {
 						debug_kdcl_count = debug_kdcl_count + Integer.parseInt(dmpDataJson.getAsString("ck"));
