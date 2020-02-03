@@ -444,9 +444,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					if (StringUtils.isBlank(values[4])) {
 						return;
 					}
-//					if (StringUtils.isBlank(values[4]) || !(values[4].contains("http"))) {
-//						return;
-//					}
 					
 					//前兩個小時log不包含目前需要處理的時間則剔除
 					logDate = values[0].split(" ")[1].split(":")[0];
@@ -471,7 +468,12 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					} else {
 						dmpDataJson.put("uuid_flag", "n");
 					}
-					dmpDataJson.put("referer", values[4]);
+					
+					
+					if (!(values[4].contains("http"))) {
+						dmpDataJson.put("referer", "https://"+values[4]);
+					}
+					
 					try {
 						if (hostNameMap.containsKey(values[4].toString())) {
 							dmpDataJson.put("domain", hostNameMap.get(values[4].toString()));
