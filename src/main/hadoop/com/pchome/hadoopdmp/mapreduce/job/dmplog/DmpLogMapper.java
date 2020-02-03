@@ -695,10 +695,17 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		}
 		// 3.分類處理元件(分析click、24H、Ruten、campaign分類)
 		try {
-			if ((dmpDataJson.getAsString("trigger_type").equals("ck") || dmpDataJson.getAsString("log_source").equals("campaign"))) {
+			if ((dmpDataJson.getAsString("trigger_type").equals("ck"))) {
 				// kdcl ad_click的adclass 或 campaign
 				// log的adclass //&&
 				// StringUtils.isNotBlank(dmpLogBeanResult.getAdClass())
+				
+				if(dmpDataJson.getAsString("log_source").equals("kdcl_log")) {
+					debug_kdcl_count = debug_kdcl_count + Integer.parseInt(dmpDataJson.getAsString("ck"));
+					System.out.println(">>>>>>>>>>>>>>>>>debug_kdcl_count:"+debug_kdcl_count);
+				}
+				
+				
 				try {
 					DmpLogMapper.aCategoryLogDataClick.processCategory(dmpDataJson, null);
 				} catch (Exception e) {
@@ -740,17 +747,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		}
 //		寫入reduce
 		try {
-			
-			
-			if (dmpDataJson.getAsString("log_source").equals("kdcl_log")) {
-				debug_kdcl_count = debug_kdcl_count + Integer.parseInt(dmpDataJson.getAsString("ck"));
-				System.out.println(">>>>>>>>>>>debug_kdcl_count:"+debug_kdcl_count);
-			}
-			
-			
-			
-			
-			
 			
 			context.write(new Text(dmpDataJson.getAsString("uuid")+"<PCHOME>"+dmpDataJson.getAsString("log_source")), new Text(dmpDataJson.toString()));
 		} catch (Exception e) {
