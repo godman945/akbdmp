@@ -441,14 +441,16 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 							&& (StringUtils.equals(values[2], "null") || StringUtils.isBlank(values[2]))) {
 						return;
 					}
-					if (StringUtils.isBlank(values[4]) || !(values[4].contains("http"))) {
+					if (StringUtils.isBlank(values[4])) {
 						return;
 					}
+//					if (StringUtils.isBlank(values[4]) || !(values[4].contains("http"))) {
+//						return;
+//					}
 					
 					//前兩個小時log不包含目前需要處理的時間則剔除
 					logDate = values[0].split(" ")[1].split(":")[0];
 					if(!record_hour.equals(logDate)) {
-						System.out.println(record_hour+":"+logDate);
 						return;
 					}
 					
