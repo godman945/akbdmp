@@ -79,8 +79,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static net.minidev.json.JSONObject dmpDataJson = new net.minidev.json.JSONObject();
 	private static org.json.JSONArray menu24hMappingJsonArray = new org.json.JSONArray();
 	
-	private static int debug_kdcl_count = 0;
-	private static int debug_kdcl_count2 = 0;
+	private static int debug_kdcl_count_ck = 0;
+	private static int debug_kdcl_count_pv = 0;
 	
 	public void setup(Context context) {
 		System.out.println(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"	+ context.getConfiguration().get("spring.profiles.active"));
@@ -518,11 +518,15 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					}
 					
 					if(dmpDataJson.getAsString("trigger_type").equals("ck")) {
-						debug_kdcl_count = debug_kdcl_count + 1;
-						System.out.println("==>>>>>>>>>debug_kdcl_count:"+debug_kdcl_count);
+						debug_kdcl_count_ck = debug_kdcl_count_ck + 1;
+						System.out.println("==>>>>>>>>>debug_kdcl_count_ck:"+debug_kdcl_count_ck);
 //						System.out.println(">>>>>>>>>>>>>>>>@@>debug_kdcl_count:"+debug_kdcl_count+">>>>>>>debug_kdcl_count2:"+debug_kdcl_count2);
 					}
-					
+					if(dmpDataJson.getAsString("trigger_type").equals("pv")) {
+						debug_kdcl_count_pv = debug_kdcl_count_pv + 1;
+						System.out.println("==>>>>>>>>>debug_kdcl_count:"+debug_kdcl_count_pv);
+//						System.out.println(">>>>>>>>>>>>>>>>@@>debug_kdcl_count:"+debug_kdcl_count+">>>>>>>debug_kdcl_count2:"+debug_kdcl_count2);
+					}
 					
 //					if(dmpDataJson.getAsString("log_source").equals("kdcl_log")) {
 //						debug_kdcl_count = debug_kdcl_count + Integer.parseInt(dmpDataJson.getAsString("ck"));
