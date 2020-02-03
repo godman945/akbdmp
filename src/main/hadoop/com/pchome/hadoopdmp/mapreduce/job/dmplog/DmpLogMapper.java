@@ -475,6 +475,13 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						System.out.println("kdcl log process domain fail json:" + dmpDataJson);
 						return;
 					}
+					
+					
+					if(values[13].equals("ck")) {
+						debug_kdcl_count_ck = debug_kdcl_count_ck + 1;
+						System.out.println("==>>>>>>>>>debug_kdcl_count_ck:"+debug_kdcl_count_ck);
+					}
+					
 					dmpDataJson.put("ad_price", values[17]);
 					dmpDataJson.put("log_source", "kdcl_log");
 					dmpDataJson.put("pfd_customer_info_id", values[24]);
@@ -500,12 +507,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("area_info_source", "ip");
 					// 裝置資訊 [device_info_classify] null:user_agent為空
 					dmpDataJson.put("user_agent", values[5].replaceAll("\"", ""));
-					
-					
-					if(values[13].equals("ck")) {
-						debug_kdcl_count_ck = debug_kdcl_count_ck + 1;
-						System.out.println("==>>>>>>>>>debug_kdcl_count_ck:"+debug_kdcl_count_ck);
-					}
 					
 					if (values[4].contains("24h.pchome.com.tw")) {
 						String pageCategory = "";
