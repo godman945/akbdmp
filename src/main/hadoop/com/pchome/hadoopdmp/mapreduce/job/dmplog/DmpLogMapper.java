@@ -80,6 +80,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static org.json.JSONArray menu24hMappingJsonArray = new org.json.JSONArray();
 	
 	private static int debug_ad_click_count = 0;
+	private static int debug_exclude_count = 0;
 	
 	public void setup(Context context) {
 		System.out.println(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"	+ context.getConfiguration().get("spring.profiles.active"));
@@ -431,14 +432,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					// values[15] ad_class
 					this.values = this.logStr.split(kdclSymbol, -1);
 					
-					
-					
-					
-					if(values[13].toUpperCase().equals("CK")) {
-						debug_ad_click_count = debug_ad_click_count + 1;
-						System.out.println(">>>>>debug_ad_click_count:"+debug_ad_click_count);
-					}
-					
 					if (values.length < kdclLogLength) {
 						return;
 					}
@@ -474,8 +467,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 							URI uri = new URI(values[4]);
 							String domain = uri.getHost();
 							dmpDataJson.put("domain", domain.startsWith("www.") ? domain.substring(4) : domain);
-							hostNameMap.put(values[4].toString(),
-									domain.startsWith("www.") ? domain.substring(4) : domain);
+							hostNameMap.put(values[4].toString(),domain.startsWith("www.") ? domain.substring(4) : domain);
 						}
 					} catch (Exception e) {
 						System.out.println("kdcl log process domain fail:" + e.getMessage());
@@ -512,6 +504,13 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						if (values[4].equals("https://24h.pchome.com.tw/") || values[4].contains("htm")
 								|| values[4].contains("index") || values[4].contains("?fq=")
 								|| values[4].contains("store/?q=")) {
+							
+							
+							if (values[13].toUpperCase().equals("CK")) {
+								debug_exclude_count = debug_exclude_count +1;
+								System.out.println(">>>>>>>>>>>debug_exclude_count:"+debug_exclude_count);
+							}
+							
 							return;
 						} else if (values[4].contains("?")) {
 							pageCategory = values[4].split("/")[values[4].split("/").length - 1];
