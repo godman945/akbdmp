@@ -518,16 +518,16 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					}
 					
 					if(dmpDataJson.getAsString("trigger_type").equals("ck")) {
-						debug_kdcl_count2 = debug_kdcl_count2 + Integer.parseInt(dmpDataJson.getAsString("ck"));
 						debug_kdcl_count = debug_kdcl_count + 1;
-						System.out.println(">>>>>>>>>>>>>>>>@@>debug_kdcl_count:"+debug_kdcl_count+">>>>>>>debug_kdcl_count2:"+debug_kdcl_count2);
+						System.out.println("==>>>>>>>>>debug_kdcl_count:"+debug_kdcl_count);
+//						System.out.println(">>>>>>>>>>>>>>>>@@>debug_kdcl_count:"+debug_kdcl_count+">>>>>>>debug_kdcl_count2:"+debug_kdcl_count2);
 					}
 					
 					
-					if(dmpDataJson.getAsString("log_source").equals("kdcl_log")) {
-						debug_kdcl_count = debug_kdcl_count + Integer.parseInt(dmpDataJson.getAsString("ck"));
-						System.out.println(dmpDataJson.getAsString("trigger_type")+">>>>>>>>>>>>>>>>>debug_kdcl_count:"+debug_kdcl_count);
-					}
+//					if(dmpDataJson.getAsString("log_source").equals("kdcl_log")) {
+//						debug_kdcl_count = debug_kdcl_count + Integer.parseInt(dmpDataJson.getAsString("ck"));
+//						System.out.println(dmpDataJson.getAsString("trigger_type")+">>>>>>>>>>>>>>>>>debug_kdcl_count:"+debug_kdcl_count);
+//					}
 					
 				} else {
 					return;
