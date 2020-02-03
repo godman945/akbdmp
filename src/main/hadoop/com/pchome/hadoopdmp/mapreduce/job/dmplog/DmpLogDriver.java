@@ -149,7 +149,7 @@ public class DmpLogDriver {
         		Date processDate = sdf.parse(dmpDate+" "+dmpHour);
         		Calendar cal = Calendar.getInstance();
         		cal.setTime(processDate);
-        		cal.add(Calendar.HOUR_OF_DAY, -1); 
+        		cal.add(Calendar.HOUR_OF_DAY, +1); 
 	        		
         		String processPreviousYear = sdf.format(cal.getTime()).split("-")[0];
         		String processPreviousMonth = sdf.format(cal.getTime()).split("-")[1];
