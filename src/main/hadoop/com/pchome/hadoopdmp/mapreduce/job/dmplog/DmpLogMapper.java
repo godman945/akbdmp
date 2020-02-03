@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -443,6 +444,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						if(values[13].equals("ck")) {
 							debug_kdcl_count_1 = debug_kdcl_count_1 + 1;
 							System.out.println("==>>>>>>>>>debug_kdcl_count_1:"+debug_kdcl_count_1);
+							System.out.println("==>>>>>>>>>debug_kdcl_count_1:"+Arrays.asList(this.values));
 						}
 						
 						return;
@@ -453,6 +455,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						if(values[13].equals("ck")) {
 							debug_kdcl_count_2 = debug_kdcl_count_2 + 1;
 							System.out.println("==>>>>>>>>>debug_kdcl_count_2:"+debug_kdcl_count_2);
+							System.out.println("==>>>>>>>>>debug_kdcl_count_2:"+Arrays.asList(this.values));
 						}
 						
 						return;
