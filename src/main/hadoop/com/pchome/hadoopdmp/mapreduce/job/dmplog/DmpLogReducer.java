@@ -69,6 +69,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	private static long pvclk_ck_count = 0;
 	private static long pvclk_total_count = 0;
 	
+	private static long debug_total_count = 0;
+	
 	@SuppressWarnings("unchecked")
 	public void setup(Context context) {
 		log.info(">>>>>> Reduce  setup>>>>>>>>>>>>>>env>>>>>>>>>>>>"+ context.getConfiguration().get("spring.profiles.active"));
@@ -189,78 +191,133 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				
 				//產出bu log csv 
 				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_value"))) {
-					System.out.println("BU>>>>>>>>>>>>>>>>"+dmpJSon);
-					
 					for (int i= 0; i < markLevelList.length; i++) {
+						wiriteToDruid.setLength(0);
 						if(StringUtils.isNotBlank(dmpJSon.getAsString(markLevelList[i]))) {
 							markValueMap.put(dmpJSon.getAsString("mark_value"), dmpJSon.getAsString("mark_value"));
-							
+							//fileName
 							wiriteToDruid.append("\""+dmpJSon.getAsString("fileName")+"\"");
+							//log date source
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_date")).append("\"");
+							//memid
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.get("memid")).append("\"");
+							//uuid
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid")).append("\"");
+							//uuid times flag
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("uuid_flag")).append("\"");
+							//ip
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ip")).append("\"");
+							//url
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("url")).append("\"");
+							//referer
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("referer")).append("\"");
+							//domain
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("domain")).append("\"");
+							//log type
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("log_source")).append("\"");
+							//trogger type
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("trigger_type")).append("\"");
+							//pfp customer_info_id
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfp_customer_info_id")).append("\"");
+							////pfd customer_info_id
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfd_customer_info_id")).append("\"");
+							//pfb customer_info_id
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_customer_info_id")).append("\"");
+							//style_id
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("style_id")).append("\"");
+							//action seq
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("action_id")).append("\"");
+							//group seq
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("group_id")).append("\"");
+							//ad seq
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_id")).append("\"");
+							//position seq
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pfbx_position_id")).append("\"");
+							//country
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_country")).append("\"");
+							//city
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("area_city")).append("\"");
+							//device
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_info")).append("\"");
+							//phone os
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_phone_info")).append("\"");
+							//os
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_os_info")).append("\"");
+							//browser
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_browser_info")).append("\"");
+							//sex
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex")).append("\"");
+							//sex source
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("sex_source")).append("\"");
+							//age
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age")).append("\"");
+							//age source
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("age_source")).append("\"");
-							wiriteToDruid.append(",").append("\"").append("audicen_id_default").append("\"");
-							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_id")).append("\"");
-							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_x")).append("\"");
-							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_y")).append("\"");
-							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_event")).append("\"");
-							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("event_id")).append("\"");
-							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_id")).append("\"");
-							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_price")).append("\"");
-							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_dis")).append("\"");
-							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString(markValueList[i])).append("\"");
-							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString(markLevelList[i])).append("\"");
-							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op1")).append("\"");
-							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op2")).append("\"");
+							//audicen
 							wiriteToDruid.append(",").append("\"").append("").append("\"");
+							//paid
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_id")).append("\"");
+							//screen_x
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_x")).append("\"");
+							//screen_y
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("screen_y")).append("\"");
+							//pa event
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pa_event")).append("\"");
+							//event id
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("event_id")).append("\"");
+							//prod id
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_id")).append("\"");
+							//prod price
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_price")).append("\"");
+							//prod dis
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_dis")).append("\"");
+							//markValue
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString(markValueList[i])).append("\"");
+							//marklevel
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString(markLevelList[i])).append("\"");
+							//op1
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op1")).append("\"");
+							//op2
+							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op2")).append("\"");
+							//ad price
+							wiriteToDruid.append(",").append("\"").append("").append("\"");
+							//webClass
 							wiriteToDruid.append(",").append("\"").append(webClass).append("\"");
+							//week
 							wiriteToDruid.append(",").append("\"").append(weeks[week_index]).append("\"");
+							//ad_view
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_view")).append("\"");
+							//vpv
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("vpv")).append("\"");
+							//ck
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ck")).append("\"");
+							//pv
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pv")).append("\"");
+							//category
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("category")).append("\"");
+							//convert_price
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("convert_price")).append("\"");
+							//device_type
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("device_type")).append("\"");
-							//判斷目前為第幾層資料
+//							//判斷目前為第幾層資料
+							//brand
 							if(i == 0 && StringUtils.isNotBlank(dmpJSon.getAsString("level_1_brand"))) {
 								wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("level_1_brand")).append("\"");
 							}else if(i == 1 && StringUtils.isNotBlank(dmpJSon.getAsString("level_2_brand"))) {
 								wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("level_2_brand")).append("\"");
 							}else if(i == 2 && StringUtils.isNotBlank(dmpJSon.getAsString("level_3_brand"))) {
 								wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("level_3_brand")).append("\"");
+							}else {
+								wiriteToDruid.append(",").append("\"").append("").append("\"");
+								System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>ALEX DEBUG:"+dmpJSon);
+								
 							}
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("industry")).append("\"");
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("24h_price_code")).append("\"");
 							
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("hour")).append("\"");
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("source_date")).append("\"");
-							
+//							
 							context.write(new Text(wiriteToDruid.toString()), null);
 							wiriteToDruid.setLength(0);
 							

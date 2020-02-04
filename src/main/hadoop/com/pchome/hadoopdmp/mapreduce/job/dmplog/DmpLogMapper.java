@@ -832,62 +832,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				}
 			}
 		}
-//		menu24hMappingJsonArray
-		
-		
-		
-//		if (categoryLevelMappingMap.containsKey(markValue)) {
-//			org.json.JSONObject layerJson = categoryLevelMappingMap.get(markValue);
-//			Iterator<String> keys = layerJson.keys();
-//			while (keys.hasNext()) {
-//				String key = keys.next();
-//				String value = layerJson.getString(key);
-//				dmpDataJson.put(key, value);
-//			}
-//		} else {
-//			for (String string : categoryLevelMappingList) {
-//				String level1 = string.split("<PCHOME>")[0];
-//				String level2 = string.split("<PCHOME>")[1];
-//				String level3 = string.split("<PCHOME>")[2];
-//				if (level1.equals(markValue)) {
-//					dmpDataJson.put("mark_layer1", "1");
-//					dmpDataJson.put("mark_value1", level1);
-//					org.json.JSONObject layerJson = new org.json.JSONObject();
-//					layerJson.put("mark_layer1", "1");
-//					layerJson.put("mark_value1", level1);
-//					categoryLevelMappingMap.put(markValue, layerJson);
-//					break;
-//				} else if (level2.equals(markValue)) {
-//					dmpDataJson.put("mark_layer1", "1");
-//					dmpDataJson.put("mark_value1", level1);
-//					dmpDataJson.put("mark_layer2", "2");
-//					dmpDataJson.put("mark_value2", level2);
-//					org.json.JSONObject layerJson = new org.json.JSONObject();
-//					layerJson.put("mark_layer1", "1");
-//					layerJson.put("mark_value1", level1);
-//					layerJson.put("mark_layer2", "2");
-//					layerJson.put("mark_value2", level2);
-//					categoryLevelMappingMap.put(markValue, layerJson);
-//					break;
-//				} else if (level3.equals(markValue)) {
-//					dmpDataJson.put("mark_layer1", "1");
-//					dmpDataJson.put("mark_value1", level1);
-//					dmpDataJson.put("mark_layer2", "2");
-//					dmpDataJson.put("mark_value2", level2);
-//					dmpDataJson.put("mark_layer3", "3");
-//					dmpDataJson.put("mark_value3", level3);
-//					org.json.JSONObject layerJson = new org.json.JSONObject();
-//					layerJson.put("mark_layer1", "1");
-//					layerJson.put("mark_value1", level1);
-//					layerJson.put("mark_layer2", "2");
-//					layerJson.put("mark_value2", level2);
-//					layerJson.put("mark_layer3", "3");
-//					layerJson.put("mark_value3", level3);
-//					categoryLevelMappingMap.put(markValue, layerJson);
-//					break;
-//				}
-//			}
-//		}
 	}
 
 	public class combinedValue {
