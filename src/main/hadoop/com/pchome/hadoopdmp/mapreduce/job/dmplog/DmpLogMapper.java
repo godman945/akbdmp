@@ -210,6 +210,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			menu24hCsvParser.close();
 			brandCsvFileInputStream.close();
 			menu24hCsvFileInputStream.close();
+			
+			
+			System.out.println(">>>>>>>>>>>>>>>>>menu24hMappingJsonArray:"+menu24hMappingJsonArray);
 		} catch (Exception e) {
 			System.out.println("Mapper setup error>>>>>> " + e.getMessage());
 		}

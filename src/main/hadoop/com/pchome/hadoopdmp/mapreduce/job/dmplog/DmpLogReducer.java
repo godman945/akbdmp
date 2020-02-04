@@ -309,7 +309,7 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 								wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("level_3_brand")).append("\"");
 							}else {
 								wiriteToDruid.append(",").append("\"").append("").append("\"");
-								System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>ALEX DEBUG:"+dmpJSon);
+//								System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>ALEX DEBUG:"+dmpJSon);
 								
 							}
 							wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("industry")).append("\"");
