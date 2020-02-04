@@ -774,7 +774,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				if(menu24hMappingJson.has("level_1_code") && menu24hMappingJson.getString("level_1_code").equals(markValue)) {
 					dmpDataJson.put("mark_layer1", "1");
 					dmpDataJson.put("mark_value1", menu24hMappingJson.getString("level_1_code"));
-					//檢查是否有對應品牌名稱
+					//檢查是否有對應品牌名稱,與分類名稱不同
 					if(menu24hMappingJson.has("level_1_brand")) {
 						dmpDataJson.put("level_1_brand", menu24hMappingJson.getString("level_1_brand"));
 					}
