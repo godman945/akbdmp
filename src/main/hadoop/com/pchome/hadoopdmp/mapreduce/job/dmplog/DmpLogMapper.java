@@ -410,6 +410,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		dmpDataJson.put("industry", "");
 		dmpDataJson.put("24h_price_code", "");
 		dmpDataJson.put("source_date", "");
+		dmpDataJson.put("rule_id", "");
 		
 		values = null;
 		logStr = "";
@@ -569,9 +570,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("event_id", "page_view");
 					}else if(values[11].toUpperCase().equals("CONVERT")) {
 						dmpDataJson.put("event_id", values[12]);
-						
-						System.out.println(">>>>>>>>>>PACL RULE:" + values[12]);
-						
+						dmpDataJson.put("rule_id", values[13]);
 						dmpDataJson.put("convert_price", values[14]);
 					}
 					
