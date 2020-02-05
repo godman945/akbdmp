@@ -77,6 +77,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	private static net.minidev.json.JSONObject dmpDataJson = new net.minidev.json.JSONObject();
 	private static org.json.JSONArray menu24hMappingJsonArray = new org.json.JSONArray();
 	
+	private static int test = 0;
+	
 	public void setup(Context context) {
 		System.out.println(">>>>>> Mapper  setup >>>>>>>>>>>>>>env>>>>>>>>>>>>"	+ context.getConfiguration().get("spring.profiles.active"));
 		try {
@@ -210,9 +212,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			menu24hCsvParser.close();
 			brandCsvFileInputStream.close();
 			menu24hCsvFileInputStream.close();
-			
-			
-			System.out.println(">>>>>>>>>>>>>>>>>menu24hMappingJsonArray:"+menu24hMappingJsonArray);
 		} catch (Exception e) {
 			System.out.println("Mapper setup error>>>>>> " + e.getMessage());
 		}
@@ -534,7 +533,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					}
 					dmpDataJson.put("source_date", values[0].split(" ")[0]);
 					dmpDataJson.put("hour", values[0].split(" ")[1].split(":")[0]);
-					
 					dmpDataJson.put("fileName", fileName);
 					dmpDataJson.put("log_date", values[0]);
 					dmpDataJson.put("memid","");
@@ -571,6 +569,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("event_id", "page_view");
 					}else if(values[11].toUpperCase().equals("CONVERT")) {
 						dmpDataJson.put("event_id", values[12]);
+						
+						System.out.println(">>>>>>>>>>PACL RULE:" + values[12]);
+						
 						dmpDataJson.put("convert_price", values[14]);
 					}
 					
@@ -643,7 +644,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				dmpDataJson.put("screen_y", values[10]);
 				dmpDataJson.put("event_id", "24h");
 				
-				if (dmpDataJson.getAsString("referer").contains("24h.pchome.com.tw")) {   
+				if (dmpDataJson.getAsString("referer").contains("24h.pchome.com.tw")) {
 					String pageCategory = "";
 					if (dmpDataJson.getAsString("referer").equals("https://24h.pchome.com.tw/")
 							|| dmpDataJson.getAsString("referer").contains("htm")
