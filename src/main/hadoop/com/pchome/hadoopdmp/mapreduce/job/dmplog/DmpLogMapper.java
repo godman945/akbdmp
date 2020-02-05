@@ -571,7 +571,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					}else if(values[11].toUpperCase().equals("CONVERT")) {
 						dmpDataJson.put("event_id", values[12]);
 						dmpDataJson.put("rule_id", values[13].replace(";", ""));
-						System.out.println(">>>>>>>>PACL RULE ID:"+values[13].replace(";", ""));
 						dmpDataJson.put("convert_price", values[14]);
 					}
 					
