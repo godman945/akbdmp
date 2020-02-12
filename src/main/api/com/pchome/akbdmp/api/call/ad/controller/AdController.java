@@ -265,6 +265,7 @@ public class AdController extends BaseController {
 				redisTemplate.delete(mapKey);
 				redisTemplate.delete(fcKey);
 				redisTemplate.delete(classKey);
+				redisTemplate.delete("stg:pa:track:"+key);
 				
 				
 				return "{\"result\":\"success\"}";
