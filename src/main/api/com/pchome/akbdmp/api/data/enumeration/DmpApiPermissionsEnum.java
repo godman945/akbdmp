@@ -5,7 +5,8 @@ package com.pchome.akbdmp.api.data.enumeration;
 		API_02("LifeCheck", true),
 		API_03("adclassApi", true),
 		API_04("dmpInfoApi", true),
-		API_05("prodAdTest", true);
+		API_05("prodAdTest", true),
+		API_06("deleteDmp", true);
 		
 
 		private final String method;

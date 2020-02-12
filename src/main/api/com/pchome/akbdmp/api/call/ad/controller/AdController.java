@@ -98,13 +98,12 @@ public class AdController extends BaseController {
 				key = uuid;
 			}
 			
-			if(key.equals("1fb0722f-79d0-4081-8e80-20c38158801d")) {
-				log.info(">>>>>>>>>>>>>>>>>>key:"+key);
-			}
 			
 			String mapKey = redisCallmapKey+key;
 			String fcKey = redisCallfcKey+key;
 			String classKey = redisClassKey+key;
+			
+			
 //			map不存在key則呼叫kafka建立redis key反之只取redis key
 //			redisTemplate.opsForValue().get(mapKey);
 			if(redisTemplate.opsForValue().get(mapKey) == null){
@@ -216,7 +215,6 @@ public class AdController extends BaseController {
 	
 	
 	
-//	@RequestMapping(value = "/api/prodAdTest", method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json;charset=UTF-8")
 	@RequestMapping(value = "/api/prodAdTest", method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/x-www-form-urlencoded;charset=UTF-8")
 	@ResponseBody
 	public Object prodAdTest(
@@ -224,18 +222,13 @@ public class AdController extends BaseController {
 			) throws Exception {
 		try {
 			String data = IOUtils.toString(request.getInputStream(), "UTF8");
-			JSONObject json = new JSONObject();
 			if(StringUtils.isNotBlank(data)){
-				String array[] = data.split("&");
-				for (String obj : array) {
-					String detail[] = obj.split("=");
-					String key = detail[0];
-					String value = detail[1];
-					json.put(key, value);
-				}
+				JSONObject json = new JSONObject(data);
+				kafkaUtil.sendMessage("akb_prod_ad_stg", "", json.toString());
+				return "success";
+			}else {
+				return "fail";
 			}
-			kafkaUtil.sendMessage("akb_prod_ad_stg", "", json.toString());
-			return "success";
 		} catch (Exception e) {
 			log.error(">>>>" + e.getMessage());
 			e.printStackTrace();
@@ -246,4 +239,44 @@ public class AdController extends BaseController {
 			return getReturnData(returnData);
 		}
 	}
+	
+	@RequestMapping(value = "/api/deleteDmp", method = RequestMethod.GET, headers = "Accept=application/json;charset=UTF-8")
+	@ResponseBody
+	public Object deleteDmp(
+			HttpServletRequest request,
+			@RequestParam(defaultValue = "", required = false) String memid,
+			@RequestParam(defaultValue = "", required = false) String uuid
+			) throws Exception {
+		try {
+				String key = StringUtils.isNotBlank(memid) ? memid : uuid;
+				if(StringUtils.isBlank(key)) {
+					return "{\"result\":\"fail memid and uuid\"}";
+				}
+				
+				String mapKey = redisCallmapKey+key;
+				String fcKey = redisCallfcKey+key;
+				String classKey = redisClassKey+key;
+				
+				log.info(">>>>>>mapKey:"+redisTemplate.opsForValue().get(mapKey));
+				log.info(">>>>>>fcKey:"+redisTemplate.opsForValue().get(fcKey));
+				log.info(">>>>>>classKey:"+redisTemplate.opsForValue().get(classKey));
+				
+				redisTemplate.delete(mapKey);
+				redisTemplate.delete(fcKey);
+				redisTemplate.delete(classKey);
+				
+				
+				return "{\"result\":\"success\"}";
+		} catch (Exception e) {
+			log.error(">>>>" + e.getMessage());
+			e.printStackTrace();
+			ReturnData returnData = new ReturnData();
+			returnData.setCode(DmpApiReturnCodeEnum.API_CODE_E002.getCode());
+			returnData.setResult(e.getMessage());
+			returnData.setStatus(DmpApiReturnCodeEnum.API_CODE_E002.isStatus());
+			return getReturnData(returnData);
+		}
+	}
+	
 }
+
