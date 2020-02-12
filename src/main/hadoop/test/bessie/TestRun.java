@@ -15,6 +15,7 @@ import java.sql.ResultSetMetaData;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.regex.Pattern;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import com.mongodb.DB;
@@ -598,6 +600,60 @@ public class TestRun {
 	
 	public static void main(String[] args) {
 		try {
+			
+//			String da = "2020-01-31 00:23:23";
+//			String logDate = da.split(" ")[1].split(":")[0];
+//			
+//			System.out.println(da.split(" ")[0]);
+//			System.out.println(da.split(" ")[1].split(":")[0]);
+			
+			
+//			dmpDataJson.put("source_date", values[0].split(" ")[0]);
+//			dmpDataJson.put("hour", values[0].split(" ")[1].split(":")[0]);
+			
+			
+//			SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH");
+//			Date processDate = sdf1.parse("2020-01-01 23");
+//    		Calendar cal = Calendar.getInstance();
+//    		cal.setTime(processDate);
+//    		cal.add(Calendar.HOUR_OF_DAY, +1); 
+//
+//    		
+//    		System.out.println(sdf1.format(cal.getTime()));
+//    		System.out.println(sdf1.format(cal.getTime()).split("-")[0]);
+//    		System.out.println(sdf1.format(cal.getTime()).split("-")[1]);
+//    		System.out.println(sdf1.format(cal.getTime()).split("-")[2].split(" ")[0]);
+//    		System.out.println(sdf1.format(cal.getTime()).split("-")[2].split(" ")[1]);
+    		
+    		
+    		
+    		
+//    		JSONObject a= new JSONObject();
+//    		a.put("ALEX", 5);
+//    		int c = 0;
+//    		
+//    		c= c+Integer.parseInt(a.getAsString("ALEX"));
+//    		System.out.println(c);
+    		
+    		
+    		
+//    		System.out.println(cal.getTime());
+////    		System.out.println(cal.get(Calendar.HOUR_OF_DAY));
+//    		System.out.println(cal.get(Calendar.YEAR));
+//    		System.out.println(cal.get(Calendar.MONTH));
+//    		System.out.println(cal.get(Calendar.HOUR_OF_DAY));
+    		
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 //			Class.forName("org.apache.calcite.avatica.remote.Driver");    
 //			String url = "jdbc:avatica:remote:url=http://druidq1.mypchome.com.tw:8082/druid/v2/sql/avatica/";
 //			Connection con = DriverManager.getConnection(url);
@@ -636,67 +692,106 @@ public class TestRun {
 			
 			
 			
-			int skip = (Integer.parseInt(args[0]) -1) * 7500000;
-			MongoCredential credential = MongoCredential.createMongoCRCredential("webuser", "dmp", "MonG0Dmp".toCharArray());
-			MongoClient mongoClient = new MongoClient(new ServerAddress("mongodb.mypchome.com.tw", 27017), Arrays.asList(credential));
-			DB mongoProducer = mongoClient.getDB("dmp");
-			DBCollection dBCollection_class_url = mongoProducer.getCollection("class_url");
-			
-			
-			File file = new File("/home/webuser/_alex/url_class_"+skip+"-"+(skip+7500000)+".csv");
-			if(!file.exists()) {
-				file.createNewFile();
-			}else {
-				file.delete();
-				file.createNewFile();
-			}
-			BufferedWriter bw = new BufferedWriter(new FileWriter("/home/webuser/_alex/url_class_"+skip+"-"+(skip+7500000)+".csv"));
-			StringBuffer a = new StringBuffer();
-			
-			SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
-			DBCursor  dbCursor  = dBCollection_class_url.find().limit(7500000).skip(skip);
-			
-			long count = skip;
-			for (DBObject dbObject : dbCursor) {
-//				if(dbObject.get("url").toString().indexOf("ruten") < 0) {
-//					System.out.println(">>>>>>>>>>>> delete :" + dbObject);
-//					dBCollection_class_url.remove(dbObject);
+//			int skip = (Integer.parseInt(args[0]) -1) * 7500000;
+//			MongoCredential credential = MongoCredential.createMongoCRCredential("webuser", "dmp", "MonG0Dmp".toCharArray());
+//			MongoClient mongoClient = new MongoClient(new ServerAddress("mongodb.mypchome.com.tw", 27017), Arrays.asList(credential));
+//			DB mongoProducer = mongoClient.getDB("dmp");
+//			DBCollection dBCollection_class_url = mongoProducer.getCollection("class_url");
+//			
+//			
+//			File file = new File("/home/webuser/_alex/url_class_"+skip+"-"+(skip+7500000)+".csv");
+//			if(!file.exists()) {
+//				file.createNewFile();
+//			}else {
+//				file.delete();
+//				file.createNewFile();
+//			}
+//			BufferedWriter bw = new BufferedWriter(new FileWriter("/home/webuser/_alex/url_class_"+skip+"-"+(skip+7500000)+".csv"));
+//			StringBuffer a = new StringBuffer();
+//			
+//			SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+//			DBCursor  dbCursor  = dBCollection_class_url.find().limit(7500000).skip(skip);
+//			
+//			long count = skip;
+//			for (DBObject dbObject : dbCursor) {
+////				if(dbObject.get("url").toString().indexOf("ruten") < 0) {
+////					System.out.println(">>>>>>>>>>>> delete :" + dbObject);
+////					dBCollection_class_url.remove(dbObject);
+////				}
+//				
+//				try {
+//					URL url = new URL(dbObject.get("url").toString());
+//				}catch (Exception e){
+//					System.out.println("FAIL :" + dbObject.get("url").toString());
+//					continue;
 //				}
-				
-				try {
-					URL url = new URL(dbObject.get("url").toString());
-				}catch (Exception e){
-					System.out.println("FAIL :" + dbObject.get("url").toString());
-					continue;
-				}
-				
-				a.setLength(0);
-				if(count > skip) {
-					bw.newLine();
-				}
-				a.append("\"").append(sdf1.format(dbObject.get("update_date"))).append("\"");
-				a.append(",").append("\"").append(dbObject.get("url")).append("\"");
-				a.append(",").append("\"").append((dbObject.get("ad_class").equals("null")||dbObject.get("ad_class") == null) ? "":dbObject.get("ad_class") ).append("\"");
-				a.append(",").append("\"").append(dbObject.get("status")).append("\"");
-				a.append(",").append("\"").append(dbObject.get("query_time")== null ? "1" : String.valueOf(dbObject.get("query_time"))).append("\"");
-				bw.write(a.toString());
-				count = count + 1;
-				if(count % 50000 == 0) {
-					System.out.println("process:"+skip+"-"+(skip+7500000));
-					System.out.println("process total:" + count);
-				}
-			}
-			bw.close();
+//				
+//				a.setLength(0);
+//				if(count > skip) {
+//					bw.newLine();
+//				}
+//				a.append("\"").append(sdf1.format(dbObject.get("update_date"))).append("\"");
+//				a.append(",").append("\"").append(dbObject.get("url")).append("\"");
+//				a.append(",").append("\"").append((dbObject.get("ad_class").equals("null")||dbObject.get("ad_class") == null) ? "":dbObject.get("ad_class") ).append("\"");
+//				a.append(",").append("\"").append(dbObject.get("status")).append("\"");
+//				a.append(",").append("\"").append(dbObject.get("query_time")== null ? "1" : String.valueOf(dbObject.get("query_time"))).append("\"");
+//				bw.write(a.toString());
+//				count = count + 1;
+//				if(count % 50000 == 0) {
+//					System.out.println("process:"+skip+"-"+(skip+7500000));
+//					System.out.println("process total:" + count);
+//				}
+//			}
+//			bw.close();
+			
+			
+//			0:TAC20181210000000001_10075<PCHOME>2020-02-06<PCHOME>2
+//			1:TAC20181210000000001_10060<PCHOME>2020-02-06<PCHOME>1
+//			2:TAC20181210000000001_10061<PCHOME>2020-02-06<PCHOME>1
+//			3:TAC20200205000000002_ALL<PCHOME>2020-02-06<PCHOME>1
+//			4:TAC20200206000000002_ALL<PCHOME>2020-02-06<PCHOME>1
+//			5:TAC20200206000000002_A001<PCHOME>2020-02-06<PCHOME>1
+//			6:TAC20181210000000001_10075<PCHOME>2020-02-05<PCHOME>2
+//			7:TAC20181210000000001_11097<PCHOME>2020-02-05<PCHOME>2
+//			8:TAC20200205000000002_ALL<PCHOME>2020-02-05<PCHOME>1
+			
+//			String testDate = "2020-02-06";
+//			int score = 2; 
+//			SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
+//			Calendar calendar = Calendar.getInstance();
+//			calendar.setTime(sdf2.parse(testDate));
+//			calendar.add(Calendar.SECOND, score);    
+//			System.out.println(calendar.getTime());
+//			
+//			
+//			
+//			testDate = "2020-02-05";
+//			score = 1; 
+//			calendar.setTime(sdf2.parse(testDate));
+//			calendar.add(Calendar.SECOND, score);    
+//			System.out.println(calendar.getTime());
 			
 			
 			
 			
+			Date date = new Date();
+			SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(date);
+			calendar.add(Calendar.DAY_OF_MONTH, -28);  
+			System.out.println(calendar.getTime());
 			
 			
 			
-//			System.setProperty("spring.profiles.active", "prd");
+//			System.setProperty("spring.profiles.active", "stg");
 //			ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllConfig.class);
-//			TestRun TestRun = (TestRun) ctx.getBean(TestRun.class);
+//			RedisTemplate redisTemplate = (RedisTemplate) ctx.getBean("redisTemplate");
+//			
+//			
+//			redisTemplate.opsForValue().set("stg:pa:codecheck:TAC20200205000000002", "1");
+//			
+//			System.out.println(redisTemplate.opsForValue().get("stg:pa:codecheck:TAC20200205000000002"));
 			
 //			DB mongoOrgOperations  = ctx.getBean(MongodbOrgHadoopConfig.class).mongoProducer();
 //			DBCollection dBCollection_class_url = mongoOrgOperations.getCollection("class_url");
