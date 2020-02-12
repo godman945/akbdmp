@@ -109,7 +109,7 @@ public class AdController extends BaseController {
 //			redisTemplate.opsForValue().get(mapKey);
 			if(redisTemplate.opsForValue().get(mapKey) == null){
 				if(key.equals("96aef726-cc54-4d24-9e1b-8e1d91e29ea5")) {
-					log.info(">>>>>>>>>>>>>>>>> call kafka:"+key);
+					log.info(">>>>>>>>>>>>>>>>> call kafka:"+key+" dmpApiTopic:"+dmpApiTopic);
 				}
 				
 				
