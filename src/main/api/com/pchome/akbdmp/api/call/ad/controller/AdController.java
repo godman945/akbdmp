@@ -260,6 +260,7 @@ public class AdController extends BaseController {
 				log.info(">>>>>>mapKey:"+redisTemplate.opsForValue().get(mapKey));
 				log.info(">>>>>>fcKey:"+redisTemplate.opsForValue().get(fcKey));
 				log.info(">>>>>>classKey:"+redisTemplate.opsForValue().get(classKey));
+				log.info(">>>>>>pacl:"+redisTemplate.opsForValue().get("stg:pa:track:"+key));
 				
 				redisTemplate.delete(mapKey);
 				redisTemplate.delete(fcKey);
