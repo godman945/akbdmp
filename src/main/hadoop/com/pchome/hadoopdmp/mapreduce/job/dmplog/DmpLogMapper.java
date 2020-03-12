@@ -520,9 +520,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						}
 						dmpDataJson.put("op1", pageCategory);
 					}
-				if(dmpDataJson.getAsString("trigger_type").equals("ck")) {
-					System.out.println(">>>> kdcl ck data:" + Arrays.asList(values));
-				}	
+					if(dmpDataJson.getAsString("trigger_type").equals("ck") && dmpDataJson.getAsString("uuid_flag").equals("n")) {
+						System.out.println(">>>> kdcl ck data:" + Arrays.asList(values));
+					}else if(dmpDataJson.getAsString("trigger_type").equals("ck") && dmpDataJson.getAsString("uuid_flag").equals("y")) {
+						System.out.println(">>>> kdcl ck data xxx:" + Arrays.asList(values));
+					}
 				} else {
 					return;
 				}
