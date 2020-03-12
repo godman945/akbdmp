@@ -432,6 +432,15 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					this.values = this.logStr.split(kdclSymbol, -1);
 					
 					
+					if (values[13].toUpperCase().equals("CK") && values[2].contains("xxx")) {
+						System.out.println(">>>> kdcl ck data xxx:" + Arrays.asList(values));
+					}else if(values[13].toUpperCase().equals("CK") && !values[2].contains("xxx")) {
+						System.out.println(">>>> kdcl ck data:" + Arrays.asList(values));
+					}
+					
+					
+					
+					
 					if (values.length < kdclLogLength) {
 						return;
 					}
@@ -441,6 +450,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					}
 					
 					if (StringUtils.isBlank(values[4]) || !(values[4].contains("http"))) {
+						System.out.println("kdcl return http fail:" + Arrays.asList(values));
 						return;
 					}
 					
@@ -474,7 +484,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						}
 					} catch (Exception e) {
 						System.out.println("kdcl log process domain fail:" + e.getMessage());
-						System.out.println("kdcl log process domain fail json:" + dmpDataJson);
+						System.out.println("kdcl log process domain fail:" + Arrays.asList(values));
 						return;
 					}
 					
@@ -520,11 +530,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						}
 						dmpDataJson.put("op1", pageCategory);
 					}
-					if(dmpDataJson.getAsString("trigger_type").equals("ck") && dmpDataJson.getAsString("uuid_flag").equals("n")) {
-						System.out.println(">>>> kdcl ck data:" + Arrays.asList(values));
-					}else if(dmpDataJson.getAsString("trigger_type").equals("ck") && dmpDataJson.getAsString("uuid_flag").equals("y")) {
-						System.out.println(">>>> kdcl ck data xxx:" + Arrays.asList(values));
-					}
+//					if(dmpDataJson.getAsString("trigger_type").equals("ck") && dmpDataJson.getAsString("uuid_flag").equals("n")) {
+//						System.out.println(">>>> kdcl ck data:" + Arrays.asList(values));
+//					}else if(dmpDataJson.getAsString("trigger_type").equals("ck") && dmpDataJson.getAsString("uuid_flag").equals("y")) {
+//						System.out.println(">>>> kdcl ck data xxx:" + Arrays.asList(values));
+//					}
 				} else {
 					return;
 				}
