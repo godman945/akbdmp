@@ -432,11 +432,11 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					this.values = this.logStr.split(kdclSymbol, -1);
 					
 					
-					if (values[13].toUpperCase().equals("CK") && values[2].contains("xxx")) {
-						System.out.println(">>>> kdcl ck data xxx:" + Arrays.asList(values));
-					}else if(values[13].toUpperCase().equals("CK") && !values[2].contains("xxx")) {
-						System.out.println(">>>> kdcl ck data:" + Arrays.asList(values));
-					}
+//					if (values[13].toUpperCase().equals("CK") && values[2].contains("xxx")) {
+//						System.out.println(">>>> kdcl ck data xxx:" + Arrays.asList(values));
+//					}else if(values[13].toUpperCase().equals("CK") && !values[2].contains("xxx")) {
+//						System.out.println(">>>> kdcl ck data:" + Arrays.asList(values));
+//					}
 					
 					
 					
@@ -446,6 +446,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					}
 					if ((StringUtils.equals(values[1], "null") || StringUtils.isBlank(values[1]))
 							&& (StringUtils.equals(values[2], "null") || StringUtils.isBlank(values[2]))) {
+						System.out.println("kdcl uuid and  memid is null fail:" + Arrays.asList(values));
 						return;
 					}
 					
