@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -508,6 +509,8 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						if (values[4].equals("https://24h.pchome.com.tw/") || values[4].contains("htm")
 								|| values[4].contains("index") || values[4].contains("?fq=")
 								|| values[4].contains("store/?q=")) {
+							
+							System.out.println(">>>> kdcl return:" + Arrays.asList(values));
 							return;
 						} else if (values[4].contains("?")) {
 							pageCategory = values[4].split("/")[values[4].split("/").length - 1];
@@ -517,11 +520,15 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						}
 						dmpDataJson.put("op1", pageCategory);
 					}
+				if(dmpDataJson.getAsString("trigger_type").equals("ck")) {
+					System.out.println(">>>> kdcl ck data:" + Arrays.asList(values));
+				}	
 				} else {
 					return;
 				}
 			} catch (Exception e) {
-				System.out.println(">>>> kdcl set json fail:" + dmpDataJson);
+				System.out.println(">>>> kdcl return:" + Arrays.asList(values));
+				return;
 			}
 		} else if (logpath.contains("pacl_log")) {
 				try {
@@ -691,9 +698,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		try {
 			deviceComponent.parseUserAgentToDevice(dmpDataJson);
 		} catch (Exception e) {
-			System.out.println(">>>>process source device fail:" + e.getMessage());
-			System.out.println(">>>>>>logStr:" + logStr);
-			System.out.println(">>>>>>fileName:" + fileName);
+			System.out.println(">>>> deviceComponent fail return:" + Arrays.asList(values));
 			return;
 		}
 		// 3.分類處理元件(分析click、24H、Ruten、campaign分類)
@@ -702,15 +707,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				// kdcl ad_click的adclass 或 campaign
 				// log的adclass //&&
 				// StringUtils.isNotBlank(dmpLogBeanResult.getAdClass())
-				
-				
-				
 				try {
 					DmpLogMapper.aCategoryLogDataClick.processCategory(dmpDataJson, null);
 				} catch (Exception e) {
-					System.out.println(">>>>process source ck_campaign fail:" + e.getMessage());
-					System.out.println(">>>>>>logStr:" + logStr);
-					System.out.println(">>>>>>fileName:" + fileName);
+					System.out.println(">>>> aCategoryLogDataClick fail return:" + Arrays.asList(values));
 					return;
 				}
 			} else if (dmpDataJson.getAsString("trigger_type").equals("pv")
@@ -719,9 +719,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				try {
 					DmpLogMapper.aCategoryLogDataRetun.processCategory(dmpDataJson, dBCollection_class_url);
 				} catch (Exception e) {
-					System.out.println(">>>>process source pv_ruten fail:" + e.getMessage());
-					System.out.println(">>>>>>logStr:" + logStr);
-					System.out.println(">>>>>>fileName:" + fileName);
+					System.out.println(">>>> aCategoryLogDataRetun fail return:" + Arrays.asList(values));
 					return;
 				}
 			} else if (dmpDataJson.getAsString("trigger_type").equals("pv")
@@ -730,23 +728,16 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				try {
 					DmpLogMapper.aCategoryLogData24H.processCategory(dmpDataJson, dBCollection_class_url);
 				} catch (Exception e) {
-					System.out.println(">>>>process source pv_24h fail:" + e.getMessage());
-					System.out.println(">>>>>>logStr:" + logStr);
-					System.out.println(">>>>>>dmpDataJson:" + dmpDataJson);
-					System.out.println(">>>>>>fileName:" + fileName);
+					System.out.println(">>>> aCategoryLogData24H fail return:" + Arrays.asList(values));
 					return;
 				}
 			}
 		} catch (Exception e) {
-			System.out.println(">>>>process source class type fail:" + e.getMessage());
-			System.out.println(">>>>>>logStr:" + logStr);
-			System.out.println(">>>>>>dmpDataJson:" + dmpDataJson);
-			System.out.println(">>>>>>fileName:" + fileName);
+			System.out.println(">>>> click,24H,Ruten fail return:" + Arrays.asList(values));
 			return;
 		}
 //		寫入reduce
 		try {
-			
 			context.write(new Text(dmpDataJson.getAsString("uuid")+"<PCHOME>"+dmpDataJson.getAsString("log_source")), new Text(dmpDataJson.toString()));
 		} catch (Exception e) {
 			log.error(">>>>write to reduce fail:" + e.getMessage());
