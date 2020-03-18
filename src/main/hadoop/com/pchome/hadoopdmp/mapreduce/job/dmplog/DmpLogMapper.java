@@ -446,7 +446,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					}
 					if ((StringUtils.equals(values[1], "null") || StringUtils.isBlank(values[1]))
 							&& (StringUtils.equals(values[2], "null") || StringUtils.isBlank(values[2]))) {
-						System.out.println("kdcl uuid and  memid is null fail:" + Arrays.asList(values));
+//						System.out.println("kdcl uuid and  memid is null fail:" + Arrays.asList(values));
 						return;
 					}
 					
@@ -484,7 +484,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 							hostNameMap.put(values[4].toString(),domain.startsWith("www.") ? domain.substring(4) : domain);
 						}
 					} catch (Exception e) {
-						System.out.println("kdcl log process domain fail:" + e.getMessage());
 						System.out.println("kdcl log process domain fail:" + Arrays.asList(values));
 						return;
 					}
@@ -592,6 +591,17 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("event_id", values[12]);
 						dmpDataJson.put("rule_id", values[13].replace(";", ""));
 						dmpDataJson.put("convert_price", values[14]);
+					}else if(values[11].toUpperCase().equals("mark")) {
+//						dmpDataJson.put("event_id", values[13]);
+//						dmpDataJson.put("mark_id", values[13]);
+//						dmpDataJson.put("mark_value", values[14]);
+//						dmpDataJson.put("event_id", values[15]);
+//						dmpDataJson.put("event_id", values[16]);
+						
+						System.out.println("values[13]:"+values[13]);
+						System.out.println("values[14]:"+values[14]);
+						System.out.println("values[15]:"+values[15]);
+						System.out.println("values[16]:"+values[16]);
 					}
 					
 					if(values[5].contains("24h.pchome.com.tw")) {

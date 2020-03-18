@@ -173,6 +173,11 @@ public class DmpLogDriver {
 	  				listPath.add(paclpath2);
 	  				log.info(">>>>>>>>>>JOB INPUT ADD PATH:"+paclpath2.toString());
 	  			}
+	  			
+	  			
+	  			//測試用pacl 2020-03-17 16
+	  			listPath.add(new Path("hdfs://hdn1.mypchome.com.tw:9000/druid/dmp_log_source/pacl_log/pacl_stg/paclstg-16.lzo"));
+	  			
 	        }
 	        
 			Path[] paths = new Path[listPath.size()];  
