@@ -367,8 +367,16 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_id")).append("\"");
 					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_price")).append("\"");
 					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("prod_dis")).append("\"");
-					wiriteToDruid.append(",").append("\"").append("").append("\"");
-					wiriteToDruid.append(",").append("\"").append("").append("\"");
+					if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_value"))) {
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("mark_value")).append("\"");
+					}else {
+						wiriteToDruid.append(",").append("\"").append("").append("\"");	
+					}
+					if(StringUtils.isNotBlank(dmpJSon.getAsString("pacl_mark_layer"))) {
+						wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("pacl_mark_layer")).append("\"");
+					}else {
+						wiriteToDruid.append(",").append("\"").append("").append("\"");	
+					}
 					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op1")).append("\"");
 					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("op2")).append("\"");
 					wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("ad_price")).append("\"");

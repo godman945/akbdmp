@@ -400,6 +400,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 		dmpDataJson.put("op2", "");
 		dmpDataJson.put("email", "");
 		dmpDataJson.put("mark_value", "");
+		dmpDataJson.put("pacl_mark_layer", "");
 		dmpDataJson.put("mark_layer1", "");
 		dmpDataJson.put("mark_layer2", "");
 		dmpDataJson.put("mark_layer3", "");
@@ -580,29 +581,37 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("screen_x", values[9]);
 					dmpDataJson.put("screen_y", values[10]);
 					dmpDataJson.put("pa_event", values[11]);
-					if(values[11].toUpperCase().equals("TRACKING")) {
-						dmpDataJson.put("event_id", values[12]);
-						dmpDataJson.put("prod_id", values[13]);
-						dmpDataJson.put("prod_price", values[14]);
-						dmpDataJson.put("prod_dis", values[15]);
-					}else if(values[11].toUpperCase().equals("PAGE_VIEW")) {
-						dmpDataJson.put("event_id", "page_view");
-					}else if(values[11].toUpperCase().equals("CONVERT")) {
-						dmpDataJson.put("event_id", values[12]);
-						dmpDataJson.put("rule_id", values[13].replace(";", ""));
-						dmpDataJson.put("convert_price", values[14]);
-					}else if(values[11].toUpperCase().equals("MARK")) {
-//						dmpDataJson.put("event_id", values[13]);
-//						dmpDataJson.put("mark_id", values[13]);
-//						dmpDataJson.put("mark_value", values[14]);
-//						dmpDataJson.put("event_id", values[15]);
-//						dmpDataJson.put("event_id", values[16]);
-						
-						System.out.println("values[13]:"+values[13]);
-						System.out.println("values[14]:"+values[14]);
-						System.out.println("values[15]:"+values[15]);
-						System.out.println("values[16]:"+values[16]);
-					}
+					switch(values[11].toUpperCase()) { 
+			            case "TRACKING":
+			            	dmpDataJson.put("event_id", values[12]);
+			            	dmpDataJson.put("prod_id", values[13]);
+							dmpDataJson.put("prod_price", values[14]);
+							dmpDataJson.put("prod_dis", values[15]);
+							break;
+			            case "PAGE_VIEW": 
+			            	dmpDataJson.put("event_id", values[12]);
+			            	break;
+			            case "CONVERT": 
+			            	dmpDataJson.put("event_id", values[12]);
+			            	dmpDataJson.put("rule_id", values[13].replace(";", ""));
+							dmpDataJson.put("convert_price", values[14]);
+			            	break;
+			            case "MARK": 
+			            	dmpDataJson.put("event_id", values[12]);
+			            	dmpDataJson.put("mark_value", values[13]);
+			            	dmpDataJson.put("pacl_mark_layer", values[14]);
+			            	break;
+			            case "RECORD": 
+			            	dmpDataJson.put("event_id", values[12]);
+			            	break;
+			            case "ACTIVEPROD": 
+			            	dmpDataJson.put("event_id", values[12]);
+			            	dmpDataJson.put("prod_id", values[13]);
+							dmpDataJson.put("prod_price", values[14]);
+							dmpDataJson.put("prod_dis", values[15]);
+			            	break; 
+			        } 
+					
 					
 					if(values[5].contains("24h.pchome.com.tw")) {
 						String pageCategory = "";
@@ -617,13 +626,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("op1", pageCategory);
 					}
 				}catch(Exception e) {
-					System.out.println(">>>>pa set json fail:"+e.getMessage());
-					System.out.println(">>>>pa set json fail log size:"+logStr.split(paclSymbol,-1).length);
-					String[] logarray = logStr.split(paclSymbol,-1);
-					for (int i = 0; i < logarray.length; i++) {
-						System.out.println(">>>>pa set json fail:["+i+"]:"+logarray[i]);
-					}
-					System.out.println(">>>>pa set json fail logStr:"+logStr);
+					System.out.println("pa log set json fail :" + Arrays.asList(values));
 					return;
 				}
 		} else if (logpath.contains("bu_log")) {
@@ -701,7 +704,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				}
 			} catch (Exception e) {
 				System.out.println(">>>>bulog set json fail:" + e.getMessage());
-				System.out.println(">>>>bulog set json fail log size:" + logStr.split(paclSymbol, -1).length);
 				String[] logarray = logStr.split(paclSymbol, -1);
 				for (int i = 0; i < logarray.length; i++) {
 					System.out.println(">>>>bulog set json fail:[" + i + "]:" + logarray[i]);
