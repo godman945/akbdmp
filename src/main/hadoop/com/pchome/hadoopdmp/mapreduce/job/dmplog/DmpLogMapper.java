@@ -600,16 +600,22 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			            	dmpDataJson.put("event_id", values[12]);
 			            	dmpDataJson.put("mark_value", values[13]);
 			            	dmpDataJson.put("pacl_mark_layer", values[14]);
+			            	dmpDataJson.put("op1", values[15]);
+			            	dmpDataJson.put("op2", values[16]);
 			            	break;
 			            case "RECORD": 
 			            	dmpDataJson.put("event_id", values[12]);
+			            	dmpDataJson.put("op1", values[13]);
+			            	dmpDataJson.put("op2", values[14]);
 			            	break;
 			            case "ACTIVEPROD": 
 			            	dmpDataJson.put("event_id", values[12]);
 			            	dmpDataJson.put("prod_id", values[13]);
 							dmpDataJson.put("prod_price", values[14]);
 							dmpDataJson.put("prod_dis", values[15]);
-			            	break; 
+							dmpDataJson.put("op1", values[16]);
+			            	dmpDataJson.put("op2", values[17]);
+			            	break; // record activeprod
 			        } 
 					
 					
