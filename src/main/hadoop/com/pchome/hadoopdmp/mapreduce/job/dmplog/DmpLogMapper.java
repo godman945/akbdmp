@@ -591,7 +591,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("event_id", values[12]);
 						dmpDataJson.put("rule_id", values[13].replace(";", ""));
 						dmpDataJson.put("convert_price", values[14]);
-					}else if(values[11].toUpperCase().equals("mark")) {
+					}else if(values[11].toUpperCase().equals("MARK")) {
 //						dmpDataJson.put("event_id", values[13]);
 //						dmpDataJson.put("mark_id", values[13]);
 //						dmpDataJson.put("mark_value", values[14]);
