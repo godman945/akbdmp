@@ -133,7 +133,7 @@ public class PersonalInfoComponent {
 						if(!mage.equals("NA") && StringUtils.isNotBlank(mage)) {
 							calendar.setTime(new Date());
 							age = calendar.get(Calendar.YEAR) - Integer.parseInt(mage);
-							if(age >=100) {
+							if(age <=120) {
 								dmpJSon.put("age", age);	
 							}
 						}else {
