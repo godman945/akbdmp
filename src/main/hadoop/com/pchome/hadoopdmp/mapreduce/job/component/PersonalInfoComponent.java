@@ -49,6 +49,15 @@ public class PersonalInfoComponent {
 		this.category = dmpJSon.getAsString("category");
 		this.uuid = dmpJSon.getAsString("uuid");
 		dbObject = null;
+		
+		
+		if("chinalight".equals(memid)) {
+			System.out.println("age debug >>>>>>>>>> memid:"+memid);
+		}
+		
+		
+		
+		
 		// 如有memid資料，先查mongo，再撈會員中心查個資
 		if(sexAgeInfoMap.containsKey(this.uuid+"<PCHOME>"+memid+"<PCHOME>"+category)) {
 			Map<String, String> personalInfoMap = sexAgeInfoMap.get(this.uuid+"<PCHOME>"+memid+"<PCHOME>"+category);
@@ -95,12 +104,34 @@ public class PersonalInfoComponent {
 				//mongo DB中有資料
 				if (dbObject != null) {
 					userInfoStr = dbObject.get("user_info").toString();
+					
+					
+					
+					if("chinalight".equals(memid)) {
+						System.out.println("age debug >>>>>>>>>> userInfoStr:"+userInfoStr);
+					}
+					
+					
+					
+					
 					// mongo DB中尚未打過會員中心取得年齡性別資訊
 					if ((!userInfoStr.contains("mage")) || (!userInfoStr.contains("msex"))){
 						//呼叫會員中心
 						memberInfoMapApi = findMemberInfoAPI(memid);
 						msex = (String) memberInfoMapApi.get("msex");
 						mage = (String) memberInfoMapApi.get("mage");
+						
+						
+						
+						
+						if("chinalight".equals(memid)) {
+							System.out.println("age debug >>>>>>>>>> call memberInfoMapApi msex:"+msex);
+							System.out.println("age debug >>>>>>>>>> call memberInfoMapApi mage:"+mage);
+						}
+						
+						
+						
+						
 						//更新user資料
 						updateUserDetail(memid,msex,mage);
 						int age = 0;
@@ -123,6 +154,16 @@ public class PersonalInfoComponent {
 					if ((userInfoStr.contains("mage")) && (userInfoStr.contains("msex"))){
 						msex = (String) ((DBObject)dbObject.get("user_info")).get("msex");
 						mage = (String) ((DBObject)dbObject.get("user_info")).get("mage");
+						
+						if("chinalight".equals(memid)) {
+							System.out.println("age debug >>>>>>>>>> has memberInfo msex:"+msex);
+							System.out.println("age debug >>>>>>>>>> has memberInfo mage:"+mage);
+						}
+						
+						
+						
+						
+						
 						int age = 0;
 						if(!mage.equals("NA") && StringUtils.isNotBlank(mage)) {
 							calendar.setTime(new Date());
