@@ -102,7 +102,7 @@ public class PersonalInfoComponent {
 						memberInfoMapApi = findMemberInfoAPI(memid);
 						msex = (String) memberInfoMapApi.get("msex");
 						mage = (String) memberInfoMapApi.get("mage");
-						
+					
 						//更新user資料
 						updateUserDetail(memid,msex,mage);
 						int age = 0;
