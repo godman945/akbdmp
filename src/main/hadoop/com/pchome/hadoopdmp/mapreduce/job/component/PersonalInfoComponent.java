@@ -49,27 +49,18 @@ public class PersonalInfoComponent {
 		this.category = dmpJSon.getAsString("category");
 		this.uuid = dmpJSon.getAsString("uuid");
 		dbObject = null;
-		
-		
-		if("chinalight".equals(memid)) {
-			System.out.println("age debug >>>>>>>>>> memid:"+memid);
-		}
-		
-		
-		
-		
 		// 如有memid資料，先查mongo，再撈會員中心查個資
 		if(sexAgeInfoMap.containsKey(this.uuid+"<PCHOME>"+memid+"<PCHOME>"+category)) {
 			Map<String, String> personalInfoMap = sexAgeInfoMap.get(this.uuid+"<PCHOME>"+memid+"<PCHOME>"+category);
 			msex = (String) personalInfoMap.get("msex");
 			mage = (String) personalInfoMap.get("mage");
 			
-			
 			int age = 0;
 			if(mage.equals("NA") || StringUtils.isBlank(mage)) {
 				dmpJSon.put("age", "");
 			}else {
-				if(mage.length() == 4) {
+				//member生日判斷是否亂留1900後才接受
+				if(mage.length() == 4 && mage.substring(0, 2).equals("19")) {
 					calendar.setTime(new Date());
 					age = calendar.get(Calendar.YEAR) - Integer.parseInt(mage);
 					dmpJSon.put("age", age);
@@ -82,17 +73,14 @@ public class PersonalInfoComponent {
 			}else {
 				dmpJSon.put("sex", msex);
 			}
-			
-			
 			if ((!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA"))) {
 				dmpJSon.put("personal_info_api_classify", "Y");
 			} else {
 				dmpJSon.put("personal_info_api_classify", "N");
 			}
-			if(StringUtils.isNotBlank(dmpJSon.getAsString("category"))) {
-				dmpJSon.put("sex_source", StringUtils.equals(msex, "NA") ? "" : "excel");
-				dmpJSon.put("age_source", StringUtils.equals(mage, "NA") ? "" : "excel");
-			}
+			dmpJSon.put("sex_source", personalInfoMap.get("sex_source") != null ? personalInfoMap.get("sex_source") : "");
+			dmpJSon.put("age_source", personalInfoMap.get("age_source") != null ? personalInfoMap.get("age_source") : "");
+			
 		}else {
 			//memid資料是否存在時  1.有資料-->查詢mongodb是否已存-->未存則打會員API新增一筆資料，已存則取出 
 			if (StringUtils.isNotBlank(memid)) {
@@ -105,14 +93,9 @@ public class PersonalInfoComponent {
 				if (dbObject != null) {
 					userInfoStr = dbObject.get("user_info").toString();
 					
-					
-					
 					if("chinalight".equals(memid)) {
 						System.out.println("age debug >>>>>>>>>> userInfoStr:"+userInfoStr);
 					}
-					
-					
-					
 					
 					// mongo DB中尚未打過會員中心取得年齡性別資訊
 					if ((!userInfoStr.contains("mage")) || (!userInfoStr.contains("msex"))){
@@ -120,17 +103,6 @@ public class PersonalInfoComponent {
 						memberInfoMapApi = findMemberInfoAPI(memid);
 						msex = (String) memberInfoMapApi.get("msex");
 						mage = (String) memberInfoMapApi.get("mage");
-						
-						
-						
-						
-						if("chinalight".equals(memid)) {
-							System.out.println("age debug >>>>>>>>>> call memberInfoMapApi msex:"+msex);
-							System.out.println("age debug >>>>>>>>>> call memberInfoMapApi mage:"+mage);
-						}
-						
-						
-						
 						
 						//更新user資料
 						updateUserDetail(memid,msex,mage);
@@ -150,25 +122,20 @@ public class PersonalInfoComponent {
 						dmpJSon.put("sex_source","member_api");
 						dmpJSon.put("age_source","member_api");
 					}
+					
+					
 					//已經打過會員中心資料
 					if ((userInfoStr.contains("mage")) && (userInfoStr.contains("msex"))){
 						msex = (String) ((DBObject)dbObject.get("user_info")).get("msex");
 						mage = (String) ((DBObject)dbObject.get("user_info")).get("mage");
 						
-						if("chinalight".equals(memid)) {
-							System.out.println("age debug >>>>>>>>>> has memberInfo msex:"+msex);
-							System.out.println("age debug >>>>>>>>>> has memberInfo mage:"+mage);
-						}
-						
-						
-						
-						
-						
 						int age = 0;
 						if(!mage.equals("NA") && StringUtils.isNotBlank(mage)) {
 							calendar.setTime(new Date());
 							age = calendar.get(Calendar.YEAR) - Integer.parseInt(mage);
-							dmpJSon.put("age", age);
+							if(age >=100) {
+								dmpJSon.put("age", age);	
+							}
 						}else {
 							dmpJSon.put("age", "");
 						}
@@ -179,10 +146,11 @@ public class PersonalInfoComponent {
 						}
 						dmpJSon.put("sex_source","member_api");
 						dmpJSon.put("age_source","member_api");
-						
 						memberInfoMapApi = new HashMap<String, String>();
 						memberInfoMapApi.put("msex", msex);
 						memberInfoMapApi.put("mage", mage);
+						memberInfoMapApi.put("age_source", "member_api");
+						memberInfoMapApi.put("sex_source", "member_api");
 					}
 						
 					if ((!StringUtils.equals(msex, "NA")) && (!StringUtils.equals(mage, "NA"))) {
@@ -256,6 +224,9 @@ public class PersonalInfoComponent {
 					} else {
 						dmpJSon.put("personal_info_classify", "N");
 					}
+					
+					forecastPersonalInfoMap.put("age_source", "excel");
+					forecastPersonalInfoMap.put("sex_source", "excel");
 					sexAgeInfoMap.put(this.uuid+"<PCHOME>"+memid+"<PCHOME>"+dmpJSon.getAsString("category"), forecastPersonalInfoMap);
 				}
 			}
@@ -270,6 +241,12 @@ public class PersonalInfoComponent {
 				}
 			}
 		}		
+		
+		
+		
+		if(memid.equals("memid:chinalight") || memid.equals("lrl1109") ) {
+			System.out.println(dmpJSon);
+		}
 		return dmpJSon;
 	}
 	
