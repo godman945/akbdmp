@@ -59,11 +59,14 @@ public class PersonalInfoComponent {
 			if(mage.equals("NA") || StringUtils.isBlank(mage)) {
 				dmpJSon.put("age", "");
 			}else {
-				//member生日判斷是否亂留1900後才接受
-				if(mage.length() == 4 && mage.substring(0, 2).equals("19")) {
+				if(mage.length() == 4) {
 					calendar.setTime(new Date());
 					age = calendar.get(Calendar.YEAR) - Integer.parseInt(mage);
-					dmpJSon.put("age", age);
+					if(age <=120) {
+						dmpJSon.put("age", age);
+					}else {
+						dmpJSon.put("age", "");		
+					}
 				}else {
 					dmpJSon.put("age", mage);
 				}
@@ -93,10 +96,6 @@ public class PersonalInfoComponent {
 				if (dbObject != null) {
 					userInfoStr = dbObject.get("user_info").toString();
 					
-					if("chinalight".equals(memid)) {
-						System.out.println("age debug >>>>>>>>>> userInfoStr:"+userInfoStr);
-					}
-					
 					// mongo DB中尚未打過會員中心取得年齡性別資訊
 					if ((!userInfoStr.contains("mage")) || (!userInfoStr.contains("msex"))){
 						//呼叫會員中心
@@ -110,7 +109,11 @@ public class PersonalInfoComponent {
 						if(!mage.equals("NA") && StringUtils.isNotBlank(mage)) {
 							calendar.setTime(new Date());
 							age = calendar.get(Calendar.YEAR) - Integer.parseInt(mage);
-							dmpJSon.put("age", age);
+							if(age <=120) {
+								dmpJSon.put("age", age);	
+							}else {
+								dmpJSon.put("age", "");
+							}
 						}else {
 							dmpJSon.put("age", "");
 						}
@@ -135,6 +138,8 @@ public class PersonalInfoComponent {
 							age = calendar.get(Calendar.YEAR) - Integer.parseInt(mage);
 							if(age <=120) {
 								dmpJSon.put("age", age);	
+							}else {
+								dmpJSon.put("age", "");
 							}
 						}else {
 							dmpJSon.put("age", "");
