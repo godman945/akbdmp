@@ -243,7 +243,7 @@ public class PersonalInfoComponent {
 		}		
 		
 		
-		if(memid.equals("memid:chinalight") || memid.equals("lrl1109") ) {
+		if(memid.equals("chinalight") || memid.equals("lrl1109") ) {
 			System.out.println(dmpJSon);
 		}
 		return dmpJSon;
