@@ -44,8 +44,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 	public JSONParser jsonParser = null;
 	public String redisFountKey;
 	private static String[] weeks = {"SUN","MON","TUE","WED","THU","FRI","SAT"};
-	private static String[] markLevelList = {"mark_layer1","mark_layer2","mark_layer3"};
-	private static String[] markValueList = {"mark_value1","mark_value2","mark_value3"};
+	private static String[] markLevelList = {"mark_layer1","mark_layer2","mark_layer3","mark_layer4"};
+	private static String[] markValueList = {"mark_value1","mark_value2","mark_value3","mark_value4"};
 	private static Calendar calendar = Calendar.getInstance();
 	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private static StringBuffer wiriteToDruid = new StringBuffer();

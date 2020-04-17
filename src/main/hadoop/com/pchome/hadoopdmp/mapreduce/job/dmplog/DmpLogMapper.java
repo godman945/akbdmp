@@ -854,6 +854,27 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					layerJson.put("mark_value3", menu24hMappingJson.getString("level_3_code"));
 					categoryLevelMappingMap.put(markValue, layerJson);
 					break;
+				}else if(markValue.indexOf("-") >= 0 && (menu24hMappingJson.has("level_3_code") && menu24hMappingJson.getString("level_3_code").equals(markValue.substring(0, markValue.indexOf("-"))))) {
+					System.out.println("process four data markValue:" + markValue);
+					//此處根據第四層名稱擷取第三層名稱資料
+					dmpDataJson.put("mark_layer1", "1");
+					dmpDataJson.put("mark_value1", menu24hMappingJson.getString("level_1_code"));
+					dmpDataJson.put("mark_layer2", "2");
+					dmpDataJson.put("mark_value2", menu24hMappingJson.getString("level_2_code"));
+					dmpDataJson.put("mark_layer3", "3");
+					dmpDataJson.put("mark_value3", menu24hMappingJson.getString("level_3_code"));
+					dmpDataJson.put("mark_layer4", "4");
+					dmpDataJson.put("mark_value4", markValue);
+					org.json.JSONObject layerJson = new org.json.JSONObject();
+					layerJson.put("mark_layer1", "1");
+					layerJson.put("mark_value1", menu24hMappingJson.getString("level_1_code"));
+					layerJson.put("mark_layer2", "2");
+					layerJson.put("mark_value2", menu24hMappingJson.getString("level_2_code"));
+					layerJson.put("mark_layer3", "3");
+					layerJson.put("mark_value3", menu24hMappingJson.getString("level_3_code"));
+					layerJson.put("mark_layer4", "4");
+					layerJson.put("mark_value4", markValue);
+					categoryLevelMappingMap.put(markValue, layerJson);
 				}
 			}
 		}
