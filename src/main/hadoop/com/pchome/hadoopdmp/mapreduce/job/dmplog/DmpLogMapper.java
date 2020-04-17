@@ -431,17 +431,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					// values[13] ck,pv
 					// values[15] ad_class
 					this.values = this.logStr.split(kdclSymbol, -1);
-					
-					
-//					if (values[13].toUpperCase().equals("CK") && values[2].contains("xxx")) {
-//						System.out.println(">>>> kdcl ck data xxx:" + Arrays.asList(values));
-//					}else if(values[13].toUpperCase().equals("CK") && !values[2].contains("xxx")) {
-//						System.out.println(">>>> kdcl ck data:" + Arrays.asList(values));
-//					}
-					
-					
-					
-					
 					if (values.length < kdclLogLength) {
 						return;
 					}
@@ -452,7 +441,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					}
 					
 					if (StringUtils.isBlank(values[4]) || !(values[4].contains("http"))) {
-						System.out.println("kdcl return http fail:" + Arrays.asList(values));
+//						System.out.println("kdcl return http fail:" + Arrays.asList(values));
 						return;
 					}
 					
@@ -485,7 +474,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 							hostNameMap.put(values[4].toString(),domain.startsWith("www.") ? domain.substring(4) : domain);
 						}
 					} catch (Exception e) {
-						System.out.println("kdcl log process domain fail:" + Arrays.asList(values));
+//						System.out.println("kdcl log process domain fail:" + Arrays.asList(values));
 						return;
 					}
 					
@@ -521,7 +510,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 								|| values[4].contains("index") || values[4].contains("?fq=")
 								|| values[4].contains("store/?q=")) {
 							
-							System.out.println(">>>> kdcl url error return:" + Arrays.asList(values));
+//							System.out.println(">>>> kdcl url error return:" + Arrays.asList(values));
 							return;
 						} else if (values[4].contains("?")) {
 							pageCategory = values[4].split("/")[values[4].split("/").length - 1];
@@ -540,7 +529,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					return;
 				}
 			} catch (Exception e) {
-				System.out.println(">>>> kdcl err return:" + Arrays.asList(values));
+//				System.out.println(">>>> kdcl err return:" + Arrays.asList(values));
 				return;
 			}
 		} else if (logpath.contains("pacl_log")) {
@@ -632,7 +621,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						dmpDataJson.put("op1", pageCategory);
 					}
 				}catch(Exception e) {
-					System.out.println("pa log set json fail :" + Arrays.asList(values));
+//					System.out.println("pa log set json fail :" + Arrays.asList(values));
 					return;
 				}
 		} else if (logpath.contains("bu_log")) {
@@ -705,7 +694,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 						process24CategoryLevel(dmpDataJson);
 					}
 				} catch (Exception e) {
-					System.out.println(">>>>>>>fail process 24 category level:" + e.getMessage());
+//					System.out.println(">>>>>>>fail process 24 category level:" + e.getMessage());
 					return;
 				}
 			} catch (Exception e) {
@@ -714,7 +703,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				for (int i = 0; i < logarray.length; i++) {
 					System.out.println(">>>>bulog set json fail:[" + i + "]:" + logarray[i]);
 				}
-				System.out.println(">>>>bulog set json logStr:" + logStr);
+//				System.out.println(">>>>bulog set json logStr:" + logStr);
 				return;
 			}
 		}
@@ -855,7 +844,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					categoryLevelMappingMap.put(markValue, layerJson);
 					break;
 				}else if(markValue.indexOf("-") >= 0 && (menu24hMappingJson.has("level_3_code") && menu24hMappingJson.getString("level_3_code").equals(markValue.substring(0, markValue.indexOf("-"))))) {
-					System.out.println("process four data markValue:" + markValue);
 					//此處根據第四層名稱擷取第三層名稱資料
 					dmpDataJson.put("mark_layer1", "1");
 					dmpDataJson.put("mark_value1", menu24hMappingJson.getString("level_1_code"));
