@@ -521,7 +521,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 								|| values[4].contains("index") || values[4].contains("?fq=")
 								|| values[4].contains("store/?q=")) {
 							
-							System.out.println(">>>> kdcl return:" + Arrays.asList(values));
+							System.out.println(">>>> kdcl url error return:" + Arrays.asList(values));
 							return;
 						} else if (values[4].contains("?")) {
 							pageCategory = values[4].split("/")[values[4].split("/").length - 1];
@@ -540,7 +540,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					return;
 				}
 			} catch (Exception e) {
-				System.out.println(">>>> kdcl return:" + Arrays.asList(values));
+				System.out.println(">>>> kdcl err return:" + Arrays.asList(values));
 				return;
 			}
 		} else if (logpath.contains("pacl_log")) {

@@ -191,6 +191,9 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 				
 				//產出bu log csv 
 				if(StringUtils.isNotBlank(dmpJSon.getAsString("mark_value")) && dmpJSon.getAsString("log_source").equals("bu_log")) {
+					if(dmpJSon.getAsString("mark_value").indexOf("-") >= 0) {
+						System.out.println("debug mark_value:"+dmpJSon.getAsString("mark_value"));
+					}
 					for (int i= 0; i < markLevelList.length; i++) {
 						wiriteToDruid.setLength(0);
 						if(StringUtils.isNotBlank(dmpJSon.getAsString(markLevelList[i]))) {
