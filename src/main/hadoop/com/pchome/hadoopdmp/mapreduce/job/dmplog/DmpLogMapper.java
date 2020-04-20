@@ -40,6 +40,7 @@ import com.mongodb.DBCollection;
 import com.pchome.hadoopdmp.enumerate.CategoryLogEnum;
 import com.pchome.hadoopdmp.mapreduce.job.component.DeviceComponent;
 import com.pchome.hadoopdmp.mapreduce.job.component.GeoIpComponent;
+import com.pchome.hadoopdmp.mapreduce.job.component.HttpUtil;
 import com.pchome.hadoopdmp.mapreduce.job.factory.ACategoryLogData;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryCodeBean;
 import com.pchome.hadoopdmp.mapreduce.job.factory.CategoryLogFactory;
@@ -77,7 +78,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public static Map<String, org.json.JSONObject> categoryLevelMappingMap = new HashMap<String, org.json.JSONObject>();
 	private static net.minidev.json.JSONObject dmpDataJson = new net.minidev.json.JSONObject();
 	private static org.json.JSONArray menu24hMappingJsonArray = new org.json.JSONArray();
-	
+	private static org.json.JSONArray brandJsonArray = new org.json.JSONArray();
 	private static int test = 0;
 	
 	public void setup(Context context) {
@@ -161,7 +162,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 			org.apache.hadoop.fs.Path brandCsvFile = new org.apache.hadoop.fs.Path("hdfs://hdn1.mypchome.com.tw:9000/hadoop_file/adm_brand_correspond.csv");
 			FSDataInputStream brandCsvFileInputStream = fs.open(brandCsvFile);
 			CSVParser brandCsvParser = new CSVParser(new InputStreamReader(brandCsvFileInputStream,"UTF-8"), CSVFormat.DEFAULT);
-			org.json.JSONArray brandJsonArray = new org.json.JSONArray();
+			
 			for (CSVRecord csvRecord : brandCsvParser) {
 				if(csvRecord.get(1).equals("NA")) {
 					continue;
@@ -669,6 +670,7 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 				dmpDataJson.put("pa_id", values[4]);
 				dmpDataJson.put("screen_x", values[9]);
 				dmpDataJson.put("screen_y", values[10]);
+				dmpDataJson.put("op1", values[16]);
 				dmpDataJson.put("event_id", "24h");
 				
 				if (dmpDataJson.getAsString("referer").contains("24h.pchome.com.tw")) {
@@ -844,6 +846,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					categoryLevelMappingMap.put(markValue, layerJson);
 					break;
 				}else if(markValue.indexOf("-") >= 0 && (menu24hMappingJson.has("level_3_code") && menu24hMappingJson.getString("level_3_code").equals(markValue.substring(0, markValue.indexOf("-"))))) {
+					if(markValue.indexOf("?")>=0) {
+						markValue = markValue.substring(0,markValue.indexOf("?"));
+					}
 					//此處根據第四層名稱擷取第三層名稱資料
 					dmpDataJson.put("mark_layer1", "1");
 					dmpDataJson.put("mark_value1", menu24hMappingJson.getString("level_1_code"));
@@ -853,6 +858,35 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					dmpDataJson.put("mark_value3", menu24hMappingJson.getString("level_3_code"));
 					dmpDataJson.put("mark_layer4", "4");
 					dmpDataJson.put("mark_value4", markValue);
+					//檢查是否有對應品牌名稱
+					if(menu24hMappingJson.has("level_1_brand")) {
+						dmpDataJson.put("level_1_brand", menu24hMappingJson.getString("level_1_brand"));
+					}
+					if(menu24hMappingJson.has("level_2_brand")) {
+						dmpDataJson.put("level_2_brand", menu24hMappingJson.getString("level_2_brand"));
+					}
+					if(menu24hMappingJson.has("level_3_brand")) {
+						dmpDataJson.put("level_3_brand", menu24hMappingJson.getString("level_3_brand"));
+					}
+					if(menu24hMappingJson.has("level_3_price_code") ) {
+						dmpDataJson.put("24h_price_code", menu24hMappingJson.getString("level_3_price_code"));
+					}
+					
+					//查詢第四層品牌代號
+					String result = HttpUtil.getInstance().getResult("http://search.pchome.com.tw/api/queryPk.html?q="+markValue,"utf-8");
+					org.json.JSONObject j = new org.json.JSONObject(result);
+					j = (org.json.JSONObject) (j.getJSONObject("response").getJSONArray("docs")).get(0);
+					String desc = j.getString("desc")+","+j.getString("title")+","+j.getString("tag");
+					
+					for (int i = 0; i < brandJsonArray.length(); i++) {
+					String brandName =	(String) ((org.json.JSONObject)brandJsonArray.get(i)).get("brand_name");
+					String brandSeq = (String) ((org.json.JSONObject)brandJsonArray.get(i)).get("brand_db_seq");
+						if(desc.indexOf(brandName)>=0) {
+							dmpDataJson.put("level_4_brand", brandSeq);
+							break;
+						}
+					}
+					
 					org.json.JSONObject layerJson = new org.json.JSONObject();
 					layerJson.put("mark_layer1", "1");
 					layerJson.put("mark_value1", menu24hMappingJson.getString("level_1_code"));

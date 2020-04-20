@@ -310,6 +310,8 @@ public class DmpLogReducer extends Reducer<Text, Text, Text, Text> {
 								wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("level_2_brand")).append("\"");
 							}else if(i == 2 && StringUtils.isNotBlank(dmpJSon.getAsString("level_3_brand"))) {
 								wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("level_3_brand")).append("\"");
+							}else if(i == 3 && StringUtils.isNotBlank(dmpJSon.getAsString("level_4_brand"))) {
+								wiriteToDruid.append(",").append("\"").append(dmpJSon.getAsString("level_4_brand")).append("\"");
 							}else {
 								wiriteToDruid.append(",").append("\"").append("").append("\"");
 							}
