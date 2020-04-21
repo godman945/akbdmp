@@ -868,15 +868,18 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					if(menu24hMappingJson.has("level_3_brand")) {
 						dmpDataJson.put("level_3_brand", menu24hMappingJson.getString("level_3_brand"));
 					}
-					if(menu24hMappingJson.has("level_3_price_code") ) {
-						dmpDataJson.put("24h_price_code", menu24hMappingJson.getString("level_3_price_code"));
-					}
 					
 					//查詢第四層品牌代號
 					String result = HttpUtil.getInstance().getResult("http://search.pchome.com.tw/api/queryPk.html?q="+markValue,"utf-8");
 					org.json.JSONObject j = new org.json.JSONObject(result);
 					j = (org.json.JSONObject) (j.getJSONObject("response").getJSONArray("docs")).get(0);
 					String desc = j.getString("desc")+","+j.getString("title")+","+j.getString("tag");
+					String price = j.getString("va_a");
+					
+					if(StringUtils.isNotBlank(price)) {
+						dmpDataJson.put("24h_price_code", price);
+					}
+					
 					
 					for (int i = 0; i < brandJsonArray.length(); i++) {
 					String brandName =	(String) ((org.json.JSONObject)brandJsonArray.get(i)).get("brand_name");
