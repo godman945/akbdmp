@@ -874,10 +874,10 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					org.json.JSONObject j = new org.json.JSONObject(result);
 					j = (org.json.JSONObject) (j.getJSONObject("response").getJSONArray("docs")).get(0);
 					String desc = j.getString("desc")+","+j.getString("title")+","+j.getString("tag");
-					String price = j.getString("va_a");
-					if(StringUtils.isNotBlank(price)) {
-						dmpDataJson.put("24h_price_code", price);
-					}
+//					String price = j.getString("va_a");
+//					if(StringUtils.isNotBlank(price)) {
+//						dmpDataJson.put("24h_price_code", price);
+//					}
 					
 					
 					for (int i = 0; i < brandJsonArray.length(); i++) {
@@ -915,17 +915,4 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 	}
 
 
-	public static void main(String[] args) throws Exception {
-//		 DmpLogMapper dmpLogMapper = new DmpLogMapper();
-//		 dmpLogMapper.map(null, null, null);
-//
-//		System.setProperty("spring.profiles.active", "stg");
-//		ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringAllHadoopConfig.class);
-//		DmpLogMapper dmpLogMapper1 = ctx.getBean(DmpLogMapper.class);
-//		
-//		dmpLogMapper1.test();
-//		dmpLogMapper1.map(null, null, null);
-
-	}
-//
 }
