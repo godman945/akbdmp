@@ -875,7 +875,6 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					j = (org.json.JSONObject) (j.getJSONObject("response").getJSONArray("docs")).get(0);
 					String desc = j.getString("desc")+","+j.getString("title")+","+j.getString("tag");
 					String price = j.getString("va_a");
-					
 					if(StringUtils.isNotBlank(price)) {
 						dmpDataJson.put("24h_price_code", price);
 					}
