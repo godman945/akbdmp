@@ -868,7 +868,9 @@ public class DmpLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 					if(menu24hMappingJson.has("level_3_brand")) {
 						dmpDataJson.put("level_3_brand", menu24hMappingJson.getString("level_3_brand"));
 					}
-					
+					if(menu24hMappingJson.has("level_3_price_code") ) {
+						dmpDataJson.put("24h_price_code", menu24hMappingJson.getString("level_3_price_code"));
+					}
 					//查詢第四層品牌代號
 					String result = HttpUtil.getInstance().getResult("http://search.pchome.com.tw/api/queryPk.html?q="+markValue,"utf-8");
 					org.json.JSONObject j = new org.json.JSONObject(result);
