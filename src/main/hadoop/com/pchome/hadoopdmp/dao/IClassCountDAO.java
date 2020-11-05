@@ -5,7 +5,7 @@ import java.util.List;
 import com.mongodb.DBObject;
 
 public interface IClassCountDAO {
-
+	
 	public int insert(List<DBObject> list) throws Exception;
 
     public int insert(DBObject dbObject) throws Exception;
